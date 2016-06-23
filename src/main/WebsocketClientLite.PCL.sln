@@ -1,0 +1,39 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.25123.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebsocketClientLite.PCL", "WebsocketClientLite.PCL.csproj", "{CD8C2A5C-4BB2-42C6-A158-F2D63912D59C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test", "Test", "{C6A551EF-FE86-4A13-B9C0-EA8B7FA798C4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IWebsocketClientLite.PCL", "..\interface\IWebsocketLite.PCL\IWebsocketClientLite.PCL.csproj", "{E4662FB6-85EB-4E49-BA9B-89862BEACE08}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebsocketLite.Console.Test", "..\test\WebsocketLite.Console.Test\WebsocketLite.Console.Test.csproj", "{B0CE5FDA-0AD9-4979-A282-2A02B9DF96FF}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{CD8C2A5C-4BB2-42C6-A158-F2D63912D59C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CD8C2A5C-4BB2-42C6-A158-F2D63912D59C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CD8C2A5C-4BB2-42C6-A158-F2D63912D59C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CD8C2A5C-4BB2-42C6-A158-F2D63912D59C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E4662FB6-85EB-4E49-BA9B-89862BEACE08}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E4662FB6-85EB-4E49-BA9B-89862BEACE08}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E4662FB6-85EB-4E49-BA9B-89862BEACE08}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E4662FB6-85EB-4E49-BA9B-89862BEACE08}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B0CE5FDA-0AD9-4979-A282-2A02B9DF96FF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B0CE5FDA-0AD9-4979-A282-2A02B9DF96FF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B0CE5FDA-0AD9-4979-A282-2A02B9DF96FF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B0CE5FDA-0AD9-4979-A282-2A02B9DF96FF}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{B0CE5FDA-0AD9-4979-A282-2A02B9DF96FF} = {C6A551EF-FE86-4A13-B9C0-EA8B7FA798C4}
+	EndGlobalSection
+EndGlobal
