@@ -37,7 +37,16 @@ namespace WebsocketClientLite.PCL.Parser
 
         internal bool IsCloseRecieved { get; private set; }
 
-        internal string NewMessage { get; private set; }
+        private string _newMessage;
+
+        internal string NewMessage
+        {
+            get
+            {
+                HasNewMessage = false;
+                return _newMessage;
+            }
+        }
 
         internal bool HasNewMessage { get; private set; }
 
@@ -128,22 +137,22 @@ namespace WebsocketClientLite.PCL.Parser
                 switch (_frameType)
                 {
                     case FrameType.Single:
-                        NewMessage = frameContent;
+                        _newMessage = frameContent;
                         HasNewMessage = true;
                         break;
 
                     case FrameType.FirstOfMultipleFrames:
-                        NewMessage = NewMessage + frameContent;
+                        _newMessage = _newMessage + frameContent;
                         HasNewMessage = false;
                         break;
 
                     case FrameType.Continuation:
-                        NewMessage = NewMessage + frameContent;
+                        _newMessage = _newMessage + frameContent;
                         HasNewMessage = false;
                         break;
 
                     case FrameType.LastInMultipleFrames:
-                        NewMessage = NewMessage + frameContent;
+                        _newMessage = _newMessage + frameContent;
                         _isMultiFrameContent = false;
                         HasNewMessage = true;
                         break;
@@ -288,7 +297,7 @@ namespace WebsocketClientLite.PCL.Parser
                 case 129:
                     _frameType = FrameType.Single;
 
-                    NewMessage = null;
+                    _newMessage = null;
                     InitFrameMessage();
                     break;
 
@@ -307,7 +316,7 @@ namespace WebsocketClientLite.PCL.Parser
                     _isMultiFrameContent = true;
                     _frameType = FrameType.FirstOfMultipleFrames;
 
-                    NewMessage = null;
+                    _newMessage = null;
                     InitFrameMessage();
                     break;
 

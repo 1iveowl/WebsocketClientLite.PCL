@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>WebsocketClientLite.PCL</id>
+    <version>1.0.1</version>
+    <title>Websocket Client Lite for PCL / Xamarin</title>
+    <authors>Jasper H. Bojsen</authors>
+    <owners>Jasper H. Bojsen</owners>
+    <licenseUrl>https://github.com/1iveowl/WebsocketClientLite.PCL/blob/master/License.md</licenseUrl>
+    <projectUrl>https://github.com/1iveowl/WebsocketClientLite.PCL/blob/master/README.md</projectUrl>
+    <iconUrl>https://nuget.org/Content/Images/packageDefaultIcon.png</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>A simple and light Websocket client. 
+Xamarin cross-platform.
+Can be set to ignore SSL/TLS server certificate issues. 
+Observe incoming message using Reactive Extensions (Rx)</description>
+    <releaseNotes>Initial release.</releaseNotes>
+    <copyright>Copyright 2016</copyright>
+    <tags>websocket rx pcl xamarin ssl tls</tags>
+    <dependencies>
+      <dependency id="Rx-Main" version="2.2.5"/>
+      <dependency id="SocketLite.PCL" version="1.1.2"/>
+      <dependency id="HttpMaschine.PCL" version="1.1.1"/>
+    </dependencies>
+  </metadata>
+  <files>
+        <file src="\bin\Release\WebsocketClientLite.PCL.dll"
+          target="lib\portable-net45+netcore45\WebsocketClientLite.PCL.dll" />
+      <file src="\bin\Release\WebsocketClientLite.PCL.pdb"
+        target="lib\portable-net45+netcore45\WebsocketClientLite.PCL.pdb" />
+        <file src="bin\Release\IWebsocketClientLite.PCL.dll"
+          target="lib\portable-net45+netcore45\IWebsocketClientLite.PCL.dll" />
+      <file src="\bin\Release\IWebsocketClientLite.PCL.pdb"
+        target="lib\portable-net45+netcore45\IWebsocketClientLite.PCL.pdb" />
+    </files>
+</package>

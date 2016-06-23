@@ -22,7 +22,7 @@ namespace WebsocketLite.Console.Test
             _subscribeToMessagesReceived = websocketClient.ObserveTextMessagesReceived.Subscribe(
                 msg =>
                 {
-                    System.Console.WriteLine(msg);
+                    System.Console.WriteLine($"Reply from test server (wss://echo.websocket.org): {msg}");
 
                 });
 
@@ -31,7 +31,9 @@ namespace WebsocketLite.Console.Test
                     new Uri("wss://echo.websocket.org"),
                     ignoreServerCertificateErrors: false);
 
-            var strArray = new[] {"Test ", "me ", "now"};
+            await websocketClient.SendTextAsync("Test Single Frame");
+
+            var strArray = new[] {"Test ", "multiple ", "frames"};
 
             await websocketClient.SendTextAsync(strArray);
         }
