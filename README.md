@@ -46,6 +46,17 @@ class Program
         var strArray = new[] {"Test ", "multiple ", "frames"};
 
         await websocketClient.SendTextAsync(strArray);
+
+        await websocketClient.SendTextMultiFrameAsync("Start ", FrameType.FirstOfMultipleFrames);
+        await Task.Delay(TimeSpan.FromMilliseconds(200));
+        await websocketClient.SendTextMultiFrameAsync("Continue... #1 ", FrameType.Continuation);
+        await Task.Delay(TimeSpan.FromMilliseconds(300));
+        await websocketClient.SendTextMultiFrameAsync("Continue... #2 ", FrameType.Continuation);
+        await Task.Delay(TimeSpan.FromMilliseconds(150));
+        await websocketClient.SendTextMultiFrameAsync("Continue... #3 ", FrameType.Continuation);
+        await Task.Delay(TimeSpan.FromMilliseconds(400));
+        await websocketClient.SendTextMultiFrameAsync("Stop.", FrameType.LastInMultipleFrames);
+
     }
 }
 ```
