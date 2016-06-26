@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Text;
 using ISocketLite.PCL.Interface;
+using IWebsocketClientLite.PCL;
 using WebsocketClientLite.PCL.Helper;
 using WebsocketClientLite.PCL.Model;
 using static WebsocketClientLite.PCL.Helper.WebsocketMasking;

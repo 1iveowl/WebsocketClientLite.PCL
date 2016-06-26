@@ -17,9 +17,10 @@ namespace IWebsocketClientLite.PCL
         Task ConnectAsync(Uri uri, bool ignoreServerCertificateErrors = false);
 
         Task CloseAsync();
-        //Task CloseAsync(ushort code, string reason);
 
         Task SendTextAsync(string message);
         Task SendTextAsync(string[] messageList);
+
+        Task SendTextMultiFrameAsync(string message, FrameType frameType);
     }
 }

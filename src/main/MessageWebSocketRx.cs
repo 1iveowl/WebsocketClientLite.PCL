@@ -110,6 +110,18 @@ namespace WebsocketClientLite.PCL
             }
         }
 
+        public async Task SendTextMultiFrameAsync(string message, FrameType frameType)
+        {
+            if (IsConnected)
+            {
+                await _websocketSenderService.SendTextMultiFrameAsync(message, frameType);
+            }
+            else
+            {
+                throw new Exception("Not connected. Client must beconnected to websocket server before sending message");
+            }
+        }
+
         public async Task SendTextAsync(string[] messageList)
         {
             if (IsConnected)
