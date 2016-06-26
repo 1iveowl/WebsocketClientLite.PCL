@@ -9,6 +9,8 @@ The library allows developers to establish wss websocket connections to websocke
 
 This project is based on [SocketLite.PCL](https://github.com/1iveowl/sockets-for-pcl/) for cross platform TCP sockets support. 
 
+This project utilizes [Reactive Extensions](http://reactivex.io/). Although this has an added learning curve its a learning worth while and it makes creating a library like this much more elegant compared to using call-back or events. 
+
 ### Usage
 ```csharp
 class Program
@@ -55,4 +57,5 @@ The following documentation was utilized when writting this library:
 [Writing Websocket Servers](https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API/Writing_WebSocket_servers)
 [Writing Websocket Server in C#](https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API/Writing_WebSocket_server)
 [Writing WebSocket client applications](https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API/Writing_WebSocket_client_applications)
+
 
