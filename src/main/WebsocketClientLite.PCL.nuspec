@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>WebsocketClientLite.PCL</id>
-    <version>1.0.2</version>
+    <version>1.0.3</version>
     <title>Websocket Client Lite for PCL / Xamarin</title>
     <authors>Jasper H. Bojsen</authors>
     <owners>Jasper H. Bojsen</owners>
@@ -20,7 +20,7 @@ Observe incoming message using Reactive Extensions (Rx)</description>
     <dependencies>
       <dependency id="Rx-Main" version="2.2.5"/>
       <dependency id="SocketLite.PCL" version="1.1.2"/>
-      <dependency id="HttpMaschine.PCL" version="1.1.1"/>
+      <dependency id="HttpMachine.PCL" version="1.1.1"/>
     </dependencies>
   </metadata>
   <files>

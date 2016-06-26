@@ -12,6 +12,7 @@ namespace WebsocketLite.Console.Test
         {
             StartWebSocket();
             System.Console.ReadKey();
+            _subscribeToMessagesReceived.Dispose();
 
         }
 
