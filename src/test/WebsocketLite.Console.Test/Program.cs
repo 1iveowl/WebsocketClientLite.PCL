@@ -12,6 +12,7 @@ namespace WebsocketLite.Console.Test
         static void Main(string[] args)
         {
             StartWebSocket();
+            System.Console.WriteLine("Waiting...");
             System.Console.ReadKey();
             _subscribeToMessagesReceived.Dispose();
 
@@ -20,6 +21,8 @@ namespace WebsocketLite.Console.Test
         static async void StartWebSocket()
         {
             var websocketClient = new MessageWebSocketRx();
+
+            System.Console.WriteLine("Start");
 
             _subscribeToMessagesReceived = websocketClient.ObserveTextMessagesReceived.Subscribe(
                 msg =>
@@ -30,9 +33,10 @@ namespace WebsocketLite.Console.Test
 
             await
                 websocketClient.ConnectAsync(
-                    new Uri("wss://echo.websocket.org"),
+                    new Uri("wss://echo.websocket.org:443"),
                     ignoreServerCertificateErrors: false);
 
+            System.Console.WriteLine("Sending: Test Single Frame");
             await websocketClient.SendTextAsync("Test Single Frame");
 
             var strArray = new[] {"Test ", "multiple ", "frames"};

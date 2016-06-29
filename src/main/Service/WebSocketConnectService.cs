@@ -48,11 +48,23 @@ namespace WebsocketClientLite.PCL.Service
 
                 await SendConnectHandShake(uri, secure);
 
-                while (!requestHandler.HttpRequestReponse.IsEndOfMessage
+                var waitForHandShakeLoopTask = Task.Run(async () =>
+                {
+                    while (!requestHandler.HttpRequestReponse.IsEndOfMessage
                     && !requestHandler.HttpRequestReponse.IsRequestTimedOut
                     && !requestHandler.HttpRequestReponse.IsUnableToParseHttp)
+                    {
+                        await Task.Delay(TimeSpan.FromMilliseconds(10));
+                    }
+                });
+
+                var timeout = Task.Delay(TimeSpan.FromSeconds(10));
+
+                var taskReturn = await Task.WhenAny(waitForHandShakeLoopTask, timeout);
+
+                if (taskReturn == timeout)
                 {
-                    await Task.Delay(TimeSpan.FromMilliseconds(10));
+                    throw new TimeoutException("Connection request to server timed out");
                 }
 
                 parserHandler.Execute(default(ArraySegment<byte>));
@@ -73,6 +85,8 @@ namespace WebsocketClientLite.PCL.Service
                                            $"Error code: {requestHandler.HttpRequestReponse.StatusCode}, " +
                                            $"Error reason: {requestHandler.HttpRequestReponse.ResponseReason}");
                 }
+
+                System.Diagnostics.Debug.WriteLine("HandShake completed");
             }
             catch (Exception ex)
             {
