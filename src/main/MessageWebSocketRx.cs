@@ -27,7 +27,6 @@ namespace WebsocketClientLite.PCL
 
         private CancellationTokenSource _cancellationTokenSource;
 
-
         private IConnectableObservable<byte[]> ObservableWebsocketData => Observable.While(
                     () => !_cancellationTokenSource.IsCancellationRequested,
                     Observable.FromAsync(ReadOneByteAtTheTimeAsync))
