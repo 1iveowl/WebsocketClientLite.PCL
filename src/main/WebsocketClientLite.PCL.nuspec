@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>WebsocketClientLite.PCL</id>
-    <version>1.5.2</version>
+    <version>1.6.0</version>
     <title>Websocket Client Lite for PCL / Xamarin</title>
     <authors>Jasper H. Bojsen</authors>
     <owners>Jasper H. Bojsen</owners>
@@ -14,7 +14,7 @@
 Xamarin cross-platform.
 Can be set to ignore SSL/TLS server certificate issues. 
 Observe incoming message using Reactive Extensions (Rx)</description>
-    <releaseNotes>Updated for Rx 3.0.0 and SocketLite.PCL 2.0.0</releaseNotes>
+    <releaseNotes>Nooow ConnectAsync needs a Cancellation Token Source. The Task is now canncelled if the connection is lost enabling the caller to retry to reestablish the conneccction.</releaseNotes>
     <copyright>Copyright 2016</copyright>
     <tags>websocket rx pcl xamarin ssl tls</tags>
     <dependencies>

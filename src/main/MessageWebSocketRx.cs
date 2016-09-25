@@ -45,6 +45,7 @@ namespace WebsocketClientLite.PCL
 
             if (bytesRead < oneByteArray.Length)
             {
+                _cancellationTokenSource.Cancel();
                 throw new Exception("Web socket connection aborted unexpectantly");
             }
             return oneByteArray;
@@ -66,9 +67,9 @@ namespace WebsocketClientLite.PCL
             throw new NotImplementedException();
         }
 
-        public async Task ConnectAsync(Uri uri, bool ignoreServerCertificateErrors = false)
+        public async Task ConnectAsync(Uri uri, CancellationTokenSource cts, bool ignoreServerCertificateErrors = false)
         {
-            _cancellationTokenSource = new CancellationTokenSource();
+            _cancellationTokenSource = cts;
             _httpParserDelegate = new HttpParserDelegate();
             _httpParserHandler = new HttpCombinedParser(_httpParserDelegate);
             

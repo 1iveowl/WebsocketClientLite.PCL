@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace IWebsocketClientLite.PCL
@@ -14,7 +15,7 @@ namespace IWebsocketClientLite.PCL
 
         void SetRequestHeader(string headerName, string headerValue);
 
-        Task ConnectAsync(Uri uri, bool ignoreServerCertificateErrors = false);
+        Task ConnectAsync(Uri uri, CancellationTokenSource cts, bool ignoreServerCertificateErrors = false);
 
         Task CloseAsync();
 
