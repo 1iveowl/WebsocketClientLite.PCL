@@ -36,9 +36,18 @@ class Program
 
             });
 
+        var cts = new CancellationTokenSource();
+
+        cts.Token.Register(() =>
+        {
+            System.Console.Write("Aborted");
+            _subscribeToMessagesReceived.Dispose();
+        });
+
         await
             websocketClient.ConnectAsync(
-                new Uri("wss://echo.websocket.org"),
+                new Uri("wss://echo.websocket.org:443"),
+                cts,
                 ignoreServerCertificateErrors: false);
 
         await websocketClient.SendTextAsync("Test Single Frame");
