@@ -43,7 +43,7 @@ namespace WebsocketLite.Console.Test
 
             //Optional Subprotocols
 
-            var subprotocols = new List<string> {"soap"};
+            List<string> subprotocols = null; //new List<string> {"soap"};
 
             await
                 websocketClient.ConnectAsync(
