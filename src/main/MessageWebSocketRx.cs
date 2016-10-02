@@ -106,11 +106,11 @@ namespace WebsocketClientLite.PCL
             {
                 if (subprotocols != null)
                 {
-                    SubprotocolAccepted = _httpParserDelegate.HttpRequestReponse.Headers.ContainsKey("Sec-WebSocket-Protocol");
+                    SubprotocolAccepted = _httpParserDelegate.HttpRequestReponse.Headers.ContainsKey("SEC-WEBSOCKET-PROTOCOL");
 
                     if (SubprotocolAccepted)
                     {
-                        SubprotocolAcceptedName = _httpParserDelegate.HttpRequestReponse.Headers["Sec-WebSocket-Protocol"];
+                        SubprotocolAcceptedName = _httpParserDelegate.HttpRequestReponse.Headers["SEC-WEBSOCKET-PROTOCOL"];
                         IsConnected = true;
                     }
                     else
