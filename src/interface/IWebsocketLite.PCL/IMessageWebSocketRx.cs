@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -13,9 +14,13 @@ namespace IWebsocketClientLite.PCL
 
         bool IsConnected { get; }
 
+        bool SubprotocolAccepted { get; }
+
+        string SubprotocolAcceptedName { get; }
+
         void SetRequestHeader(string headerName, string headerValue);
 
-        Task ConnectAsync(Uri uri, CancellationTokenSource cts, bool ignoreServerCertificateErrors = false);
+        Task ConnectAsync(Uri uri, CancellationTokenSource cts, bool ignoreServerCertificateErrors = false, IEnumerable<string> subProtocols = null);
 
         Task CloseAsync();
 

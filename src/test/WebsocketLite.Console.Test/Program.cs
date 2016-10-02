@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
@@ -40,11 +41,16 @@ namespace WebsocketLite.Console.Test
                 _subscribeToMessagesReceived.Dispose();
             });
 
+            //Optional Subprotocols
+
+            var subprotocols = new List<string> {"soap"};
+
             await
                 websocketClient.ConnectAsync(
                     new Uri("wss://echo.websocket.org:443"),
                     cts,
-                    ignoreServerCertificateErrors: false);
+                    ignoreServerCertificateErrors: false,
+                    subprotocols:subprotocols);
 
             System.Console.WriteLine("Sending: Test Single Frame");
             await websocketClient.SendTextAsync("Test Single Frame");

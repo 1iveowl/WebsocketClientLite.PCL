@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Reactive.Subjects;
 using System.Threading;
@@ -28,7 +29,8 @@ namespace WebsocketClientLite.PCL.Service
             HttpCombinedParser parserHandler,
             CancellationTokenSource cancellationTokenSource,
             WebsocketListener websocketListener,
-            bool ignoreServerCertificateErrors = false)
+            bool ignoreServerCertificateErrors = false,
+            IEnumerable<string> subprotocols = null)
         {
             try
             {
@@ -46,7 +48,7 @@ namespace WebsocketClientLite.PCL.Service
 
                 websocketListener.Start(requestHandler, parserHandler);
 
-                await SendConnectHandShake(uri, secure);
+                await SendConnectHandShake(uri, secure, subprotocols);
 
                 var waitForHandShakeLoopTask = Task.Run(async () =>
                 {
@@ -105,9 +107,9 @@ namespace WebsocketClientLite.PCL.Service
             
         }
 
-        private async Task SendConnectHandShake(Uri uri, bool secure)
+        private async Task SendConnectHandShake(Uri uri, bool secure, IEnumerable<string> subprotocols = null)
         {
-            var handShake = ClientHandShake.Compose(uri, secure);
+            var handShake = ClientHandShake.Compose(uri, secure, subprotocols);
             await _client.WriteStream.WriteAsync(handShake, 0, handShake.Length);
             await _client.WriteStream.FlushAsync();
         }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Reactive.Concurrency;
 using System.Reactive.Subjects;
@@ -35,7 +36,12 @@ namespace WebsocketClientLite.PCL
 
         public IObservable<string> ObserveTextMessagesReceived => _websocketListener.ObserveTextMessageSequence;
 
+
+
         public bool IsConnected { get; private set; }
+        public bool SubprotocolAccepted { get; private set; }
+
+        public string SubprotocolAcceptedName { get; private set; } 
 
         private async Task<byte[]> ReadOneByteAtTheTimeAsync()
         {
@@ -67,7 +73,11 @@ namespace WebsocketClientLite.PCL
             throw new NotImplementedException();
         }
 
-        public async Task ConnectAsync(Uri uri, CancellationTokenSource cts, bool ignoreServerCertificateErrors = false)
+        public async Task ConnectAsync(
+            Uri uri, 
+            CancellationTokenSource cts, 
+            bool ignoreServerCertificateErrors = false, 
+            IEnumerable<string> subprotocols = null)
         {
             _cancellationTokenSource = cts;
             _httpParserDelegate = new HttpParserDelegate();
@@ -84,7 +94,8 @@ namespace WebsocketClientLite.PCL
                 _httpParserHandler,
                 _cancellationTokenSource,
                 _websocketListener,
-                ignoreServerCertificateErrors);
+                ignoreServerCertificateErrors,
+                subprotocols);
             }
             catch (Exception)
             {
@@ -93,7 +104,25 @@ namespace WebsocketClientLite.PCL
 
             if (_httpParserDelegate.HttpRequestReponse.StatusCode == 101)
             {
-                IsConnected = true;
+                if (subprotocols != null)
+                {
+                    SubprotocolAccepted = _httpParserDelegate.HttpRequestReponse.Headers.ContainsKey("Sec-WebSocket-Protocol");
+
+                    if (SubprotocolAccepted)
+                    {
+                        SubprotocolAcceptedName = _httpParserDelegate.HttpRequestReponse.Headers["Sec-WebSocket-Protocol"];
+                        IsConnected = true;
+                    }
+                    else
+                    {
+                        throw new Exception("Server did not support any of the proposed Sub Protocols");
+                    }
+                }
+                else
+                {
+                    IsConnected = true;
+                }
+                
                 _websocketListener.DataReceiveMode = DataReceiveMode.IsListeningForTextData;
             }
         }
