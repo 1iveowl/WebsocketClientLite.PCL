@@ -40,7 +40,7 @@ class Program
 
         cts.Token.Register(() =>
         {
-            System.Console.Write("Aborted");
+            System.Console.Write("Aborted. Connection cancelled by server or server became unavailable.");
             _subscribeToMessagesReceived.Dispose();
         });
 
