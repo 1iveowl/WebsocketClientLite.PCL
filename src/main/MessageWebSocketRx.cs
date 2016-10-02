@@ -115,7 +115,7 @@ namespace WebsocketClientLite.PCL
                     }
                     else
                     {
-                        throw new Exception("Server did not support any of the proposed Sub Protocols");
+                        throw new Exception("Server did not support any of the needed Sub Protocols");
                     }
                 }
                 else
