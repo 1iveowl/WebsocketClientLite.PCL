@@ -105,12 +105,19 @@ namespace WebsocketClientLite.PCL
             {
                 if (subprotocols != null)
                 {
-                    SubprotocolAccepted = _httpParserDelegate.HttpRequestReponse.Headers.ContainsKey("SEC-WEBSOCKET-PROTOCOL");
+                    SubprotocolAccepted = _httpParserDelegate?.HttpRequestReponse?.Headers?.ContainsKey("SEC-WEBSOCKET-PROTOCOL") ?? false;
 
                     if (SubprotocolAccepted)
                     {
-                        SubprotocolAcceptedName = _httpParserDelegate.HttpRequestReponse.Headers["SEC-WEBSOCKET-PROTOCOL"];
-                        IsConnected = true;
+                        SubprotocolAcceptedName = _httpParserDelegate?.HttpRequestReponse?.Headers?["SEC-WEBSOCKET-PROTOCOL"];
+                        if (!string.IsNullOrEmpty(SubprotocolAcceptedName))
+                        {
+                            IsConnected = true;
+                        }
+                        else
+                        {
+                            throw new Exception("Server responded with blank Sub Protocol name");
+                        }
                     }
                     else
                     {
