@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.25123.0
+VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebsocketClientLite.PCL", "WebsocketClientLite.PCL.csproj", "{CD8C2A5C-4BB2-42C6-A158-F2D63912D59C}"
 EndProject
@@ -10,6 +10,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IWebsocketClientLite.PCL", "..\interface\IWebsocketLite.PCL\IWebsocketClientLite.PCL.csproj", "{E4662FB6-85EB-4E49-BA9B-89862BEACE08}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebsocketLite.Console.Test", "..\test\WebsocketLite.Console.Test\WebsocketLite.Console.Test.csproj", "{B0CE5FDA-0AD9-4979-A282-2A02B9DF96FF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebsocketLite.Android.Test", "..\test\WebsocketLite.Android.Test\WebsocketLite.Android.Test.csproj", "{E43AF73C-1362-4EFD-A0D8-37AA430F86FC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -29,11 +31,18 @@ Global
 		{B0CE5FDA-0AD9-4979-A282-2A02B9DF96FF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B0CE5FDA-0AD9-4979-A282-2A02B9DF96FF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B0CE5FDA-0AD9-4979-A282-2A02B9DF96FF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E43AF73C-1362-4EFD-A0D8-37AA430F86FC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E43AF73C-1362-4EFD-A0D8-37AA430F86FC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E43AF73C-1362-4EFD-A0D8-37AA430F86FC}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{E43AF73C-1362-4EFD-A0D8-37AA430F86FC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E43AF73C-1362-4EFD-A0D8-37AA430F86FC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E43AF73C-1362-4EFD-A0D8-37AA430F86FC}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{B0CE5FDA-0AD9-4979-A282-2A02B9DF96FF} = {C6A551EF-FE86-4A13-B9C0-EA8B7FA798C4}
+		{E43AF73C-1362-4EFD-A0D8-37AA430F86FC} = {C6A551EF-FE86-4A13-B9C0-EA8B7FA798C4}
 	EndGlobalSection
 EndGlobal

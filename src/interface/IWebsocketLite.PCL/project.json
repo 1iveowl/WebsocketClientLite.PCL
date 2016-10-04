@@ -4,7 +4,7 @@
     "HttpMachine.PCL": "2.0.1",
     "Microsoft.NETCore.Portable.Compatibility": "1.0.1",
     "NETStandard.Library": "1.6.0",
-    "SocketLite.PCL": "3.0.1",
+    "SocketLite.PCL": "3.0.2",
     "System.Reactive": "3.0.0"
   },
   "frameworks": {
