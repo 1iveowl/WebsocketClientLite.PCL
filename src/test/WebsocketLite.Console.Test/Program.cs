@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
+using ISocketLite.PCL.Model;
 using IWebsocketClientLite.PCL;
 using WebsocketClientLite.PCL;
 
@@ -51,7 +52,8 @@ namespace WebsocketLite.Console.Test
                     new Uri("wss://echo.websocket.org:443"),
                     cts,
                     ignoreServerCertificateErrors: false,
-                    subprotocols:subprotocols);
+                    subprotocols:subprotocols, 
+                    tlsProtocolVersion:TlsProtocolVersion.Tls12);
 
             System.Console.WriteLine("Sending: Test Single Frame");
             await websocketClient.SendTextAsync("Test Single Frame");
