@@ -53,7 +53,9 @@ class Program
             websocketClient.ConnectAsync(
                 new Uri("wss://echo.websocket.org:443"),
                 cts,
-                ignoreServerCertificateErrors: false);
+                ignoreServerCertificateErrors: false,
+                subprotocols:subprotocols, 
+                tlsProtocolVersion:TlsProtocolVersion.Tls12);
 
         await websocketClient.SendTextAsync("Test Single Frame");
 
