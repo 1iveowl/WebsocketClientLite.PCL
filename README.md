@@ -43,6 +43,11 @@ class Program
             System.Console.Write("Aborted");
             _subscribeToMessagesReceived.Dispose();
         });
+        
+        // ### Optional Subprotocols ###
+        // The echo.websocket.org does not support any sub-protocols and hence this test does not add any.
+        // Adding a sub-protocol that the server does not support causes the client to close down the connection.
+        List<string> subprotocols = null; //new List<string> {"soap", "json"};
 
         await
             websocketClient.ConnectAsync(
