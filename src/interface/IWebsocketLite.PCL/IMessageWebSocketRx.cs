@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using ISocketLite.PCL.Model;
 
 namespace IWebsocketClientLite.PCL
 {
@@ -20,7 +21,12 @@ namespace IWebsocketClientLite.PCL
 
         void SetRequestHeader(string headerName, string headerValue);
 
-        Task ConnectAsync(Uri uri, CancellationTokenSource cts, bool ignoreServerCertificateErrors = false, IEnumerable<string> subProtocols = null);
+        Task ConnectAsync(
+            Uri uri, 
+            CancellationTokenSource cts, 
+            IEnumerable<string> subProtocols = null, 
+            bool ignoreServerCertificateErrors = false, 
+            TlsProtocolVersion tlsProtocolType = TlsProtocolVersion.None);
 
         Task CloseAsync();
 

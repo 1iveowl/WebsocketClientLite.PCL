@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>WebsocketClientLite.PCL</id>
-    <version>2.0.0</version>
+    <version>2.0.2</version>
     <title>Websocket Client Lite for PCL / Xamarin</title>
     <authors>Jasper H. Bojsen</authors>
     <owners>Jasper H. Bojsen</owners>
@@ -15,12 +15,12 @@ Xamarin cross-platform.
 Can be set to ignore SSL/TLS server certificate issues. 
 Observe incoming message using Reactive Extensions (Rx)</description>
     <releaseNotes>
-    Added support for Sub Protocols and moved to .NET Standard 1.4 Library</releaseNotes>
+    Added support for Sub Protocols and moved to .NET Standard 1.4 Library. Adding the option to choose TLS Protocol</releaseNotes>
     <copyright>Copyright 2016</copyright>
     <tags>websocket rx pcl xamarin ssl tls</tags>
     <dependencies>
       <dependency id="System.Reactive" version="3.0.0"/>
-      <dependency id="SocketLite.PCL" version="3.0.1"/>
+      <dependency id="SocketLite.PCL" version="3.0.4"/>
       <dependency id="HttpMachine.PCL" version="2.0.1"/>
     </dependencies>
   </metadata>

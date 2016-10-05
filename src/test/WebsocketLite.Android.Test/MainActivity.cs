@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Android.App;
 using Android.Widget;
 using Android.OS;
+using ISocketLite.PCL.Model;
 using IWebsocketClientLite.PCL;
 using WebsocketClientLite.PCL;
 
@@ -30,7 +31,7 @@ namespace WebsocketLite.Android.Test
             }
             
 
-            Task.Delay(TimeSpan.FromMinutes(5));
+            //Task.Delay(TimeSpan.FromMinutes(5));
 
             //_subscribeToMessagesReceived.Dispose();
             // Set our view from the "main" layout resource
@@ -69,10 +70,11 @@ namespace WebsocketLite.Android.Test
             try
             {
                 await websocketClient.ConnectAsync(
-                    new Uri("wss://echo.websocket.org:443"),
+                    new Uri("wss://echo.websocket.org"),
                     cts,
+                    subprotocols: subprotocols,
                     ignoreServerCertificateErrors: false,
-                    subprotocols: subprotocols);
+                    tlsProtocolVersion: TlsProtocolVersion.Tls10);
             }
             catch (Exception ex)
             {

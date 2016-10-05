@@ -2,7 +2,7 @@
   "supports": {},
   "dependencies": {
     "HttpMachine.PCL": "2.0.1",
-    "SocketLite.PCL": "3.0.2",
+    "SocketLite.PCL": "3.0.4",
     "System.Reactive": "3.0.0"
   },
   "frameworks": {

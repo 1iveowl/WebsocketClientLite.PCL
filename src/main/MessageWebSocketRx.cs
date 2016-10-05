@@ -7,6 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using HttpMachine;
 using ISocketLite.PCL.Interface;
+using ISocketLite.PCL.Model;
 using IWebsocketClientLite.PCL;
 using SocketLite.Services;
 using WebsocketClientLite.PCL.Model;
@@ -75,8 +76,9 @@ namespace WebsocketClientLite.PCL
         public async Task ConnectAsync(
             Uri uri, 
             CancellationTokenSource cts, 
-            bool ignoreServerCertificateErrors = false, 
-            IEnumerable<string> subprotocols = null)
+            IEnumerable<string> subprotocols = null,
+            bool ignoreServerCertificateErrors = false,
+            TlsProtocolVersion tlsProtocolVersion = TlsProtocolVersion.Tls12)
         {
             _cancellationTokenSource = cts;
             _httpParserDelegate = new HttpParserDelegate();
@@ -93,8 +95,9 @@ namespace WebsocketClientLite.PCL
                 _httpParserHandler,
                 _cancellationTokenSource,
                 _websocketListener,
+                subprotocols,
                 ignoreServerCertificateErrors,
-                subprotocols);
+                tlsProtocolVersion);
             }
             catch (Exception)
             {

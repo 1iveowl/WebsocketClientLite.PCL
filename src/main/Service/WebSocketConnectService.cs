@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Net;
-using System.Reactive.Subjects;
 using System.Threading;
 using System.Threading.Tasks;
 using HttpMachine;
 using ISocketLite.PCL.Interface;
+using ISocketLite.PCL.Model;
 using WebsocketClientLite.PCL.Helper;
 using WebsocketClientLite.PCL.Model;
 using WebsocketClientLite.PCL.Parser;
@@ -29,8 +28,9 @@ namespace WebsocketClientLite.PCL.Service
             HttpCombinedParser parserHandler,
             CancellationTokenSource cancellationTokenSource,
             WebsocketListener websocketListener,
+            IEnumerable<string> subprotocols = null,
             bool ignoreServerCertificateErrors = false,
-            IEnumerable<string> subprotocols = null)
+            TlsProtocolVersion tlsProtocolType = TlsProtocolVersion.Tls12)
         {
             try
             {
@@ -41,8 +41,8 @@ namespace WebsocketClientLite.PCL.Service
                     uri.Port.ToString(),
                     secure,
                     cancellationTokenSource.Token,
-
-                    ignoreServerCertificateErrors);
+                    ignoreServerCertificateErrors,
+                    tlsProtocolType);
 
                 websocketListener.DataReceiveMode = DataReceiveMode.IsListeningForHandShake;
 
