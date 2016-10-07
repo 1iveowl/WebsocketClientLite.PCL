@@ -26,7 +26,7 @@ namespace IWebsocketClientLite.PCL
             CancellationTokenSource cts, 
             IEnumerable<string> subProtocols = null, 
             bool ignoreServerCertificateErrors = false, 
-            TlsProtocolVersion tlsProtocolType = TlsProtocolVersion.None);
+            TlsProtocolVersion tlsProtocolType = TlsProtocolVersion.Tls12);
 
         Task CloseAsync();
 

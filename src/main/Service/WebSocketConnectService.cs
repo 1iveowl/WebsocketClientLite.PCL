@@ -22,7 +22,7 @@ namespace WebsocketClientLite.PCL.Service
         }
 
         internal async Task ConnectAsync(
-            Uri uri, 
+            Uri uri,
             bool secure,
             HttpParserDelegate requestHandler,
             HttpCombinedParser parserHandler,
@@ -53,8 +53,8 @@ namespace WebsocketClientLite.PCL.Service
                 var waitForHandShakeLoopTask = Task.Run(async () =>
                 {
                     while (!requestHandler.HttpRequestReponse.IsEndOfMessage
-                    && !requestHandler.HttpRequestReponse.IsRequestTimedOut
-                    && !requestHandler.HttpRequestReponse.IsUnableToParseHttp)
+                           && !requestHandler.HttpRequestReponse.IsRequestTimedOut
+                           && !requestHandler.HttpRequestReponse.IsUnableToParseHttp)
                     {
                         await Task.Delay(TimeSpan.FromMilliseconds(10));
                     }
@@ -84,8 +84,8 @@ namespace WebsocketClientLite.PCL.Service
                 if (requestHandler.HttpRequestReponse.StatusCode != 101)
                 {
                     throw new Exception($"Unable to connect to websocket Server. " +
-                                           $"Error code: {requestHandler.HttpRequestReponse.StatusCode}, " +
-                                           $"Error reason: {requestHandler.HttpRequestReponse.ResponseReason}");
+                                        $"Error code: {requestHandler.HttpRequestReponse.StatusCode}, " +
+                                        $"Error reason: {requestHandler.HttpRequestReponse.ResponseReason}");
                 }
 
                 System.Diagnostics.Debug.WriteLine("HandShake completed");
@@ -104,14 +104,23 @@ namespace WebsocketClientLite.PCL.Service
         {
             _cancellationTokenSource.Cancel();
             _client.Disconnect();
-            
+
         }
 
         private async Task SendConnectHandShake(Uri uri, bool secure, IEnumerable<string> subprotocols = null)
         {
             var handShake = ClientHandShake.Compose(uri, secure, subprotocols);
-            await _client.WriteStream.WriteAsync(handShake, 0, handShake.Length);
-            await _client.WriteStream.FlushAsync();
+            try
+            {
+                await _client.WriteStream.WriteAsync(handShake, 0, handShake.Length);
+                await _client.WriteStream.FlushAsync();
+            }
+            catch (Exception ex)
+            {
+                
+                throw ex;
+            }
+            
         }
     }
 }

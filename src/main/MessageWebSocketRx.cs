@@ -99,9 +99,9 @@ namespace WebsocketClientLite.PCL
                 ignoreServerCertificateErrors,
                 tlsProtocolVersion);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                throw;
+                throw ex;
             }
 
             if (_httpParserDelegate.HttpRequestReponse.StatusCode == 101)

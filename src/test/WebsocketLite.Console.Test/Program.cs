@@ -49,11 +49,12 @@ namespace WebsocketLite.Console.Test
 
             await
                 websocketClient.ConnectAsync(
-                    new Uri("wss://echo.websocket.org:443"),
+                    //new Uri("wss://echo.websocket.org:443"),
+                    new Uri("wss://spc.1iveowl.dk:8088/ws/spc/?username=WS_usr&password=SpecialPostTjenesten_ws"),
                     cts,
-                    ignoreServerCertificateErrors: false,
+                    ignoreServerCertificateErrors: true,
                     subprotocols:subprotocols, 
-                    tlsProtocolVersion:TlsProtocolVersion.Tls12);
+                    tlsProtocolVersion:TlsProtocolVersion.None);
 
             System.Console.WriteLine("Sending: Test Single Frame");
             await websocketClient.SendTextAsync("Test Single Frame");
