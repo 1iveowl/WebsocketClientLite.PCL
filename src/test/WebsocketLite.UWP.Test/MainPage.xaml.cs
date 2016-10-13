@@ -52,8 +52,7 @@ namespace WebsocketLite.UWP.Test
 
             await
                 websocketClient.ConnectAsync(
-                    //new Uri("wss://echo.websocket.org:443"),
-                    new Uri("wss://spc.1iveowl.dk:8088/ws/spc/?username=WS_usr&password=SpecialPostTjenesten_ws"),
+                    new Uri("wss://echo.websocket.org:443"),
                     cts,
                     ignoreServerCertificateErrors: true,
                     subprotocols: null,
