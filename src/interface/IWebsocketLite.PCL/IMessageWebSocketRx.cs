@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using ISocketLite.PCL.Model;
 
 namespace IWebsocketClientLite.PCL
 {
@@ -13,9 +15,18 @@ namespace IWebsocketClientLite.PCL
 
         bool IsConnected { get; }
 
+        bool SubprotocolAccepted { get; }
+
+        string SubprotocolAcceptedName { get; }
+
         void SetRequestHeader(string headerName, string headerValue);
 
-        Task ConnectAsync(Uri uri, CancellationTokenSource cts, bool ignoreServerCertificateErrors = false);
+        Task ConnectAsync(
+            Uri uri, 
+            CancellationTokenSource cts, 
+            IEnumerable<string> subProtocols = null, 
+            bool ignoreServerCertificateErrors = false, 
+            TlsProtocolVersion tlsProtocolType = TlsProtocolVersion.Tls12);
 
         Task CloseAsync();
 

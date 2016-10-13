@@ -1,10 +1,10 @@
 ﻿using System;
-using System.Net;
-using System.Reactive.Subjects;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using HttpMachine;
 using ISocketLite.PCL.Interface;
+using ISocketLite.PCL.Model;
 using WebsocketClientLite.PCL.Helper;
 using WebsocketClientLite.PCL.Model;
 using WebsocketClientLite.PCL.Parser;
@@ -22,13 +22,15 @@ namespace WebsocketClientLite.PCL.Service
         }
 
         internal async Task ConnectAsync(
-            Uri uri, 
+            Uri uri,
             bool secure,
             HttpParserDelegate requestHandler,
             HttpCombinedParser parserHandler,
             CancellationTokenSource cancellationTokenSource,
             WebsocketListener websocketListener,
-            bool ignoreServerCertificateErrors = false)
+            IEnumerable<string> subprotocols = null,
+            bool ignoreServerCertificateErrors = false,
+            TlsProtocolVersion tlsProtocolType = TlsProtocolVersion.Tls12)
         {
             try
             {
@@ -39,20 +41,20 @@ namespace WebsocketClientLite.PCL.Service
                     uri.Port.ToString(),
                     secure,
                     cancellationTokenSource.Token,
-
-                    ignoreServerCertificateErrors);
+                    ignoreServerCertificateErrors,
+                    tlsProtocolType);
 
                 websocketListener.DataReceiveMode = DataReceiveMode.IsListeningForHandShake;
 
                 websocketListener.Start(requestHandler, parserHandler);
 
-                await SendConnectHandShake(uri, secure);
+                await SendConnectHandShake(uri, secure, subprotocols);
 
                 var waitForHandShakeLoopTask = Task.Run(async () =>
                 {
                     while (!requestHandler.HttpRequestReponse.IsEndOfMessage
-                    && !requestHandler.HttpRequestReponse.IsRequestTimedOut
-                    && !requestHandler.HttpRequestReponse.IsUnableToParseHttp)
+                           && !requestHandler.HttpRequestReponse.IsRequestTimedOut
+                           && !requestHandler.HttpRequestReponse.IsUnableToParseHttp)
                     {
                         await Task.Delay(TimeSpan.FromMilliseconds(10));
                     }
@@ -82,8 +84,8 @@ namespace WebsocketClientLite.PCL.Service
                 if (requestHandler.HttpRequestReponse.StatusCode != 101)
                 {
                     throw new Exception($"Unable to connect to websocket Server. " +
-                                           $"Error code: {requestHandler.HttpRequestReponse.StatusCode}, " +
-                                           $"Error reason: {requestHandler.HttpRequestReponse.ResponseReason}");
+                                        $"Error code: {requestHandler.HttpRequestReponse.StatusCode}, " +
+                                        $"Error reason: {requestHandler.HttpRequestReponse.ResponseReason}");
                 }
 
                 System.Diagnostics.Debug.WriteLine("HandShake completed");
@@ -102,14 +104,23 @@ namespace WebsocketClientLite.PCL.Service
         {
             _cancellationTokenSource.Cancel();
             _client.Disconnect();
-            
+
         }
 
-        private async Task SendConnectHandShake(Uri uri, bool secure)
+        private async Task SendConnectHandShake(Uri uri, bool secure, IEnumerable<string> subprotocols = null)
         {
-            var handShake = ClientHandShake.Compose(uri, secure);
-            await _client.WriteStream.WriteAsync(handShake, 0, handShake.Length);
-            await _client.WriteStream.FlushAsync();
+            var handShake = ClientHandShake.Compose(uri, secure, subprotocols);
+            try
+            {
+                await _client.WriteStream.WriteAsync(handShake, 0, handShake.Length);
+                await _client.WriteStream.FlushAsync();
+            }
+            catch (Exception ex)
+            {
+                
+                throw ex;
+            }
+            
         }
     }
 }

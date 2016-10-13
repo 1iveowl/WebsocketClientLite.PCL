@@ -1,44 +1,64 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
+using Android.App;
+using Android.Widget;
+using Android.OS;
 using ISocketLite.PCL.Model;
 using IWebsocketClientLite.PCL;
 using WebsocketClientLite.PCL;
 
-namespace WebsocketLite.Console.Test
+namespace WebsocketLite.Android.Test
 {
-    class Program
+    [Activity(Label = "WebsocketLite.Android.Test", MainLauncher = true, Icon = "@drawable/icon")]
+    public class MainActivity : Activity
     {
-        private static IDisposable _subscribeToMessagesReceived; 
+        private static IDisposable _subscribeToMessagesReceived;
 
-        static void Main(string[] args)
+        protected override void OnCreate(Bundle bundle)
         {
-            StartWebSocket();
-            System.Console.WriteLine("Waiting...");
-            System.Console.ReadKey();
-            _subscribeToMessagesReceived.Dispose();
+            base.OnCreate(bundle);
+
+            try
+            {
+                StartWebSocket();
+            }
+            catch (Exception ex)
+            {
+                
+                throw ex;
+            }
+            
+
+            //Task.Delay(TimeSpan.FromMinutes(5));
+
+            //_subscribeToMessagesReceived.Dispose();
+            // Set our view from the "main" layout resource
+            // SetContentView (Resource.Layout.Main);
+
 
         }
 
-        static async void StartWebSocket()
+        private async void StartWebSocket()
         {
             var websocketClient = new MessageWebSocketRx();
 
-            System.Console.WriteLine("Start");
+            //System.Console.WriteLine("Start");
 
             _subscribeToMessagesReceived = websocketClient.ObserveTextMessagesReceived.Subscribe(
                 msg =>
                 {
-                    System.Console.WriteLine($"Reply from test server (wss://echo.websocket.org): {msg}");
+                    var t = msg;
+                    var x = "wait";
+                    //System.Console.WriteLine($"Reply from test server (wss://echo.websocket.org): {msg}");
                 });
-            
+
             var cts = new CancellationTokenSource();
 
             cts.Token.Register(() =>
             {
-                System.Console.Write("Aborted");
+                //System.Console.Write("Aborted");
                 _subscribeToMessagesReceived.Dispose();
             });
 
@@ -47,15 +67,23 @@ namespace WebsocketLite.Console.Test
             // Adding a sub-protocol that the server does not support causes the client to close down the connection.
             List<string> subprotocols = null; //new List<string> {"soap", "json"};
 
-            await
-                websocketClient.ConnectAsync(
-                    new Uri("wss://echo.websocket.org:443"),
+            try
+            {
+                await websocketClient.ConnectAsync(
+                    new Uri("wss://echo.websocket.org"),
                     cts,
-                    ignoreServerCertificateErrors: true,
-                    subprotocols:subprotocols, 
-                    tlsProtocolVersion:TlsProtocolVersion.None);
+                    subprotocols: subprotocols,
+                    ignoreServerCertificateErrors: false,
+                    tlsProtocolVersion: TlsProtocolVersion.Tls10);
+            }
+            catch (Exception ex)
+            {
+                
+                throw ex;
+            }
+            
 
-            System.Console.WriteLine("Sending: Test Single Frame");
+            //System.Console.WriteLine("Sending: Test Single Frame");
             await websocketClient.SendTextAsync("Test Single Frame");
 
             var strArray = new[] { "Test ", "multiple ", "frames" };
@@ -74,3 +102,4 @@ namespace WebsocketLite.Console.Test
         }
     }
 }
+

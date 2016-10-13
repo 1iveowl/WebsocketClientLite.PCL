@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>WebsocketClientLite.PCL</id>
-    <version>1.6.0</version>
+    <version>2.0.5</version>
     <title>Websocket Client Lite for PCL / Xamarin</title>
     <authors>Jasper H. Bojsen</authors>
     <owners>Jasper H. Bojsen</owners>
@@ -14,23 +14,24 @@
 Xamarin cross-platform.
 Can be set to ignore SSL/TLS server certificate issues. 
 Observe incoming message using Reactive Extensions (Rx)</description>
-    <releaseNotes>Nooow ConnectAsync needs a Cancellation Token Source. The Task is now canncelled if the connection is lost enabling the caller to retry to reestablish the conneccction.</releaseNotes>
+    <releaseNotes>
+    Added support for Sub Protocols and moved to .NET Standard 1.4 Library. Adding the option to choose TLS Protocol</releaseNotes>
     <copyright>Copyright 2016</copyright>
     <tags>websocket rx pcl xamarin ssl tls</tags>
     <dependencies>
       <dependency id="System.Reactive" version="3.0.0"/>
-      <dependency id="SocketLite.PCL" version="2.0.4"/>
-      <dependency id="HttpMachine.PCL" version="1.1.1"/>
+      <dependency id="SocketLite.PCL" version="3.0.6"/>
+      <dependency id="HttpMachine.PCL" version="2.0.1"/>
     </dependencies>
   </metadata>
   <files>
         <file src="\bin\Release\WebsocketClientLite.PCL.dll"
-          target="lib\portable-net45+netcore45\WebsocketClientLite.PCL.dll" />
+          target="lib\netstandard1.4\WebsocketClientLite.PCL.dll" />
       <file src="\bin\Release\WebsocketClientLite.PCL.pdb"
-        target="lib\portable-net45+netcore45\WebsocketClientLite.PCL.pdb" />
+        target="lib\netstandard1.4\WebsocketClientLite.PCL.pdb" />
         <file src="bin\Release\IWebsocketClientLite.PCL.dll"
-          target="lib\portable-net45+netcore45\IWebsocketClientLite.PCL.dll" />
+          target="lib\netstandard1.4\IWebsocketClientLite.PCL.dll" />
       <file src="\bin\Release\IWebsocketClientLite.PCL.pdb"
-        target="lib\portable-net45+netcore45\IWebsocketClientLite.PCL.pdb" />
+        target="lib\netstandard1.4\IWebsocketClientLite.PCL.pdb" />
     </files>
 </package>

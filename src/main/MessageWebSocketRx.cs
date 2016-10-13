@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Net;
+using System.Collections.Generic;
 using System.Reactive.Concurrency;
 using System.Reactive.Subjects;
 using System.Reactive.Linq;
@@ -7,6 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using HttpMachine;
 using ISocketLite.PCL.Interface;
+using ISocketLite.PCL.Model;
 using IWebsocketClientLite.PCL;
 using SocketLite.Services;
 using WebsocketClientLite.PCL.Model;
@@ -35,7 +36,12 @@ namespace WebsocketClientLite.PCL
 
         public IObservable<string> ObserveTextMessagesReceived => _websocketListener.ObserveTextMessageSequence;
 
+
+
         public bool IsConnected { get; private set; }
+        public bool SubprotocolAccepted { get; private set; }
+
+        public string SubprotocolAcceptedName { get; private set; } 
 
         private async Task<byte[]> ReadOneByteAtTheTimeAsync()
         {
@@ -67,7 +73,12 @@ namespace WebsocketClientLite.PCL
             throw new NotImplementedException();
         }
 
-        public async Task ConnectAsync(Uri uri, CancellationTokenSource cts, bool ignoreServerCertificateErrors = false)
+        public async Task ConnectAsync(
+            Uri uri, 
+            CancellationTokenSource cts, 
+            IEnumerable<string> subprotocols = null,
+            bool ignoreServerCertificateErrors = false,
+            TlsProtocolVersion tlsProtocolVersion = TlsProtocolVersion.Tls12)
         {
             _cancellationTokenSource = cts;
             _httpParserDelegate = new HttpParserDelegate();
@@ -84,16 +95,43 @@ namespace WebsocketClientLite.PCL
                 _httpParserHandler,
                 _cancellationTokenSource,
                 _websocketListener,
-                ignoreServerCertificateErrors);
+                subprotocols,
+                ignoreServerCertificateErrors,
+                tlsProtocolVersion);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                throw;
+                throw ex;
             }
 
             if (_httpParserDelegate.HttpRequestReponse.StatusCode == 101)
             {
-                IsConnected = true;
+                if (subprotocols != null)
+                {
+                    SubprotocolAccepted = _httpParserDelegate?.HttpRequestReponse?.Headers?.ContainsKey("SEC-WEBSOCKET-PROTOCOL") ?? false;
+
+                    if (SubprotocolAccepted)
+                    {
+                        SubprotocolAcceptedName = _httpParserDelegate?.HttpRequestReponse?.Headers?["SEC-WEBSOCKET-PROTOCOL"];
+                        if (!string.IsNullOrEmpty(SubprotocolAcceptedName))
+                        {
+                            IsConnected = true;
+                        }
+                        else
+                        {
+                            throw new Exception("Server responded with blank Sub Protocol name");
+                        }
+                    }
+                    else
+                    {
+                        throw new Exception("Server did not support any of the needed Sub Protocols");
+                    }
+                }
+                else
+                {
+                    IsConnected = true;
+                }
+                
                 _websocketListener.DataReceiveMode = DataReceiveMode.IsListeningForTextData;
             }
         }
