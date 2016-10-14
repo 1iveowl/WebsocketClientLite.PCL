@@ -52,17 +52,17 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="HttpMachine, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\main\packages\HttpMachine.PCL.2.0.1\lib\netstandard1.4\HttpMachine.dll</HintPath>
+      <HintPath>..\..\main\packages\HttpMachine.PCL.2.0.3\lib\netstandard1.2\HttpMachine.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="ISocketLite.PCL, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\main\packages\SocketLite.PCL.3.0.6\lib\MonoAndroid10\ISocketLite.PCL.dll</HintPath>
+      <HintPath>..\..\main\packages\SocketLite.PCL.3.0.9\lib\MonoAndroid10\ISocketLite.PCL.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Mono.Android" />
     <Reference Include="mscorlib" />
     <Reference Include="SocketLite, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\main\packages\SocketLite.PCL.3.0.6\lib\MonoAndroid10\SocketLite.dll</HintPath>
+      <HintPath>..\..\main\packages\SocketLite.PCL.3.0.9\lib\MonoAndroid10\SocketLite.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
