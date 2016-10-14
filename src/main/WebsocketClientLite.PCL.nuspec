@@ -20,7 +20,7 @@ Observe incoming message using Reactive Extensions (Rx)</description>
     <tags>websocket rx pcl xamarin ssl tls</tags>
     <dependencies>
       <dependency id="System.Reactive" version="3.0.0"/>
-      <dependency id="SocketLite.PCL" version="3.0.8"/>
+      <dependency id="SocketLite.PCL" version="3.0.9"/>
       <dependency id="HttpMachine.PCL" version="2.0.3"/>
     </dependencies>
   </metadata>
