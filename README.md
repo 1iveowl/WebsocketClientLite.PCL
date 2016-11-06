@@ -1,5 +1,7 @@
 
 # Websocket Client Lite 
+[![NuGet](https://img.shields.io/badge/nuget-2.0.11_(.Net_Standard_1.2)-brightgreen.svg)](https://www.nuget.org/packages/WebsocketClientLite.PCL/2.0.11)
+[![NuGet](https://img.shields.io/badge/nuget-1.6.2_(Profile_111)-yellow.svg)](https://www.nuget.org/packages/WebsocketClientLite.PCL/1.6.2)
 ### A light weigth websocket client for Xamarin Forms on .NET 4.5+, Windows 10/UWP, iOS and Android that utilizes Reactive Extensions (Rx)
 
 This library was written to make it easy to use Websocket across all the major platforms platforms.
