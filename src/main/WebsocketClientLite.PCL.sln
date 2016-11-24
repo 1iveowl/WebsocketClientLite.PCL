@@ -15,6 +15,19 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebsocketLite.Android.Test"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebsocketLite.UWP.Test", "..\test\WebsocketLite.UWP.Test\WebsocketLite.UWP.Test.csproj", "{72DE5251-280A-4ADA-9BCE-55DEABF97924}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Github", "Github", "{9D70CE96-E6FE-4E36-AD43-818D371A27ED}"
+	ProjectSection(SolutionItems) = preProject
+		..\..\License.md = ..\..\License.md
+		..\..\README.md = ..\..\README.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Nuget", "Nuget", "{E9C88A2B-F5C0-41F0-8C8D-487D0FB5C69E}"
+	ProjectSection(SolutionItems) = preProject
+		build.ps1 = build.ps1
+		publish.ps1 = publish.ps1
+		WebsocketClientLite.PCL.nuspec = WebsocketClientLite.PCL.nuspec
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

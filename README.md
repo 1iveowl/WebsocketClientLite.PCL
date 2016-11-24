@@ -1,5 +1,7 @@
 
 # Websocket Client Lite 
+[![NuGet](https://img.shields.io/badge/nuget-2.0.11_(.Net_Standard_1.2)-brightgreen.svg)](https://www.nuget.org/packages/WebsocketClientLite.PCL/2.0.11)
+[![NuGet](https://img.shields.io/badge/nuget-1.6.2_(Profile_111)-yellow.svg)](https://www.nuget.org/packages/WebsocketClientLite.PCL/1.6.2)
 ### A light weigth websocket client for Xamarin Forms on .NET 4.5+, Windows 10/UWP, iOS and Android that utilizes Reactive Extensions (Rx)
 
 This library was written to make it easy to use Websocket across all the major platforms platforms.
@@ -8,7 +10,7 @@ This library is a ground-up implementation of the Websocket specification [(RFC 
 
 The library allows developers to establish secure wss websocket connections to websocket servers that have self-signing certificates, expired certificates etc. This capability should be used with care, but is nice to have in testing environments or close local networks IoT set-ups etc. To use this set the ConnectAsync parameter `ignoreServerCertificateErrors: true`.
 
-This project is based on [SocketLite.PCL](https://github.com/1iveowl/sockets-for-pcl/) for cross platform TCP sockets support. 
+This project is based on [SocketLite.PCL](https://github.com/1iveowl/SocketLite.PCL) for cross platform TCP sockets support. 
 
 This project utilizes [Reactive Extensions](http://reactivex.io/). Although this has an added learning curve its a learning worth while and it makes creating a library like this much more elegant compared to using call-back or events. 
 
@@ -43,12 +45,19 @@ class Program
             System.Console.Write("Aborted. Connection cancelled by server or server became unavailable.");
             _subscribeToMessagesReceived.Dispose();
         });
+        
+        // ### Optional Subprotocols ###
+        // The echo.websocket.org does not support any sub-protocols and hence this test does not add any.
+        // Adding a sub-protocol that the server does not support causes the client to close down the connection.
+        List<string> subprotocols = null; //new List<string> {"soap", "json"};
 
         await
             websocketClient.ConnectAsync(
                 new Uri("wss://echo.websocket.org:443"),
                 cts,
-                ignoreServerCertificateErrors: false);
+                ignoreServerCertificateErrors: false,
+                subprotocols:subprotocols, 
+                tlsProtocolVersion:TlsProtocolVersion.Tls12);
 
         await websocketClient.SendTextAsync("Test Single Frame");
 
