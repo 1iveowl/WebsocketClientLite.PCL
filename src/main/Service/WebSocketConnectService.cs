@@ -48,7 +48,7 @@ namespace WebsocketClientLite.PCL.Service
 
                 websocketListener.Start(requestHandler, parserHandler);
 
-                await SendConnectHandShake(uri, secure, subprotocols);
+                await SendConnectHandShakeAsync(uri, secure, subprotocols);
 
                 var waitForHandShakeLoopTask = Task.Run(async () =>
                 {
@@ -107,7 +107,7 @@ namespace WebsocketClientLite.PCL.Service
 
         }
 
-        private async Task SendConnectHandShake(Uri uri, bool secure, IEnumerable<string> subprotocols = null)
+        private async Task SendConnectHandShakeAsync(Uri uri, bool secure, IEnumerable<string> subprotocols = null)
         {
             var handShake = ClientHandShake.Compose(uri, secure, subprotocols);
             try
