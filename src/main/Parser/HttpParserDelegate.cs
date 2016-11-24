@@ -101,10 +101,29 @@ namespace WebsocketClientLite.PCL.Parser
             HttpRequestReponse.ResponseReason = statusReason;
         }
 
+        public void OnTransferEncodingChunked(HttpCombinedParser combinedParser, bool isChunked)
+        {
+
+        }
+
+        public void OnChunkedLength(HttpCombinedParser combinedParser, int length)
+        {
+
+        }
+
+        public void OnChunkReceived(HttpCombinedParser combinedParser)
+        {
+
+        }
+
         public void OnMessageEnd(HttpCombinedParser combinedParser)
         {
             HttpRequestReponse.IsEndOfMessage = true;
         }
 
+        public void Dispose()
+        {
+
+        }
     }
 }

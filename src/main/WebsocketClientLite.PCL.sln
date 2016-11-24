@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.25920.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebsocketClientLite.PCL", "WebsocketClientLite.PCL.csproj", "{CD8C2A5C-4BB2-42C6-A158-F2D63912D59C}"
 EndProject
@@ -23,9 +23,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Github", "Github", "{9D70CE
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Nuget", "Nuget", "{E9C88A2B-F5C0-41F0-8C8D-487D0FB5C69E}"
 	ProjectSection(SolutionItems) = preProject
-		build.ps1 = build.ps1
-		publish.ps1 = publish.ps1
-		WebsocketClientLite.PCL.nuspec = WebsocketClientLite.PCL.nuspec
+		..\build\build.ps1 = ..\build\build.ps1
+		..\build\publish.ps1 = ..\build\publish.ps1
+		..\build\publishLocal.ps1 = ..\build\publishLocal.ps1
+		..\build\WebsocketClientLite.PCL.nuspec = ..\build\WebsocketClientLite.PCL.nuspec
 	EndProjectSection
 EndProject
 Global

@@ -1,11 +1,11 @@
 ﻿{
   "supports": {},
   "dependencies": {
-    "HttpMachine.PCL": "2.0.3",
+    "HttpMachine.PCL": "3.0.1",
     "Microsoft.NETCore.Portable.Compatibility": "1.0.1",
-    "NETStandard.Library": "1.6.0",
-    "SocketLite.PCL": "3.0.11",
-    "System.Reactive": "3.1.0"
+    "NETStandard.Library": "1.6.1",
+    "SocketLite.PCL": "3.6.0-beta2",
+    "System.Reactive": "3.1.1"
   },
   "frameworks": {
     "netstandard1.2": {}

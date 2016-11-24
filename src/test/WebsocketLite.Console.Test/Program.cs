@@ -53,7 +53,7 @@ namespace WebsocketLite.Console.Test
                     cts,
                     ignoreServerCertificateErrors: true,
                     subprotocols:subprotocols, 
-                    tlsProtocolVersion:TlsProtocolVersion.None);
+                    tlsProtocolVersion:TlsProtocolVersion.Tls12);
 
             System.Console.WriteLine("Sending: Test Single Frame");
             await websocketClient.SendTextAsync("Test Single Frame");

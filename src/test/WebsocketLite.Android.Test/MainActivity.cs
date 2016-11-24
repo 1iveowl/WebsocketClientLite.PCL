@@ -22,7 +22,7 @@ namespace WebsocketLite.Android.Test
 
             try
             {
-                StartWebSocket();
+                StartWebSocketAsync();
             }
             catch (Exception ex)
             {
@@ -40,7 +40,7 @@ namespace WebsocketLite.Android.Test
 
         }
 
-        private async void StartWebSocket()
+        private async void StartWebSocketAsync()
         {
             var websocketClient = new MessageWebSocketRx();
 
