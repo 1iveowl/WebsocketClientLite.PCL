@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reactive.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading;
+using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
@@ -37,10 +39,13 @@ namespace WebsocketLite.UWP.Test
         {
             var websocketClient = new MessageWebSocketRx();
 
-            _subscribeToMessagesReceived = websocketClient.ObserveTextMessagesReceived.Subscribe(
+            _subscribeToMessagesReceived = websocketClient
+                .ObserveTextMessagesReceived
+                .ObserveOnDispatcher()
+                .Subscribe(
                 msg =>
                 {
-                    var t = msg;
+                    Received.Text = msg;
                 });
 
             var cts = new CancellationTokenSource();
@@ -58,7 +63,12 @@ namespace WebsocketLite.UWP.Test
                     subprotocols: null,
                     tlsProtocolVersion: TlsProtocolVersion.Tls12);
 
-            var test = "";
+            var testString = "Test Single Frame";
+
+            Sending.Text = testString;
+            await Task.Delay(TimeSpan.FromSeconds(1));
+
+            await websocketClient.SendTextAsync("Test Single Frame");
         }
     }
 }

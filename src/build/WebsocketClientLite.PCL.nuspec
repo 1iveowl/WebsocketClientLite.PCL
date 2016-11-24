@@ -15,14 +15,14 @@ Xamarin cross-platform.
 Can be set to ignore SSL/TLS server certificate issues. 
 Observe incoming message using Reactive Extensions (Rx)</description>
     <releaseNotes>
-Updated dependencies to Rx 3.1.1 and SocketLite 3.6.0-beta2
+Updated dependencies to Rx 3.1.1 and SocketLite 3.6.0
 Added support for Sub Protocols and moved to .NET Standard 1.2 Library. Adding the option to choose TLS Protocol</releaseNotes>
     <copyright>Copyright 2016</copyright>
-    <tags>websocket rx pcl xamarin ssl tls</tags>
+    <tags>netstandard pcl netcore ios android xamarin uwp websocket rx ssl tls</tags>
     
     <dependencies>
       <dependency id="System.Reactive" version="3.1.1"/>
-      <dependency id="SocketLite.PCL" version="3.6.0-beta2"/>
+      <dependency id="SocketLite.PCL" version="3.6.0"/>
       <dependency id="HttpMachine.PCL" version="3.0.1"/>
       <dependency id="NETStandard.Library" version="1.6.1"/>
     </dependencies>
