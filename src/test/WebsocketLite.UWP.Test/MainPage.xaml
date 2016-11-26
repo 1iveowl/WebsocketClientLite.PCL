@@ -8,6 +8,17 @@
     mc:Ignorable="d">
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <StackPanel>
+            <TextBlock Margin="36">
+                <Run Text="Sending:" />
+                <Run x:Name="Sending" />
+                <LineBreak></LineBreak>
+                <LineBreak></LineBreak>
+                <Run Text="Received:" />
+                <Run x:Name="Received" />
+                <LineBreak></LineBreak>
+            </TextBlock>
+        </StackPanel>
 
     </Grid>
 </Page>

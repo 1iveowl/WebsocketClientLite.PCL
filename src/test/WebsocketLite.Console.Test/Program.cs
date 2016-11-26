@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using ISocketLite.PCL.Model;
@@ -49,11 +48,12 @@ namespace WebsocketLite.Console.Test
 
             await
                 websocketClient.ConnectAsync(
+                    //new Uri("ws://rpi3.my.home:3000/socket.io/?EIO=2&transport=websocket"),
                     new Uri("wss://echo.websocket.org:443"),
                     cts,
                     ignoreServerCertificateErrors: true,
                     subprotocols:subprotocols, 
-                    tlsProtocolVersion:TlsProtocolVersion.None);
+                    tlsProtocolVersion:TlsProtocolVersion.Tls10);
 
             System.Console.WriteLine("Sending: Test Single Frame");
             await websocketClient.SendTextAsync("Test Single Frame");
