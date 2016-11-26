@@ -28,6 +28,11 @@ namespace WebsocketClientLite.PCL.Service
                     case DataReceiveMode.IsListeningForHandShake:
                         try
                         {
+                            if (_parserDelgate.HttpRequestReponse.IsEndOfMessage)
+                            {
+                                return string.Empty;
+                            }
+
                             _handshakeParser.Parse(b, _parserDelgate, _parserHandler);
                             return null;
                         }
@@ -63,7 +68,7 @@ namespace WebsocketClientLite.PCL.Service
         internal bool HasReceivedCloseFromServer { get; private set; }
 
         internal WebsocketListener(
-            ITcpSocketClient client, 
+            ITcpSocketClient client,
             IConnectableObservable<byte[]> observableWebsocketData,
             WebSocketConnectService webSocketConnectService)
         {

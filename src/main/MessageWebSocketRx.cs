@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Reactive.Concurrency;
 using System.Reactive.Subjects;
 using System.Reactive.Linq;
@@ -31,13 +32,10 @@ namespace WebsocketClientLite.PCL
         private IConnectableObservable<byte[]> ObservableWebsocketData => Observable.While(
                     () => !_cancellationTokenSource.IsCancellationRequested,
                     Observable.FromAsync(ReadOneByteAtTheTimeAsync))
-            .SubscribeOn(Scheduler.Default)
+            .ObserveOn(Scheduler.Default)
             .Publish();
 
         public IObservable<string> ObserveTextMessagesReceived => _websocketListener.ObserveTextMessageSequence;
-
-
-
         public bool IsConnected { get; private set; }
         public bool SubprotocolAccepted { get; private set; }
 
@@ -49,8 +47,11 @@ namespace WebsocketClientLite.PCL
 
             var bytesRead = await _tcpSocketClient.ReadStream.ReadAsync(oneByteArray, 0, 1);
 
+            Debug.WriteLine(oneByteArray[0].ToString());
+
             if (bytesRead < oneByteArray.Length)
             {
+                IsConnected = false;
                 _cancellationTokenSource.Cancel();
                 throw new Exception("Web socket connection aborted unexpectantly. Check connection and socket security version/TLS version)");
             }
@@ -145,6 +146,7 @@ namespace WebsocketClientLite.PCL
             }
             else
             {
+                IsConnected = false;
                 throw new Exception("Not connected. Client must beconnected to websocket server before sending message");
             }
         }
@@ -157,6 +159,7 @@ namespace WebsocketClientLite.PCL
             }
             else
             {
+                IsConnected = false;
                 throw new Exception("Not connected. Client must beconnected to websocket server before sending message");
             }
         }
@@ -169,6 +172,7 @@ namespace WebsocketClientLite.PCL
             }
             else
             {
+                IsConnected = false;
                 throw new Exception("Not connected. Client must beconnected to websocket server before sending message");
             }
         }
@@ -186,6 +190,7 @@ namespace WebsocketClientLite.PCL
 
                 if (!_websocketListener.HasReceivedCloseFromServer)
                 {
+                    IsConnected = false;
                     _websocketListener.Stop();
                 }
             }).ConfigureAwait(false);
