@@ -1,12 +1,17 @@
-
 # Websocket Client Lite 
-[![NuGet](https://img.shields.io/badge/nuget-2.0.11_(.Net_Standard_1.2)-brightgreen.svg)](https://www.nuget.org/packages/WebsocketClientLite.PCL/2.0.11)
+[![NuGet Badge](https://buildstats.info/nuget/WebsocketClientLite.PCL)](https://www.nuget.org/packages/WebsocketClientLite.PCL)
+
+[![.NET Standard](http://img.shields.io/badge/.NET_Standard-v1.2-green.svg)](https://docs.microsoft.com/da-dk/dotnet/articles/standard/library)
+
+Note: From version 3.6.0 this library support .NET Core.
+
+For PCL Profile111 compatibility use legacy version 1.6.2:
+
 [![NuGet](https://img.shields.io/badge/nuget-1.6.2_(Profile_111)-yellow.svg)](https://www.nuget.org/packages/WebsocketClientLite.PCL/1.6.2)
-### A light weigth websocket client for Xamarin Forms on .NET 4.5+, Windows 10/UWP, iOS and Android that utilizes Reactive Extensions (Rx)
 
-This library was written to make it easy to use Websocket across all the major platforms platforms.
+## A Light Weigth Cross Platform Websocket Client 
 
-This library is a ground-up implementation of the Websocket specification [(RFC 6544)](https://tools.ietf.org/html/rfc6455). The implementation does not rely on the build-in Websocket libraries in .NET and UWP. 
+This library is a ground-up implementation of the Websocket specification [(RFC 6544)](https://tools.ietf.org/html/rfc6455). The implementation does not rely on the build-in Websocket libraries in .NET and UWP etc. 
 
 The library allows developers to establish secure wss websocket connections to websocket servers that have self-signing certificates, expired certificates etc. This capability should be used with care, but is nice to have in testing environments or close local networks IoT set-ups etc. To use this set the ConnectAsync parameter `ignoreServerCertificateErrors: true`.
 
@@ -14,7 +19,17 @@ This project is based on [SocketLite.PCL](https://github.com/1iveowl/SocketLite.
 
 This project utilizes [Reactive Extensions](http://reactivex.io/). Although this has an added learning curve its a learning worth while and it makes creating a library like this much more elegant compared to using call-back or events. 
 
-### Usage
+## Usage
+The library is easy to use, which is best illustated with this example:
+
+#### Usings:
+```csharp
+using ISocketLite.PCL.Model;
+using IWebsocketClientLite.PCL;
+using WebsocketClientLite.PCL;
+```
+
+#### Eaxmple class:
 ```csharp
 class Program
 {
@@ -23,6 +38,8 @@ class Program
     {
         StartWebSocket();
         System.Console.ReadKey();
+
+		// Don't forget to clean-up with Dispose. It doesn't matter here, but it will in your code.
         _subscribeToMessagesReceived.Dispose();
 
     }
@@ -31,50 +48,65 @@ class Program
     {
         var websocketClient = new MessageWebSocketRx();
 
+		// 1. Start by subscribing to messages. 
         _subscribeToMessagesReceived = websocketClient.ObserveTextMessagesReceived.Subscribe(
             msg =>
             {
+				// Your code goes here forhandling an incoming message
                 System.Console.WriteLine($"Reply from test server (wss://echo.websocket.org): {msg}");
 
             });
 
-        var cts = new CancellationTokenSource();
+		// 2 Create a Cancellation token and register what will happen if the connection is cancelled.
+		var cts = new CancellationTokenSource();
 
         cts.Token.Register(() =>
         {
             System.Console.Write("Aborted. Connection cancelled by server or server became unavailable.");
             _subscribeToMessagesReceived.Dispose();
         });
-        
-        // ### Optional Subprotocols ###
+
+		
+		// 2a. ### Optional Subprotocols ###
         // The echo.websocket.org does not support any sub-protocols and hence this test does not add any.
         // Adding a sub-protocol that the server does not support causes the client to close down the connection.
         List<string> subprotocols = null; //new List<string> {"soap", "json"};
+        
 
-        await
-            websocketClient.ConnectAsync(
-                new Uri("wss://echo.websocket.org:443"),
-                cts,
-                ignoreServerCertificateErrors: false,
-                subprotocols:subprotocols, 
+	    // 3. Now establish a connection to the server
+
+		await websocketClient.ConnectAsync(
+                new Uri("wss://echo.websocket.org:443"),	// use the publicly available test server: http://www.websocket.org/echo.html
+                cts,										// pass the cancellation token
+                ignoreServerCertificateErrors: false,		// you can ignore server certificate errors. Good for test, but be careful! 
+                subprotocols:subprotocols,	
                 tlsProtocolVersion:TlsProtocolVersion.Tls12);
 
+		// 4. send a  test to the echo server. It will reply back with what you send. 
         await websocketClient.SendTextAsync("Test Single Frame");
 
+		// 5. you can also send multiple frames in one batch.
         var strArray = new[] {"Test ", "multiple ", "frames"};
 
         await websocketClient.SendTextAsync(strArray);
 
+
+		// 6. or you can send frames one by one. Start with FrameType.FirstOfMultipleFrames
         await websocketClient.SendTextMultiFrameAsync("Start ", FrameType.FirstOfMultipleFrames);
         await Task.Delay(TimeSpan.FromMilliseconds(200));
+
+		// ... continue with: FrameType.Continuation
         await websocketClient.SendTextMultiFrameAsync("Continue... #1 ", FrameType.Continuation);
         await Task.Delay(TimeSpan.FromMilliseconds(300));
+
         await websocketClient.SendTextMultiFrameAsync("Continue... #2 ", FrameType.Continuation);
         await Task.Delay(TimeSpan.FromMilliseconds(150));
+
         await websocketClient.SendTextMultiFrameAsync("Continue... #3 ", FrameType.Continuation);
         await Task.Delay(TimeSpan.FromMilliseconds(400));
-        await websocketClient.SendTextMultiFrameAsync("Stop.", FrameType.LastInMultipleFrames);
 
+		// Don't forget the last stop frame!
+        await websocketClient.SendTextMultiFrameAsync("This is the last Stop Frame.", FrameType.LastInMultipleFrames);
     }
 }
 ```
