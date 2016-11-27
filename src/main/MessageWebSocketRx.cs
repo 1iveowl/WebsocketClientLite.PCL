@@ -47,14 +47,15 @@ namespace WebsocketClientLite.PCL
                 _webSocketConnectService);
         }
 
-        public void SetRequestHeader(string headerName, string headerValue)
-        {
-            throw new NotImplementedException();
-        }
+        //public void SetRequestHeader(string headerName, string headerValue)
+        //{
+        //    throw new NotImplementedException();
+        //}
 
         public async Task ConnectAsync(
             Uri uri, 
-            CancellationTokenSource outerCancellationTokenSource, 
+            CancellationTokenSource outerCancellationTokenSource,
+            string origin = null,
             IEnumerable<string> subprotocols = null,
             bool ignoreServerCertificateErrors = false,
             TlsProtocolVersion tlsProtocolVersion = TlsProtocolVersion.Tls12)
@@ -80,6 +81,7 @@ namespace WebsocketClientLite.PCL
                     _httpParserHandler,
                     _innerCancellationTokenSource,
                     _websocketListener,
+                    origin,
                     subprotocols,
                     ignoreServerCertificateErrors,
                     tlsProtocolVersion);

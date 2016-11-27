@@ -71,7 +71,8 @@ namespace WebsocketClientLite.PCL.Service
 
         private IObservable<byte[]> ByteStreamHandlerObservable => Observable.While(
                 () => !_innerCancellationTokenSource.IsCancellationRequested,
-                Observable.FromAsync(ReadOneByteAtTheTimeAsync)).ObserveOn(Scheduler.Default);
+                Observable.FromAsync(ReadOneByteAtTheTimeAsync))
+            .ObserveOn(Scheduler.Default);
 
         internal bool IsConnected;
 
@@ -90,6 +91,7 @@ namespace WebsocketClientLite.PCL.Service
         private async Task<byte[]> ReadOneByteAtTheTimeAsync()
         {
             var oneByteArray = new byte[1];
+
             try
             {
                 if (!_webSocketConnectService?.TcpSocketClient?.ReadStream?.CanRead ?? false)
@@ -99,7 +101,7 @@ namespace WebsocketClientLite.PCL.Service
 
                 var bytesRead = await _webSocketConnectService.TcpSocketClient.ReadStream.ReadAsync(oneByteArray, 0, 1);
 
-                //Debug.WriteLine(oneByteArray[0].ToString());
+                Debug.WriteLine(oneByteArray[0].ToString());
 
                 if (bytesRead < oneByteArray.Length)
                 {

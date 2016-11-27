@@ -57,6 +57,7 @@ namespace WebsocketLite.Console.Test
                 new Uri("ws://rpi3.my.home:3000/socket.io/?EIO=2&transport=websocket"),
                 //new Uri("wss://echo.websocket.org:443"),
                 cts,
+                origin:null,
                 ignoreServerCertificateErrors: true,
                 subprotocols: subprotocols,
                 tlsProtocolVersion: TlsProtocolVersion.Tls12);
