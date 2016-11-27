@@ -25,7 +25,9 @@ namespace WebsocketClientLite.PCL
 
         private HttpParserDelegate _httpParserDelegate;
         private HttpCombinedParser _httpParserHandler;
+        private IDisposable _outerCancellationRegiration;
 
+<<<<<<< Updated upstream
         private CancellationTokenSource _cancellationTokenSource;
 
         private IConnectableObservable<byte[]> ObservableWebsocketData => Observable.While(
@@ -38,17 +40,20 @@ namespace WebsocketClientLite.PCL
 
 
 
+=======
+        //private CancellationTokenSource _outerCancellationTokenSource;
+        private CancellationTokenSource _innerCancellationTokenSource;
+
+        public IObservable<string> ObserveTextMessagesReceived => _websocketListener.ObserveTextMessageSequence;
+
+>>>>>>> Stashed changes
         public bool IsConnected { get; private set; }
         public bool SubprotocolAccepted { get; private set; }
 
-        public string SubprotocolAcceptedName { get; private set; } 
+        public string SubprotocolAcceptedName { get; private set; }
 
-        private async Task<byte[]> ReadOneByteAtTheTimeAsync()
-        {
-            var oneByteArray = new byte[1];
 
-            var bytesRead = await _tcpSocketClient.ReadStream.ReadAsync(oneByteArray, 0, 1);
-
+<<<<<<< Updated upstream
             if (bytesRead < oneByteArray.Length)
             {
                 _cancellationTokenSource.Cancel();
@@ -56,15 +61,16 @@ namespace WebsocketClientLite.PCL
             }
             return oneByteArray;
         }
+=======
+>>>>>>> Stashed changes
 
         public MessageWebSocketRx()
         {
-            _webSocketConnectService = new WebSocketConnectService(_tcpSocketClient);
-            _websocketSenderService = new WebsocketSenderService(_tcpSocketClient);
+            _webSocketConnectService = new WebSocketConnectService();
+            _websocketSenderService = new WebsocketSenderService();
 
             _websocketListener = new WebsocketListener(
-                _tcpSocketClient,
-                ObservableWebsocketData,
+                //_tcpSocketClient,
                 _webSocketConnectService);
         }
 
@@ -75,12 +81,18 @@ namespace WebsocketClientLite.PCL
 
         public async Task ConnectAsync(
             Uri uri, 
-            CancellationTokenSource cts, 
+            CancellationTokenSource outerCancellationTokenSource, 
             IEnumerable<string> subprotocols = null,
             bool ignoreServerCertificateErrors = false,
             TlsProtocolVersion tlsProtocolVersion = TlsProtocolVersion.Tls12)
         {
-            _cancellationTokenSource = cts;
+            _outerCancellationRegiration = outerCancellationTokenSource.Token.Register(() =>
+            {
+                _innerCancellationTokenSource.Cancel();
+            });
+
+            _innerCancellationTokenSource = new CancellationTokenSource();
+
             using (_httpParserDelegate = new HttpParserDelegate())
             using (_httpParserHandler = new HttpCombinedParser(_httpParserDelegate))
             {
@@ -93,7 +105,7 @@ namespace WebsocketClientLite.PCL
                     isSecure,
                     _httpParserDelegate,
                     _httpParserHandler,
-                    _cancellationTokenSource,
+                    _innerCancellationTokenSource,
                     _websocketListener,
                     subprotocols,
                     ignoreServerCertificateErrors,
@@ -131,7 +143,6 @@ namespace WebsocketClientLite.PCL
                     {
                         IsConnected = true;
                     }
-
                     _websocketListener.DataReceiveMode = DataReceiveMode.IsListeningForTextData;
                 }
             }
@@ -141,7 +152,7 @@ namespace WebsocketClientLite.PCL
         {
             if (IsConnected)
             {
-                await _websocketSenderService.SendTextAsync(message);
+                await _websocketSenderService.SendTextAsync(_webSocketConnectService.TcpSocketClient, message);
             }
             else
             {
@@ -153,7 +164,7 @@ namespace WebsocketClientLite.PCL
         {
             if (IsConnected)
             {
-                await _websocketSenderService.SendTextMultiFrameAsync(message, frameType);
+                await _websocketSenderService.SendTextMultiFrameAsync(_webSocketConnectService.TcpSocketClient, message, frameType);
             }
             else
             {
@@ -165,30 +176,47 @@ namespace WebsocketClientLite.PCL
         {
             if (IsConnected)
             {
-                await _websocketSenderService.SendTextAsync(messageList);
+                await _websocketSenderService.SendTextAsync(_webSocketConnectService.TcpSocketClient, messageList);
             }
             else
             {
                 throw new Exception("Not connected. Client must beconnected to websocket server before sending message");
             }
         }
-
-
         public async Task CloseAsync()
         {
-            await _websocketSenderService.SendCloseHandshake(StatusCodes.GoingAway);
-            
-            // If Server does not close the connection, close it after 2 sec.
-            //TODO There most be a more elegant way to do this?
-            Task.Run(async () =>
-            {
-                await Task.Delay(TimeSpan.FromSeconds(2));
+            _outerCancellationRegiration.Dispose();
 
+            if (_tcpSocketClient.IsConnected)
+            {
+                await _websocketSenderService.SendCloseHandshake(_webSocketConnectService.TcpSocketClient, StatusCodes.GoingAway);
+            }
+
+<<<<<<< Updated upstream
                 if (!_websocketListener.HasReceivedCloseFromServer)
                 {
                     _websocketListener.Stop();
                 }
             }).ConfigureAwait(false);
+=======
+            // Give server a chance to respond to close
+            await Task.Delay(TimeSpan.FromMilliseconds(100));
+
+            _websocketListener.Stop();
+
+            // If Server does not close the connection, close it after 2 sec.
+            //TODO There most be a more elegant way to do this?
+            //Task.Run(async () =>
+            //{
+            //    await Task.Delay(TimeSpan.FromSeconds(2));
+
+            //    if (!_websocketListener.HasReceivedCloseFromServer)
+            //    {
+            //        IsConnected = false;
+            //        _websocketListener.Stop();
+            //    }
+            //}).ConfigureAwait(false);
+>>>>>>> Stashed changes
         }
 
         private bool IsSecureWebsocket(Uri uri)

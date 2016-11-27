@@ -7,7 +7,6 @@ namespace WebsocketClientLite.PCL.Helper
 {
     internal class ControlFrameHandler
     {
-        private readonly ITcpSocketClient _client;
         internal bool IsPingReceived { get; private set; }
 
         internal bool IsCloseReceived { get; private set; }
@@ -19,16 +18,15 @@ namespace WebsocketClientLite.PCL.Helper
         private int _payloadPosition = 0;
         private bool _isNextBytePayloadLength = false;
 
-        internal ControlFrameHandler(ITcpSocketClient client)
+        internal ControlFrameHandler()
         {
-            _client = client;
         }
 
-        internal ControlFrameType CheckForPingOrCloseControlFrame(byte data)
+        internal ControlFrameType CheckForPingOrCloseControlFrame(ITcpSocketClient tcpSocketClient, byte data)
         {
             if (_isReceivingPingData)
             {
-                AddPingPayload(data);
+                AddPingPayload(tcpSocketClient, data);
                 return ControlFrameType.Ping;
             }
 
@@ -44,7 +42,7 @@ namespace WebsocketClientLite.PCL.Helper
             return ControlFrameType.None;
         }
 
-        internal void AddPingPayload(byte data)
+        internal void AddPingPayload(ITcpSocketClient tcpSocketClient, byte data)
         {
             if (_isNextBytePayloadLength)
             {
@@ -53,7 +51,7 @@ namespace WebsocketClientLite.PCL.Helper
                 {
                     InitNoPing();
                     _pong = new byte[2] {138, 0};
-                    SendPong();
+                    SendPong(tcpSocketClient);
                 }
                 else
                 {
@@ -76,15 +74,14 @@ namespace WebsocketClientLite.PCL.Helper
                 else
                 {
                     InitNoPing();
-                    SendPong();
+                    SendPong(tcpSocketClient);
                 }
             }
         }
 
-        private void SendPong()
+        private void SendPong(ITcpSocketClient tcpSocketClient)
         {
-            //SendPongAsync();
-            Task.Run(async () => await SendPongAsync()).ConfigureAwait(false);
+            Task.Run(async () => await SendPongAsync(tcpSocketClient)).ConfigureAwait(false);
         }
 
         private void InitPingStart()
@@ -102,10 +99,10 @@ namespace WebsocketClientLite.PCL.Helper
             _isNextBytePayloadLength = false;
         }
 
-        private async Task SendPongAsync()
+        private async Task SendPongAsync(ITcpSocketClient tcpSocketClient)
         {
-            await _client.WriteStream.WriteAsync(_pong, 0, _pong.Length);
-            await _client.WriteStream.FlushAsync();
+            await tcpSocketClient.WriteStream.WriteAsync(_pong, 0, _pong.Length);
+            await tcpSocketClient.WriteStream.FlushAsync();
             Debug.WriteLine("Pong send");
         }
     }

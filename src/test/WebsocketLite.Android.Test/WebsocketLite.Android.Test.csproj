@@ -55,14 +55,14 @@
       <HintPath>..\..\main\packages\HttpMachine.PCL.3.0.1\lib\netstandard1\HttpMachine.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="ISocketLite.PCL, Version=3.6.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\main\packages\SocketLite.PCL.3.6.0\lib\MonoAndroid10\ISocketLite.PCL.dll</HintPath>
+    <Reference Include="ISocketLite.PCL, Version=3.6.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\main\packages\SocketLite.PCL.3.6.1-beta4\lib\MonoAndroid10\ISocketLite.PCL.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Mono.Android" />
     <Reference Include="mscorlib" />
     <Reference Include="SocketLite, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\main\packages\SocketLite.PCL.3.6.0\lib\MonoAndroid10\SocketLite.dll</HintPath>
+      <HintPath>..\..\main\packages\SocketLite.PCL.3.6.1-beta4\lib\MonoAndroid10\SocketLite.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />

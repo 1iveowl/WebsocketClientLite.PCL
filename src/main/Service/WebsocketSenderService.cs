@@ -11,48 +11,46 @@ namespace WebsocketClientLite.PCL.Service
 {
     internal class WebsocketSenderService
     {
-        private readonly ITcpSocketClient _client;
+        private bool _isSendingMultipleFrames;
 
-        internal WebsocketSenderService(ITcpSocketClient client)
+        internal WebsocketSenderService()
         {
-            _client = client;
         }
 
-        internal async Task SendTextAsync(string message)
+        internal async Task SendTextAsync(ITcpSocketClient tcpSocketClient, string message)
         {
             var msgAsBytes = Encoding.UTF8.GetBytes(message);
 
-            await SendFrameAsync(msgAsBytes, FrameType.Single);
+            await ComposeFrameAsync(tcpSocketClient, msgAsBytes, FrameType.Single);
         }
 
-        internal async Task SendTextAsync(string[] messageList)
+        internal async Task SendTextAsync(ITcpSocketClient tcpSocketClient, string[] messageList)
         {
 
             if (messageList.Length < 1) return;
 
             if (messageList.Length == 1)
             {
-                await SendFrameAsync(Encoding.UTF8.GetBytes(messageList[0]), FrameType.Single);
+                await ComposeFrameAsync(tcpSocketClient, Encoding.UTF8.GetBytes(messageList[0]), FrameType.Single);
             }
 
-            await SendFrameAsync(Encoding.UTF8.GetBytes(messageList[0]), FrameType.FirstOfMultipleFrames);
+            await ComposeFrameAsync(tcpSocketClient, Encoding.UTF8.GetBytes(messageList[0]), FrameType.FirstOfMultipleFrames);
 
             for (var i = 1; i < messageList.Length - 1; i++)
             {
-                await SendFrameAsync(Encoding.UTF8.GetBytes(messageList[i]), FrameType.Continuation);
+                await ComposeFrameAsync(tcpSocketClient, Encoding.UTF8.GetBytes(messageList[i]), FrameType.Continuation);
             }
-            await SendFrameAsync(Encoding.UTF8.GetBytes(messageList.Last()), FrameType.LastInMultipleFrames);
+            await ComposeFrameAsync(tcpSocketClient, Encoding.UTF8.GetBytes(messageList.Last()), FrameType.LastInMultipleFrames);
         }
 
-        private bool _isSendingMultipleFrames = false;
-
-        internal async Task SendTextMultiFrameAsync(string message, FrameType frameType)
+        
+        internal async Task SendTextMultiFrameAsync(ITcpSocketClient tcpSocketClient, string message, FrameType frameType)
         {
             if (_isSendingMultipleFrames)
             {
                 if (frameType == FrameType.FirstOfMultipleFrames || frameType == FrameType.Single)
                 {
-                    await SendFrameAsync(Encoding.UTF8.GetBytes("_sequence aborted error_"), FrameType.LastInMultipleFrames);
+                    await ComposeFrameAsync(tcpSocketClient, Encoding.UTF8.GetBytes("_sequence aborted error_"), FrameType.LastInMultipleFrames);
                     _isSendingMultipleFrames = false;
                     throw new Exception("Multiple frames is progress. Frame must be a Continuation Frame or Last Frams in sequence. Multiple frame sequence aborted and finalized");
                 }
@@ -69,34 +67,32 @@ namespace WebsocketClientLite.PCL.Service
             switch (frameType)
             {
                 case FrameType.Single:
-                    await SendFrameAsync(Encoding.UTF8.GetBytes(message), FrameType.Single);
+                    await ComposeFrameAsync(tcpSocketClient, Encoding.UTF8.GetBytes(message), FrameType.Single);
                     break;
                 case FrameType.FirstOfMultipleFrames:
                     _isSendingMultipleFrames = true;
-                    await SendFrameAsync(Encoding.UTF8.GetBytes(message), FrameType.FirstOfMultipleFrames);
+                    await ComposeFrameAsync(tcpSocketClient, Encoding.UTF8.GetBytes(message), FrameType.FirstOfMultipleFrames);
                     break;
                 case FrameType.LastInMultipleFrames:
-                    await SendFrameAsync(Encoding.UTF8.GetBytes(message), FrameType.LastInMultipleFrames);
+                    await ComposeFrameAsync(tcpSocketClient, Encoding.UTF8.GetBytes(message), FrameType.LastInMultipleFrames);
                     _isSendingMultipleFrames = false;
                     break;
                 case FrameType.Continuation:
-                    await SendFrameAsync(Encoding.UTF8.GetBytes(message), FrameType.Continuation);
+                    await ComposeFrameAsync(tcpSocketClient, Encoding.UTF8.GetBytes(message), FrameType.Continuation);
                     break;
             }
         }
 
-        internal async Task SendCloseHandshake(StatusCodes statusCode)
+        internal async Task SendCloseHandshake(ITcpSocketClient tcpSocketClient, StatusCodes statusCode)
         {
             var closeFrameBodyCode = BitConverter.GetBytes((ushort)statusCode);
             var reason = Encoding.UTF8.GetBytes(statusCode.ToString());
 
-            await SendFrameAsync(closeFrameBodyCode.Concat(reason).ToArray(),
+            await ComposeFrameAsync(tcpSocketClient, closeFrameBodyCode.Concat(reason).ToArray(),
                 FrameType.CloseControlFrame);
         }
 
-
-
-        private async Task SendFrameAsync(byte[] content, FrameType frameType)
+        private async Task ComposeFrameAsync(ITcpSocketClient tcpSocketClient, byte[] content, FrameType frameType)
         {
             var firstByte = new byte[1];
 
@@ -126,9 +122,18 @@ namespace WebsocketClientLite.PCL.Service
             var maskedMessage = Encode(content, maskKey);
             var frame = firstByte.Concat(payloadBytes).Concat(maskKey).Concat(maskedMessage).ToArray();
 
+            await SendFrameAsync(tcpSocketClient, frame);
+        }
 
-            await _client.WriteStream.WriteAsync(frame, 0, frame.Length);
-            await _client.WriteStream.FlushAsync();
+        private async Task SendFrameAsync(ITcpSocketClient tcpSocketClient, byte[] frame)
+        {
+            if (!tcpSocketClient.IsConnected)
+            {
+                throw new Exception("Websocket connection have been closed");
+            }
+
+            await tcpSocketClient.WriteStream.WriteAsync(frame, 0, frame.Length);
+            await tcpSocketClient.WriteStream.FlushAsync();
         }
     }
 }

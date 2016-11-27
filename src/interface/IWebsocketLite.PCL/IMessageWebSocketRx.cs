@@ -23,7 +23,7 @@ namespace IWebsocketClientLite.PCL
 
         Task ConnectAsync(
             Uri uri, 
-            CancellationTokenSource cts, 
+            CancellationTokenSource outerCancellationTokenSource, 
             IEnumerable<string> subProtocols = null, 
             bool ignoreServerCertificateErrors = false, 
             TlsProtocolVersion tlsProtocolType = TlsProtocolVersion.Tls12);

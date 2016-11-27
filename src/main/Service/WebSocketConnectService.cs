@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using HttpMachine;
 using ISocketLite.PCL.Interface;
 using ISocketLite.PCL.Model;
+using SocketLite.Services;
 using WebsocketClientLite.PCL.Helper;
 using WebsocketClientLite.PCL.Model;
 using WebsocketClientLite.PCL.Parser;
@@ -13,12 +14,11 @@ namespace WebsocketClientLite.PCL.Service
 {
     internal class WebSocketConnectService
     {
-        private readonly ITcpSocketClient _client;
-        private CancellationTokenSource _cancellationTokenSource;
+        internal ITcpSocketClient TcpSocketClient;
+        private CancellationTokenSource _innerCancellationTokenSource;
 
-        internal WebSocketConnectService(ITcpSocketClient client)
+        internal WebSocketConnectService()
         {
-            _client = client;
         }
 
         internal async Task ConnectAsync(
@@ -26,27 +26,29 @@ namespace WebsocketClientLite.PCL.Service
             bool secure,
             HttpParserDelegate requestHandler,
             HttpCombinedParser parserHandler,
-            CancellationTokenSource cancellationTokenSource,
+            CancellationTokenSource innerCancellationTokenSource,
             WebsocketListener websocketListener,
             IEnumerable<string> subprotocols = null,
             bool ignoreServerCertificateErrors = false,
             TlsProtocolVersion tlsProtocolType = TlsProtocolVersion.Tls12)
         {
+            TcpSocketClient = new TcpSocketClient();
+
             try
             {
-                _cancellationTokenSource = cancellationTokenSource;
+                _innerCancellationTokenSource = innerCancellationTokenSource;
 
-                await _client.ConnectAsync(
+                await TcpSocketClient.ConnectAsync(
                     uri.Host,
                     uri.Port.ToString(),
                     secure,
-                    cancellationTokenSource.Token,
+                    innerCancellationTokenSource.Token,
                     ignoreServerCertificateErrors,
                     tlsProtocolType);
 
                 websocketListener.DataReceiveMode = DataReceiveMode.IsListeningForHandShake;
 
-                websocketListener.Start(requestHandler, parserHandler);
+                websocketListener.Start(requestHandler, parserHandler, innerCancellationTokenSource);
 
                 await SendConnectHandShakeAsync(uri, secure, subprotocols);
 
@@ -102,8 +104,8 @@ namespace WebsocketClientLite.PCL.Service
 
         internal void Disconnect()
         {
-            _cancellationTokenSource.Cancel();
-            _client.Disconnect();
+            _innerCancellationTokenSource.Cancel();
+            TcpSocketClient.Disconnect();
 
         }
 
@@ -112,8 +114,8 @@ namespace WebsocketClientLite.PCL.Service
             var handShake = ClientHandShake.Compose(uri, secure, subprotocols);
             try
             {
-                await _client.WriteStream.WriteAsync(handShake, 0, handShake.Length);
-                await _client.WriteStream.FlushAsync();
+                await TcpSocketClient.WriteStream.WriteAsync(handShake, 0, handShake.Length);
+                await TcpSocketClient.WriteStream.FlushAsync();
             }
             catch (Exception ex)
             {
