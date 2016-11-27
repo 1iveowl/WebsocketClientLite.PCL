@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using System.Threading;
@@ -33,6 +34,11 @@ namespace WebsocketClientLite.PCL.Service
                     case DataReceiveMode.IsListeningForHandShake:
                         try
                         {
+                            if (_parserDelgate.HttpRequestReponse.IsEndOfMessage)
+                            {
+                                return string.Empty;
+                            }
+
                             _handshakeParser.Parse(b, _parserDelgate, _parserHandler);
                             return null;
                         }
@@ -65,7 +71,7 @@ namespace WebsocketClientLite.PCL.Service
 
         private IObservable<byte[]> ByteStreamHandlerObservable => Observable.While(
                 () => !_innerCancellationTokenSource.IsCancellationRequested,
-                Observable.FromAsync(ReadOneByteAtTheTimeAsync));
+                Observable.FromAsync(ReadOneByteAtTheTimeAsync)).ObserveOn(Scheduler.Default);
 
         internal bool IsConnected;
 
@@ -74,11 +80,7 @@ namespace WebsocketClientLite.PCL.Service
         internal bool HasReceivedCloseFromServer { get; private set; }
 
         internal WebsocketListener(
-<<<<<<< Updated upstream
-            ITcpSocketClient client, 
-            IConnectableObservable<byte[]> observableWebsocketData,
-=======
->>>>>>> Stashed changes
+
             WebSocketConnectService webSocketConnectService)
         {
             _webSocketConnectService = webSocketConnectService;
@@ -88,17 +90,16 @@ namespace WebsocketClientLite.PCL.Service
         private async Task<byte[]> ReadOneByteAtTheTimeAsync()
         {
             var oneByteArray = new byte[1];
-
-            if (!_webSocketConnectService.TcpSocketClient.ReadStream.CanRead)
-            {
-                throw new Exception("Websocket connection have been closed");
-            }
-
             try
             {
+                if (!_webSocketConnectService?.TcpSocketClient?.ReadStream?.CanRead ?? false)
+                {
+                    throw new Exception("Websocket connection have been closed");
+                }
+
                 var bytesRead = await _webSocketConnectService.TcpSocketClient.ReadStream.ReadAsync(oneByteArray, 0, 1);
 
-                Debug.WriteLine(oneByteArray[0].ToString());
+                //Debug.WriteLine(oneByteArray[0].ToString());
 
                 if (bytesRead < oneByteArray.Length)
                 {

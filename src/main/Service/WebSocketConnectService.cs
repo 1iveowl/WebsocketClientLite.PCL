@@ -104,8 +104,8 @@ namespace WebsocketClientLite.PCL.Service
 
         internal void Disconnect()
         {
-            _innerCancellationTokenSource.Cancel();
             TcpSocketClient.Disconnect();
+            _innerCancellationTokenSource.Cancel();
 
         }
 

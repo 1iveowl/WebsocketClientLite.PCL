@@ -25,44 +25,17 @@ namespace WebsocketClientLite.PCL
 
         private HttpParserDelegate _httpParserDelegate;
         private HttpCombinedParser _httpParserHandler;
-        private IDisposable _outerCancellationRegiration;
+        private IDisposable _outerCancellationRegistration;
 
-<<<<<<< Updated upstream
-        private CancellationTokenSource _cancellationTokenSource;
-
-        private IConnectableObservable<byte[]> ObservableWebsocketData => Observable.While(
-                    () => !_cancellationTokenSource.IsCancellationRequested,
-                    Observable.FromAsync(ReadOneByteAtTheTimeAsync))
-            .SubscribeOn(Scheduler.Default)
-            .Publish();
-
-        public IObservable<string> ObserveTextMessagesReceived => _websocketListener.ObserveTextMessageSequence;
-
-
-
-=======
-        //private CancellationTokenSource _outerCancellationTokenSource;
         private CancellationTokenSource _innerCancellationTokenSource;
 
         public IObservable<string> ObserveTextMessagesReceived => _websocketListener.ObserveTextMessageSequence;
 
->>>>>>> Stashed changes
         public bool IsConnected { get; private set; }
         public bool SubprotocolAccepted { get; private set; }
 
         public string SubprotocolAcceptedName { get; private set; }
 
-
-<<<<<<< Updated upstream
-            if (bytesRead < oneByteArray.Length)
-            {
-                _cancellationTokenSource.Cancel();
-                throw new Exception("Web socket connection aborted unexpectantly. Check connection and socket security version/TLS version)");
-            }
-            return oneByteArray;
-        }
-=======
->>>>>>> Stashed changes
 
         public MessageWebSocketRx()
         {
@@ -86,7 +59,7 @@ namespace WebsocketClientLite.PCL
             bool ignoreServerCertificateErrors = false,
             TlsProtocolVersion tlsProtocolVersion = TlsProtocolVersion.Tls12)
         {
-            _outerCancellationRegiration = outerCancellationTokenSource.Token.Register(() =>
+            _outerCancellationRegistration = outerCancellationTokenSource.Token.Register(() =>
             {
                 _innerCancellationTokenSource.Cancel();
             });
@@ -156,6 +129,7 @@ namespace WebsocketClientLite.PCL
             }
             else
             {
+                IsConnected = false;
                 throw new Exception("Not connected. Client must beconnected to websocket server before sending message");
             }
         }
@@ -168,6 +142,7 @@ namespace WebsocketClientLite.PCL
             }
             else
             {
+                IsConnected = false;
                 throw new Exception("Not connected. Client must beconnected to websocket server before sending message");
             }
         }
@@ -180,27 +155,20 @@ namespace WebsocketClientLite.PCL
             }
             else
             {
+                IsConnected = false;
                 throw new Exception("Not connected. Client must beconnected to websocket server before sending message");
             }
         }
         public async Task CloseAsync()
         {
-            _outerCancellationRegiration.Dispose();
-
             if (_tcpSocketClient.IsConnected)
             {
                 await _websocketSenderService.SendCloseHandshake(_webSocketConnectService.TcpSocketClient, StatusCodes.GoingAway);
             }
-
-<<<<<<< Updated upstream
-                if (!_websocketListener.HasReceivedCloseFromServer)
-                {
-                    _websocketListener.Stop();
-                }
-            }).ConfigureAwait(false);
-=======
             // Give server a chance to respond to close
             await Task.Delay(TimeSpan.FromMilliseconds(100));
+
+            _outerCancellationRegistration.Dispose();
 
             _websocketListener.Stop();
 
@@ -216,7 +184,6 @@ namespace WebsocketClientLite.PCL
             //        _websocketListener.Stop();
             //    }
             //}).ConfigureAwait(false);
->>>>>>> Stashed changes
         }
 
         private bool IsSecureWebsocket(Uri uri)
