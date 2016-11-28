@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Threading;
 using System.Threading.Tasks;
 using ISocketLite.PCL.Model;
 using IWebsocketClientLite.PCL;
@@ -43,14 +42,6 @@ namespace WebsocketLite.Console.Test
                         System.Console.WriteLine($"Subscription Completed");
                     });
 
-                //var cts = new CancellationTokenSource();
-
-                //cts.Token.Register(() =>
-                //{
-                //    System.Console.Write("Cancelled");
-                //    //_subscribeToMessagesReceived.Dispose();
-                //});
-
                 // ### Optional Subprotocols ###
                 // The echo.websocket.org does not support any sub-protocols and hence this test does not add any.
                 // Adding a sub-protocol that the server does not support causes the client to close down the connection.
@@ -80,7 +71,6 @@ namespace WebsocketLite.Console.Test
                     ignoreServerCertificateErrors: true,
                     subprotocols: subprotocols,
                     tlsProtocolVersion: TlsProtocolVersion.Tls12);
-
 
                 System.Console.WriteLine("Sending: Test Single Frame");
                 await websocketClient.SendTextAsync("Test Single Frame");
@@ -114,8 +104,6 @@ namespace WebsocketLite.Console.Test
 
                 await websocketClient.CloseAsync();
             }
-
-            
         }
     }
 }
