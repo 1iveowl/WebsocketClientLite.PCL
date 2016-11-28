@@ -25,7 +25,7 @@ namespace IWebsocketClientLite.PCL
 
         Task ConnectAsync(
             Uri uri, 
-            CancellationTokenSource outerCancellationTokenSource,
+            //CancellationTokenSource outerCancellationTokenSource,
             string origin = null,
             IEnumerable<string> subProtocols = null, 
             bool ignoreServerCertificateErrors = false, 

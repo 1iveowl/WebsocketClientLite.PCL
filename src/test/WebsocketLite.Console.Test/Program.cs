@@ -60,7 +60,7 @@ namespace WebsocketLite.Console.Test
                 await websocketClient.ConnectAsync(
                     new Uri("ws://192.168.0.7:3000/socket.io/?EIO=2&transport=websocket"),
                     //new Uri("wss://echo.websocket.org:443"),
-                    cts,
+                    //cts,
                     origin: null,
                     ignoreServerCertificateErrors: true,
                     subprotocols: subprotocols,
@@ -76,7 +76,7 @@ namespace WebsocketLite.Console.Test
                 await websocketClient.ConnectAsync(
                     //new Uri("ws://localhost:3000/socket.io/?EIO=2&transport=websocket"),
                     new Uri("wss://echo.websocket.org:443"),
-                    cts,
+                    //cts,
                     ignoreServerCertificateErrors: true,
                     subprotocols: subprotocols,
                     tlsProtocolVersion: TlsProtocolVersion.Tls12);
@@ -105,7 +105,7 @@ namespace WebsocketLite.Console.Test
                 await websocketClient.ConnectAsync(
                     new Uri("ws://192.168.0.7:3000/socket.io/?EIO=2&transport=websocket"),
                     //new Uri("wss://echo.websocket.org:443"),
-                    cts,
+                    //cts,
                     ignoreServerCertificateErrors: true,
                     subprotocols: subprotocols,
                     tlsProtocolVersion: TlsProtocolVersion.Tls12);
