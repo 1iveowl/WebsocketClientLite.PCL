@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Reactive.Concurrency;
-using System.Reactive.Subjects;
-using System.Reactive.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using HttpMachine;
@@ -46,11 +43,6 @@ namespace WebsocketClientLite.PCL
                 //_tcpSocketClient,
                 _webSocketConnectService);
         }
-
-        //public void SetRequestHeader(string headerName, string headerValue)
-        //{
-        //    throw new NotImplementedException();
-        //}
 
         public async Task ConnectAsync(
             Uri uri, 
@@ -163,12 +155,15 @@ namespace WebsocketClientLite.PCL
         }
         public async Task CloseAsync()
         {
+            
+            await Task.Delay(TimeSpan.FromMilliseconds(250));
+
             if (_tcpSocketClient.IsConnected)
             {
                 await _websocketSenderService.SendCloseHandshake(_webSocketConnectService.TcpSocketClient, StatusCodes.GoingAway);
             }
             // Give server a chance to respond to close
-            await Task.Delay(TimeSpan.FromMilliseconds(100));
+            await Task.Delay(TimeSpan.FromMilliseconds(250));
 
             _outerCancellationRegistration.Dispose();
 

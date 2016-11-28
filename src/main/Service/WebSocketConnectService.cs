@@ -105,9 +105,8 @@ namespace WebsocketClientLite.PCL.Service
 
         internal void Disconnect()
         {
-            TcpSocketClient.Disconnect();
             _innerCancellationTokenSource.Cancel();
-
+            TcpSocketClient.Disconnect();
         }
 
         private async Task SendConnectHandShakeAsync(Uri uri, bool secure, string origin = null, IEnumerable<string> subprotocols = null)

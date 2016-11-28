@@ -14,7 +14,6 @@ namespace WebsocketClientLite.PCL.Service
 {
     internal class WebsocketListener
     {
-
         private readonly ISubject<string> _textMessageSequence = new Subject<string>();
         private readonly HandshakeParser _handshakeParser = new HandshakeParser();
         private readonly WebSocketConnectService _webSocketConnectService;
@@ -29,6 +28,8 @@ namespace WebsocketClientLite.PCL.Service
         private IObservable<string> ObserveTextMessageSession => ByteStreamHandlerObservable.Select(
             b =>
             {
+                if (_textDataParser.IsCloseRecieved) return string.Empty;
+
                 switch (DataReceiveMode)
                 {
                     case DataReceiveMode.IsListeningForHandShake:
@@ -90,6 +91,8 @@ namespace WebsocketClientLite.PCL.Service
 
         private async Task<byte[]> ReadOneByteAtTheTimeAsync()
         {
+            if (_textDataParser.IsCloseRecieved) return null;
+
             var oneByteArray = new byte[1];
 
             try

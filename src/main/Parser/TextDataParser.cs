@@ -9,7 +9,6 @@ using static WebsocketClientLite.PCL.Helper.WebsocketMasking;
 
 namespace WebsocketClientLite.PCL.Parser
 {
-
     internal class TextDataParser : IDisposable
     {
         private readonly ControlFrameHandler _controlFrameHandler;
@@ -328,10 +327,6 @@ namespace WebsocketClientLite.PCL.Parser
                         _frameType = FrameType.Continuation;
                         InitFrameMessage();
                     }
-
-                    break;
-
-                default:
                     break;
             }
         }

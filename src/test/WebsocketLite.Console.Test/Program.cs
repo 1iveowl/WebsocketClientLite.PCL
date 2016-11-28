@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Reactive.Disposables;
-using System.Reactive.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Timers;
 using ISocketLite.PCL.Model;
 using IWebsocketClientLite.PCL;
 using WebsocketClientLite.PCL;
@@ -99,7 +96,7 @@ namespace WebsocketLite.Console.Test
             await websocketClient.CloseAsync();
 
             await websocketClient.ConnectAsync(
-                new Uri("ws://localhost:3000/socket.io/?EIO=2&transport=websocket"),
+                new Uri("ws://rpi3.my.home:3000/socket.io/?EIO=2&transport=websocket"),
                 //new Uri("wss://echo.websocket.org:443"),
                 cts,
                 ignoreServerCertificateErrors: true,
