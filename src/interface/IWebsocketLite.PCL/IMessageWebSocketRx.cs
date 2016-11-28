@@ -13,6 +13,8 @@ namespace IWebsocketClientLite.PCL
     {
         IObservable<string> ObserveTextMessagesReceived { get; }
 
+        IObservable<ConnectionStatus> ObserveConnectionStatus { get; }
+
         bool IsConnected { get; }
 
         bool SubprotocolAccepted { get; }

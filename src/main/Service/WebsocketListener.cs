@@ -61,7 +61,7 @@ namespace WebsocketClientLite.PCL.Service
 
                         if (TextDataParser.IsCloseRecieved)
                         {
-                            Stop();
+                            StopReceivingData();
                         }
                         return TextDataParser.HasNewMessage ? TextDataParser.NewMessage : null;
 
@@ -149,7 +149,7 @@ namespace WebsocketClientLite.PCL.Service
                 HasReceivedCloseFromServer = false;
         }
 
-        internal void Stop()
+        internal void StopReceivingData()
         {
             IsConnected = false;
             _byteStreamSessionSubscription.Dispose();

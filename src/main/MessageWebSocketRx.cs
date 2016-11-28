@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Reactive.Linq;
+using System.Reactive.Subjects;
 using System.Threading;
 using System.Threading.Tasks;
 using HttpMachine;
@@ -16,6 +18,7 @@ namespace WebsocketClientLite.PCL
     public class MessageWebSocketRx : IMessageWebSocketRx
     {
         private readonly ITcpSocketClient _tcpSocketClient = new TcpSocketClient();
+        private readonly ISubject<ConnectionStatus> _connectionStatusObserver = new Subject<ConnectionStatus>();
         private readonly WebSocketConnectService _webSocketConnectService;
         private readonly WebsocketListener _websocketListener;
         private readonly WebsocketSenderService _websocketSenderService;
@@ -25,6 +28,8 @@ namespace WebsocketClientLite.PCL
         private IDisposable _outerCancellationRegistration;
 
         private CancellationTokenSource _innerCancellationTokenSource;
+
+        public IObservable<ConnectionStatus> ObserveConnectionStatus => _connectionStatusObserver.AsObservable();
 
         public IObservable<string> ObserveTextMessagesReceived => _websocketListener.ObserveTextMessageSequence;
 
@@ -36,6 +41,7 @@ namespace WebsocketClientLite.PCL
 
         public MessageWebSocketRx()
         {
+            _connectionStatusObserver.OnNext(ConnectionStatus.Disconnected);
             _webSocketConnectService = new WebSocketConnectService();
             _websocketSenderService = new WebsocketSenderService();
 
@@ -52,6 +58,7 @@ namespace WebsocketClientLite.PCL
             bool ignoreServerCertificateErrors = false,
             TlsProtocolVersion tlsProtocolVersion = TlsProtocolVersion.Tls12)
         {
+            _connectionStatusObserver.OnNext(ConnectionStatus.Connecting);
             _outerCancellationRegistration = outerCancellationTokenSource.Token.Register(() =>
             {
                 _innerCancellationTokenSource.Cancel();
@@ -80,6 +87,7 @@ namespace WebsocketClientLite.PCL
                 }
                 catch (Exception ex)
                 {
+                    _connectionStatusObserver.OnNext(ConnectionStatus.ConnectionFailed);
                     throw ex;
                 }
 
@@ -94,6 +102,7 @@ namespace WebsocketClientLite.PCL
                             SubprotocolAcceptedName = _httpParserDelegate?.HttpRequestReponse?.Headers?["SEC-WEBSOCKET-PROTOCOL"];
                             if (!string.IsNullOrEmpty(SubprotocolAcceptedName))
                             {
+                                _connectionStatusObserver.OnNext(ConnectionStatus.Connected);
                                 IsConnected = true;
                             }
                             else
@@ -108,6 +117,7 @@ namespace WebsocketClientLite.PCL
                     }
                     else
                     {
+                        _connectionStatusObserver.OnNext(ConnectionStatus.Connected);
                         IsConnected = true;
                     }
                     _websocketListener.DataReceiveMode = DataReceiveMode.IsListeningForTextData;
@@ -115,46 +125,9 @@ namespace WebsocketClientLite.PCL
             }
         }
 
-        public async Task SendTextAsync(string message)
-        {
-            if (IsConnected)
-            {
-                await _websocketSenderService.SendTextAsync(_webSocketConnectService.TcpSocketClient, message);
-            }
-            else
-            {
-                IsConnected = false;
-                throw new Exception("Not connected. Client must beconnected to websocket server before sending message");
-            }
-        }
-
-        public async Task SendTextMultiFrameAsync(string message, FrameType frameType)
-        {
-            if (IsConnected)
-            {
-                await _websocketSenderService.SendTextMultiFrameAsync(_webSocketConnectService.TcpSocketClient, message, frameType);
-            }
-            else
-            {
-                IsConnected = false;
-                throw new Exception("Not connected. Client must beconnected to websocket server before sending message");
-            }
-        }
-
-        public async Task SendTextAsync(string[] messageList)
-        {
-            if (IsConnected)
-            {
-                await _websocketSenderService.SendTextAsync(_webSocketConnectService.TcpSocketClient, messageList);
-            }
-            else
-            {
-                IsConnected = false;
-                throw new Exception("Not connected. Client must beconnected to websocket server before sending message");
-            }
-        }
         public async Task CloseAsync()
         {
+            _connectionStatusObserver.OnNext(ConnectionStatus.Disconnecting);
             var dataReceiveDone = WaitForDataAsync();
             var timeoutDataTask = Task.Delay(TimeSpan.FromSeconds(1));
 
@@ -173,12 +146,75 @@ namespace WebsocketClientLite.PCL
             var disconnectresult = await Task.WhenAny(serverDisconnect, timeoutServerCloseTask);
             if (disconnectresult != serverDisconnect)
             {
-                _websocketListener.Stop();
+                _websocketListener.StopReceivingData();
             }
 
+            _connectionStatusObserver.OnNext(ConnectionStatus.Disconnected);
             IsConnected = false;
             _outerCancellationRegistration.Dispose();
         }
+
+        public async Task SendTextAsync(string message)
+        {
+            if (IsConnected)
+            {
+                _connectionStatusObserver.OnNext(ConnectionStatus.Sending);
+                await _websocketSenderService.SendTextAsync(_webSocketConnectService.TcpSocketClient, message);
+                _connectionStatusObserver.OnNext(ConnectionStatus.DeliveryAcknowledged);
+            }
+            else
+            {
+                IsConnected = false;
+                throw new Exception("Not connected. Client must beconnected to websocket server before sending message");
+            }
+        }
+
+        public async Task SendTextMultiFrameAsync(string message, FrameType frameType)
+        {
+            if (IsConnected)
+            {
+                switch (frameType)
+                {
+                    case FrameType.FirstOfMultipleFrames:
+                        _connectionStatusObserver.OnNext(ConnectionStatus.MultiFrameSendingBegin);
+                        break;
+                    case FrameType.Continuation:
+                        _connectionStatusObserver.OnNext(ConnectionStatus.MultiFrameSendingContinue);
+                        break;
+                    case FrameType.LastInMultipleFrames:
+                        _connectionStatusObserver.OnNext(ConnectionStatus.MultiFrameSendingLast);
+                        break;
+                    case FrameType.CloseControlFrame:
+                        break;
+                    default:
+                        break;
+                }
+                
+                await _websocketSenderService.SendTextMultiFrameAsync(_webSocketConnectService.TcpSocketClient, message, frameType);
+                _connectionStatusObserver.OnNext(ConnectionStatus.FrameDeliveryAcknowledged);
+            }
+            else
+            {
+                IsConnected = false;
+                throw new Exception("Not connected. Client must beconnected to websocket server before sending message");
+            }
+        }
+
+        public async Task SendTextAsync(string[] messageList)
+        {
+            if (IsConnected)
+            {
+                _connectionStatusObserver.OnNext(ConnectionStatus.Sending);
+                await _websocketSenderService.SendTextAsync(_webSocketConnectService.TcpSocketClient, messageList);
+                _connectionStatusObserver.OnNext(ConnectionStatus.DeliveryAcknowledged);
+            }
+            else
+            {
+                IsConnected = false;
+                throw new Exception("Not connected. Client must beconnected to websocket server before sending message");
+            }
+        }
+
 
         private async Task WaitForServerToCloseConnectionAsync()
         {

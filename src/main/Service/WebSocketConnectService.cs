@@ -47,59 +47,60 @@ namespace WebsocketClientLite.PCL.Service
                     ignoreServerCertificateErrors,
                     tlsProtocolType);
 
-                websocketListener.DataReceiveMode = DataReceiveMode.IsListeningForHandShake;
-
-                websocketListener.Start(requestHandler, parserHandler, innerCancellationTokenSource);
-
-                await SendConnectHandShakeAsync(uri, secure, origin, subprotocols);
-
-                var waitForHandShakeLoopTask = Task.Run(async () =>
+                if (TcpSocketClient.IsConnected)
                 {
-                    while (!requestHandler.HttpRequestReponse.IsEndOfMessage
-                           && !requestHandler.HttpRequestReponse.IsRequestTimedOut
-                           && !requestHandler.HttpRequestReponse.IsUnableToParseHttp)
+                    websocketListener.DataReceiveMode = DataReceiveMode.IsListeningForHandShake;
+
+                    websocketListener.Start(requestHandler, parserHandler, innerCancellationTokenSource);
+
+                    await SendConnectHandShakeAsync(uri, secure, origin, subprotocols);
+
+                    var waitForHandShakeLoopTask = Task.Run(async () =>
                     {
-                        await Task.Delay(TimeSpan.FromMilliseconds(10));
+                        while (!requestHandler.HttpRequestReponse.IsEndOfMessage
+                               && !requestHandler.HttpRequestReponse.IsRequestTimedOut
+                               && !requestHandler.HttpRequestReponse.IsUnableToParseHttp)
+                        {
+                            await Task.Delay(TimeSpan.FromMilliseconds(10));
+                        }
+                    });
+
+                    var timeout = Task.Delay(TimeSpan.FromSeconds(10));
+
+                    var taskReturn = await Task.WhenAny(waitForHandShakeLoopTask, timeout);
+
+                    if (taskReturn == timeout)
+                    {
+                        throw new TimeoutException("Connection request to server timed out");
                     }
-                });
 
-                var timeout = Task.Delay(TimeSpan.FromSeconds(10));
+                    parserHandler.Execute(default(ArraySegment<byte>));
 
-                var taskReturn = await Task.WhenAny(waitForHandShakeLoopTask, timeout);
+                    if (requestHandler.HttpRequestReponse.IsUnableToParseHttp)
+                    {
+                        throw new Exception("Invalid response from websocket server");
+                    }
 
-                if (taskReturn == timeout)
-                {
-                    throw new TimeoutException("Connection request to server timed out");
+                    if (requestHandler.HttpRequestReponse.IsRequestTimedOut)
+                    {
+                        throw new TimeoutException("Connection request to server timed out");
+                    }
+
+                    if (requestHandler.HttpRequestReponse.StatusCode != 101)
+                    {
+                        throw new Exception($"Unable to connect to websocket Server. " +
+                                            $"Error code: {requestHandler.HttpRequestReponse.StatusCode}, " +
+                                            $"Error reason: {requestHandler.HttpRequestReponse.ResponseReason}");
+                    }
+
+                    System.Diagnostics.Debug.WriteLine("HandShake completed");
                 }
-
-                parserHandler.Execute(default(ArraySegment<byte>));
-
-                if (requestHandler.HttpRequestReponse.IsUnableToParseHttp)
-                {
-                    throw new Exception("Invalid response from websocket server");
-                }
-
-                if (requestHandler.HttpRequestReponse.IsRequestTimedOut)
-                {
-                    throw new TimeoutException("Connection request to server timed out");
-                }
-
-                if (requestHandler.HttpRequestReponse.StatusCode != 101)
-                {
-                    throw new Exception($"Unable to connect to websocket Server. " +
-                                        $"Error code: {requestHandler.HttpRequestReponse.StatusCode}, " +
-                                        $"Error reason: {requestHandler.HttpRequestReponse.ResponseReason}");
-                }
-
-                System.Diagnostics.Debug.WriteLine("HandShake completed");
             }
             catch (Exception ex)
             {
                 throw ex;
             }
-            finally
-            {
-            }
+
             parserHandler.Execute(default(ArraySegment<byte>));
         }
 

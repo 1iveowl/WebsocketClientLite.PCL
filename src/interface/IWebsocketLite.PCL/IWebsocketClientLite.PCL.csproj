@@ -35,6 +35,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="ConnectionStatus.cs" />
     <Compile Include="FrameType.cs" />
     <Compile Include="IMessageWebSocketRx.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
