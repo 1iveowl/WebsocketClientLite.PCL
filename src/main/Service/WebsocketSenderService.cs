@@ -83,7 +83,7 @@ namespace WebsocketClientLite.PCL.Service
             }
         }
 
-        internal async Task SendCloseHandshake(ITcpSocketClient tcpSocketClient, StatusCodes statusCode)
+        internal async Task SendCloseHandshakeAsync(ITcpSocketClient tcpSocketClient, StatusCodes statusCode)
         {
             var closeFrameBodyCode = BitConverter.GetBytes((ushort)statusCode);
             var reason = Encoding.UTF8.GetBytes(statusCode.ToString());

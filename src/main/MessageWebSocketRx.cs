@@ -163,7 +163,7 @@ namespace WebsocketClientLite.PCL
 
             if (_tcpSocketClient.IsConnected)
             {
-                await _websocketSenderService.SendCloseHandshake(_webSocketConnectService.TcpSocketClient, StatusCodes.GoingAway);
+                await _websocketSenderService.SendCloseHandshakeAsync(_webSocketConnectService.TcpSocketClient, StatusCodes.GoingAway);
             }
 
             var serverDisconnect = WaitForServerToCloseConnectionAsync();

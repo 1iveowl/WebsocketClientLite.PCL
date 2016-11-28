@@ -14,13 +14,13 @@ namespace WebsocketLite.Console.Test
 
         static void Main(string[] args)
         {
-            StartWebSocket();
+            StartWebSocketAsync();
             System.Console.WriteLine("Waiting...");
             System.Console.ReadKey();
             _subscribeToMessagesReceived.Dispose();
         }
 
-        static async void StartWebSocket()
+        static async void StartWebSocketAsync()
         {
             var websocketClient = new MessageWebSocketRx();
 
@@ -41,7 +41,7 @@ namespace WebsocketLite.Console.Test
             cts.Token.Register(() =>
             {
                 System.Console.Write("Aborted");
-                _subscribeToMessagesReceived.Dispose();
+                //_subscribeToMessagesReceived.Dispose();
             });
 
             // ### Optional Subprotocols ###
