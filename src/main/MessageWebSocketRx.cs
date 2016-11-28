@@ -217,5 +217,9 @@ namespace WebsocketClientLite.PCL
             return secure;
         }
 
+        public void Dispose()
+        {
+            _outerCancellationRegistration?.Dispose();
+        }
     }
 }

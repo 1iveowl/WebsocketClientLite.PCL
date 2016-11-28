@@ -9,7 +9,7 @@ using ISocketLite.PCL.Model;
 
 namespace IWebsocketClientLite.PCL
 {
-    public interface IMessageWebSocketRx
+    public interface IMessageWebSocketRx : IDisposable
     {
         IObservable<string> ObserveTextMessagesReceived { get; }
 
