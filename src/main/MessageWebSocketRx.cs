@@ -155,32 +155,45 @@ namespace WebsocketClientLite.PCL
         }
         public async Task CloseAsync()
         {
-            
-            await Task.Delay(TimeSpan.FromMilliseconds(250));
+            var dataReceiveDone = WaitForDataAsync();
+            var timeoutDataTask = Task.Delay(TimeSpan.FromSeconds(1));
+
+            // Wait for data or timeout after 1 second
+            var dataReceivedDone = await Task.WhenAny(dataReceiveDone, timeoutDataTask);
 
             if (_tcpSocketClient.IsConnected)
             {
                 await _websocketSenderService.SendCloseHandshake(_webSocketConnectService.TcpSocketClient, StatusCodes.GoingAway);
             }
-            // Give server a chance to respond to close
-            await Task.Delay(TimeSpan.FromMilliseconds(250));
 
+            var serverDisconnect = WaitForServerToCloseConnectionAsync();
+            var timeoutServerCloseTask = Task.Delay(TimeSpan.FromSeconds(2));
+
+            // Wait for server to close the connection or force a close.
+            var disconnectresult = await Task.WhenAny(serverDisconnect, timeoutServerCloseTask);
+            if (disconnectresult != serverDisconnect)
+            {
+                _websocketListener.Stop();
+            }
+
+            IsConnected = false;
             _outerCancellationRegistration.Dispose();
+        }
 
-            _websocketListener.Stop();
+        private async Task WaitForServerToCloseConnectionAsync()
+        {
+            while (!_websocketListener.HasReceivedCloseFromServer)
+            {
+                await Task.Delay(TimeSpan.FromMilliseconds(50));
+            }
+        }
 
-            // If Server does not close the connection, close it after 2 sec.
-            //TODO There most be a more elegant way to do this?
-            //Task.Run(async () =>
-            //{
-            //    await Task.Delay(TimeSpan.FromSeconds(2));
-
-            //    if (!_websocketListener.HasReceivedCloseFromServer)
-            //    {
-            //        IsConnected = false;
-            //        _websocketListener.Stop();
-            //    }
-            //}).ConfigureAwait(false);
+        private async Task WaitForDataAsync()
+        {
+            while (!_websocketListener.TextDataParser.IsCloseRecieved)
+            {
+                await Task.Delay(TimeSpan.FromMilliseconds(50));
+            }
         }
 
         private bool IsSecureWebsocket(Uri uri)

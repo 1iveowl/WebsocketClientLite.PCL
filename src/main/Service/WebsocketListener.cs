@@ -17,8 +17,8 @@ namespace WebsocketClientLite.PCL.Service
         private readonly ISubject<string> _textMessageSequence = new Subject<string>();
         private readonly HandshakeParser _handshakeParser = new HandshakeParser();
         private readonly WebSocketConnectService _webSocketConnectService;
-        private readonly TextDataParser _textDataParser;
-
+        internal readonly TextDataParser TextDataParser;
+        
         private ITcpSocketClient _tcpSocketClient;
         private CancellationTokenSource _innerCancellationTokenSource;
         private HttpParserDelegate _parserDelgate;
@@ -28,7 +28,7 @@ namespace WebsocketClientLite.PCL.Service
         private IObservable<string> ObserveTextMessageSession => ByteStreamHandlerObservable.Select(
             b =>
             {
-                if (_textDataParser.IsCloseRecieved) return string.Empty;
+                if (TextDataParser.IsCloseRecieved) return string.Empty;
 
                 switch (DataReceiveMode)
                 {
@@ -57,13 +57,13 @@ namespace WebsocketClientLite.PCL.Service
                         }
                     case DataReceiveMode.IsListeningForTextData:
 
-                        _textDataParser.Parse(_tcpSocketClient, b[0]);
+                        TextDataParser.Parse(_tcpSocketClient, b[0]);
 
-                        if (_textDataParser.IsCloseRecieved)
+                        if (TextDataParser.IsCloseRecieved)
                         {
                             Stop();
                         }
-                        return _textDataParser.HasNewMessage ? _textDataParser.NewMessage : null;
+                        return TextDataParser.HasNewMessage ? TextDataParser.NewMessage : null;
 
                     default:
                         return null;
@@ -86,12 +86,12 @@ namespace WebsocketClientLite.PCL.Service
             WebSocketConnectService webSocketConnectService)
         {
             _webSocketConnectService = webSocketConnectService;
-            _textDataParser = new TextDataParser();
+            TextDataParser = new TextDataParser();
         }
 
         private async Task<byte[]> ReadOneByteAtTheTimeAsync()
         {
-            if (_textDataParser.IsCloseRecieved) return null;
+            if (TextDataParser.IsCloseRecieved) return null;
 
             var oneByteArray = new byte[1];
 
@@ -127,7 +127,7 @@ namespace WebsocketClientLite.PCL.Service
         {
             _parserHandler = parserHandler;
             _parserDelgate = requestHandler;
-            _textDataParser.Reinitialize();
+            TextDataParser.Reinitialize();
             _innerCancellationTokenSource = innerCancellationTokenSource;
 
             _tcpSocketClient = _webSocketConnectService.TcpSocketClient;
