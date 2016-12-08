@@ -48,20 +48,20 @@ namespace WebsocketLite.Console.Test
                 List<string> subprotocols = null; //new List<string> {"soap", "json"};
 
 
-                await websocketClient.ConnectAsync(
-                    new Uri("ws://192.168.0.7:3000/socket.io/?EIO=2&transport=websocket"),
-                    //new Uri("wss://echo.websocket.org:443"),
-                    //cts,
-                    origin: null,
-                    ignoreServerCertificateErrors: true,
-                    subprotocols: subprotocols,
-                    tlsProtocolVersion: TlsProtocolVersion.Tls12);
+                //await websocketClient.ConnectAsync(
+                //    new Uri("ws://192.168.0.7:3000/socket.io/?EIO=2&transport=websocket"),
+                //    //new Uri("wss://echo.websocket.org:443"),
+                //    //cts,
+                //    origin: null,
+                //    ignoreServerCertificateErrors: true,
+                //    subprotocols: subprotocols,
+                //    tlsProtocolVersion: TlsProtocolVersion.Tls12);
 
-                //System.Console.WriteLine("Sending: Test Single Frame");
-                await websocketClient.SendTextAsync("Test rpi3");
+                ////System.Console.WriteLine("Sending: Test Single Frame");
+                //await websocketClient.SendTextAsync("Test rpi3");
 
 
-                await websocketClient.CloseAsync();
+                //await websocketClient.CloseAsync();
 
 
                 await websocketClient.ConnectAsync(
@@ -92,17 +92,17 @@ namespace WebsocketLite.Console.Test
 
                 await websocketClient.CloseAsync();
 
-                await websocketClient.ConnectAsync(
-                    new Uri("ws://192.168.0.7:3000/socket.io/?EIO=2&transport=websocket"),
-                    //new Uri("wss://echo.websocket.org:443"),
-                    //cts,
-                    ignoreServerCertificateErrors: true,
-                    subprotocols: subprotocols,
-                    tlsProtocolVersion: TlsProtocolVersion.Tls12);
+                //await websocketClient.ConnectAsync(
+                //    new Uri("ws://192.168.0.7:3000/socket.io/?EIO=2&transport=websocket"),
+                //    //new Uri("wss://echo.websocket.org:443"),
+                //    //cts,
+                //    ignoreServerCertificateErrors: true,
+                //    subprotocols: subprotocols,
+                //    tlsProtocolVersion: TlsProtocolVersion.Tls12);
 
-                await websocketClient.SendTextAsync("Test localhost");
+                //await websocketClient.SendTextAsync("Test localhost");
 
-                await websocketClient.CloseAsync();
+                //await websocketClient.CloseAsync();
             }
         }
     }
