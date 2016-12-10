@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Reactive.Concurrency;
-using System.Reactive.Subjects;
 using System.Reactive.Linq;
+using System.Reactive.Subjects;
 using System.Threading;
 using System.Threading.Tasks;
 using HttpMachine;
@@ -20,68 +18,54 @@ namespace WebsocketClientLite.PCL
     public class MessageWebSocketRx : IMessageWebSocketRx
     {
         private readonly ITcpSocketClient _tcpSocketClient = new TcpSocketClient();
+        private readonly ISubject<ConnectionStatus> _connectionStatusObserver = new Subject<ConnectionStatus>();
         private readonly WebSocketConnectService _webSocketConnectService;
         private readonly WebsocketListener _websocketListener;
         private readonly WebsocketSenderService _websocketSenderService;
 
         private HttpParserDelegate _httpParserDelegate;
         private HttpCombinedParser _httpParserHandler;
+        //private IDisposable _outerCancellationRegistration;
 
-        private CancellationTokenSource _cancellationTokenSource;
+        private CancellationTokenSource _innerCancellationTokenSource;
 
-        private IConnectableObservable<byte[]> ObservableWebsocketData => Observable.While(
-                    () => !_cancellationTokenSource.IsCancellationRequested,
-                    Observable.FromAsync(ReadOneByteAtTheTimeAsync))
-            .ObserveOn(Scheduler.Default)
-            .Publish();
+        public IObservable<ConnectionStatus> ObserveConnectionStatus => _connectionStatusObserver.AsObservable();
 
         public IObservable<string> ObserveTextMessagesReceived => _websocketListener.ObserveTextMessageSequence;
+
         public bool IsConnected { get; private set; }
         public bool SubprotocolAccepted { get; private set; }
 
-        public string SubprotocolAcceptedName { get; private set; } 
+        public string SubprotocolAcceptedName { get; private set; }
 
-        private async Task<byte[]> ReadOneByteAtTheTimeAsync()
-        {
-            var oneByteArray = new byte[1];
-
-            var bytesRead = await _tcpSocketClient.ReadStream.ReadAsync(oneByteArray, 0, 1);
-
-            Debug.WriteLine(oneByteArray[0].ToString());
-
-            if (bytesRead < oneByteArray.Length)
-            {
-                IsConnected = false;
-                _cancellationTokenSource.Cancel();
-                throw new Exception("Web socket connection aborted unexpectantly. Check connection and socket security version/TLS version)");
-            }
-            return oneByteArray;
-        }
 
         public MessageWebSocketRx()
         {
-            _webSocketConnectService = new WebSocketConnectService(_tcpSocketClient);
-            _websocketSenderService = new WebsocketSenderService(_tcpSocketClient);
+            _connectionStatusObserver.OnNext(ConnectionStatus.Disconnected);
+            _webSocketConnectService = new WebSocketConnectService();
+            _websocketSenderService = new WebsocketSenderService();
 
             _websocketListener = new WebsocketListener(
-                _tcpSocketClient,
-                ObservableWebsocketData,
+                //_tcpSocketClient,
                 _webSocketConnectService);
-        }
-
-        public void SetRequestHeader(string headerName, string headerValue)
-        {
-            throw new NotImplementedException();
         }
 
         public async Task ConnectAsync(
             Uri uri, 
-            CancellationTokenSource cts, 
+            //CancellationTokenSource outerCancellationTokenSource,
+            string origin = null,
             IEnumerable<string> subprotocols = null,
             bool ignoreServerCertificateErrors = false,
             TlsProtocolVersion tlsProtocolVersion = TlsProtocolVersion.Tls12)
         {
-            _cancellationTokenSource = cts;
+            _connectionStatusObserver.OnNext(ConnectionStatus.Connecting);
+            //_outerCancellationRegistration = outerCancellationTokenSource.Token.Register(() =>
+            //{
+            //    _innerCancellationTokenSource.Cancel();
+            //});
+
+            _innerCancellationTokenSource = new CancellationTokenSource();
+
             using (_httpParserDelegate = new HttpParserDelegate())
             using (_httpParserHandler = new HttpCombinedParser(_httpParserDelegate))
             {
@@ -94,14 +78,16 @@ namespace WebsocketClientLite.PCL
                     isSecure,
                     _httpParserDelegate,
                     _httpParserHandler,
-                    _cancellationTokenSource,
+                    _innerCancellationTokenSource,
                     _websocketListener,
+                    origin,
                     subprotocols,
                     ignoreServerCertificateErrors,
                     tlsProtocolVersion);
                 }
                 catch (Exception ex)
                 {
+                    _connectionStatusObserver.OnNext(ConnectionStatus.ConnectionFailed);
                     throw ex;
                 }
 
@@ -116,6 +102,7 @@ namespace WebsocketClientLite.PCL
                             SubprotocolAcceptedName = _httpParserDelegate?.HttpRequestReponse?.Headers?["SEC-WEBSOCKET-PROTOCOL"];
                             if (!string.IsNullOrEmpty(SubprotocolAcceptedName))
                             {
+                                _connectionStatusObserver.OnNext(ConnectionStatus.Connected);
                                 IsConnected = true;
                             }
                             else
@@ -130,19 +117,50 @@ namespace WebsocketClientLite.PCL
                     }
                     else
                     {
+                        _connectionStatusObserver.OnNext(ConnectionStatus.Connected);
                         IsConnected = true;
                     }
-
                     _websocketListener.DataReceiveMode = DataReceiveMode.IsListeningForTextData;
                 }
             }
+        }
+
+        public async Task CloseAsync()
+        {
+            _connectionStatusObserver.OnNext(ConnectionStatus.Disconnecting);
+            var dataReceiveDone = WaitForDataAsync();
+            var timeoutDataTask = Task.Delay(TimeSpan.FromSeconds(1));
+
+            // Wait for data or timeout after 1 second
+            var dataReceivedDone = await Task.WhenAny(dataReceiveDone, timeoutDataTask);
+
+            if (_tcpSocketClient.IsConnected)
+            {
+                await _websocketSenderService.SendCloseHandshakeAsync(_webSocketConnectService.TcpSocketClient, StatusCodes.GoingAway);
+            }
+
+            var serverDisconnect = WaitForServerToCloseConnectionAsync();
+            var timeoutServerCloseTask = Task.Delay(TimeSpan.FromSeconds(2));
+
+            // Wait for server to close the connection or force a close.
+            var disconnectresult = await Task.WhenAny(serverDisconnect, timeoutServerCloseTask);
+            if (disconnectresult != serverDisconnect)
+            {
+                _websocketListener.StopReceivingData();
+            }
+
+            _connectionStatusObserver.OnNext(ConnectionStatus.Disconnected);
+            IsConnected = false;
+            //_outerCancellationRegistration.Dispose();
         }
 
         public async Task SendTextAsync(string message)
         {
             if (IsConnected)
             {
-                await _websocketSenderService.SendTextAsync(message);
+                _connectionStatusObserver.OnNext(ConnectionStatus.Sending);
+                await _websocketSenderService.SendTextAsync(_webSocketConnectService.TcpSocketClient, message);
+                _connectionStatusObserver.OnNext(ConnectionStatus.DeliveryAcknowledged);
             }
             else
             {
@@ -155,7 +173,25 @@ namespace WebsocketClientLite.PCL
         {
             if (IsConnected)
             {
-                await _websocketSenderService.SendTextMultiFrameAsync(message, frameType);
+                switch (frameType)
+                {
+                    case FrameType.FirstOfMultipleFrames:
+                        _connectionStatusObserver.OnNext(ConnectionStatus.MultiFrameSendingBegin);
+                        break;
+                    case FrameType.Continuation:
+                        _connectionStatusObserver.OnNext(ConnectionStatus.MultiFrameSendingContinue);
+                        break;
+                    case FrameType.LastInMultipleFrames:
+                        _connectionStatusObserver.OnNext(ConnectionStatus.MultiFrameSendingLast);
+                        break;
+                    case FrameType.CloseControlFrame:
+                        break;
+                    default:
+                        break;
+                }
+                
+                await _websocketSenderService.SendTextMultiFrameAsync(_webSocketConnectService.TcpSocketClient, message, frameType);
+                _connectionStatusObserver.OnNext(ConnectionStatus.FrameDeliveryAcknowledged);
             }
             else
             {
@@ -168,7 +204,9 @@ namespace WebsocketClientLite.PCL
         {
             if (IsConnected)
             {
-                await _websocketSenderService.SendTextAsync(messageList);
+                _connectionStatusObserver.OnNext(ConnectionStatus.Sending);
+                await _websocketSenderService.SendTextAsync(_webSocketConnectService.TcpSocketClient, messageList);
+                _connectionStatusObserver.OnNext(ConnectionStatus.DeliveryAcknowledged);
             }
             else
             {
@@ -178,22 +216,20 @@ namespace WebsocketClientLite.PCL
         }
 
 
-        public async Task CloseAsync()
+        private async Task WaitForServerToCloseConnectionAsync()
         {
-            await _websocketSenderService.SendCloseHandshake(StatusCodes.GoingAway);
-            
-            // If Server does not close the connection, close it after 2 sec.
-            //TODO There most be a more elegant way to do this?
-            Task.Run(async () =>
+            while (!_websocketListener.HasReceivedCloseFromServer)
             {
-                await Task.Delay(TimeSpan.FromSeconds(2));
+                await Task.Delay(TimeSpan.FromMilliseconds(50));
+            }
+        }
 
-                if (!_websocketListener.HasReceivedCloseFromServer)
-                {
-                    IsConnected = false;
-                    _websocketListener.Stop();
-                }
-            }).ConfigureAwait(false);
+        private async Task WaitForDataAsync()
+        {
+            while (!_websocketListener.TextDataParser.IsCloseRecieved)
+            {
+                await Task.Delay(TimeSpan.FromMilliseconds(50));
+            }
         }
 
         private bool IsSecureWebsocket(Uri uri)
@@ -217,5 +253,9 @@ namespace WebsocketClientLite.PCL
             return secure;
         }
 
+        public void Dispose()
+        {
+            //_outerCancellationRegistration?.Dispose();
+        }
     }
 }

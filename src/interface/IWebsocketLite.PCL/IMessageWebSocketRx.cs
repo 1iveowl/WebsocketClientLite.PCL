@@ -9,9 +9,11 @@ using ISocketLite.PCL.Model;
 
 namespace IWebsocketClientLite.PCL
 {
-    public interface IMessageWebSocketRx
+    public interface IMessageWebSocketRx : IDisposable
     {
         IObservable<string> ObserveTextMessagesReceived { get; }
+
+        IObservable<ConnectionStatus> ObserveConnectionStatus { get; }
 
         bool IsConnected { get; }
 
@@ -19,11 +21,12 @@ namespace IWebsocketClientLite.PCL
 
         string SubprotocolAcceptedName { get; }
 
-        void SetRequestHeader(string headerName, string headerValue);
+        //void SetRequestHeader(string headerName, string headerValue);
 
         Task ConnectAsync(
             Uri uri, 
-            CancellationTokenSource cts, 
+            //CancellationTokenSource outerCancellationTokenSource,
+            string origin = null,
             IEnumerable<string> subProtocols = null, 
             bool ignoreServerCertificateErrors = false, 
             TlsProtocolVersion tlsProtocolType = TlsProtocolVersion.Tls12);

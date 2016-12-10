@@ -9,8 +9,7 @@ using static WebsocketClientLite.PCL.Helper.WebsocketMasking;
 
 namespace WebsocketClientLite.PCL.Parser
 {
-
-    internal class TextDataParser
+    internal class TextDataParser : IDisposable
     {
         private readonly ControlFrameHandler _controlFrameHandler;
 
@@ -51,9 +50,9 @@ namespace WebsocketClientLite.PCL.Parser
 
         internal bool HasNewMessage { get; private set; }
 
-        internal TextDataParser(ITcpSocketClient client)
+        internal TextDataParser()
         {
-            _controlFrameHandler = new ControlFrameHandler(client);
+            _controlFrameHandler = new ControlFrameHandler();
 
         }
 
@@ -62,11 +61,11 @@ namespace WebsocketClientLite.PCL.Parser
             IsCloseRecieved = false;
         }
 
-        internal void Parse(byte data)
+        internal void Parse(ITcpSocketClient tcpSocketClient, byte data)
         {
             if (!_isFrameBeingReceived)
             {
-                if (IsControlFrame(data))
+                if (IsControlFrame(tcpSocketClient, data))
                 {
                     return;
                 }
@@ -93,9 +92,9 @@ namespace WebsocketClientLite.PCL.Parser
             }
         }
 
-        private bool IsControlFrame(byte data)
+        private bool IsControlFrame(ITcpSocketClient tcpSocketClient, byte data)
         {
-            var controlFrame = _controlFrameHandler.CheckForPingOrCloseControlFrame(data);
+            var controlFrame = _controlFrameHandler.CheckForPingOrCloseControlFrame(tcpSocketClient, data);
 
             switch (controlFrame)
             {
@@ -328,10 +327,6 @@ namespace WebsocketClientLite.PCL.Parser
                         _frameType = FrameType.Continuation;
                         InitFrameMessage();
                     }
-
-                    break;
-
-                default:
                     break;
             }
         }
@@ -341,6 +336,10 @@ namespace WebsocketClientLite.PCL.Parser
             _isFrameBeingReceived = true;
             _isFirstPayloadByte = true;
             _isNextBytePayloadLengthByte = true;
+        }
+
+        public void Dispose()
+        {
         }
     }
 }

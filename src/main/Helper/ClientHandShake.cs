@@ -8,7 +8,7 @@ namespace WebsocketClientLite.PCL.Helper
 {
     internal static class ClientHandShake
     {
-        internal static byte[] Compose(Uri uri, bool isSecure, IEnumerable<string> subprotocols = null)
+        internal static byte[] Compose(Uri uri, bool isSecure, string origin = null, IEnumerable<string> subprotocols = null)
         {
             var sb = new StringBuilder();
 
@@ -16,6 +16,12 @@ namespace WebsocketClientLite.PCL.Helper
             sb.Append($"Host: {uri.Host}\r\n");
             sb.Append($"Upgrade: websocket\r\n");
             sb.Append($"Connection: Upgrade\r\n");
+
+            if (!string.IsNullOrEmpty(origin))
+            {
+                sb.Append($"Origin: {origin}\r\n");
+            }
+
             sb.Append($"Sec-WebSocket-Key: {GenerateRandomWebSocketKey()}\r\n");
 
             if (subprotocols == null)

@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using HttpMachine;
 using ISocketLite.PCL.Interface;
 using ISocketLite.PCL.Model;
+using SocketLite.Services;
 using WebsocketClientLite.PCL.Helper;
 using WebsocketClientLite.PCL.Model;
 using WebsocketClientLite.PCL.Parser;
@@ -13,12 +14,11 @@ namespace WebsocketClientLite.PCL.Service
 {
     internal class WebSocketConnectService
     {
-        private readonly ITcpSocketClient _client;
-        private CancellationTokenSource _cancellationTokenSource;
+        internal ITcpSocketClient TcpSocketClient;
+        private CancellationTokenSource _innerCancellationTokenSource;
 
-        internal WebSocketConnectService(ITcpSocketClient client)
+        internal WebSocketConnectService()
         {
-            _client = client;
         }
 
         internal async Task ConnectAsync(
@@ -26,94 +26,97 @@ namespace WebsocketClientLite.PCL.Service
             bool secure,
             HttpParserDelegate requestHandler,
             HttpCombinedParser parserHandler,
-            CancellationTokenSource cancellationTokenSource,
+            CancellationTokenSource innerCancellationTokenSource,
             WebsocketListener websocketListener,
+            string origin = null,
             IEnumerable<string> subprotocols = null,
             bool ignoreServerCertificateErrors = false,
             TlsProtocolVersion tlsProtocolType = TlsProtocolVersion.Tls12)
         {
+            TcpSocketClient = new TcpSocketClient();
+
             try
             {
-                _cancellationTokenSource = cancellationTokenSource;
+                _innerCancellationTokenSource = innerCancellationTokenSource;
 
-                await _client.ConnectAsync(
+                await TcpSocketClient.ConnectAsync(
                     uri.Host,
                     uri.Port.ToString(),
                     secure,
-                    cancellationTokenSource.Token,
+                    innerCancellationTokenSource.Token,
                     ignoreServerCertificateErrors,
                     tlsProtocolType);
 
-                websocketListener.DataReceiveMode = DataReceiveMode.IsListeningForHandShake;
-
-                websocketListener.Start(requestHandler, parserHandler);
-
-                await SendConnectHandShakeAsync(uri, secure, subprotocols);
-
-                var waitForHandShakeLoopTask = Task.Run(async () =>
+                if (TcpSocketClient.IsConnected)
                 {
-                    while (!requestHandler.HttpRequestReponse.IsEndOfMessage
-                           && !requestHandler.HttpRequestReponse.IsRequestTimedOut
-                           && !requestHandler.HttpRequestReponse.IsUnableToParseHttp)
+                    websocketListener.DataReceiveMode = DataReceiveMode.IsListeningForHandShake;
+
+                    websocketListener.Start(requestHandler, parserHandler, innerCancellationTokenSource);
+
+                    await SendConnectHandShakeAsync(uri, secure, origin, subprotocols);
+
+                    var waitForHandShakeLoopTask = Task.Run(async () =>
                     {
-                        await Task.Delay(TimeSpan.FromMilliseconds(10));
+                        while (!requestHandler.HttpRequestReponse.IsEndOfMessage
+                               && !requestHandler.HttpRequestReponse.IsRequestTimedOut
+                               && !requestHandler.HttpRequestReponse.IsUnableToParseHttp)
+                        {
+                            await Task.Delay(TimeSpan.FromMilliseconds(10));
+                        }
+                    });
+
+                    var timeout = Task.Delay(TimeSpan.FromSeconds(10));
+
+                    var taskReturn = await Task.WhenAny(waitForHandShakeLoopTask, timeout);
+
+                    if (taskReturn == timeout)
+                    {
+                        throw new TimeoutException("Connection request to server timed out");
                     }
-                });
 
-                var timeout = Task.Delay(TimeSpan.FromSeconds(10));
+                    parserHandler.Execute(default(ArraySegment<byte>));
 
-                var taskReturn = await Task.WhenAny(waitForHandShakeLoopTask, timeout);
+                    if (requestHandler.HttpRequestReponse.IsUnableToParseHttp)
+                    {
+                        throw new Exception("Invalid response from websocket server");
+                    }
 
-                if (taskReturn == timeout)
-                {
-                    throw new TimeoutException("Connection request to server timed out");
+                    if (requestHandler.HttpRequestReponse.IsRequestTimedOut)
+                    {
+                        throw new TimeoutException("Connection request to server timed out");
+                    }
+
+                    if (requestHandler.HttpRequestReponse.StatusCode != 101)
+                    {
+                        throw new Exception($"Unable to connect to websocket Server. " +
+                                            $"Error code: {requestHandler.HttpRequestReponse.StatusCode}, " +
+                                            $"Error reason: {requestHandler.HttpRequestReponse.ResponseReason}");
+                    }
+
+                    System.Diagnostics.Debug.WriteLine("HandShake completed");
                 }
-
-                parserHandler.Execute(default(ArraySegment<byte>));
-
-                if (requestHandler.HttpRequestReponse.IsUnableToParseHttp)
-                {
-                    throw new Exception("Invalid response from websocket server");
-                }
-
-                if (requestHandler.HttpRequestReponse.IsRequestTimedOut)
-                {
-                    throw new TimeoutException("Connection request to server timed out");
-                }
-
-                if (requestHandler.HttpRequestReponse.StatusCode != 101)
-                {
-                    throw new Exception($"Unable to connect to websocket Server. " +
-                                        $"Error code: {requestHandler.HttpRequestReponse.StatusCode}, " +
-                                        $"Error reason: {requestHandler.HttpRequestReponse.ResponseReason}");
-                }
-
-                System.Diagnostics.Debug.WriteLine("HandShake completed");
             }
             catch (Exception ex)
             {
                 throw ex;
             }
-            finally
-            {
-            }
+
             parserHandler.Execute(default(ArraySegment<byte>));
         }
 
         internal void Disconnect()
         {
-            _cancellationTokenSource.Cancel();
-            _client.Disconnect();
-
+            _innerCancellationTokenSource.Cancel();
+            TcpSocketClient.Disconnect();
         }
 
-        private async Task SendConnectHandShakeAsync(Uri uri, bool secure, IEnumerable<string> subprotocols = null)
+        private async Task SendConnectHandShakeAsync(Uri uri, bool secure, string origin = null, IEnumerable<string> subprotocols = null)
         {
-            var handShake = ClientHandShake.Compose(uri, secure, subprotocols);
+            var handShake = ClientHandShake.Compose(uri, secure, origin, subprotocols);
             try
             {
-                await _client.WriteStream.WriteAsync(handShake, 0, handShake.Length);
-                await _client.WriteStream.FlushAsync();
+                await TcpSocketClient.WriteStream.WriteAsync(handShake, 0, handShake.Length);
+                await TcpSocketClient.WriteStream.FlushAsync();
             }
             catch (Exception ex)
             {
