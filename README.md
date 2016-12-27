@@ -29,7 +29,7 @@ using IWebsocketClientLite.PCL;
 using WebsocketClientLite.PCL;
 ```
 
-#### Eaxmple class:
+#### Example WebSocket Client:
 ```csharp
 class Program
 {
@@ -57,17 +57,7 @@ class Program
 
             });
 
-		// 2 Create a Cancellation token and register what will happen if the connection is cancelled.
-		var cts = new CancellationTokenSource();
-
-        cts.Token.Register(() =>
-        {
-            System.Console.Write("Aborted. Connection cancelled by server or server became unavailable.");
-            _subscribeToMessagesReceived.Dispose();
-        });
-
-		
-		// 2a. ### Optional Subprotocols ###
+		// 2. ### Optional Subprotocols ###
         // The echo.websocket.org does not support any sub-protocols and hence this test does not add any.
         // Adding a sub-protocol that the server does not support causes the client to close down the connection.
         List<string> subprotocols = null; //new List<string> {"soap", "json"};
@@ -77,7 +67,6 @@ class Program
 
 		await websocketClient.ConnectAsync(
                 new Uri("wss://echo.websocket.org:443"),	// use the publicly available test server: http://www.websocket.org/echo.html
-                cts,										// pass the cancellation token
                 ignoreServerCertificateErrors: false,		// you can ignore server certificate errors. Good for test, but be careful! 
                 subprotocols:subprotocols,	
                 tlsProtocolVersion:TlsProtocolVersion.Tls12);
@@ -89,7 +78,6 @@ class Program
         var strArray = new[] {"Test ", "multiple ", "frames"};
 
         await websocketClient.SendTextAsync(strArray);
-
 
 		// 6. or you can send frames one by one. Start with FrameType.FirstOfMultipleFrames
         await websocketClient.SendTextMultiFrameAsync("Start ", FrameType.FirstOfMultipleFrames);
@@ -111,6 +99,16 @@ class Program
 }
 ```
 
+#### Monitoring Status
+Monitoring connection status is easy: 
+```csharp
+var websocketLoggerSubscriber = websocketClient.ObserveConnectionStatus.Subscribe(
+    status =>
+    {
+        // Insert code here for logging or handling connection status
+        System.Console.WriteLine(status.ToString());
+    });
+```
 
 ####References:
 The following documentation was utilized when writting this library:
