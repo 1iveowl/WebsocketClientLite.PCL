@@ -9,7 +9,7 @@
             "program": "${workspaceRoot}/bin/Debug/netcoreapp1.1/NETcore.Console.Test.VSCode.dll",
             "args": [],
             "cwd": "${workspaceRoot}",
-            "externalConsole": false,
+            "externalConsole": true,
             "stopAtEntry": false,
             "internalConsoleOptions": "openOnSessionStart"
         },
