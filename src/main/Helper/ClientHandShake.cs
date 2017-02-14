@@ -8,7 +8,12 @@ namespace WebsocketClientLite.PCL.Helper
 {
     internal static class ClientHandShake
     {
-        internal static byte[] Compose(Uri uri, bool isSecure, string origin = null, IEnumerable<string> subprotocols = null)
+        internal static byte[] Compose(
+            Uri uri, 
+            bool isSecure, 
+            string origin = null, 
+            IDictionary<string, string> headers = null,
+            IEnumerable<string> subprotocols = null)
         {
             var sb = new StringBuilder();
 
@@ -17,6 +22,14 @@ namespace WebsocketClientLite.PCL.Helper
             sb.Append($"Upgrade: websocket\r\n");
             sb.Append($"Connection: Upgrade\r\n");
 
+            if (headers != null)
+            {
+                foreach (var header in headers)
+                {
+                    sb.Append($"{header.Key}: {header.Value}\r\n");
+                }
+            }
+
             if (!string.IsNullOrEmpty(origin))
             {
                 sb.Append($"Origin: {origin}\r\n");
@@ -24,19 +37,12 @@ namespace WebsocketClientLite.PCL.Helper
 
             sb.Append($"Sec-WebSocket-Key: {GenerateRandomWebSocketKey()}\r\n");
 
-            if (subprotocols == null)
+            if (subprotocols != null)
             {
-                sb.Append($"Sec-WebSocket-Protocol: chat, superchat\r\n");
-            }
-            else
-            {
-                var subprotocolHeader = "Sec-WebSocket-Protocol: chat, superchat";
+                var subprotocol = subprotocols
+                    .Aggregate("Sec-WebSocket-Protocol: ", (current, protocol) => $"{current}, {protocol}");
 
-                foreach (var protocol in subprotocols)
-                {
-                    subprotocolHeader = $"{subprotocolHeader}, {protocol}";
-                }
-                sb.Append($"{subprotocolHeader}\r\n");
+                sb.Append($"{subprotocol}\r\n");
             }
             
             sb.Append($"Sec-WebSocket-Version: 13\r\n");

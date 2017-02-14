@@ -45,8 +45,10 @@ class Program
             // Adding a sub-protocol that the server does not support causes the client to close down the connection.
             List<string> subprotocols = null; //new List<string> {"soap", "json"};
 
+            var headers = new Dictionary<string, string>{{"Pragma", "no-cache"}, {"Cache-Control", "no-cache"}};
 
-            //await websocketClient.ConnectAsync(
+
+                //await websocketClient.ConnectAsync(
             //    new Uri("ws://192.168.0.7:3000/socket.io/?EIO=2&transport=websocket"),
             //    //new Uri("wss://echo.websocket.org:443"),
             //    //cts,
@@ -67,6 +69,7 @@ class Program
                 new Uri("wss://echo.websocket.org:443"),
                 //cts,
                 ignoreServerCertificateErrors: true,
+                headers:headers,
                 subprotocols: subprotocols,
                 tlsProtocolVersion: TlsProtocolVersion.Tls12);
 
@@ -88,7 +91,7 @@ class Program
             await Task.Delay(TimeSpan.FromMilliseconds(400));
             await websocketClient.SendTextMultiFrameAsync("Stop.", FrameType.LastInMultipleFrames);
 
-            await websocketClient.CloseAsync();
+            //await websocketClient.CloseAsync();
 
             //await websocketClient.ConnectAsync(
             //    new Uri("ws://192.168.0.7:3000/socket.io/?EIO=2&transport=websocket"),

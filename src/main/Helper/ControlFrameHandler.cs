@@ -7,10 +7,6 @@ namespace WebsocketClientLite.PCL.Helper
 {
     internal class ControlFrameHandler
     {
-        internal bool IsPingReceived { get; private set; }
-
-        internal bool IsCloseReceived { get; private set; }
-
         private byte[] _pong;
 
         private bool _isReceivingPingData = false;
@@ -33,7 +29,6 @@ namespace WebsocketClientLite.PCL.Helper
             switch (data)
             {
                 case 136:
-                    IsCloseReceived = true;
                     return ControlFrameType.Close;
                 case 137:
                     InitPingStart();
@@ -42,15 +37,15 @@ namespace WebsocketClientLite.PCL.Helper
             return ControlFrameType.None;
         }
 
-        internal void AddPingPayload(ITcpSocketClient tcpSocketClient, byte data)
+        private void AddPingPayload(ITcpSocketClient tcpSocketClient, byte data)
         {
             if (_isNextBytePayloadLength)
             {
                 var b = data;
                 if (b == 0)
                 {
-                    InitNoPing();
-                    _pong = new byte[2] {138, 0};
+                    ReinitializePing();
+                    _pong = new byte[1] {138};
                     SendPong(tcpSocketClient);
                 }
                 else
@@ -73,7 +68,7 @@ namespace WebsocketClientLite.PCL.Helper
                 }
                 else
                 {
-                    InitNoPing();
+                    ReinitializePing();
                     SendPong(tcpSocketClient);
                 }
             }
@@ -87,14 +82,12 @@ namespace WebsocketClientLite.PCL.Helper
         private void InitPingStart()
         {
             Debug.WriteLine("Ping received");
-            IsPingReceived = true;
             _isReceivingPingData = true;
             _isNextBytePayloadLength = true;
         }
 
-        private void InitNoPing()
+        private void ReinitializePing()
         {
-            IsPingReceived = false;
             _isReceivingPingData = false;
             _isNextBytePayloadLength = false;
         }

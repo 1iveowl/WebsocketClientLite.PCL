@@ -25,7 +25,6 @@ namespace WebsocketClientLite.PCL
 
         private HttpParserDelegate _httpParserDelegate;
         private HttpCombinedParser _httpParserHandler;
-        //private IDisposable _outerCancellationRegistration;
 
         private CancellationTokenSource _innerCancellationTokenSource;
 
@@ -45,24 +44,18 @@ namespace WebsocketClientLite.PCL
             _webSocketConnectService = new WebSocketConnectService();
             _websocketSenderService = new WebsocketSenderService();
 
-            _websocketListener = new WebsocketListener(
-                //_tcpSocketClient,
-                _webSocketConnectService);
+            _websocketListener = new WebsocketListener(_webSocketConnectService);
         }
 
         public async Task ConnectAsync(
             Uri uri, 
-            //CancellationTokenSource outerCancellationTokenSource,
             string origin = null,
+            IDictionary<string, string> headers = null,
             IEnumerable<string> subprotocols = null,
             bool ignoreServerCertificateErrors = false,
             TlsProtocolVersion tlsProtocolVersion = TlsProtocolVersion.Tls12)
         {
             _connectionStatusObserver.OnNext(ConnectionStatus.Connecting);
-            //_outerCancellationRegistration = outerCancellationTokenSource.Token.Register(() =>
-            //{
-            //    _innerCancellationTokenSource.Cancel();
-            //});
 
             _innerCancellationTokenSource = new CancellationTokenSource();
 
@@ -81,6 +74,7 @@ namespace WebsocketClientLite.PCL
                     _innerCancellationTokenSource,
                     _websocketListener,
                     origin,
+                    headers,
                     subprotocols,
                     ignoreServerCertificateErrors,
                     tlsProtocolVersion);
@@ -151,7 +145,6 @@ namespace WebsocketClientLite.PCL
 
             _connectionStatusObserver.OnNext(ConnectionStatus.Disconnected);
             IsConnected = false;
-            //_outerCancellationRegistration.Dispose();
         }
 
         public async Task SendTextAsync(string message)
@@ -255,7 +248,7 @@ namespace WebsocketClientLite.PCL
 
         public void Dispose()
         {
-            //_outerCancellationRegistration?.Dispose();
+
         }
     }
 }

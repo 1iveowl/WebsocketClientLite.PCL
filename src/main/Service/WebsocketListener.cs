@@ -97,9 +97,14 @@ namespace WebsocketClientLite.PCL.Service
 
             try
             {
+                if (_webSocketConnectService?.TcpSocketClient?.ReadStream == null)
+                {
+                    throw new Exception("Readstream cannot be null.");
+                }
+
                 if (!_webSocketConnectService?.TcpSocketClient?.ReadStream?.CanRead ?? false)
                 {
-                    throw new Exception("Websocket connection have been closed");
+                    throw new Exception("Websocket connection have been closed.");
                 }
 
                 var bytesRead = await _webSocketConnectService.TcpSocketClient.ReadStream.ReadAsync(oneByteArray, 0, 1);
@@ -110,7 +115,7 @@ namespace WebsocketClientLite.PCL.Service
                 {
                     IsConnected = false;
                     _innerCancellationTokenSource.Cancel();
-                    throw new Exception("Websocket connection aborted unexpectantly. Check connection and socket security version/TLS version)");
+                    throw new Exception("Websocket connection aborted unexpectantly. Check connection and socket security version/TLS version).");
                 }
             }
             catch (ObjectDisposedException)
@@ -156,7 +161,5 @@ namespace WebsocketClientLite.PCL.Service
             HasReceivedCloseFromServer = true;
             _webSocketConnectService.Disconnect();
         }
-
-
     }
 }
