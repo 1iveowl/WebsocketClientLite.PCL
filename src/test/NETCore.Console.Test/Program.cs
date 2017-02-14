@@ -88,7 +88,7 @@ class Program
             await Task.Delay(TimeSpan.FromMilliseconds(400));
             await websocketClient.SendTextMultiFrameAsync("Stop.", FrameType.LastInMultipleFrames);
 
-            await websocketClient.CloseAsync();
+            //await websocketClient.CloseAsync();
 
             //await websocketClient.ConnectAsync(
             //    new Uri("ws://192.168.0.7:3000/socket.io/?EIO=2&transport=websocket"),

@@ -13,7 +13,6 @@ namespace WebsocketClientLite.PCL.Helper
             var sb = new StringBuilder();
 
             sb.Append($"GET {uri.PathAndQuery} HTTP/1.1\r\n");
-            //sb.Append($"GET {uri.AbsoluteUri} HTTP/1.1\r\n");
             sb.Append($"Host: {uri.Host}\r\n");
             sb.Append($"Upgrade: websocket\r\n");
             sb.Append($"Connection: Upgrade\r\n");
@@ -27,19 +26,12 @@ namespace WebsocketClientLite.PCL.Helper
 
             sb.Append($"Sec-WebSocket-Key: {GenerateRandomWebSocketKey()}\r\n");
 
-            if (subprotocols == null)
+            if (subprotocols != null)
             {
-                //sb.Append($"Sec-WebSocket-Protocol: chat, superchat\r\n");
-            }
-            else
-            {
-                var subprotocolHeader = "";// = "Sec-WebSocket-Protocol: chat, superchat";
+                var subprotocol = subprotocols
+                    .Aggregate("Sec-WebSocket-Protocol: ", (current, protocol) => $"{current}, {protocol}");
 
-                foreach (var protocol in subprotocols)
-                {
-                    subprotocolHeader = $"{subprotocolHeader}, {protocol}";
-                }
-                sb.Append($"{subprotocolHeader}\r\n");
+                sb.Append($"{subprotocol}\r\n");
             }
             
             sb.Append($"Sec-WebSocket-Version: 13\r\n");

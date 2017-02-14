@@ -7,9 +7,9 @@ namespace WebsocketClientLite.PCL.Helper
 {
     internal class ControlFrameHandler
     {
-        internal bool IsPingReceived { get; private set; }
+        private bool IsPingReceived { get; set; }
 
-        internal bool IsCloseReceived { get; private set; }
+        private bool IsCloseReceived { get; set; }
 
         private byte[] _pong;
 
@@ -42,15 +42,15 @@ namespace WebsocketClientLite.PCL.Helper
             return ControlFrameType.None;
         }
 
-        internal void AddPingPayload(ITcpSocketClient tcpSocketClient, byte data)
+        private void AddPingPayload(ITcpSocketClient tcpSocketClient, byte data)
         {
             if (_isNextBytePayloadLength)
             {
                 var b = data;
                 if (b == 0)
                 {
-                    InitNoPing();
-                    _pong = new byte[2] {138, 0};
+                    ReinitializePing();
+                    _pong = new byte[1] {138};
                     SendPong(tcpSocketClient);
                 }
                 else
@@ -73,7 +73,7 @@ namespace WebsocketClientLite.PCL.Helper
                 }
                 else
                 {
-                    InitNoPing();
+                    ReinitializePing();
                     SendPong(tcpSocketClient);
                 }
             }
@@ -92,7 +92,7 @@ namespace WebsocketClientLite.PCL.Helper
             _isNextBytePayloadLength = true;
         }
 
-        private void InitNoPing()
+        private void ReinitializePing()
         {
             IsPingReceived = false;
             _isReceivingPingData = false;
