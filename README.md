@@ -105,6 +105,27 @@ class Program
 }
 ```
 
+#### Working With Slack - and maybe also other Websocket Server implementations
+The [RFC 6455 section defining how ping/pong works](https://tools.ietf.org/html/rfc6455#section-5.5.2) seem to be ambigious on the question of whether or not a pong should include the byte defining the length of "Application Data" when the length is zero. 
+
+When testing against [websocket.org](http://websocket.org/echo) the byte is expected with the value of zero, however when used with the [slack.rtm](https://api.slack.com/rtm) api the byte should not be there or the slack websocket server will disconnect.
+
+To manage this byte the following connect parameter can be set to true. Like this:
+```csharp
+await _webSocket.ConnectAsync(_uri, excludeZeroApplicationDataInPong:true);
+```
+
+To futher complicate matters the slack.rtm api also requires at a Slack application layer ping too. A simplified implementation of this could look like this:
+
+```csharp
+while (true)
+{
+    await Task.Delay(TimeSpan.FromSeconds(30));
+    await _webSocket.SendTextAsync("{\"id\": 1234, // ID, see \"sending messages\" above\"type\": \"ping\",...}");
+}
+```
+For details read the **Ping and Pong** section of the [slack.rtm api documentation](https://api.slack.com/rtm) 
+
 #### Monitoring Status
 Monitoring connection status is easy: 
 ```csharp
