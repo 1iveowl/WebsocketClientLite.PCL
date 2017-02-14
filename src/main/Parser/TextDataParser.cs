@@ -61,11 +61,11 @@ namespace WebsocketClientLite.PCL.Parser
             IsCloseRecieved = false;
         }
 
-        internal void Parse(ITcpSocketClient tcpSocketClient, byte data)
+        internal void Parse(ITcpSocketClient tcpSocketClient, byte data, bool excludeZeroApplicationDataInPong = false)
         {
             if (!_isFrameBeingReceived)
             {
-                if (IsControlFrame(tcpSocketClient, data))
+                if (IsControlFrame(tcpSocketClient, data, excludeZeroApplicationDataInPong))
                 {
                     return;
                 }
@@ -92,9 +92,12 @@ namespace WebsocketClientLite.PCL.Parser
             }
         }
 
-        private bool IsControlFrame(ITcpSocketClient tcpSocketClient, byte data)
+        private bool IsControlFrame(
+            ITcpSocketClient tcpSocketClient, 
+            byte data, 
+            bool excludeZeroApplicationDataInPong = false)
         {
-            var controlFrame = _controlFrameHandler.CheckForPingOrCloseControlFrame(tcpSocketClient, data);
+            var controlFrame = _controlFrameHandler.CheckForPingOrCloseControlFrame(tcpSocketClient, data, excludeZeroApplicationDataInPong);
 
             switch (controlFrame)
             {

@@ -27,7 +27,8 @@ namespace IWebsocketClientLite.PCL
             IDictionary<string, string> headers = null,
             IEnumerable<string> subProtocols = null, 
             bool ignoreServerCertificateErrors = false, 
-            TlsProtocolVersion tlsProtocolType = TlsProtocolVersion.Tls12);
+            TlsProtocolVersion tlsProtocolType = TlsProtocolVersion.Tls12,
+            bool excludeZeroApplicationDataInPong = false);
 
         Task CloseAsync();
 

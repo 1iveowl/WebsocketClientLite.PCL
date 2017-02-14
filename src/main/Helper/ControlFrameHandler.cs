@@ -18,11 +18,14 @@ namespace WebsocketClientLite.PCL.Helper
         {
         }
 
-        internal ControlFrameType CheckForPingOrCloseControlFrame(ITcpSocketClient tcpSocketClient, byte data)
+        internal ControlFrameType CheckForPingOrCloseControlFrame(
+            ITcpSocketClient tcpSocketClient, 
+            byte data, 
+            bool excludeZeroApplicationDataInPong = false)
         {
             if (_isReceivingPingData)
             {
-                AddPingPayload(tcpSocketClient, data);
+                AddPingPayload(tcpSocketClient, data, excludeZeroApplicationDataInPong);
                 return ControlFrameType.Ping;
             }
 
@@ -37,7 +40,7 @@ namespace WebsocketClientLite.PCL.Helper
             return ControlFrameType.None;
         }
 
-        private void AddPingPayload(ITcpSocketClient tcpSocketClient, byte data)
+        private void AddPingPayload(ITcpSocketClient tcpSocketClient, byte data, bool excludeZeroApplicationDataInPong = false)
         {
             if (_isNextBytePayloadLength)
             {
@@ -45,7 +48,11 @@ namespace WebsocketClientLite.PCL.Helper
                 if (b == 0)
                 {
                     ReinitializePing();
-                    _pong = new byte[1] {138};
+
+                    _pong = excludeZeroApplicationDataInPong 
+                        ? new byte[1] { 138} 
+                        : new byte[2] { 138, 0 };
+                    
                     SendPong(tcpSocketClient);
                 }
                 else
