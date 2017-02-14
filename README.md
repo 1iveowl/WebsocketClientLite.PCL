@@ -57,17 +57,23 @@ class Program
 
             });
 
-		// 2. ### Optional Subprotocols ###
+		// 2a. ### Optional Subprotocols ###
         // The echo.websocket.org does not support any sub-protocols and hence this test does not add any.
         // Adding a sub-protocol that the server does not support causes the client to close down the connection.
-        List<string> subprotocols = null; //new List<string> {"soap", "json"};
-        
+		// Anyhow here is how to add 
+        // List<string> subprotocols = new List<string> {"soap", "json"};
+		List<string> subprotocols = null;
+
+		// 2b. ### Optional headers
+		// Adding headers are easy
+		var headers = new Dictionary<string, string>{{"Pragma", "no-cache"}, {"Cache-Control", "no-cache"}};
 
 	    // 3. Now establish a connection to the server
 
 		await websocketClient.ConnectAsync(
                 new Uri("wss://echo.websocket.org:443"),	// use the publicly available test server: http://www.websocket.org/echo.html
                 ignoreServerCertificateErrors: false,		// you can ignore server certificate errors. Good for test, but be careful! 
+				headers: headers,
                 subprotocols:subprotocols,	
                 tlsProtocolVersion:TlsProtocolVersion.Tls12);
 

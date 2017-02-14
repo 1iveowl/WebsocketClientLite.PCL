@@ -21,12 +21,10 @@ namespace IWebsocketClientLite.PCL
 
         string SubprotocolAcceptedName { get; }
 
-        //void SetRequestHeader(string headerName, string headerValue);
-
         Task ConnectAsync(
             Uri uri, 
-            //CancellationTokenSource outerCancellationTokenSource,
             string origin = null,
+            IDictionary<string, string> headers = null,
             IEnumerable<string> subProtocols = null, 
             bool ignoreServerCertificateErrors = false, 
             TlsProtocolVersion tlsProtocolType = TlsProtocolVersion.Tls12);

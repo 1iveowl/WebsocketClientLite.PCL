@@ -7,10 +7,6 @@ namespace WebsocketClientLite.PCL.Helper
 {
     internal class ControlFrameHandler
     {
-        private bool IsPingReceived { get; set; }
-
-        private bool IsCloseReceived { get; set; }
-
         private byte[] _pong;
 
         private bool _isReceivingPingData = false;
@@ -33,7 +29,6 @@ namespace WebsocketClientLite.PCL.Helper
             switch (data)
             {
                 case 136:
-                    IsCloseReceived = true;
                     return ControlFrameType.Close;
                 case 137:
                     InitPingStart();
@@ -87,14 +82,12 @@ namespace WebsocketClientLite.PCL.Helper
         private void InitPingStart()
         {
             Debug.WriteLine("Ping received");
-            IsPingReceived = true;
             _isReceivingPingData = true;
             _isNextBytePayloadLength = true;
         }
 
         private void ReinitializePing()
         {
-            IsPingReceived = false;
             _isReceivingPingData = false;
             _isNextBytePayloadLength = false;
         }

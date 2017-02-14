@@ -29,6 +29,7 @@ namespace WebsocketClientLite.PCL.Service
             CancellationTokenSource innerCancellationTokenSource,
             WebsocketListener websocketListener,
             string origin = null,
+            IDictionary<string, string> headers = null,
             IEnumerable<string> subprotocols = null,
             bool ignoreServerCertificateErrors = false,
             TlsProtocolVersion tlsProtocolType = TlsProtocolVersion.Tls12)
@@ -53,7 +54,7 @@ namespace WebsocketClientLite.PCL.Service
 
                     websocketListener.Start(requestHandler, parserHandler, innerCancellationTokenSource);
 
-                    await SendConnectHandShakeAsync(uri, secure, origin, subprotocols);
+                    await SendConnectHandShakeAsync(uri, secure, origin, headers, subprotocols);
 
                     var waitForHandShakeLoopTask = Task.Run(async () =>
                     {
@@ -110,9 +111,14 @@ namespace WebsocketClientLite.PCL.Service
             TcpSocketClient.Disconnect();
         }
 
-        private async Task SendConnectHandShakeAsync(Uri uri, bool secure, string origin = null, IEnumerable<string> subprotocols = null)
+        private async Task SendConnectHandShakeAsync(
+            Uri uri, 
+            bool secure, 
+            string origin = null,
+            IDictionary<string, string> headers = null,
+            IEnumerable<string> subprotocols = null)
         {
-            var handShake = ClientHandShake.Compose(uri, secure, origin, subprotocols);
+            var handShake = ClientHandShake.Compose(uri, secure, origin, headers, subprotocols);
             try
             {
                 await TcpSocketClient.WriteStream.WriteAsync(handShake, 0, handShake.Length);
