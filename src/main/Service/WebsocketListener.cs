@@ -24,6 +24,7 @@ namespace WebsocketClientLite.PCL.Service
         private HttpParserDelegate _parserDelgate;
         private HttpCombinedParser _parserHandler;
         private IDisposable _byteStreamSessionSubscription;
+        internal bool ExcludeZeroApplicationDataInPong;
 
         private IObservable<string> ObserveTextMessageSession => ByteStreamHandlerObservable.Select(
             b =>
@@ -57,7 +58,7 @@ namespace WebsocketClientLite.PCL.Service
                         }
                     case DataReceiveMode.IsListeningForTextData:
 
-                        TextDataParser.Parse(_tcpSocketClient, b[0]);
+                        TextDataParser.Parse(_tcpSocketClient, b[0], ExcludeZeroApplicationDataInPong);
 
                         if (TextDataParser.IsCloseRecieved)
                         {
@@ -75,15 +76,15 @@ namespace WebsocketClientLite.PCL.Service
                 Observable.FromAsync(ReadOneByteAtTheTimeAsync))
             .ObserveOn(Scheduler.Default);
 
-        internal bool IsConnected;
+        private bool _isConnected;
 
         internal IObservable<string> ObserveTextMessageSequence => _textMessageSequence.AsObservable();
-        internal DataReceiveMode DataReceiveMode { get; set; } = DataReceiveMode.IsListeningForHandShake;
+
+        internal DataReceiveMode DataReceiveMode { private get; set; } = DataReceiveMode.IsListeningForHandShake;
+
         internal bool HasReceivedCloseFromServer { get; private set; }
 
-        internal WebsocketListener(
-
-            WebSocketConnectService webSocketConnectService)
+        internal WebsocketListener(WebSocketConnectService webSocketConnectService)
         {
             _webSocketConnectService = webSocketConnectService;
             TextDataParser = new TextDataParser();
@@ -113,7 +114,7 @@ namespace WebsocketClientLite.PCL.Service
 
                 if (bytesRead < oneByteArray.Length)
                 {
-                    IsConnected = false;
+                    _isConnected = false;
                     _innerCancellationTokenSource.Cancel();
                     throw new Exception("Websocket connection aborted unexpectantly. Check connection and socket security version/TLS version).");
                 }
@@ -156,7 +157,7 @@ namespace WebsocketClientLite.PCL.Service
 
         internal void StopReceivingData()
         {
-            IsConnected = false;
+            _isConnected = false;
             _byteStreamSessionSubscription.Dispose();
             HasReceivedCloseFromServer = true;
             _webSocketConnectService.Disconnect();

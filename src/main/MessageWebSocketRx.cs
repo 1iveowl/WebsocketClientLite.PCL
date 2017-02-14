@@ -53,8 +53,11 @@ namespace WebsocketClientLite.PCL
             IDictionary<string, string> headers = null,
             IEnumerable<string> subprotocols = null,
             bool ignoreServerCertificateErrors = false,
-            TlsProtocolVersion tlsProtocolVersion = TlsProtocolVersion.Tls12)
+            TlsProtocolVersion tlsProtocolVersion = TlsProtocolVersion.Tls12,
+            bool excludeZeroApplicationDataInPong = false)
         {
+            _websocketListener.ExcludeZeroApplicationDataInPong = excludeZeroApplicationDataInPong;
+
             _connectionStatusObserver.OnNext(ConnectionStatus.Connecting);
 
             _innerCancellationTokenSource = new CancellationTokenSource();
