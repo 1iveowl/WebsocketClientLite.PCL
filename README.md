@@ -105,7 +105,7 @@ class Program
 }
 ```
 
-#### Working With Slack - and maybe also other Websocket Server implementations
+#### Working With Slack (And Maybe Also Other Websocket Server Implementations)
 The [RFC 6455 section defining how ping/pong works](https://tools.ietf.org/html/rfc6455#section-5.5.2) seem to be ambigious on the question of whether or not a pong should include the byte defining the length of "Application Data" when the length is zero. 
 
 When testing against [websocket.org](http://websocket.org/echo) the byte is expected with the value of zero, however when used with the [slack.rtm](https://api.slack.com/rtm) api the byte should not be there or the slack websocket server will disconnect.
