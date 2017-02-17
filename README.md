@@ -70,8 +70,7 @@ class Program
 
 	    // 3. Now establish a connection to the server
 
-		await websocketClient.ConnectAsync(
-                new Uri("wss://echo.websocket.org:443"),	// use the publicly available test server: http://www.websocket.org/echo.html
+		await websocketClient.ConnectAsync(                new Uri("wss://echo.websocket.org:443"),	// use the publicly available test server: http://www.websocket.org/echo.html
                 ignoreServerCertificateErrors: false,		// you can ignore server certificate errors. Good for test, but be careful! 
 				headers: headers,
                 subprotocols:subprotocols,	
@@ -115,7 +114,7 @@ To manage this byte the following connect parameter can be set to true. Like thi
 await _webSocket.ConnectAsync(_uri, excludeZeroApplicationDataInPong:true);
 ```
 
-To futher complicate matters the slack.rtm api also requires at a Slack application layer ping too. A simplified implementation of this could look like this:
+To futher complicate matters the slack.rtm api also [seems to requires a ping at the Slack application layer too](http://stackoverflow.com/questions/38171620/slack-rtm-api-disconnection-following-message-in-scala). A simplified implementation of this could look like this:
 
 ```csharp
 while (true)
