@@ -114,7 +114,7 @@ To manage this byte the following connect parameter can be set to true. Like thi
 await _webSocket.ConnectAsync(_uri, excludeZeroApplicationDataInPong:true);
 ```
 
-To futher complicate matters the slack.rtm api also [seems to requires a ping at the Slack application layer too](http://stackoverflow.com/questions/38171620/slack-rtm-api-disconnection-following-message-in-scala). A simplified implementation of this could look like this:
+To futher complicate matters the [slack.rtm api](https://api.slack.com/rtm) also [seems to requires a ping at the Slack application layer too](http://stackoverflow.com/questions/38171620/slack-rtm-api-disconnection-following-message-in-scala). A simplified implementation of this could look like this:
 
 ```csharp
 while (true)
