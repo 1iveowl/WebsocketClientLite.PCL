@@ -9,6 +9,8 @@ class Program
 {
     private static IDisposable _subscribeToMessagesReceived;
 
+    const string AllowedChars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+
     static void Main(string[] args)
     {
 
@@ -45,10 +47,10 @@ class Program
             // Adding a sub-protocol that the server does not support causes the client to close down the connection.
             List<string> subprotocols = null; //new List<string> {"soap", "json"};
 
-            var headers = new Dictionary<string, string>{{"Pragma", "no-cache"}, {"Cache-Control", "no-cache"}};
+            var headers = new Dictionary<string, string> { { "Pragma", "no-cache" }, { "Cache-Control", "no-cache" } };
 
 
-                //await websocketClient.ConnectAsync(
+            //await websocketClient.ConnectAsync(
             //    new Uri("ws://192.168.0.7:3000/socket.io/?EIO=2&transport=websocket"),
             //    //new Uri("wss://echo.websocket.org:443"),
             //    //cts,
@@ -69,40 +71,76 @@ class Program
                 new Uri("wss://echo.websocket.org:443"),
                 //cts,
                 ignoreServerCertificateErrors: true,
-                headers:headers,
+                headers: headers,
                 subprotocols: subprotocols,
                 tlsProtocolVersion: TlsProtocolVersion.Tls12);
 
             System.Console.WriteLine("Sending: Test Single Frame");
             await websocketClient.SendTextAsync("Test Single Frame");
 
-            var strArray = new[] { "Test ", "multiple ", "frames" };
+            await websocketClient.SendTextAsync("Test Single Frame again");
 
-            await websocketClient.SendTextAsync(strArray);
+            await websocketClient.SendTextAsync(TestString(128, 200));
 
-            await websocketClient.SendTextMultiFrameAsync("Start ", FrameType.FirstOfMultipleFrames);
-            await Task.Delay(TimeSpan.FromMilliseconds(200));
-            await websocketClient.SendTextMultiFrameAsync("Continue... #1 ", FrameType.Continuation);
-            await Task.Delay(TimeSpan.FromMilliseconds(300));
-            await websocketClient.SendTextMultiFrameAsync("Continue... #2 ", FrameType.Continuation);
-            await Task.Delay(TimeSpan.FromMilliseconds(150));
-            await websocketClient.SendTextMultiFrameAsync("Continue... #3 ", FrameType.Continuation);
-            await Task.Delay(TimeSpan.FromMilliseconds(400));
-            await websocketClient.SendTextMultiFrameAsync("Stop.", FrameType.LastInMultipleFrames);
+            await websocketClient.SendTextAsync(TestString(65538, 65550));
 
-            await websocketClient.CloseAsync();
+            //var strArray = new[] { "Test ", "multiple ", "frames" };
 
-            await websocketClient.ConnectAsync(
-                new Uri("ws://192.168.0.7:3000/socket.io/?EIO=2&transport=websocket"),
-                //new Uri("wss://echo.websocket.org:443"),
-                //cts,
-                ignoreServerCertificateErrors: true,
-                subprotocols: subprotocols,
-                tlsProtocolVersion: TlsProtocolVersion.Tls12);
+            //await websocketClient.SendTextAsync(strArray);
 
-            await websocketClient.SendTextAsync("Test localhost");
+            //await websocketClient.SendTextMultiFrameAsync("Start ", FrameType.FirstOfMultipleFrames);
+            //await Task.Delay(TimeSpan.FromMilliseconds(200));
+            //await websocketClient.SendTextMultiFrameAsync("Continue... #1 ", FrameType.Continuation);
+            //await Task.Delay(TimeSpan.FromMilliseconds(300));
+            //await websocketClient.SendTextMultiFrameAsync("Continue... #2 ", FrameType.Continuation);
+            //await Task.Delay(TimeSpan.FromMilliseconds(150));
+            //await websocketClient.SendTextMultiFrameAsync("Continue... #3 ", FrameType.Continuation);
+            //await Task.Delay(TimeSpan.FromMilliseconds(400));
+            //await websocketClient.SendTextMultiFrameAsync("Stop.", FrameType.LastInMultipleFrames);
 
-            await websocketClient.CloseAsync();
+            //await websocketClient.CloseAsync();
+
+            //await websocketClient.ConnectAsync(
+            //    new Uri("ws://192.168.0.7:3000/socket.io/?EIO=2&transport=websocket"),
+            //    //new Uri("wss://echo.websocket.org:443"),
+            //    //cts,
+            //    ignoreServerCertificateErrors: true,
+            //    subprotocols: subprotocols,
+            //    tlsProtocolVersion: TlsProtocolVersion.Tls12);
+
+            //await websocketClient.SendTextAsync("Test localhost");
+
+            //await websocketClient.CloseAsync();
         }
+
+
+    }
+
+    private static string TestString(int minlength, int maxlenght)
+    {
+
+        var rng = new Random();
+
+        return RandomStrings(AllowedChars, minlength, maxlenght, 25, rng);
+    }
+
+    private static string RandomStrings(
+        string allowedChars,
+        int minLength,
+        int maxLength,
+        int count,
+        Random rng)
+    {
+        var chars = new char[maxLength];
+        var setLength = allowedChars.Length;
+
+        var length = rng.Next(minLength, maxLength + 1);
+
+        for (var i = 0; i < length; ++i)
+        {
+            chars[i] = allowedChars[rng.Next(setLength)];
+        }
+
+        return new string(chars, 0, length);
     }
 }
