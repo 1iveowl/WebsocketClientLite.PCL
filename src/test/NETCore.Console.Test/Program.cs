@@ -80,7 +80,7 @@ class Program
 
             await websocketClient.SendTextAsync("Test Single Frame again");
 
-            await websocketClient.SendTextAsync(TestString(128, 200));
+            //await websocketClient.SendTextAsync(TestString(5096, 10096));
 
             await websocketClient.SendTextAsync(TestString(65538, 65550));
 
