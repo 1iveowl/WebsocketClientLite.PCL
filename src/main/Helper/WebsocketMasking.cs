@@ -88,7 +88,7 @@ namespace WebsocketClientLite.PCL.Helper
                     payloadLength[0],
                 };
 
-                //return BitConverter.GetBytes((long)length);
+                return byteArray;
             }
 
             throw new ArgumentException("Too long message for one frame");
