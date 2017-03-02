@@ -76,7 +76,6 @@ class Program
             System.Console.WriteLine("Sending: Test Single Frame");
             await websocketClient.SendTextAsync("Test Single Frame");
 
-
             var strArray = new[] { "Test ", "multiple ", "frames" };
 
             await websocketClient.SendTextAsync(strArray);
@@ -91,19 +90,19 @@ class Program
             await Task.Delay(TimeSpan.FromMilliseconds(400));
             await websocketClient.SendTextMultiFrameAsync("Stop.", FrameType.LastInMultipleFrames);
 
-            //await websocketClient.CloseAsync();
+            await websocketClient.CloseAsync();
 
-            //await websocketClient.ConnectAsync(
-            //    new Uri("ws://192.168.0.7:3000/socket.io/?EIO=2&transport=websocket"),
-            //    //new Uri("wss://echo.websocket.org:443"),
-            //    //cts,
-            //    ignoreServerCertificateErrors: true,
-            //    subprotocols: subprotocols,
-            //    tlsProtocolVersion: TlsProtocolVersion.Tls12);
+            await websocketClient.ConnectAsync(
+                new Uri("ws://192.168.0.7:3000/socket.io/?EIO=2&transport=websocket"),
+                //new Uri("wss://echo.websocket.org:443"),
+                //cts,
+                ignoreServerCertificateErrors: true,
+                subprotocols: subprotocols,
+                tlsProtocolVersion: TlsProtocolVersion.Tls12);
 
-            //await websocketClient.SendTextAsync("Test localhost");
+            await websocketClient.SendTextAsync("Test localhost");
 
-            //await websocketClient.CloseAsync();
+            await websocketClient.CloseAsync();
         }
     }
 }

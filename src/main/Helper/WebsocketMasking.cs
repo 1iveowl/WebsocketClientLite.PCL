@@ -35,37 +35,63 @@ namespace WebsocketClientLite.PCL.Helper
 
         internal static byte[] CreatePayloadBytes(int length, bool isMasking)
         {
-            
+            byte firstPayloadByte = 0;
 
-            if (length <= 125)
+            if (length < 126)
             {
                 if (isMasking)
                 {
-                    length = length + 128;
+                    firstPayloadByte = (byte)(length + 128);
                 }
-                return new byte[1] {(byte)length};
+                return new byte[1] { firstPayloadByte};
             }
 
-            if (length > 125 && length <= Math.Pow(2, 16))
+            if (length >= 126 && length <= Math.Pow(2, 16))
             {
                 if (isMasking)
                 {
-                    length = length + 128;
+                    firstPayloadByte = 126 + 128;
                 }
-                return BitConverter.GetBytes((short)length);
+
+                var payloadLength = BitConverter.GetBytes((short)length);
+
+                var byteArray = new byte[3]
+                {
+                    firstPayloadByte,
+                    payloadLength[1],
+                    payloadLength[0],
+                    
+                };
+
+                return byteArray;
             }
 
-            if (length > Math.Pow(2, 64))
+            if (length >= Math.Pow(2, 16) && length <= Math.Pow(2, 64))
             {
-                throw new ArgumentException("Too long message for one frame");
+                if (isMasking)
+                {
+                    firstPayloadByte = 127 + 128;
+                }
+
+                var payloadLength = BitConverter.GetBytes((long)length);
+
+                var byteArray = new byte[9]
+                {
+                    firstPayloadByte,
+                    payloadLength[7],
+                    payloadLength[6],
+                    payloadLength[5],
+                    payloadLength[4],
+                    payloadLength[3],
+                    payloadLength[2],
+                    payloadLength[1],
+                    payloadLength[0],
+                };
+
+                //return BitConverter.GetBytes((long)length);
             }
 
-            if (isMasking)
-            {
-                length = length + 128;
-            }
-
-            return BitConverter.GetBytes((long)length);
+            throw new ArgumentException("Too long message for one frame");
 
         }
     }
