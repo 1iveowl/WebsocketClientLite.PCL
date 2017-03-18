@@ -66,7 +66,7 @@ class Program
                 System.Console.WriteLine($"Subscription Completed");
             });
 
-		// 2a. ### Optional Subprotocols ###
+	// 2a. ### Optional Subprotocols ###
         // The echo.websocket.org does not support any sub-protocols and hence this test does not add any.
         // Adding a sub-protocol that the server does not support causes the client to close down the connection.
 		// Anyhow here is how to add 
