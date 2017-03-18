@@ -48,53 +48,56 @@ class Program
     {
         var websocketClient = new MessageWebSocketRx();
 
-		// 1. Start by subscribing to messages. 
+	// 1. Start by subscribing to messages. 
         _subscribeToMessagesReceived = websocketClient.ObserveTextMessagesReceived.Subscribe(
             msg =>
             {
+	    	//Insert your code managing incoming messages here
                 System.Console.WriteLine($"Reply from test server: {msg}");
             },
             ex =>
             {
+	    	//Insert your code managing incoming exception here
                 System.Console.WriteLine(ex.Message);
             },
             () =>
             {
+	    	//Insert your code handling the completion of the subscription here
                 System.Console.WriteLine($"Subscription Completed");
             });
 
-		// 2a. ### Optional Subprotocols ###
+	// 2a. ### Optional Subprotocols ###
         // The echo.websocket.org does not support any sub-protocols and hence this test does not add any.
         // Adding a sub-protocol that the server does not support causes the client to close down the connection.
 		// Anyhow here is how to add 
         // List<string> subprotocols = new List<string> {"soap", "json"};
-		List<string> subprotocols = null;
+	List<string> subprotocols = null;
 
-		// 2b. ### Optional headers
-		// Adding headers are easy
-		var headers = new Dictionary<string, string>{{"Pragma", "no-cache"}, {"Cache-Control", "no-cache"}};
+	// 2b. ### Optional headers
+	// Adding headers are easy
+	var headers = new Dictionary<string, string>{{"Pragma", "no-cache"}, {"Cache-Control", "no-cache"}};
 
-	    // 3. Now establish a connection to the server
+	// 3. Now establish a connection to the server
 
-		await websocketClient.ConnectAsync(                new Uri("wss://echo.websocket.org:443"),	// use the publicly available test server: http://www.websocket.org/echo.html
+	await websocketClient.ConnectAsync(new Uri("wss://echo.websocket.org:443"),	// use the publicly available test server: http://www.websocket.org/echo.html
                 ignoreServerCertificateErrors: false,		// you can ignore server certificate errors. Good for test, but be careful! 
-				headers: headers,
+		headers: headers,
                 subprotocols:subprotocols,	
                 tlsProtocolVersion:TlsProtocolVersion.Tls12);
 
-		// 4. send a  test to the echo server. It will reply back with what you send. 
+	// 4. send a  test to the echo server. It will reply back with what you send. 
         await websocketClient.SendTextAsync("Test Single Frame");
 
-		// 5. you can also send multiple frames in one batch.
+	// 5. you can also send multiple frames in one batch.
         var strArray = new[] {"Test ", "multiple ", "frames"};
 
         await websocketClient.SendTextAsync(strArray);
 
-		// 6. or you can send frames one by one. Start with FrameType.FirstOfMultipleFrames
+	// 6. or you can send frames one by one. Start with FrameType.FirstOfMultipleFrames
         await websocketClient.SendTextMultiFrameAsync("Start ", FrameType.FirstOfMultipleFrames);
         await Task.Delay(TimeSpan.FromMilliseconds(200));
 
-		// ... continue with: FrameType.Continuation
+	// ... continue with: FrameType.Continuation
         await websocketClient.SendTextMultiFrameAsync("Continue... #1 ", FrameType.Continuation);
         await Task.Delay(TimeSpan.FromMilliseconds(300));
 
@@ -104,7 +107,7 @@ class Program
         await websocketClient.SendTextMultiFrameAsync("Continue... #3 ", FrameType.Continuation);
         await Task.Delay(TimeSpan.FromMilliseconds(400));
 
-		// Don't forget the last stop frame!
+	// Don't forget the last stop frame!
         await websocketClient.SendTextMultiFrameAsync("This is the last Stop Frame.", FrameType.LastInMultipleFrames);
     }
 }
