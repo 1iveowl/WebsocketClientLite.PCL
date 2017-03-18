@@ -32,15 +32,19 @@ namespace WebsocketLite.Console.Test
                         System.Console.WriteLine(s.ToString());
                     });
 
-                _subscribeToMessagesReceived = websocketClient.ObserveTextMessagesReceived.Subscribe(
-                    msg =>
-                    {
-                        System.Console.WriteLine($"Reply from test server: {msg}");
-                    },
-                    () =>
-                    {
-                        System.Console.WriteLine($"Subscription Completed");
-                    });
+        _subscribeToMessagesReceived = websocketClient.ObserveTextMessagesReceived.Subscribe(
+            msg =>
+            {
+                System.Console.WriteLine($"Reply from test server: {msg}");
+            },
+            ex =>
+            {
+                System.Console.WriteLine(ex.Message);
+            },
+            () =>
+            {
+                System.Console.WriteLine($"Subscription Completed");
+            });
 
                 // ### Optional Subprotocols ###
                 // The echo.websocket.org does not support any sub-protocols and hence this test does not add any.
@@ -72,8 +76,20 @@ namespace WebsocketLite.Console.Test
                     subprotocols: subprotocols,
                     tlsProtocolVersion: TlsProtocolVersion.Tls12);
 
+                System.Console.WriteLine("Waiting 20 seconds to send");
+                await Task.Delay(TimeSpan.FromSeconds(20));
+
                 System.Console.WriteLine("Sending: Test Single Frame");
-                await websocketClient.SendTextAsync("Test Single Frame");
+                try
+                {
+                    await websocketClient.SendTextAsync("Test Single Frame");
+                }
+                catch (Exception e)
+                {
+                    System.Console.WriteLine(e);
+                    //throw;
+                }
+                
 
 
                 var strArray = new[] { "Test ", "multiple ", "frames" };
@@ -89,6 +105,14 @@ namespace WebsocketLite.Console.Test
                 await websocketClient.SendTextMultiFrameAsync("Continue... #3 ", FrameType.Continuation);
                 await Task.Delay(TimeSpan.FromMilliseconds(400));
                 await websocketClient.SendTextMultiFrameAsync("Stop.", FrameType.LastInMultipleFrames);
+
+                System.Console.WriteLine("Press a key and send more data");
+                System.Console.ReadKey();
+                await websocketClient.SendTextAsync("Test yet another Single Frame");
+
+                System.Console.WriteLine("Waiting for 10 minutes");
+
+                await Task.Delay(TimeSpan.FromMinutes(10));
 
                 await websocketClient.CloseAsync();
 

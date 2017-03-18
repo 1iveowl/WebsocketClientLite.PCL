@@ -18,7 +18,7 @@ namespace WebsocketClientLite.PCL.Service
         private readonly HandshakeParser _handshakeParser = new HandshakeParser();
         private readonly WebSocketConnectService _webSocketConnectService;
         internal readonly TextDataParser TextDataParser;
-        
+
         private ITcpSocketClient _tcpSocketClient;
         private CancellationTokenSource _innerCancellationTokenSource;
         private HttpParserDelegate _parserDelgate;
@@ -127,8 +127,8 @@ namespace WebsocketClientLite.PCL.Service
         }
 
         internal void Start(
-            HttpParserDelegate requestHandler, 
-            HttpCombinedParser parserHandler, 
+            HttpParserDelegate requestHandler,
+            HttpCombinedParser parserHandler,
             CancellationTokenSource innerCancellationTokenSource)
         {
             _parserHandler = parserHandler;
@@ -147,12 +147,12 @@ namespace WebsocketClientLite.PCL.Service
                 {
                     _textMessageSequence.OnError(ex);
                 },
-                () => 
+                () =>
                 {
                     _textMessageSequence.OnCompleted();
                 });
 
-                HasReceivedCloseFromServer = false;
+            HasReceivedCloseFromServer = false;
         }
 
         internal void StopReceivingData()
