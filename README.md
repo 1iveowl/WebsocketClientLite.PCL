@@ -107,7 +107,7 @@ class Program
         await websocketClient.SendTextMultiFrameAsync("Continue... #3 ", FrameType.Continuation);
         await Task.Delay(TimeSpan.FromMilliseconds(400));
 
-		// Don't forget the last stop frame!
+	// Don't forget the last stop frame!
         await websocketClient.SendTextMultiFrameAsync("This is the last Stop Frame.", FrameType.LastInMultipleFrames);
     }
 }
