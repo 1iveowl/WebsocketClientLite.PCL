@@ -52,9 +52,15 @@ class Program
         _subscribeToMessagesReceived = websocketClient.ObserveTextMessagesReceived.Subscribe(
             msg =>
             {
-				// Your code goes here forhandling an incoming message
-                System.Console.WriteLine($"Reply from test server (wss://echo.websocket.org): {msg}");
-
+                System.Console.WriteLine($"Reply from test server: {msg}");
+            },
+            ex =>
+            {
+                System.Console.WriteLine(ex.Message);
+            },
+            () =>
+            {
+                System.Console.WriteLine($"Subscription Completed");
             });
 
 		// 2a. ### Optional Subprotocols ###
