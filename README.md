@@ -48,7 +48,7 @@ class Program
     {
         var websocketClient = new MessageWebSocketRx();
 
-		// 1. Start by subscribing to messages. 
+	// 1. Start by subscribing to messages. 
         _subscribeToMessagesReceived = websocketClient.ObserveTextMessagesReceived.Subscribe(
             msg =>
             {
