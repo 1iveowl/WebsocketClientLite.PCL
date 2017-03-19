@@ -13,6 +13,8 @@ namespace WebsocketLite.Console.Test
 
         static void Main(string[] args)
         {
+
+            // This example is out-dated. See the NETCore.Console.Test for the latest version of the example
    
             StartWebSocketAsync();
             System.Console.WriteLine("Waiting...");

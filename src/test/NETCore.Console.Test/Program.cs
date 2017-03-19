@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using ISocketLite.PCL.Model;
 using IWebsocketClientLite.PCL;
@@ -9,18 +10,41 @@ class Program
 {
     private static IDisposable _subscribeToMessagesReceived;
 
+
     const string AllowedChars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 
     static void Main(string[] args)
     {
 
-        StartWebSocketAsync();
+        var outerCancellationSource = new CancellationTokenSource();
+
+        Task.Run(() => StartWebSocketAsyncWithRetry(outerCancellationSource), outerCancellationSource.Token);
+
         System.Console.WriteLine("Waiting...");
         System.Console.ReadKey();
-        _subscribeToMessagesReceived.Dispose();
+        outerCancellationSource.Cancel();
     }
 
-    private static async void StartWebSocketAsync()
+    private static async Task StartWebSocketAsyncWithRetry(CancellationTokenSource outerCancellationTokenSource)
+    {
+        while (!outerCancellationTokenSource.IsCancellationRequested)
+        {
+            var innerCancellationSource = new CancellationTokenSource();
+            await StartWebSocketAsync(innerCancellationSource);
+
+            while (!innerCancellationSource.IsCancellationRequested)
+            {
+                await Task.Delay(TimeSpan.FromSeconds(10), innerCancellationSource.Token);
+            }
+
+            _subscribeToMessagesReceived.Dispose();
+
+            // Wait 5 seconds before trying again
+            await Task.Delay(TimeSpan.FromSeconds(5), outerCancellationTokenSource.Token);
+        }
+    }
+
+    private static async Task StartWebSocketAsync(CancellationTokenSource innerCancellationTokenSource)
     {
         using (var websocketClient = new MessageWebSocketRx())
         {
@@ -37,9 +61,15 @@ class Program
                 {
                     System.Console.WriteLine($"Reply from test server: {msg}");
                 },
+                ex =>
+                {
+                    System.Console.WriteLine(ex.Message);
+                    innerCancellationTokenSource.Cancel();
+                },
                 () =>
                 {
                     System.Console.WriteLine($"Subscription Completed");
+                    innerCancellationTokenSource.Cancel();
                 });
 
             // ### Optional Subprotocols ###
