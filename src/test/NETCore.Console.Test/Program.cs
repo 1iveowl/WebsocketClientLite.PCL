@@ -105,42 +105,53 @@ class Program
                 subprotocols: subprotocols,
                 tlsProtocolVersion: TlsProtocolVersion.Tls12);
 
-            System.Console.WriteLine("Sending: Test Single Frame");
-            await websocketClient.SendTextAsync("Test Single Frame");
+            try
+            {
+                System.Console.WriteLine("Waiting 10 seconds to send");
+                await Task.Delay(TimeSpan.FromSeconds(10));
 
-            await websocketClient.SendTextAsync("Test Single Frame again");
+                System.Console.WriteLine("Sending: Test Single Frame");
+                await websocketClient.SendTextAsync("Test Single Frame");
 
-            //await websocketClient.SendTextAsync(TestString(5096, 10096));
+                await websocketClient.SendTextAsync("Test Single Frame again");
 
-            await websocketClient.SendTextAsync(TestString(65538, 65550));
+                //await websocketClient.SendTextAsync(TestString(5096, 10096));
 
-            var strArray = new[] { "Test ", "multiple ", "frames" };
+                await websocketClient.SendTextAsync(TestString(65538, 65550));
 
-            await websocketClient.SendTextAsync(strArray);
+                var strArray = new[] { "Test ", "multiple ", "frames" };
 
-            await websocketClient.SendTextMultiFrameAsync("Start ", FrameType.FirstOfMultipleFrames);
-            await Task.Delay(TimeSpan.FromMilliseconds(200));
-            await websocketClient.SendTextMultiFrameAsync("Continue... #1 ", FrameType.Continuation);
-            await Task.Delay(TimeSpan.FromMilliseconds(300));
-            await websocketClient.SendTextMultiFrameAsync("Continue... #2 ", FrameType.Continuation);
-            await Task.Delay(TimeSpan.FromMilliseconds(150));
-            await websocketClient.SendTextMultiFrameAsync("Continue... #3 ", FrameType.Continuation);
-            await Task.Delay(TimeSpan.FromMilliseconds(400));
-            await websocketClient.SendTextMultiFrameAsync("Stop.", FrameType.LastInMultipleFrames);
+                await websocketClient.SendTextAsync(strArray);
 
-            await websocketClient.CloseAsync();
+                await websocketClient.SendTextMultiFrameAsync("Start ", FrameType.FirstOfMultipleFrames);
+                await Task.Delay(TimeSpan.FromMilliseconds(200));
+                await websocketClient.SendTextMultiFrameAsync("Continue... #1 ", FrameType.Continuation);
+                await Task.Delay(TimeSpan.FromMilliseconds(300));
+                await websocketClient.SendTextMultiFrameAsync("Continue... #2 ", FrameType.Continuation);
+                await Task.Delay(TimeSpan.FromMilliseconds(150));
+                await websocketClient.SendTextMultiFrameAsync("Continue... #3 ", FrameType.Continuation);
+                await Task.Delay(TimeSpan.FromMilliseconds(400));
+                await websocketClient.SendTextMultiFrameAsync("Stop.", FrameType.LastInMultipleFrames);
 
-            await websocketClient.ConnectAsync(
-                //new Uri("ws://192.168.0.7:3000/socket.io/?EIO=2&transport=websocket"),
-                new Uri("wss://echo.websocket.org:443"),
-                //cts,
-                ignoreServerCertificateErrors: true,
-                subprotocols: subprotocols,
-                tlsProtocolVersion: TlsProtocolVersion.Tls12);
+                await websocketClient.CloseAsync();
 
-            await websocketClient.SendTextAsync("Test localhost");
+                await websocketClient.ConnectAsync(
+                    //new Uri("ws://192.168.0.7:3000/socket.io/?EIO=2&transport=websocket"),
+                    new Uri("wss://echo.websocket.org:443"),
+                    //cts,
+                    ignoreServerCertificateErrors: true,
+                    subprotocols: subprotocols,
+                    tlsProtocolVersion: TlsProtocolVersion.Tls12);
 
-            await websocketClient.CloseAsync();
+                await websocketClient.SendTextAsync("Test localhost");
+
+                await websocketClient.CloseAsync();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                innerCancellationTokenSource.Cancel();
+            }
         }
 
 
