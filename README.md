@@ -20,7 +20,9 @@ This project is based on [SocketLite.PCL](https://github.com/1iveowl/SocketLite.
 This project utilizes [Reactive Extensions](http://reactivex.io/). Although this has an added learning curve its a learning worth while and it makes creating a library like this much more elegant compared to using call-back or events. 
 
 ## Usage
-The library is easy to use, which is best illustated with this example:
+The library is easy to use, as illustated with the examples below.
+
+For a more elaborate example see [this code](https://github.com/1iveowl/WebsocketClientLite.PCL/blob/master/src/test/NETCore.Console.Test/Program.cs).
 
 #### Usings:
 ```csharp
