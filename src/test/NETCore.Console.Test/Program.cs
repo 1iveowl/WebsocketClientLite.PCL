@@ -23,8 +23,6 @@ class Program
         System.Console.WriteLine("Waiting...");
         System.Console.ReadKey();
         outerCancellationSource.Cancel();
-
-        _subscribeToMessagesReceived.Dispose();
     }
 
     private static async Task StartWebSocketAsyncWithRetry(CancellationTokenSource outerCancellationTokenSource)
@@ -38,6 +36,8 @@ class Program
             {
                 await Task.Delay(TimeSpan.FromSeconds(10), innerCancellationSource.Token);
             }
+
+            _subscribeToMessagesReceived.Dispose();
 
             // Wait 5 seconds before trying again
             await Task.Delay(TimeSpan.FromSeconds(5), outerCancellationTokenSource.Token);
