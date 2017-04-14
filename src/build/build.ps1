@@ -2,7 +2,7 @@ param([string]$version)
 
 if ([string]::IsNullOrEmpty($version)) {$version = "0.0.1"}
 
-$msbuild = join-path -path (Get-ItemProperty "HKLM:\software\Microsoft\MSBuild\ToolsVersions\14.0")."MSBuildToolsPath" -childpath "msbuild.exe"
+$msbuild = join-path -path "C:\Program Files (x86)\Microsoft Visual Studio\2017\Enterprise\MSBuild\15.0\Bin" -childpath "msbuild.exe"
 &$msbuild ..\interface\IWebsocketLite.PCL\IWebsocketClientLite.PCL.csproj /t:Build /p:Configuration="Release"
 &$msbuild ..\main\WebsocketClientLite.PCL.csproj /t:Build /p:Configuration="Release"
 
