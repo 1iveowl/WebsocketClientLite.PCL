@@ -9,6 +9,8 @@ For PCL Profile111 compatibility use legacy version 1.6.2:
 
 [![NuGet](https://img.shields.io/badge/nuget-1.6.2_(Profile_111)-yellow.svg)](https://www.nuget.org/packages/WebsocketClientLite.PCL/1.6.2)
 
+*Please star this project if you find it useful. Thank you.*
+
 ## A Light Weight Cross Platform Websocket Client 
 
 This library is a ground-up implementation of the Websocket specification [(RFC 6544)](https://tools.ietf.org/html/rfc6455). The implementation does not rely on the build-in Websocket libraries in .NET and UWP etc. 
