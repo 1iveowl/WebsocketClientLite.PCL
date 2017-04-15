@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -135,14 +136,61 @@ namespace WebsocketClientLite.PCL.Service
             await WriteStreamAsync(tcpSocketClient, frame);
         }
 
+        readonly ConcurrentQueue<byte[]> writePendingData = new ConcurrentQueue<byte[]>();
+        bool sendingData = false;
+
         private async Task WriteStreamAsync(ITcpSocketClient tcpSocketClient, byte[] frame)
         {
             if (frame == null)
             {
                 return;
             }
-            await tcpSocketClient.WriteStream.WriteAsync(frame, 0, frame.Length);
-            await tcpSocketClient.WriteStream.FlushAsync();
+
+            writePendingData.Enqueue(frame);
+
+            lock (writePendingData)
+            {
+                if (sendingData)
+                {
+                    return;
+                }
+                else
+                {
+                    sendingData = true;
+                }
+            }
+
+            try
+            {
+                byte[] buffer = null;
+                if (writePendingData.Count > 0 && writePendingData.TryDequeue(out buffer))
+                {
+                    await tcpSocketClient.WriteStream.WriteAsync(buffer, 0, buffer.Length);
+                    await tcpSocketClient.WriteStream.FlushAsync();
+                }
+                else
+                {
+                    lock (writePendingData)
+                    {
+                        sendingData = false;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                // handle exception then
+                lock (writePendingData)
+                {
+                    sendingData = false;
+                }
+            }
+            finally
+            {
+                lock (writePendingData)
+                {
+                    sendingData = false;
+                }
+            }
         }
     }
 }
