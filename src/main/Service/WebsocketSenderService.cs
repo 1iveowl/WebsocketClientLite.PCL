@@ -14,6 +14,9 @@ namespace WebsocketClientLite.PCL.Service
     {
         private bool _isSendingMultipleFrames;
 
+        private readonly ConcurrentQueue<byte[]> _writePendingData = new ConcurrentQueue<byte[]>();
+        private bool _sendingData;
+
         internal WebsocketSenderService()
         {
         }
@@ -136,8 +139,7 @@ namespace WebsocketClientLite.PCL.Service
             await WriteStreamAsync(tcpSocketClient, frame);
         }
 
-        readonly ConcurrentQueue<byte[]> writePendingData = new ConcurrentQueue<byte[]>();
-        bool sendingData = false;
+        
 
         private async Task WriteStreamAsync(ITcpSocketClient tcpSocketClient, byte[] frame)
         {
@@ -146,49 +148,45 @@ namespace WebsocketClientLite.PCL.Service
                 return;
             }
 
-            writePendingData.Enqueue(frame);
+            _writePendingData.Enqueue(frame);
 
-            lock (writePendingData)
+            lock (_writePendingData)
             {
-                if (sendingData)
+                if (_sendingData)
                 {
                     return;
                 }
-                else
-                {
-                    sendingData = true;
-                }
+                _sendingData = true;
             }
 
             try
             {
-                byte[] buffer = null;
-                if (writePendingData.Count > 0 && writePendingData.TryDequeue(out buffer))
+                if (_writePendingData.Count > 0 && _writePendingData.TryDequeue(out byte[] buffer))
                 {
                     await tcpSocketClient.WriteStream.WriteAsync(buffer, 0, buffer.Length);
                     await tcpSocketClient.WriteStream.FlushAsync();
                 }
                 else
                 {
-                    lock (writePendingData)
+                    lock (_writePendingData)
                     {
-                        sendingData = false;
+                        _sendingData = false;
                     }
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 // handle exception then
-                lock (writePendingData)
+                lock (_writePendingData)
                 {
-                    sendingData = false;
+                    _sendingData = false;
                 }
             }
             finally
             {
-                lock (writePendingData)
+                lock (_writePendingData)
                 {
-                    sendingData = false;
+                    _sendingData = false;
                 }
             }
         }
