@@ -132,6 +132,15 @@ namespace WebsocketClientLite.PCL.Service
                 throw new Exception("Websocket connection have been closed");
             }
 
+            await WriteStreamAsync(tcpSocketClient, frame);
+        }
+
+        private async Task WriteStreamAsync(ITcpSocketClient tcpSocketClient, byte[] frame)
+        {
+            if (frame == null)
+            {
+                return;
+            }
             await tcpSocketClient.WriteStream.WriteAsync(frame, 0, frame.Length);
             await tcpSocketClient.WriteStream.FlushAsync();
         }
