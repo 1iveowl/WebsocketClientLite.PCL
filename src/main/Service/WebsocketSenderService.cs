@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,6 +13,9 @@ namespace WebsocketClientLite.PCL.Service
     internal class WebsocketSenderService
     {
         private bool _isSendingMultipleFrames;
+
+        private readonly ConcurrentQueue<byte[]> _writePendingData = new ConcurrentQueue<byte[]>();
+        private bool _sendingData;
 
         internal WebsocketSenderService()
         {
@@ -132,8 +136,59 @@ namespace WebsocketClientLite.PCL.Service
                 throw new Exception("Websocket connection have been closed");
             }
 
-            await tcpSocketClient.WriteStream.WriteAsync(frame, 0, frame.Length);
-            await tcpSocketClient.WriteStream.FlushAsync();
+            await WriteQueuedStreamAsync(tcpSocketClient, frame);
+        }
+
+        
+
+        private async Task WriteQueuedStreamAsync(ITcpSocketClient tcpSocketClient, byte[] frame)
+        {
+            if (frame == null)
+            {
+                return;
+            }
+
+            _writePendingData.Enqueue(frame);
+
+            lock (_writePendingData)
+            {
+                if (_sendingData)
+                {
+                    return;
+                }
+                _sendingData = true;
+            }
+
+            try
+            {
+                if (_writePendingData.Count > 0 && _writePendingData.TryDequeue(out byte[] buffer))
+                {
+                    await tcpSocketClient.WriteStream.WriteAsync(buffer, 0, buffer.Length);
+                    await tcpSocketClient.WriteStream.FlushAsync();
+                }
+                else
+                {
+                    lock (_writePendingData)
+                    {
+                        _sendingData = false;
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                // handle exception then
+                lock (_writePendingData)
+                {
+                    _sendingData = false;
+                }
+            }
+            finally
+            {
+                lock (_writePendingData)
+                {
+                    _sendingData = false;
+                }
+            }
         }
     }
 }

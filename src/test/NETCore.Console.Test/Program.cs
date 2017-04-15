@@ -107,8 +107,8 @@ class Program
 
             try
             {
-                System.Console.WriteLine("Waiting 10 seconds to send");
-                await Task.Delay(TimeSpan.FromSeconds(10));
+                //System.Console.WriteLine("Waiting 10 seconds to send");
+                //await Task.Delay(TimeSpan.FromSeconds(10));
 
                 System.Console.WriteLine("Sending: Test Single Frame");
                 await websocketClient.SendTextAsync("Test Single Frame");

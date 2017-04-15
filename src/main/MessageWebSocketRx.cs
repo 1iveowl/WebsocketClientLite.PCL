@@ -251,7 +251,9 @@ namespace WebsocketClientLite.PCL
 
         public void Dispose()
         {
-
+            _tcpSocketClient.Dispose();
+            _webSocketConnectService.Disconnect();
+            _websocketListener.StopReceivingData();
         }
     }
 }
