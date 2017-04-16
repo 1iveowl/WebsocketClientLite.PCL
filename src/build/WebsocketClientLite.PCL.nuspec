@@ -33,7 +33,7 @@ Added the option to choose TLS Protocol
     
   </metadata>
     <files>
-      <file src="..\main\bin\Release\WebsocketClientLite.*" target="lib\netstandard1.2" />
-      <file src="..\main\bin\Release\IWebsocketClientLite.*" target="lib\netstandard1.2" />
+      <file src="..\main\WebsocketClientLite.Netstandard\bin\Release\netstandard1.2\WebsocketClientLite.*" target="lib\netstandard1.2" />
+      <file src="..\interface\IWebsocketClientLite.Netstandard\bin\Release\netstandard1.2\IWebsocketClientLite.*" target="lib\netstandard1.2" />
     </files>
 </package>
