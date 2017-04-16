@@ -1,0 +1,13 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard1.2</TargetFramework>
+    <AssemblyName>IWebsocketClientLite.PCL</AssemblyName>
+    <RootNamespace>IWebsocketClientLite.PCL</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="SocketLite.PCL" Version="3.7.2" />
+  </ItemGroup>
+
+</Project>

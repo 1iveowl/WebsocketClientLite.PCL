@@ -1,15 +1,19 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <OutputType>Exe</OutputType>
-    <TargetFramework>netcoreapp1.1</TargetFramework>
+    <TargetFramework>netstandard1.2</TargetFramework>
+    <AssemblyName>WebsocketClientLite.PCL</AssemblyName>
+    <RootNamespace>WebsocketClientLite.PCL</RootNamespace>
   </PropertyGroup>
+
   <ItemGroup>
     <PackageReference Include="HttpMachine.PCL" Version="3.0.1" />
     <PackageReference Include="SocketLite.PCL" Version="3.7.2" />
     <PackageReference Include="System.Reactive" Version="3.1.1" />
   </ItemGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\..\interface\IWebsocketClientLite.Netstandard\IWebsocketClientLite.Netstandard.csproj" />
-    <ProjectReference Include="..\..\main\WebsocketClientLite.Netstandard\WebsocketClientLite.Netstandard.csproj" />
   </ItemGroup>
+
 </Project>

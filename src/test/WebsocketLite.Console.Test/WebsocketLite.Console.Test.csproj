@@ -153,13 +153,13 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\interface\IWebsocketLite.PCL\IWebsocketClientLite.PCL.csproj">
-      <Project>{e4662fb6-85eb-4e49-ba9b-89862beace08}</Project>
-      <Name>IWebsocketClientLite.PCL</Name>
+    <ProjectReference Include="..\..\interface\IWebsocketClientLite.Netstandard\IWebsocketClientLite.Netstandard.csproj">
+      <Project>{7dfe740f-b8b0-4c09-bd3f-c0c54048149e}</Project>
+      <Name>IWebsocketClientLite.Netstandard</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\main\WebsocketClientLite.PCL.csproj">
-      <Project>{cd8c2a5c-4bb2-42c6-a158-f2d63912d59c}</Project>
-      <Name>WebsocketClientLite.PCL</Name>
+    <ProjectReference Include="..\..\main\WebsocketClientLite.Netstandard\WebsocketClientLite.Netstandard.csproj">
+      <Project>{b323455d-61e5-4d21-907c-647a9cfa96f8}</Project>
+      <Name>WebsocketClientLite.Netstandard</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
