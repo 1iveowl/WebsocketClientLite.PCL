@@ -19,7 +19,7 @@ The library allows developers to establish secure wss websocket connections to w
 
 This project is based on [SocketLite](https://github.com/1iveowl/SocketLite) for cross platform TCP sockets support. 
 
-This project utilizes [Reactive Extensions](http://reactivex.io/). Although this has an added learning curve its a learning worth while and it makes creating a library like this much more elegant compared to using call-back or events. 
+This project utilizes [Reactive Extensions](http://reactivex.io/). Although this has an added learning curve it is an added learning curve worth while persuing, as it IMHO makes creating a library like this much more elegant compared to using call-back or events. 
 
 ## Usage
 The library is easy to use, as illustated with the examples below.
