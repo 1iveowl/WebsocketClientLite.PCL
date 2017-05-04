@@ -117,12 +117,12 @@ class Program
 }
 ```
 
-#### Working With Slack (And Maybe Also Other Websocket Server Implementations)
-The [RFC 6455 section defining how ping/pong works](https://tools.ietf.org/html/rfc6455#section-5.5.2) seem to be ambigious on the question of whether or not a pong should include the byte defining the length of "Application Data" when the length is zero. 
+#### Working With Slack (And maybe also other Websocket server implementations)
+The [RFC 6455 section defining how ping/pong works](https://tools.ietf.org/html/rfc6455#section-5.5.2) seems to be ambigious on the question of whether or not a pong should include the byte defining the length of "Application Data" in the special case when the length is just zero. 
 
-When testing against [websocket.org](http://websocket.org/echo) the byte is expected with the value of zero, however when used with the [slack.rtm](https://api.slack.com/rtm) api the byte should not be there or the slack websocket server will disconnect.
+When testing against [websocket.org](http://websocket.org/echo) the byte is expected and should have the value: 0 (zero). However when used with the [slack.rtm](https://api.slack.com/rtm) api the byte should **not** be there and if it is, the slack websocket server will disconnect.
 
-To manage this byte the following connect parameter can be set to true. Like this:
+To manage this *byte-issue* the following connect parameter can be set to true, in which case the byte with the zero value will not be added to the pong. Like this:
 ```csharp
 await _webSocket.ConnectAsync(_uri, excludeZeroApplicationDataInPong:true);
 ```
@@ -149,7 +149,7 @@ var websocketLoggerSubscriber = websocketClient.ObserveConnectionStatus.Subscrib
     });
 ```
 
-####References:
+#### References:
 The following documentation was utilized when writting this library:
 
  - [RFC 6544](https://tools.ietf.org/html/rfc6455)
