@@ -177,6 +177,9 @@ namespace WebsocketClientLite.PCL
 
             ITcpSocketClient socketClient = new TcpSocketClient();
 
+            _httpParserDelegate = new HttpParserDelegate();
+            _httpParserHandler = new HttpCombinedParser(_httpParserDelegate);
+
             await socketClient.ConnectAsync(
                 uri.Host,
                 uri.Port.ToString(),
@@ -185,31 +188,31 @@ namespace WebsocketClientLite.PCL
                 ignoreServerCertificateErrors,
                 tlsProtocolType);
 
+            var obsListener = await _webSocketConnectService.ConnectToObservableListener(
+                uri,
+                IsSecureWebsocket(uri),
+                _httpParserDelegate,
+                _httpParserHandler,
+                _innerCancellationTokenSource,
+                _websocketListener,
+                socketClient,
+                origin,
+                headers,
+                subProtocols,
+                ignoreServerCertificateErrors,
+                tlsProtocolType);
+
 
             var observable = Observable.Create<string>(
-                async obs =>
+                obs =>
                 {
                     IDisposable disp;
 
-                    using (_httpParserDelegate = new HttpParserDelegate())
-                    using (_httpParserHandler = new HttpCombinedParser(_httpParserDelegate))
-                    {
+                    //using (_httpParserDelegate = new HttpParserDelegate())
+                    //using (_httpParserHandler = new HttpCombinedParser(_httpParserDelegate))
+                    //{
                         try
                         {
-                            var obsListener = await _webSocketConnectService.ConnectToObservableListener(
-                                uri,
-                                IsSecureWebsocket(uri),
-                                _httpParserDelegate,
-                                _httpParserHandler,
-                                _innerCancellationTokenSource,
-                                _websocketListener,
-                                socketClient,
-                                origin,
-                                headers,
-                                subProtocols,
-                                ignoreServerCertificateErrors,
-                                tlsProtocolType);
-
                             disp = obsListener.Subscribe(
                                 b =>
                                 {
@@ -262,7 +265,7 @@ namespace WebsocketClientLite.PCL
                             }
                             _websocketListener.DataReceiveMode = DataReceiveMode.IsListeningForTextData;
                         }
-                    }
+                    //}
 
                     return disp;
                 });

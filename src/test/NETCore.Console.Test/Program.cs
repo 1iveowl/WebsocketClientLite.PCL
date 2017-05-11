@@ -86,7 +86,6 @@ class Program
                     innerCancellationTokenSource.Cancel();
                 });
 
-            var t = "";
 
             // ### Optional Subprotocols ###
             // The echo.websocket.org does not support any sub-protocols and hence this test does not add any.
