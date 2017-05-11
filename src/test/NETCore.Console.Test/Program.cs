@@ -30,6 +30,7 @@ class Program
         while (!outerCancellationTokenSource.IsCancellationRequested)
         {
             var innerCancellationSource = new CancellationTokenSource();
+
             await StartWebSocketAsync(innerCancellationSource);
 
             while (!innerCancellationSource.IsCancellationRequested)
@@ -56,7 +57,20 @@ class Program
                     System.Console.WriteLine(s.ToString());
                 });
 
-            _subscribeToMessagesReceived = websocketClient.ObserveTextMessagesReceived.Subscribe(
+            List<string> subprotocols = null; //new List<string> {"soap", "json"};
+
+            var headers = new Dictionary<string, string> { { "Pragma", "no-cache" }, { "Cache-Control", "no-cache" } };
+
+            var messageObserver = await websocketClient.CreateObservableMessageReceiver(
+                //new Uri("ws://localhost:3000/socket.io/?EIO=2&transport=websocket"),
+                new Uri("wss://echo.websocket.org:443"),
+                //cts,
+                ignoreServerCertificateErrors: true,
+                headers: headers,
+                subProtocols: subprotocols,
+                tlsProtocolType: TlsProtocolVersion.Tls12);
+
+            _subscribeToMessagesReceived = messageObserver.Subscribe(
                 msg =>
                 {
                     System.Console.WriteLine($"Reply from test server: {msg}");
@@ -72,12 +86,12 @@ class Program
                     innerCancellationTokenSource.Cancel();
                 });
 
+            var t = "";
+
             // ### Optional Subprotocols ###
             // The echo.websocket.org does not support any sub-protocols and hence this test does not add any.
             // Adding a sub-protocol that the server does not support causes the client to close down the connection.
-            List<string> subprotocols = null; //new List<string> {"soap", "json"};
-
-            var headers = new Dictionary<string, string> { { "Pragma", "no-cache" }, { "Cache-Control", "no-cache" } };
+            
 
 
             //await websocketClient.ConnectAsync(
@@ -96,14 +110,14 @@ class Program
             //await websocketClient.CloseAsync();
 
 
-            await websocketClient.ConnectAsync(
-                //new Uri("ws://localhost:3000/socket.io/?EIO=2&transport=websocket"),
-                new Uri("wss://echo.websocket.org:443"),
-                //cts,
-                ignoreServerCertificateErrors: true,
-                headers: headers,
-                subprotocols: subprotocols,
-                tlsProtocolVersion: TlsProtocolVersion.Tls12);
+            //await websocketClient.ConnectAsync(
+            //    //new Uri("ws://localhost:3000/socket.io/?EIO=2&transport=websocket"),
+            //    new Uri("wss://echo.websocket.org:443"),
+            //    //cts,
+            //    ignoreServerCertificateErrors: true,
+            //    headers: headers,
+            //    subprotocols: subprotocols,
+            //    tlsProtocolVersion: TlsProtocolVersion.Tls12);
 
             try
             {
@@ -133,19 +147,28 @@ class Program
                 await Task.Delay(TimeSpan.FromMilliseconds(400));
                 await websocketClient.SendTextMultiFrameAsync("Stop.", FrameType.LastInMultipleFrames);
 
-                await websocketClient.CloseAsync();
+                _subscribeToMessagesReceived.Dispose();
 
-                await websocketClient.ConnectAsync(
-                    //new Uri("ws://192.168.0.7:3000/socket.io/?EIO=2&transport=websocket"),
-                    new Uri("wss://echo.websocket.org:443"),
-                    //cts,
-                    ignoreServerCertificateErrors: true,
-                    subprotocols: subprotocols,
-                    tlsProtocolVersion: TlsProtocolVersion.Tls12);
+
+                _subscribeToMessagesReceived = messageObserver.Subscribe(
+                    msg =>
+                    {
+                        System.Console.WriteLine($"Reply from test server: {msg}");
+                    },
+                    ex =>
+                    {
+                        System.Console.WriteLine(ex.Message);
+                        innerCancellationTokenSource.Cancel();
+                    },
+                    () =>
+                    {
+                        System.Console.WriteLine($"Subscription Completed");
+                        innerCancellationTokenSource.Cancel();
+                    });
 
                 await websocketClient.SendTextAsync("Test localhost");
 
-                await websocketClient.CloseAsync();
+                _subscribeToMessagesReceived.Dispose();
             }
             catch (Exception e)
             {

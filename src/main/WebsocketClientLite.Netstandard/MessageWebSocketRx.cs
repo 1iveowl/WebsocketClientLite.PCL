@@ -17,38 +17,14 @@ namespace WebsocketClientLite.PCL
 {
     public class MessageWebSocketRx : IMessageWebSocketRx
     {
-        private readonly ITcpSocketClient _tcpSocketClient = new TcpSocketClient();
-        private readonly ISubject<ConnectionStatus> _connectionStatusObserver = new Subject<ConnectionStatus>();
-        private readonly WebSocketConnectService _webSocketConnectService;
-        private readonly WebsocketListener _websocketListener;
-        private readonly WebsocketSenderService _websocketSenderService;
 
-        private HttpParserDelegate _httpParserDelegate;
-        private HttpCombinedParser _httpParserHandler;
-
-        private CancellationTokenSource _innerCancellationTokenSource;
-
-        public IObservable<ConnectionStatus> ObserveConnectionStatus => _connectionStatusObserver.AsObservable();
-
+        #region Obsolete
+        [Obsolete("Deprecated")]
         public IObservable<string> ObserveTextMessagesReceived => _websocketListener.ObserveTextMessageSequence;
 
-        public bool IsConnected { get; private set; }
-        public bool SubprotocolAccepted { get; private set; }
-
-        public string SubprotocolAcceptedName { get; private set; }
-
-
-        public MessageWebSocketRx()
-        {
-            _connectionStatusObserver.OnNext(ConnectionStatus.Disconnected);
-            _webSocketConnectService = new WebSocketConnectService();
-            _websocketSenderService = new WebsocketSenderService();
-
-            _websocketListener = new WebsocketListener(_webSocketConnectService);
-        }
-
+        [Obsolete("Deprecated")]
         public async Task ConnectAsync(
-            Uri uri, 
+            Uri uri,
             string origin = null,
             IDictionary<string, string> headers = null,
             IEnumerable<string> subprotocols = null,
@@ -70,17 +46,17 @@ namespace WebsocketClientLite.PCL
                 try
                 {
                     await _webSocketConnectService.ConnectAsync(
-                    uri,
-                    isSecure,
-                    _httpParserDelegate,
-                    _httpParserHandler,
-                    _innerCancellationTokenSource,
-                    _websocketListener,
-                    origin,
-                    headers,
-                    subprotocols,
-                    ignoreServerCertificateErrors,
-                    tlsProtocolVersion);
+                        uri,
+                        isSecure,
+                        _httpParserDelegate,
+                        _httpParserHandler,
+                        _innerCancellationTokenSource,
+                        _websocketListener,
+                        origin,
+                        headers,
+                        subprotocols,
+                        ignoreServerCertificateErrors,
+                        tlsProtocolVersion);
                 }
                 catch (Exception ex)
                 {
@@ -122,6 +98,7 @@ namespace WebsocketClientLite.PCL
             }
         }
 
+        [Obsolete("Deprecated")]
         public async Task CloseAsync()
         {
             _connectionStatusObserver.OnNext(ConnectionStatus.Disconnecting);
@@ -148,6 +125,149 @@ namespace WebsocketClientLite.PCL
 
             _connectionStatusObserver.OnNext(ConnectionStatus.Disconnected);
             IsConnected = false;
+        }
+
+        #endregion
+
+        //internal ITcpSocketClient TcpSocketClient;
+
+        public IObservable<ConnectionStatus> ObserveConnectionStatus => _connectionStatusObserver.AsObservable();
+
+        private readonly ITcpSocketClient _tcpSocketClient = new TcpSocketClient();
+        private readonly ISubject<ConnectionStatus> _connectionStatusObserver = new Subject<ConnectionStatus>();
+        private readonly WebSocketConnectService _webSocketConnectService;
+        private readonly WebsocketListener _websocketListener;
+        private readonly WebsocketSenderService _websocketSenderService;
+
+        private HttpParserDelegate _httpParserDelegate;
+        private HttpCombinedParser _httpParserHandler;
+
+        private CancellationTokenSource _innerCancellationTokenSource;
+
+
+        public bool IsConnected { get; private set; }
+        public bool SubprotocolAccepted { get; private set; }
+
+        public string SubprotocolAcceptedName { get; private set; }
+
+
+        public MessageWebSocketRx()
+        {
+            //_connectionStatusObserver.OnNext(ConnectionStatus.Disconnected);
+            _webSocketConnectService = new WebSocketConnectService();
+            _websocketSenderService = new WebsocketSenderService();
+            _websocketListener = new WebsocketListener(_webSocketConnectService);
+        }
+
+
+        public async Task<IObservable<string>> CreateObservableMessageReceiver(
+            Uri uri,
+            string origin = null,
+            IDictionary<string, string> headers = null,
+            IEnumerable<string> subProtocols = null,
+            bool ignoreServerCertificateErrors = false,
+            TlsProtocolVersion tlsProtocolType = TlsProtocolVersion.Tls12,
+            bool excludeZeroApplicationDataInPong = false)
+        {
+            _websocketListener.ExcludeZeroApplicationDataInPong = excludeZeroApplicationDataInPong;
+
+            _connectionStatusObserver.OnNext(ConnectionStatus.Connecting);
+
+            _innerCancellationTokenSource = new CancellationTokenSource();
+
+            ITcpSocketClient socketClient = new TcpSocketClient();
+
+            await socketClient.ConnectAsync(
+                uri.Host,
+                uri.Port.ToString(),
+                IsSecureWebsocket(uri),
+                _innerCancellationTokenSource.Token,
+                ignoreServerCertificateErrors,
+                tlsProtocolType);
+
+
+            var observable = Observable.Create<string>(
+                async obs =>
+                {
+                    IDisposable disp;
+
+                    using (_httpParserDelegate = new HttpParserDelegate())
+                    using (_httpParserHandler = new HttpCombinedParser(_httpParserDelegate))
+                    {
+                        try
+                        {
+                            var obsListener = await _webSocketConnectService.ConnectToObservableListener(
+                                uri,
+                                IsSecureWebsocket(uri),
+                                _httpParserDelegate,
+                                _httpParserHandler,
+                                _innerCancellationTokenSource,
+                                _websocketListener,
+                                socketClient,
+                                origin,
+                                headers,
+                                subProtocols,
+                                ignoreServerCertificateErrors,
+                                tlsProtocolType);
+
+                            disp = obsListener.Subscribe(
+                                b =>
+                                {
+                                    obs.OnNext(b);
+                                },
+                                ex =>
+                                {
+                                    obs.OnError(ex);
+                                },
+                                () => obs.OnCompleted());
+
+                        }
+                        catch (Exception ex)
+                        {
+                            _connectionStatusObserver.OnNext(ConnectionStatus.ConnectionFailed);
+                            throw ex;
+                        }
+
+                        if (_httpParserDelegate.HttpRequestReponse.StatusCode == 101)
+                        {
+                            if (subProtocols != null)
+                            {
+                                SubprotocolAccepted =
+                                    _httpParserDelegate?.HttpRequestReponse?.Headers?.ContainsKey(
+                                        "SEC-WEBSOCKET-PROTOCOL") ?? false;
+
+                                if (SubprotocolAccepted)
+                                {
+                                    SubprotocolAcceptedName =
+                                        _httpParserDelegate?.HttpRequestReponse?.Headers?["SEC-WEBSOCKET-PROTOCOL"];
+                                    if (!string.IsNullOrEmpty(SubprotocolAcceptedName))
+                                    {
+                                        _connectionStatusObserver.OnNext(ConnectionStatus.Connected);
+                                        IsConnected = true;
+                                    }
+                                    else
+                                    {
+                                        throw new Exception("Server responded with blank Sub Protocol name");
+                                    }
+                                }
+                                else
+                                {
+                                    throw new Exception("Server did not support any of the needed Sub Protocols");
+                                }
+                            }
+                            else
+                            {
+                                _connectionStatusObserver.OnNext(ConnectionStatus.Connected);
+                                IsConnected = true;
+                            }
+                            _websocketListener.DataReceiveMode = DataReceiveMode.IsListeningForTextData;
+                        }
+                    }
+
+                    return disp;
+                });
+
+            return observable;
         }
 
         public async Task SendTextAsync(string message)

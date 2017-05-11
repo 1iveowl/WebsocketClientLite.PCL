@@ -1,12 +1,12 @@
-﻿using System;
+﻿using HttpMachine;
+using ISocketLite.PCL.Interface;
+using System;
 using System.Diagnostics;
-using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using System.Threading;
 using System.Threading.Tasks;
-using HttpMachine;
-using ISocketLite.PCL.Interface;
+using WebsocketClientLite.PCL.Helper;
 using WebsocketClientLite.PCL.Model;
 using WebsocketClientLite.PCL.Parser;
 
@@ -19,12 +19,19 @@ namespace WebsocketClientLite.PCL.Service
         private readonly WebSocketConnectService _webSocketConnectService;
         internal readonly TextDataParser TextDataParser;
 
+        //private bool _isConnected;
+
         private ITcpSocketClient _tcpSocketClient;
         private CancellationTokenSource _innerCancellationTokenSource;
         private HttpParserDelegate _parserDelgate;
         private HttpCombinedParser _parserHandler;
         private IDisposable _byteStreamSessionSubscription;
         internal bool ExcludeZeroApplicationDataInPong;
+
+        private IObservable<byte[]> ByteStreamHandlerObservable => Observable.While(
+                () => !_innerCancellationTokenSource.IsCancellationRequested,
+                Observable.FromAsync(ReadOneByteAtTheTimeAsync));
+            //.ObserveOn(Scheduler.Default);
 
         private IObservable<string> ObserveTextMessageSession => ByteStreamHandlerObservable.Select(
             b =>
@@ -71,12 +78,7 @@ namespace WebsocketClientLite.PCL.Service
                 }
             }).Where(str => !string.IsNullOrEmpty(str));
 
-        private IObservable<byte[]> ByteStreamHandlerObservable => Observable.While(
-                () => !_innerCancellationTokenSource.IsCancellationRequested,
-                Observable.FromAsync(ReadOneByteAtTheTimeAsync))
-            .ObserveOn(Scheduler.Default);
 
-        private bool _isConnected;
 
         internal IObservable<string> ObserveTextMessageSequence => _textMessageSequence.AsObservable();
 
@@ -114,7 +116,7 @@ namespace WebsocketClientLite.PCL.Service
 
                 if (bytesRead < oneByteArray.Length)
                 {
-                    _isConnected = false;
+                    //_isConnected = false;
                     _innerCancellationTokenSource.Cancel();
                     throw new Exception("Websocket connection aborted unexpectantly. Check connection and socket security version/TLS version).");
                 }
@@ -155,9 +157,101 @@ namespace WebsocketClientLite.PCL.Service
             HasReceivedCloseFromServer = false;
         }
 
+        internal IObservable<string> CreateObservableListener(
+            HttpParserDelegate requestHandler,
+            HttpCombinedParser parserHandler,
+            CancellationTokenSource innerCancellationTokenSource)
+        {
+            _parserHandler = parserHandler;
+            _parserDelgate = requestHandler;
+            TextDataParser.Reinitialize();
+
+            _innerCancellationTokenSource = innerCancellationTokenSource;
+
+            _tcpSocketClient = _webSocketConnectService.TcpSocketClient;
+
+            var observable = Observable.Create<string>(
+                obs =>
+                {
+                    var disp = _tcpSocketClient.ReadStream.ReadDataSObservable()
+                    //Observable.While(
+                    //        () => !_innerCancellationTokenSource.IsCancellationRequested,
+                    //        Observable.FromAsync(ReadOneByteAtTheTimeAsync))
+                        .Subscribe(
+                            b =>
+                            {
+                                var ba = new []{b};
+                                
+                                if (TextDataParser.IsCloseRecieved) return;
+
+                                switch (DataReceiveMode)
+                                {
+                                    case DataReceiveMode.IsListeningForHandShake:
+                                        try
+                                        {
+                                            if (_parserDelgate.HttpRequestReponse.IsEndOfMessage)
+                                            {
+                                                return;
+                                            }
+
+                                            _handshakeParser.Parse(ba, _parserDelgate, _parserHandler);
+
+                                            obs.OnNext(null);
+                                        }
+                                        catch (Exception ex)
+                                        {
+                                            if (ex is TimeoutException)
+                                            {
+                                                _parserDelgate.HttpRequestReponse.IsRequestTimedOut = true;
+                                            }
+                                            else
+                                            {
+                                                _parserDelgate.HttpRequestReponse.IsUnableToParseHttp = true;
+                                            }
+                                            obs.OnNext(null);
+                                        }
+                                        break;
+                                    case DataReceiveMode.IsListeningForTextData:
+
+                                        TextDataParser.Parse(_tcpSocketClient, b, ExcludeZeroApplicationDataInPong);
+
+                                        if (TextDataParser.IsCloseRecieved)
+                                        {
+                                            StopReceivingData();
+                                        }
+
+                                        obs.OnNext(TextDataParser.HasNewMessage ? TextDataParser.NewMessage : null);
+                                        break;
+
+                                    default:
+                                        obs.OnNext(null);
+                                        break;
+                                }
+
+                            },
+                                ex =>
+                                {
+                                    StopReceivingData();
+                                    _textMessageSequence.OnError(ex);
+                                },
+                                () =>
+                                {
+                                    StopReceivingData();
+                                    _textMessageSequence.OnCompleted();
+                                }
+                            );
+
+                    HasReceivedCloseFromServer = false;
+
+                    return disp;
+                });
+
+            return observable;
+        }
+
         internal void StopReceivingData()
         {
-            _isConnected = false;
+            //_isConnected = false;
             _byteStreamSessionSubscription.Dispose();
             HasReceivedCloseFromServer = true;
             _webSocketConnectService.Disconnect();
