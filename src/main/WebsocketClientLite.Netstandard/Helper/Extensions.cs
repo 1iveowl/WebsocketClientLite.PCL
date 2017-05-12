@@ -29,7 +29,7 @@ namespace WebsocketClientLite.PCL.Helper
 
                 bytesRead = await stream.ReadAsync(oneByteArray, 0, 1);
                 
-                Debug.WriteLine(oneByteArray[0].ToString());
+                //Debug.WriteLine(oneByteArray[0].ToString());
 
                 if (bytesRead < oneByteArray.Length)
                 {

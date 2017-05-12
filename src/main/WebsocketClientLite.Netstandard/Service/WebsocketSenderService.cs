@@ -14,11 +14,14 @@ namespace WebsocketClientLite.PCL.Service
     {
         private bool _isSendingMultipleFrames;
 
+        private WebsocketListener _websocketListener;
+
         private readonly ConcurrentQueue<byte[]> _writePendingData = new ConcurrentQueue<byte[]>();
         private bool _sendingData;
 
-        internal WebsocketSenderService()
+        internal WebsocketSenderService(WebsocketListener websocketListener)
         {
+            _websocketListener = websocketListener;
         }
 
         internal async Task SendTextAsync(ITcpSocketClient tcpSocketClient, string message)
@@ -139,8 +142,6 @@ namespace WebsocketClientLite.PCL.Service
             await WriteQueuedStreamAsync(tcpSocketClient, frame);
         }
 
-        
-
         private async Task WriteQueuedStreamAsync(ITcpSocketClient tcpSocketClient, byte[] frame)
         {
             if (frame == null)
@@ -163,6 +164,7 @@ namespace WebsocketClientLite.PCL.Service
             {
                 if (_writePendingData.Count > 0 && _writePendingData.TryDequeue(out byte[] buffer))
                 {
+                    await WaitForWebsocketConnection();
                     await tcpSocketClient.WriteStream.WriteAsync(buffer, 0, buffer.Length);
                     await tcpSocketClient.WriteStream.FlushAsync();
                 }
@@ -188,6 +190,14 @@ namespace WebsocketClientLite.PCL.Service
                 {
                     _sendingData = false;
                 }
+            }
+        }
+
+        private async Task WaitForWebsocketConnection()
+        {
+            while (!_websocketListener.IsConnected)
+            {
+                await Task.Delay(TimeSpan.FromMilliseconds(10));
             }
         }
     }

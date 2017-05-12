@@ -9,6 +9,7 @@ using ISocketLite.PCL.Interface;
 using ISocketLite.PCL.Model;
 using IWebsocketClientLite.PCL;
 using SocketLite.Services;
+using WebsocketClientLite.PCL.Helper;
 using WebsocketClientLite.PCL.Model;
 using WebsocketClientLite.PCL.Parser;
 using WebsocketClientLite.PCL.Service;
@@ -68,15 +69,15 @@ namespace WebsocketClientLite.PCL
                 {
                     if (subprotocols != null)
                     {
-                        SubprotocolAccepted = _httpParserDelegate?.HttpRequestReponse?.Headers?.ContainsKey("SEC-WEBSOCKET-PROTOCOL") ?? false;
+                        _websocketListener.SubprotocolAccepted = _httpParserDelegate?.HttpRequestReponse?.Headers?.ContainsKey("SEC-WEBSOCKET-PROTOCOL") ?? false;
 
                         if (SubprotocolAccepted)
                         {
-                            SubprotocolAcceptedName = _httpParserDelegate?.HttpRequestReponse?.Headers?["SEC-WEBSOCKET-PROTOCOL"];
+                            _websocketListener.SubprotocolAcceptedName = _httpParserDelegate?.HttpRequestReponse?.Headers?["SEC-WEBSOCKET-PROTOCOL"];
                             if (!string.IsNullOrEmpty(SubprotocolAcceptedName))
                             {
                                 _connectionStatusObserver.OnNext(ConnectionStatus.Connected);
-                                IsConnected = true;
+                                _websocketListener.IsConnected = true;
                             }
                             else
                             {
@@ -91,7 +92,7 @@ namespace WebsocketClientLite.PCL
                     else
                     {
                         _connectionStatusObserver.OnNext(ConnectionStatus.Connected);
-                        IsConnected = true;
+                        _websocketListener.IsConnected = true;
                     }
                     _websocketListener.DataReceiveMode = DataReceiveMode.IsListeningForTextData;
                 }
@@ -124,7 +125,7 @@ namespace WebsocketClientLite.PCL
             }
 
             _connectionStatusObserver.OnNext(ConnectionStatus.Disconnected);
-            IsConnected = false;
+            _websocketListener.IsConnected = false;
         }
 
         #endregion
@@ -145,17 +146,17 @@ namespace WebsocketClientLite.PCL
         private CancellationTokenSource _innerCancellationTokenSource;
 
 
-        public bool IsConnected { get; private set; }
-        public bool SubprotocolAccepted { get; private set; }
+        public bool IsConnected => _websocketListener.IsConnected;
+        public bool SubprotocolAccepted => _websocketListener.SubprotocolAccepted;
 
-        public string SubprotocolAcceptedName { get; private set; }
+        public string SubprotocolAcceptedName => _websocketListener.SubprotocolAcceptedName;
         
         public MessageWebSocketRx()
         {
-            //_connectionStatusObserver.OnNext(ConnectionStatus.Disconnected);
             _webSocketConnectService = new WebSocketConnectService();
-            _websocketSenderService = new WebsocketSenderService();
+            
             _websocketListener = new WebsocketListener(_webSocketConnectService);
+            _websocketSenderService = new WebsocketSenderService(_websocketListener);
         }
         
         public async Task<IObservable<string>> CreateObservableMessageReceiver(
@@ -173,6 +174,15 @@ namespace WebsocketClientLite.PCL
 
             ITcpSocketClient socketClient = new TcpSocketClient();
 
+            _httpParserDelegate = new HttpParserDelegate();
+            _httpParserHandler = new HttpCombinedParser(_httpParserDelegate);
+
+            var observableSocketListener = _websocketListener.CreateObservableListener(
+                _httpParserDelegate,
+                _httpParserHandler,
+                _innerCancellationTokenSource,
+                socketClient);
+
             await socketClient.ConnectAsync(
                 uri.Host,
                 uri.Port.ToString(),
@@ -181,153 +191,36 @@ namespace WebsocketClientLite.PCL
                 ignoreServerCertificateErrors,
                 tlsProtocolType);
 
-
-            using (_httpParserDelegate = new HttpParserDelegate())
-            using (_httpParserHandler = new HttpCombinedParser(_httpParserDelegate))
-            {
-                await _webSocketConnectService.ConnectServer(
-                    uri,
-                    IsSecureWebsocket(uri),
-                    _httpParserDelegate,
-                    _httpParserHandler,
-                    _innerCancellationTokenSource,
-                    _websocketListener,
-                    socketClient,
-                    origin,
-                    headers,
-                    subProtocols,
-                    ignoreServerCertificateErrors,
-                    tlsProtocolType);
-
-                if (_httpParserDelegate.HttpRequestReponse.StatusCode == 101)
-                {
-                    if (subProtocols != null)
-                    {
-                        SubprotocolAccepted =
-                            _httpParserDelegate?.HttpRequestReponse?.Headers?.ContainsKey(
-                                "SEC-WEBSOCKET-PROTOCOL") ?? false;
-
-                        if (SubprotocolAccepted)
-                        {
-                            SubprotocolAcceptedName =
-                                _httpParserDelegate?.HttpRequestReponse?.Headers?["SEC-WEBSOCKET-PROTOCOL"];
-                            if (!string.IsNullOrEmpty(SubprotocolAcceptedName))
-                            {
-                                _connectionStatusObserver.OnNext(ConnectionStatus.Connected);
-                                IsConnected = true;
-                            }
-                            else
-                            {
-                                throw new Exception("Server responded with blank Sub Protocol name");
-                            }
-                        }
-                        else
-                        {
-                            throw new Exception("Server did not support any of the needed Sub Protocols");
-                        }
-                    }
-                    else
-                    {
-                        _connectionStatusObserver.OnNext(ConnectionStatus.Connected);
-                        IsConnected = true;
-                    }
-                    _websocketListener.DataReceiveMode = DataReceiveMode.IsListeningForTextData;
-                }
-
-            }
-
-            return _websocketListener.CreateObservableListener(_httpParserDelegate, _httpParserHandler, _innerCancellationTokenSource);
             
-            //var observable = Observable.Create<string>(
-            //    obs =>
-            //    {
-            //        IDisposable disp;
+            await _webSocketConnectService.ConnectServer(
+                observableSocketListener,
+                uri,
+                IsSecureWebsocket(uri),
+                _httpParserDelegate,
+                _httpParserHandler,
+                _innerCancellationTokenSource,
+                _websocketListener,
+                socketClient,
+                origin,
+                headers,
+                subProtocols,
+                ignoreServerCertificateErrors,
+                tlsProtocolType);
 
-            //        using (_httpParserDelegate = new HttpParserDelegate())
-            //        using (_httpParserHandler = new HttpCombinedParser(_httpParserDelegate))
-            //        {
-            //            try
-            //            {
-            //                disp = obsListener.Subscribe(
-            //                    b =>
-            //                    {
-            //                        obs.OnNext(b);
-            //                    },
-            //                    ex =>
-            //                    {
-            //                        obs.OnError(ex);
-            //                    },
-            //                    () => obs.OnCompleted());
-
-            //            }
-            //            catch (Exception ex)
-            //            {
-            //                _connectionStatusObserver.OnNext(ConnectionStatus.ConnectionFailed);
-            //                throw ex;
-            //            }
-
-            //            if (_httpParserDelegate.HttpRequestReponse.StatusCode == 101)
-            //            {
-            //                if (subProtocols != null)
-            //                {
-            //                    SubprotocolAccepted =
-            //                        _httpParserDelegate?.HttpRequestReponse?.Headers?.ContainsKey(
-            //                            "SEC-WEBSOCKET-PROTOCOL") ?? false;
-
-            //                    if (SubprotocolAccepted)
-            //                    {
-            //                        SubprotocolAcceptedName =
-            //                            _httpParserDelegate?.HttpRequestReponse?.Headers?["SEC-WEBSOCKET-PROTOCOL"];
-            //                        if (!string.IsNullOrEmpty(SubprotocolAcceptedName))
-            //                        {
-            //                            _connectionStatusObserver.OnNext(ConnectionStatus.Connected);
-            //                            IsConnected = true;
-            //                        }
-            //                        else
-            //                        {
-            //                            throw new Exception("Server responded with blank Sub Protocol name");
-            //                        }
-            //                    }
-            //                    else
-            //                    {
-            //                        throw new Exception("Server did not support any of the needed Sub Protocols");
-            //                    }
-            //                }
-            //                else
-            //                {
-            //                    _connectionStatusObserver.OnNext(ConnectionStatus.Connected);
-            //                    IsConnected = true;
-            //                }
-            //                _websocketListener.DataReceiveMode = DataReceiveMode.IsListeningForTextData;
-            //            }
-            //        }
-
-            //        return disp;
-            //    });
-
-            //return observable;
+            return observableSocketListener;
         }
 
         public async Task SendTextAsync(string message)
         {
-            if (IsConnected)
-            {
-                _connectionStatusObserver.OnNext(ConnectionStatus.Sending);
-                await _websocketSenderService.SendTextAsync(_webSocketConnectService.TcpSocketClient, message);
-                _connectionStatusObserver.OnNext(ConnectionStatus.DeliveryAcknowledged);
-            }
-            else
-            {
-                IsConnected = false;
-                throw new Exception("Not connected. Client must beconnected to websocket server before sending message");
-            }
+            _connectionStatusObserver.OnNext(ConnectionStatus.Sending);
+            await _websocketSenderService.SendTextAsync(_webSocketConnectService.TcpSocketClient, message);
+            _connectionStatusObserver.OnNext(ConnectionStatus.DeliveryAcknowledged);
+
         }
 
         public async Task SendTextMultiFrameAsync(string message, FrameType frameType)
         {
-            if (IsConnected)
-            {
-                switch (frameType)
+            switch (frameType)
                 {
                     case FrameType.FirstOfMultipleFrames:
                         _connectionStatusObserver.OnNext(ConnectionStatus.MultiFrameSendingBegin);
@@ -346,27 +239,13 @@ namespace WebsocketClientLite.PCL
                 
                 await _websocketSenderService.SendTextMultiFrameAsync(_webSocketConnectService.TcpSocketClient, message, frameType);
                 _connectionStatusObserver.OnNext(ConnectionStatus.FrameDeliveryAcknowledged);
-            }
-            else
-            {
-                IsConnected = false;
-                throw new Exception("Not connected. Client must beconnected to websocket server before sending message");
-            }
         }
 
         public async Task SendTextAsync(string[] messageList)
         {
-            if (IsConnected)
-            {
-                _connectionStatusObserver.OnNext(ConnectionStatus.Sending);
-                await _websocketSenderService.SendTextAsync(_webSocketConnectService.TcpSocketClient, messageList);
-                _connectionStatusObserver.OnNext(ConnectionStatus.DeliveryAcknowledged);
-            }
-            else
-            {
-                IsConnected = false;
-                throw new Exception("Not connected. Client must beconnected to websocket server before sending message");
-            }
+            _connectionStatusObserver.OnNext(ConnectionStatus.Sending);
+            await _websocketSenderService.SendTextAsync(_webSocketConnectService.TcpSocketClient, messageList);
+            _connectionStatusObserver.OnNext(ConnectionStatus.DeliveryAcknowledged);
         }
 
 
@@ -412,6 +291,14 @@ namespace WebsocketClientLite.PCL
             _tcpSocketClient.Dispose();
             _webSocketConnectService.Disconnect();
             _websocketListener.StopReceivingData();
+        }
+
+        private async Task WaitForWebsocketConnection()
+        {
+            while (!_websocketListener.IsConnected)
+            {
+                await Task.Delay(TimeSpan.FromMilliseconds(10));
+            }
         }
     }
 }

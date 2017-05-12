@@ -147,28 +147,28 @@ class Program
                 await Task.Delay(TimeSpan.FromMilliseconds(400));
                 await websocketClient.SendTextMultiFrameAsync("Stop.", FrameType.LastInMultipleFrames);
 
-                _subscribeToMessagesReceived.Dispose();
+                //_subscribeToMessagesReceived.Dispose();
 
 
-                _subscribeToMessagesReceived = messageObserver.Subscribe(
-                    msg =>
-                    {
-                        System.Console.WriteLine($"Reply from test server: {msg}");
-                    },
-                    ex =>
-                    {
-                        System.Console.WriteLine(ex.Message);
-                        innerCancellationTokenSource.Cancel();
-                    },
-                    () =>
-                    {
-                        System.Console.WriteLine($"Subscription Completed");
-                        innerCancellationTokenSource.Cancel();
-                    });
+                //_subscribeToMessagesReceived = messageObserver.Subscribe(
+                //    msg =>
+                //    {
+                //        System.Console.WriteLine($"Reply from test server: {msg}");
+                //    },
+                //    ex =>
+                //    {
+                //        System.Console.WriteLine(ex.Message);
+                //        innerCancellationTokenSource.Cancel();
+                //    },
+                //    () =>
+                //    {
+                //        System.Console.WriteLine($"Subscription Completed");
+                //        innerCancellationTokenSource.Cancel();
+                //    });
 
-                await websocketClient.SendTextAsync("Test localhost");
+                //await websocketClient.SendTextAsync("Test localhost");
 
-                _subscribeToMessagesReceived.Dispose();
+                //_subscribeToMessagesReceived.Dispose();
             }
             catch (Exception e)
             {
