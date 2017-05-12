@@ -149,8 +149,7 @@ namespace WebsocketClientLite.PCL
         public bool SubprotocolAccepted { get; private set; }
 
         public string SubprotocolAcceptedName { get; private set; }
-
-
+        
         public MessageWebSocketRx()
         {
             //_connectionStatusObserver.OnNext(ConnectionStatus.Disconnected);
@@ -158,8 +157,7 @@ namespace WebsocketClientLite.PCL
             _websocketSenderService = new WebsocketSenderService();
             _websocketListener = new WebsocketListener(_webSocketConnectService);
         }
-
-
+        
         public async Task<IObservable<string>> CreateObservableMessageReceiver(
             Uri uri,
             string origin = null,
@@ -170,15 +168,10 @@ namespace WebsocketClientLite.PCL
             bool excludeZeroApplicationDataInPong = false)
         {
             _websocketListener.ExcludeZeroApplicationDataInPong = excludeZeroApplicationDataInPong;
-
             _connectionStatusObserver.OnNext(ConnectionStatus.Connecting);
-
             _innerCancellationTokenSource = new CancellationTokenSource();
 
             ITcpSocketClient socketClient = new TcpSocketClient();
-
-            _httpParserDelegate = new HttpParserDelegate();
-            _httpParserHandler = new HttpCombinedParser(_httpParserDelegate);
 
             await socketClient.ConnectAsync(
                 uri.Host,
@@ -188,89 +181,131 @@ namespace WebsocketClientLite.PCL
                 ignoreServerCertificateErrors,
                 tlsProtocolType);
 
-            var obsListener = await _webSocketConnectService.ConnectToObservableListener(
-                uri,
-                IsSecureWebsocket(uri),
-                _httpParserDelegate,
-                _httpParserHandler,
-                _innerCancellationTokenSource,
-                _websocketListener,
-                socketClient,
-                origin,
-                headers,
-                subProtocols,
-                ignoreServerCertificateErrors,
-                tlsProtocolType);
 
+            using (_httpParserDelegate = new HttpParserDelegate())
+            using (_httpParserHandler = new HttpCombinedParser(_httpParserDelegate))
+            {
+                await _webSocketConnectService.ConnectServer(
+                    uri,
+                    IsSecureWebsocket(uri),
+                    _httpParserDelegate,
+                    _httpParserHandler,
+                    _innerCancellationTokenSource,
+                    _websocketListener,
+                    socketClient,
+                    origin,
+                    headers,
+                    subProtocols,
+                    ignoreServerCertificateErrors,
+                    tlsProtocolType);
 
-            var observable = Observable.Create<string>(
-                obs =>
+                if (_httpParserDelegate.HttpRequestReponse.StatusCode == 101)
                 {
-                    IDisposable disp;
+                    if (subProtocols != null)
+                    {
+                        SubprotocolAccepted =
+                            _httpParserDelegate?.HttpRequestReponse?.Headers?.ContainsKey(
+                                "SEC-WEBSOCKET-PROTOCOL") ?? false;
 
-                    //using (_httpParserDelegate = new HttpParserDelegate())
-                    //using (_httpParserHandler = new HttpCombinedParser(_httpParserDelegate))
-                    //{
-                        try
+                        if (SubprotocolAccepted)
                         {
-                            disp = obsListener.Subscribe(
-                                b =>
-                                {
-                                    obs.OnNext(b);
-                                },
-                                ex =>
-                                {
-                                    obs.OnError(ex);
-                                },
-                                () => obs.OnCompleted());
-
-                        }
-                        catch (Exception ex)
-                        {
-                            _connectionStatusObserver.OnNext(ConnectionStatus.ConnectionFailed);
-                            throw ex;
-                        }
-
-                        if (_httpParserDelegate.HttpRequestReponse.StatusCode == 101)
-                        {
-                            if (subProtocols != null)
-                            {
-                                SubprotocolAccepted =
-                                    _httpParserDelegate?.HttpRequestReponse?.Headers?.ContainsKey(
-                                        "SEC-WEBSOCKET-PROTOCOL") ?? false;
-
-                                if (SubprotocolAccepted)
-                                {
-                                    SubprotocolAcceptedName =
-                                        _httpParserDelegate?.HttpRequestReponse?.Headers?["SEC-WEBSOCKET-PROTOCOL"];
-                                    if (!string.IsNullOrEmpty(SubprotocolAcceptedName))
-                                    {
-                                        _connectionStatusObserver.OnNext(ConnectionStatus.Connected);
-                                        IsConnected = true;
-                                    }
-                                    else
-                                    {
-                                        throw new Exception("Server responded with blank Sub Protocol name");
-                                    }
-                                }
-                                else
-                                {
-                                    throw new Exception("Server did not support any of the needed Sub Protocols");
-                                }
-                            }
-                            else
+                            SubprotocolAcceptedName =
+                                _httpParserDelegate?.HttpRequestReponse?.Headers?["SEC-WEBSOCKET-PROTOCOL"];
+                            if (!string.IsNullOrEmpty(SubprotocolAcceptedName))
                             {
                                 _connectionStatusObserver.OnNext(ConnectionStatus.Connected);
                                 IsConnected = true;
                             }
-                            _websocketListener.DataReceiveMode = DataReceiveMode.IsListeningForTextData;
+                            else
+                            {
+                                throw new Exception("Server responded with blank Sub Protocol name");
+                            }
                         }
-                    //}
+                        else
+                        {
+                            throw new Exception("Server did not support any of the needed Sub Protocols");
+                        }
+                    }
+                    else
+                    {
+                        _connectionStatusObserver.OnNext(ConnectionStatus.Connected);
+                        IsConnected = true;
+                    }
+                    _websocketListener.DataReceiveMode = DataReceiveMode.IsListeningForTextData;
+                }
 
-                    return disp;
-                });
+            }
 
-            return observable;
+            return _websocketListener.CreateObservableListener(_httpParserDelegate, _httpParserHandler, _innerCancellationTokenSource);
+            
+            //var observable = Observable.Create<string>(
+            //    obs =>
+            //    {
+            //        IDisposable disp;
+
+            //        using (_httpParserDelegate = new HttpParserDelegate())
+            //        using (_httpParserHandler = new HttpCombinedParser(_httpParserDelegate))
+            //        {
+            //            try
+            //            {
+            //                disp = obsListener.Subscribe(
+            //                    b =>
+            //                    {
+            //                        obs.OnNext(b);
+            //                    },
+            //                    ex =>
+            //                    {
+            //                        obs.OnError(ex);
+            //                    },
+            //                    () => obs.OnCompleted());
+
+            //            }
+            //            catch (Exception ex)
+            //            {
+            //                _connectionStatusObserver.OnNext(ConnectionStatus.ConnectionFailed);
+            //                throw ex;
+            //            }
+
+            //            if (_httpParserDelegate.HttpRequestReponse.StatusCode == 101)
+            //            {
+            //                if (subProtocols != null)
+            //                {
+            //                    SubprotocolAccepted =
+            //                        _httpParserDelegate?.HttpRequestReponse?.Headers?.ContainsKey(
+            //                            "SEC-WEBSOCKET-PROTOCOL") ?? false;
+
+            //                    if (SubprotocolAccepted)
+            //                    {
+            //                        SubprotocolAcceptedName =
+            //                            _httpParserDelegate?.HttpRequestReponse?.Headers?["SEC-WEBSOCKET-PROTOCOL"];
+            //                        if (!string.IsNullOrEmpty(SubprotocolAcceptedName))
+            //                        {
+            //                            _connectionStatusObserver.OnNext(ConnectionStatus.Connected);
+            //                            IsConnected = true;
+            //                        }
+            //                        else
+            //                        {
+            //                            throw new Exception("Server responded with blank Sub Protocol name");
+            //                        }
+            //                    }
+            //                    else
+            //                    {
+            //                        throw new Exception("Server did not support any of the needed Sub Protocols");
+            //                    }
+            //                }
+            //                else
+            //                {
+            //                    _connectionStatusObserver.OnNext(ConnectionStatus.Connected);
+            //                    IsConnected = true;
+            //                }
+            //                _websocketListener.DataReceiveMode = DataReceiveMode.IsListeningForTextData;
+            //            }
+            //        }
+
+            //        return disp;
+            //    });
+
+            //return observable;
         }
 
         public async Task SendTextAsync(string message)

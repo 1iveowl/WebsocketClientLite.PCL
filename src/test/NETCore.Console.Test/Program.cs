@@ -86,6 +86,7 @@ class Program
                     innerCancellationTokenSource.Cancel();
                 });
 
+            //await Task.Delay(TimeSpan.FromSeconds(30));
 
             // ### Optional Subprotocols ###
             // The echo.websocket.org does not support any sub-protocols and hence this test does not add any.

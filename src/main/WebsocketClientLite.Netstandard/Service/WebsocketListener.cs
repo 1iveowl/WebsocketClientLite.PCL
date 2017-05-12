@@ -28,12 +28,15 @@ namespace WebsocketClientLite.PCL.Service
         private IDisposable _byteStreamSessionSubscription;
         internal bool ExcludeZeroApplicationDataInPong;
 
-        private IObservable<byte[]> ByteStreamHandlerObservable => Observable.While(
-                () => !_innerCancellationTokenSource.IsCancellationRequested,
-                Observable.FromAsync(ReadOneByteAtTheTimeAsync));
-            //.ObserveOn(Scheduler.Default);
+        //private IObservable<byte[]> ByteStreamHandlerObservable => Observable.While(
+        //        () => !_innerCancellationTokenSource.IsCancellationRequested,
+        //        Observable.FromAsync(ReadOneByteAtTheTimeAsync));
+        ////.ObserveOn(Scheduler.Default);
 
-        private IObservable<string> ObserveTextMessageSession => ByteStreamHandlerObservable.Select(
+        [Obsolete("Deprecated")]
+        private IObservable<string> ObserveTextMessageSession => _tcpSocketClient
+            .ReadStream.ReadOneByteAtTheTimeObservable(_innerCancellationTokenSource)
+            .Select(
             b =>
             {
                 if (TextDataParser.IsCloseRecieved) return string.Empty;
@@ -77,9 +80,7 @@ namespace WebsocketClientLite.PCL.Service
                         return null;
                 }
             }).Where(str => !string.IsNullOrEmpty(str));
-
-
-
+        
         internal IObservable<string> ObserveTextMessageSequence => _textMessageSequence.AsObservable();
 
         internal DataReceiveMode DataReceiveMode { private get; set; } = DataReceiveMode.IsListeningForHandShake;
@@ -92,41 +93,41 @@ namespace WebsocketClientLite.PCL.Service
             TextDataParser = new TextDataParser();
         }
 
-        private async Task<byte[]> ReadOneByteAtTheTimeAsync()
-        {
-            if (TextDataParser.IsCloseRecieved) return null;
+        //private async Task<byte[]> ReadOneByteAtTheTimeAsync()
+        //{
+        //    if (TextDataParser.IsCloseRecieved) return null;
 
-            var oneByteArray = new byte[1];
+        //    var oneByteArray = new byte[1];
 
-            try
-            {
-                if (_webSocketConnectService?.TcpSocketClient?.ReadStream == null)
-                {
-                    throw new Exception("Readstream cannot be null.");
-                }
+        //    try
+        //    {
+        //        if (_webSocketConnectService?.TcpSocketClient?.ReadStream == null)
+        //        {
+        //            throw new Exception("Readstream cannot be null.");
+        //        }
 
-                if (!_webSocketConnectService?.TcpSocketClient?.ReadStream?.CanRead ?? false)
-                {
-                    throw new Exception("Websocket connection have been closed.");
-                }
+        //        if (!_webSocketConnectService?.TcpSocketClient?.ReadStream?.CanRead ?? false)
+        //        {
+        //            throw new Exception("Websocket connection have been closed.");
+        //        }
 
-                var bytesRead = await _webSocketConnectService.TcpSocketClient.ReadStream.ReadAsync(oneByteArray, 0, 1);
+        //        var bytesRead = await _webSocketConnectService.TcpSocketClient.ReadStream.ReadAsync(oneByteArray, 0, 1);
 
-                //Debug.WriteLine(oneByteArray[0].ToString());
+        //        //Debug.WriteLine(oneByteArray[0].ToString());
 
-                if (bytesRead < oneByteArray.Length)
-                {
-                    //_isConnected = false;
-                    _innerCancellationTokenSource.Cancel();
-                    throw new Exception("Websocket connection aborted unexpectantly. Check connection and socket security version/TLS version).");
-                }
-            }
-            catch (ObjectDisposedException)
-            {
-                Debug.WriteLine("Ignoring Object Disposed Exception - This is an expected exception");
-            }
-            return oneByteArray;
-        }
+        //        if (bytesRead < oneByteArray.Length)
+        //        {
+        //            //_isConnected = false;
+        //            _innerCancellationTokenSource.Cancel();
+        //            throw new Exception("Websocket connection aborted unexpectantly. Check connection and socket security version/TLS version).");
+        //        }
+        //    }
+        //    catch (ObjectDisposedException)
+        //    {
+        //        Debug.WriteLine("Ignoring Object Disposed Exception - This is an expected exception");
+        //    }
+        //    return oneByteArray;
+        //}
 
         internal void Start(
             HttpParserDelegate requestHandler,
@@ -157,6 +158,7 @@ namespace WebsocketClientLite.PCL.Service
             HasReceivedCloseFromServer = false;
         }
 
+
         internal IObservable<string> CreateObservableListener(
             HttpParserDelegate requestHandler,
             HttpCombinedParser parserHandler,
@@ -173,47 +175,46 @@ namespace WebsocketClientLite.PCL.Service
             var observable = Observable.Create<string>(
                 obs =>
                 {
-                    var disp = _tcpSocketClient.ReadStream.ReadDataSObservable()
-                    //Observable.While(
-                    //        () => !_innerCancellationTokenSource.IsCancellationRequested,
-                    //        Observable.FromAsync(ReadOneByteAtTheTimeAsync))
+                    var disp = _tcpSocketClient.ReadStream
+                        .ReadOneByteAtTheTimeObservable(innerCancellationTokenSource)
                         .Subscribe(
                             b =>
                             {
-                                var ba = new []{b};
-                                
+                                //System.Diagnostics.Debug.WriteLine(b[0].ToString());
+
                                 if (TextDataParser.IsCloseRecieved) return;
 
-                                switch (DataReceiveMode)
-                                {
-                                    case DataReceiveMode.IsListeningForHandShake:
-                                        try
-                                        {
-                                            if (_parserDelgate.HttpRequestReponse.IsEndOfMessage)
-                                            {
-                                                return;
-                                            }
+                                //switch (DataReceiveMode)
+                                //{
+                                //    case DataReceiveMode.IsListeningForHandShake:
+                                //        try
+                                //        {
+                                //            if (_parserDelgate.HttpRequestReponse.IsEndOfMessage)
+                                //            {
+                                //                return;
+                                //            }
 
-                                            _handshakeParser.Parse(ba, _parserDelgate, _parserHandler);
+                                //            _handshakeParser.Parse(b, _parserDelgate, _parserHandler);
 
-                                            obs.OnNext(null);
-                                        }
-                                        catch (Exception ex)
-                                        {
-                                            if (ex is TimeoutException)
-                                            {
-                                                _parserDelgate.HttpRequestReponse.IsRequestTimedOut = true;
-                                            }
-                                            else
-                                            {
-                                                _parserDelgate.HttpRequestReponse.IsUnableToParseHttp = true;
-                                            }
-                                            obs.OnNext(null);
-                                        }
-                                        break;
-                                    case DataReceiveMode.IsListeningForTextData:
+                                //            obs.OnNext(null);
+                                //        }
+                                //        catch (Exception ex)
+                                //        {
+                                //            if (ex is TimeoutException)
+                                //            {
+                                //                _parserDelgate.HttpRequestReponse.IsRequestTimedOut = true;
+                                //            }
+                                //            else
+                                //            {
+                                //                _parserDelgate.HttpRequestReponse.IsUnableToParseHttp = true;
+                                //            }
+                                //            obs.OnNext(null);
+                                //        }
+                                //        break;
 
-                                        TextDataParser.Parse(_tcpSocketClient, b, ExcludeZeroApplicationDataInPong);
+                                //    case DataReceiveMode.IsListeningForTextData:
+
+                                        TextDataParser.Parse(_tcpSocketClient, b[0], ExcludeZeroApplicationDataInPong);
 
                                         if (TextDataParser.IsCloseRecieved)
                                         {
@@ -221,12 +222,12 @@ namespace WebsocketClientLite.PCL.Service
                                         }
 
                                         obs.OnNext(TextDataParser.HasNewMessage ? TextDataParser.NewMessage : null);
-                                        break;
+                                //        break;
 
-                                    default:
-                                        obs.OnNext(null);
-                                        break;
-                                }
+                                //    default:
+                                //        obs.OnNext(null);
+                                //        break;
+                                //}
 
                             },
                                 ex =>
@@ -252,7 +253,7 @@ namespace WebsocketClientLite.PCL.Service
         internal void StopReceivingData()
         {
             //_isConnected = false;
-            _byteStreamSessionSubscription.Dispose();
+           // _byteStreamSessionSubscription.Dispose();
             HasReceivedCloseFromServer = true;
             _webSocketConnectService.Disconnect();
         }
