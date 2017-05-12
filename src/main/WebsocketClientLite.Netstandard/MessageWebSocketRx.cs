@@ -9,7 +9,6 @@ using ISocketLite.PCL.Interface;
 using ISocketLite.PCL.Model;
 using IWebsocketClientLite.PCL;
 using SocketLite.Services;
-using WebsocketClientLite.PCL.Helper;
 using WebsocketClientLite.PCL.Model;
 using WebsocketClientLite.PCL.Parser;
 using WebsocketClientLite.PCL.Service;
@@ -20,6 +19,10 @@ namespace WebsocketClientLite.PCL
     {
 
         #region Obsolete
+
+        [Obsolete("Deprecated")]
+        public IObservable<ConnectionStatus> ObserveConnectionStatus => _connectionStatusObserver.AsObservable();
+
         [Obsolete("Deprecated")]
         public IObservable<string> ObserveTextMessagesReceived => _websocketListener.ObserveTextMessageSequence;
 
@@ -99,7 +102,7 @@ namespace WebsocketClientLite.PCL
             }
         }
 
-        [Obsolete("Deprecated")]
+        [Obsolete("Deprecated")] 
         public async Task CloseAsync()
         {
             _connectionStatusObserver.OnNext(ConnectionStatus.Disconnecting);
@@ -129,10 +132,6 @@ namespace WebsocketClientLite.PCL
         }
 
         #endregion
-
-        //internal ITcpSocketClient TcpSocketClient;
-
-        public IObservable<ConnectionStatus> ObserveConnectionStatus => _connectionStatusObserver.AsObservable();
 
         private readonly ITcpSocketClient _tcpSocketClient = new TcpSocketClient();
         private readonly ISubject<ConnectionStatus> _connectionStatusObserver = new Subject<ConnectionStatus>();
@@ -289,16 +288,8 @@ namespace WebsocketClientLite.PCL
         public void Dispose()
         {
             _tcpSocketClient.Dispose();
-            _webSocketConnectService.Disconnect();
+            //_webSocketConnectService.Disconnect();
             _websocketListener.StopReceivingData();
-        }
-
-        private async Task WaitForWebsocketConnection()
-        {
-            while (!_websocketListener.IsConnected)
-            {
-                await Task.Delay(TimeSpan.FromMilliseconds(10));
-            }
         }
     }
 }

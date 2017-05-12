@@ -108,7 +108,7 @@ namespace WebsocketClientLite.PCL.Service
         [Obsolete("Deprecated")]
         internal void Disconnect()
         {
-            _innerCancellationTokenSource.Cancel();
+            _innerCancellationTokenSource?.Cancel();
             TcpSocketClient.Disconnect();
         }
 

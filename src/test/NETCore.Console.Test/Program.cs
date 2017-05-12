@@ -86,39 +86,6 @@ class Program
                     innerCancellationTokenSource.Cancel();
                 });
 
-            //await Task.Delay(TimeSpan.FromSeconds(30));
-
-            // ### Optional Subprotocols ###
-            // The echo.websocket.org does not support any sub-protocols and hence this test does not add any.
-            // Adding a sub-protocol that the server does not support causes the client to close down the connection.
-            
-
-
-            //await websocketClient.ConnectAsync(
-            //    new Uri("ws://192.168.0.7:3000/socket.io/?EIO=2&transport=websocket"),
-            //    //new Uri("wss://echo.websocket.org:443"),
-            //    //cts,
-            //    origin: null,
-            //    ignoreServerCertificateErrors: true,
-            //    subprotocols: subprotocols,
-            //    tlsProtocolVersion: TlsProtocolVersion.Tls12);
-
-            ////System.Console.WriteLine("Sending: Test Single Frame");
-            //await websocketClient.SendTextAsync("Test rpi3");
-
-
-            //await websocketClient.CloseAsync();
-
-
-            //await websocketClient.ConnectAsync(
-            //    //new Uri("ws://localhost:3000/socket.io/?EIO=2&transport=websocket"),
-            //    new Uri("wss://echo.websocket.org:443"),
-            //    //cts,
-            //    ignoreServerCertificateErrors: true,
-            //    headers: headers,
-            //    subprotocols: subprotocols,
-            //    tlsProtocolVersion: TlsProtocolVersion.Tls12);
-
             try
             {
                 //System.Console.WriteLine("Waiting 10 seconds to send");
@@ -147,26 +114,32 @@ class Program
                 await Task.Delay(TimeSpan.FromMilliseconds(400));
                 await websocketClient.SendTextMultiFrameAsync("Stop.", FrameType.LastInMultipleFrames);
 
-                //_subscribeToMessagesReceived.Dispose();
+                System.Console.WriteLine("Waiting 20 sec.");
+                await Task.Delay(TimeSpan.FromSeconds(20));
 
+                System.Console.WriteLine("------------");
+                System.Console.WriteLine("Done waiting");
+                System.Console.WriteLine("------------");
 
-                //_subscribeToMessagesReceived = messageObserver.Subscribe(
-                //    msg =>
-                //    {
-                //        System.Console.WriteLine($"Reply from test server: {msg}");
-                //    },
-                //    ex =>
-                //    {
-                //        System.Console.WriteLine(ex.Message);
-                //        innerCancellationTokenSource.Cancel();
-                //    },
-                //    () =>
-                //    {
-                //        System.Console.WriteLine($"Subscription Completed");
-                //        innerCancellationTokenSource.Cancel();
-                //    });
+                _subscribeToMessagesReceived.Dispose();
+                
+                _subscribeToMessagesReceived = messageObserver.Subscribe(
+                    msg =>
+                    {
+                        System.Console.WriteLine($"Reply from test server: {msg}");
+                    },
+                    ex =>
+                    {
+                        System.Console.WriteLine(ex.Message);
+                        innerCancellationTokenSource.Cancel();
+                    },
+                    () =>
+                    {
+                        System.Console.WriteLine($"Subscription Completed");
+                        innerCancellationTokenSource.Cancel();
+                    });
 
-                //await websocketClient.SendTextAsync("Test localhost");
+                await websocketClient.SendTextAsync("Test localhost");
 
                 //_subscribeToMessagesReceived.Dispose();
             }
