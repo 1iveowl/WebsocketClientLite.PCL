@@ -8,9 +8,10 @@ using WebsocketClientLite.PCL;
 
 class Program
 {
-    private static IDisposable _subscribeToMessagesReceived;
 
     const string AllowedChars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+
+    private static bool _isConnected;
 
     static void Main(string[] args)
     {
@@ -37,8 +38,6 @@ class Program
                 await Task.Delay(TimeSpan.FromSeconds(10), innerCancellationSource.Token);
             }
 
-            _subscribeToMessagesReceived.Dispose();
-
             // Wait 5 seconds before trying again
             await Task.Delay(TimeSpan.FromSeconds(5), outerCancellationTokenSource.Token);
         }
@@ -54,6 +53,20 @@ class Program
                 s =>
                 {
                     System.Console.WriteLine(s.ToString());
+                    if (s == ConnectionStatus.Disconnected 
+                    || s == ConnectionStatus.Aborted 
+                    || s == ConnectionStatus.ConnectionFailed)
+                    {
+                        innerCancellationTokenSource.Cancel();
+                    }
+                },
+                ex =>
+                {
+                    innerCancellationTokenSource.Cancel();
+                },
+                () =>
+                {
+                    innerCancellationTokenSource.Cancel();
                 });
 
             List<string> subprotocols = null; //new List<string> {"soap", "json"};
@@ -61,15 +74,13 @@ class Program
             var headers = new Dictionary<string, string> { { "Pragma", "no-cache" }, { "Cache-Control", "no-cache" } };
 
             var messageObserver = await websocketClient.CreateObservableMessageReceiver(
-                //new Uri("ws://localhost:3000/socket.io/?EIO=2&transport=websocket"),
                 new Uri("wss://echo.websocket.org:443"),
-                //cts,
                 ignoreServerCertificateErrors: true,
                 headers: headers,
                 subProtocols: subprotocols,
                 tlsProtocolType: TlsProtocolVersion.Tls12);
 
-            _subscribeToMessagesReceived = messageObserver.Subscribe(
+             var subscribeToMessagesReceived = messageObserver.Subscribe(
                 msg =>
                 {
                     System.Console.WriteLine($"Reply from test server: {msg}");
@@ -87,15 +98,10 @@ class Program
 
             try
             {
-                //System.Console.WriteLine("Waiting 10 seconds to send");
-                //await Task.Delay(TimeSpan.FromSeconds(10));
-
                 System.Console.WriteLine("Sending: Test Single Frame");
                 await websocketClient.SendTextAsync("Test Single Frame");
 
                 await websocketClient.SendTextAsync("Test Single Frame again");
-
-                //await websocketClient.SendTextAsync(TestString(5096, 10096));
 
                 await websocketClient.SendTextAsync(TestString(65538, 65550));
 
@@ -113,12 +119,10 @@ class Program
                 await Task.Delay(TimeSpan.FromMilliseconds(400));
                 await websocketClient.SendTextMultiFrameAsync("Stop.", FrameType.LastInMultipleFrames);
 
-                //await Task.Delay(TimeSpan.FromMinutes(5));
-
                 // Close the Websocket connection gracefully telling the server goodbye
                 await websocketClient.CloseAsync();
 
-                _subscribeToMessagesReceived.Dispose();
+                subscribeToMessagesReceived.Dispose();
                 websocketLoggerSubscriber.Dispose();
             }
             catch (Exception e)

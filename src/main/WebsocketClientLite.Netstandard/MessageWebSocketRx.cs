@@ -121,7 +121,7 @@ namespace WebsocketClientLite.PCL
         
         public MessageWebSocketRx()
         {
-            _webSocketConnectService = new WebSocketConnectService();
+            _webSocketConnectService = new WebSocketConnectService(_subjectConnectionStatus);
             
             _websocketListener = new WebsocketListener(_webSocketConnectService, _subjectConnectionStatus);
             _websocketSenderService = new WebsocketSenderService(_websocketListener);

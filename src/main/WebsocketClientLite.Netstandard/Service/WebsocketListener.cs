@@ -167,6 +167,7 @@ namespace WebsocketClientLite.PCL.Service
 
                                 if (_hasHandshakeTimedout)
                                 {
+                                    _subjectConnectionStatus.OnNext(ConnectionStatus.Aborted);
                                     throw new WebsocketClientLiteException("Connection request to server timed out");
                                 }
 
@@ -237,11 +238,13 @@ namespace WebsocketClientLite.PCL.Service
                             }
                             else
                             {
+                                _subjectConnectionStatus.OnNext(ConnectionStatus.Aborted);
                                 throw new WebsocketClientLiteException("Server responded with blank Sub Protocol name");
                             }
                         }
                         else
                         {
+                            _subjectConnectionStatus.OnNext(ConnectionStatus.Aborted);
                             throw new WebsocketClientLiteException("Server did not support any of the needed Sub Protocols");
                         }
                     }

@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Reactive.Subjects;
 using System.Threading;
 using System.Threading.Tasks;
 using ISocketLite.PCL.Interface;
+using IWebsocketClientLite.PCL;
 using WebsocketClientLite.PCL.Helper;
 using WebsocketClientLite.PCL.Model;
 
@@ -111,8 +113,11 @@ namespace WebsocketClientLite.PCL.Service
 
         internal ITcpSocketClient TcpSocketClient;
 
-        internal WebSocketConnectService()
+        private readonly ISubject<ConnectionStatus> _subjectConnectionStatus;
+
+        internal WebSocketConnectService(ISubject<ConnectionStatus> subjectConnectionStatus)
         {
+            _subjectConnectionStatus = subjectConnectionStatus;
         }
 
         internal async Task ConnectServer(
@@ -124,6 +129,7 @@ namespace WebsocketClientLite.PCL.Service
             IEnumerable<string> subprotocols = null)
         {
             TcpSocketClient = tcpSocketClient;
+            _subjectConnectionStatus.OnNext(ConnectionStatus.Connecting);
 
             await SendConnectHandShakeAsync(uri, secure, origin, headers, subprotocols);
 
@@ -144,7 +150,7 @@ namespace WebsocketClientLite.PCL.Service
             }
             catch (Exception ex)
             {
-                
+                _subjectConnectionStatus.OnNext(ConnectionStatus.Aborted);
                 throw new WebsocketClientLiteException("Unable to complete handshake", ex.InnerException);
             }
         }
