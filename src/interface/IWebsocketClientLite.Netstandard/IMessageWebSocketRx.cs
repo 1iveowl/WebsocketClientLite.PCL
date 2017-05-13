@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using ISocketLite.PCL.Model;
 
@@ -11,9 +7,22 @@ namespace IWebsocketClientLite.PCL
 {
     public interface IMessageWebSocketRx : IDisposable
     {
-        IObservable<string> ObserveTextMessagesReceived { get; }
+        #region Obsolete
 
-        IObservable<ConnectionStatus> ObserveConnectionStatus { get; }
+        //[Obsolete("Deprecated")]
+        //IObservable<string> ObserveTextMessagesReceived { get; }
+
+        //[Obsolete("Deprecated")]
+        //Task ConnectAsync(
+        //    Uri uri,
+        //    string origin = null,
+        //    IDictionary<string, string> headers = null,
+        //    IEnumerable<string> subProtocols = null,
+        //    bool ignoreServerCertificateErrors = false,
+        //    TlsProtocolVersion tlsProtocolType = TlsProtocolVersion.Tls12,
+        //    bool excludeZeroApplicationDataInPong = false);
+        
+        #endregion
 
         bool IsConnected { get; }
 
@@ -21,12 +30,14 @@ namespace IWebsocketClientLite.PCL
 
         string SubprotocolAcceptedName { get; }
 
-        Task ConnectAsync(
-            Uri uri, 
+        IObservable<ConnectionStatus> ObserveConnectionStatus { get; }
+
+        Task<IObservable<string>> CreateObservableMessageReceiver(
+            Uri uri,
             string origin = null,
             IDictionary<string, string> headers = null,
-            IEnumerable<string> subProtocols = null, 
-            bool ignoreServerCertificateErrors = false, 
+            IEnumerable<string> subProtocols = null,
+            bool ignoreServerCertificateErrors = false,
             TlsProtocolVersion tlsProtocolType = TlsProtocolVersion.Tls12,
             bool excludeZeroApplicationDataInPong = false);
 
@@ -34,7 +45,6 @@ namespace IWebsocketClientLite.PCL
 
         Task SendTextAsync(string message);
         Task SendTextAsync(string[] messageList);
-
         Task SendTextMultiFrameAsync(string message, FrameType frameType);
     }
 }

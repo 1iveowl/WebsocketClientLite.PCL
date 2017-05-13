@@ -8,10 +8,10 @@ using WebsocketClientLite.PCL;
 
 class Program
 {
-    private static IDisposable _subscribeToMessagesReceived;
-
 
     const string AllowedChars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+
+    private static bool _isConnected;
 
     static void Main(string[] args)
     {
@@ -30,14 +30,13 @@ class Program
         while (!outerCancellationTokenSource.IsCancellationRequested)
         {
             var innerCancellationSource = new CancellationTokenSource();
+
             await StartWebSocketAsync(innerCancellationSource);
 
             while (!innerCancellationSource.IsCancellationRequested)
             {
                 await Task.Delay(TimeSpan.FromSeconds(10), innerCancellationSource.Token);
             }
-
-            _subscribeToMessagesReceived.Dispose();
 
             // Wait 5 seconds before trying again
             await Task.Delay(TimeSpan.FromSeconds(5), outerCancellationTokenSource.Token);
@@ -54,9 +53,34 @@ class Program
                 s =>
                 {
                     System.Console.WriteLine(s.ToString());
+                    if (s == ConnectionStatus.Disconnected 
+                    || s == ConnectionStatus.Aborted 
+                    || s == ConnectionStatus.ConnectionFailed)
+                    {
+                        innerCancellationTokenSource.Cancel();
+                    }
+                },
+                ex =>
+                {
+                    innerCancellationTokenSource.Cancel();
+                },
+                () =>
+                {
+                    innerCancellationTokenSource.Cancel();
                 });
 
-            _subscribeToMessagesReceived = websocketClient.ObserveTextMessagesReceived.Subscribe(
+            List<string> subprotocols = null; //new List<string> {"soap", "json"};
+
+            var headers = new Dictionary<string, string> { { "Pragma", "no-cache" }, { "Cache-Control", "no-cache" } };
+
+            var messageObserver = await websocketClient.CreateObservableMessageReceiver(
+                new Uri("wss://echo.websocket.org:443"),
+                ignoreServerCertificateErrors: true,
+                headers: headers,
+                subProtocols: subprotocols,
+                tlsProtocolType: TlsProtocolVersion.Tls12);
+
+             var subscribeToMessagesReceived = messageObserver.Subscribe(
                 msg =>
                 {
                     System.Console.WriteLine($"Reply from test server: {msg}");
@@ -72,50 +96,12 @@ class Program
                     innerCancellationTokenSource.Cancel();
                 });
 
-            // ### Optional Subprotocols ###
-            // The echo.websocket.org does not support any sub-protocols and hence this test does not add any.
-            // Adding a sub-protocol that the server does not support causes the client to close down the connection.
-            List<string> subprotocols = null; //new List<string> {"soap", "json"};
-
-            var headers = new Dictionary<string, string> { { "Pragma", "no-cache" }, { "Cache-Control", "no-cache" } };
-
-
-            //await websocketClient.ConnectAsync(
-            //    new Uri("ws://192.168.0.7:3000/socket.io/?EIO=2&transport=websocket"),
-            //    //new Uri("wss://echo.websocket.org:443"),
-            //    //cts,
-            //    origin: null,
-            //    ignoreServerCertificateErrors: true,
-            //    subprotocols: subprotocols,
-            //    tlsProtocolVersion: TlsProtocolVersion.Tls12);
-
-            ////System.Console.WriteLine("Sending: Test Single Frame");
-            //await websocketClient.SendTextAsync("Test rpi3");
-
-
-            //await websocketClient.CloseAsync();
-
-
-            await websocketClient.ConnectAsync(
-                //new Uri("ws://localhost:3000/socket.io/?EIO=2&transport=websocket"),
-                new Uri("wss://echo.websocket.org:443"),
-                //cts,
-                ignoreServerCertificateErrors: true,
-                headers: headers,
-                subprotocols: subprotocols,
-                tlsProtocolVersion: TlsProtocolVersion.Tls12);
-
             try
             {
-                //System.Console.WriteLine("Waiting 10 seconds to send");
-                //await Task.Delay(TimeSpan.FromSeconds(10));
-
                 System.Console.WriteLine("Sending: Test Single Frame");
                 await websocketClient.SendTextAsync("Test Single Frame");
 
                 await websocketClient.SendTextAsync("Test Single Frame again");
-
-                //await websocketClient.SendTextAsync(TestString(5096, 10096));
 
                 await websocketClient.SendTextAsync(TestString(65538, 65550));
 
@@ -133,19 +119,11 @@ class Program
                 await Task.Delay(TimeSpan.FromMilliseconds(400));
                 await websocketClient.SendTextMultiFrameAsync("Stop.", FrameType.LastInMultipleFrames);
 
+                // Close the Websocket connection gracefully telling the server goodbye
                 await websocketClient.CloseAsync();
 
-                await websocketClient.ConnectAsync(
-                    //new Uri("ws://192.168.0.7:3000/socket.io/?EIO=2&transport=websocket"),
-                    new Uri("wss://echo.websocket.org:443"),
-                    //cts,
-                    ignoreServerCertificateErrors: true,
-                    subprotocols: subprotocols,
-                    tlsProtocolVersion: TlsProtocolVersion.Tls12);
-
-                await websocketClient.SendTextAsync("Test localhost");
-
-                await websocketClient.CloseAsync();
+                subscribeToMessagesReceived.Dispose();
+                websocketLoggerSubscriber.Dispose();
             }
             catch (Exception e)
             {
@@ -153,8 +131,6 @@ class Program
                 innerCancellationTokenSource.Cancel();
             }
         }
-
-
     }
 
     private static string TestString(int minlength, int maxlenght)

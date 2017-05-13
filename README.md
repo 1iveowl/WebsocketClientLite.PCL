@@ -21,98 +21,170 @@ This project is based on [SocketLite](https://github.com/1iveowl/SocketLite) for
 
 This project utilizes [Reactive Extensions](http://reactivex.io/). Although this has an added learning curve it is an added learning curve worth while persuing, as it IMHO makes creating a library like this much more elegant compared to using call-back or events. 
 
+## New in Version 4.0
+Version 4.0 represents a major overhaul. Unfortunately version 4.0 is **not** backwards compatible with the previous version. There were just to many things I wanted to change. That said, version 4.0 does not have any new functionality, so if you don't want to upgrade you don't have to - at least not in the short term. Version 4.0 is a bit fast, and future versions might add new functionality, so I do recommend the small effort involved in upgrading your code to version 4.0.
+
+On the of changes in version 4.0 is that it is no longer required to do a `ConnectAsync`. All you have to do is to subscribe to the observable and you are set. I still recommened that you do a `CloseAsync` to close the connection to the server gracefully. After closing the websocket connection, you should dispose of your subscrptions. Also to reconnect you should create a new `MessageWebSocketRx`object. 
+
 ## Usage
 The library is easy to use, as illustated with the examples below.
 
-For a more elaborate example see [this code](https://github.com/1iveowl/WebsocketClientLite.PCL/blob/master/src/test/NETCore.Console.Test/Program.cs).
 
-#### Usings:
-```csharp
-using ISocketLite.PCL.Model;
-using IWebsocketClientLite.PCL;
-using WebsocketClientLite.PCL;
-```
-
-#### Example WebSocket Client:
+### Example WebSocket Client:
 ```csharp
 class Program
 {
-    private static IDisposable _subscribeToMessagesReceived; 
+
+    const string AllowedChars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+
+    private static bool _isConnected;
+
     static void Main(string[] args)
     {
-        StartWebSocket();
+
+        var outerCancellationSource = new CancellationTokenSource();
+
+        Task.Run(() => StartWebSocketAsyncWithRetry(outerCancellationSource), outerCancellationSource.Token);
+
+        System.Console.WriteLine("Waiting...");
         System.Console.ReadKey();
-
-		// Don't forget to clean-up with Dispose. It doesn't matter here, but it will in your code.
-        _subscribeToMessagesReceived.Dispose();
-
+        outerCancellationSource.Cancel();
     }
 
-    static async void StartWebSocket()
+    private static async Task StartWebSocketAsyncWithRetry(CancellationTokenSource outerCancellationTokenSource)
     {
-        var websocketClient = new MessageWebSocketRx();
+        while (!outerCancellationTokenSource.IsCancellationRequested)
+        {
+            var innerCancellationSource = new CancellationTokenSource();
 
-	// 1. Start by subscribing to messages. 
-        _subscribeToMessagesReceived = websocketClient.ObserveTextMessagesReceived.Subscribe(
-            msg =>
+            await StartWebSocketAsync(innerCancellationSource);
+
+            while (!innerCancellationSource.IsCancellationRequested)
             {
-	    	//Insert your code managing incoming messages here
-                System.Console.WriteLine($"Reply from test server: {msg}");
-            },
-            ex =>
+                await Task.Delay(TimeSpan.FromSeconds(10), innerCancellationSource.Token);
+            }
+
+            // Wait 5 seconds before trying again
+            await Task.Delay(TimeSpan.FromSeconds(5), outerCancellationTokenSource.Token);
+        }
+    }
+
+    private static async Task StartWebSocketAsync(CancellationTokenSource innerCancellationTokenSource)
+    {
+        using (var websocketClient = new MessageWebSocketRx())
+        {
+            System.Console.WriteLine("Start");
+
+            var websocketLoggerSubscriber = websocketClient.ObserveConnectionStatus.Subscribe(
+                s =>
+                {
+                    System.Console.WriteLine(s.ToString());
+                    if (s == ConnectionStatus.Disconnected 
+                    || s == ConnectionStatus.Aborted 
+                    || s == ConnectionStatus.ConnectionFailed)
+                    {
+                        innerCancellationTokenSource.Cancel();
+                    }
+                },
+                ex =>
+                {
+                    innerCancellationTokenSource.Cancel();
+                },
+                () =>
+                {
+                    innerCancellationTokenSource.Cancel();
+                });
+
+            List<string> subprotocols = null; //new List<string> {"soap", "json"};
+
+            var headers = new Dictionary<string, string> { { "Pragma", "no-cache" }, { "Cache-Control", "no-cache" } };
+
+            var messageObserver = await websocketClient.CreateObservableMessageReceiver(
+                new Uri("wss://echo.websocket.org:443"),
+                ignoreServerCertificateErrors: true,
+                headers: headers,
+                subProtocols: subprotocols,
+                tlsProtocolType: TlsProtocolVersion.Tls12);
+
+             var subscribeToMessagesReceived = messageObserver.Subscribe(
+                msg =>
+                {
+                    System.Console.WriteLine($"Reply from test server: {msg}");
+                },
+                ex =>
+                {
+                    System.Console.WriteLine(ex.Message);
+                    innerCancellationTokenSource.Cancel();
+                },
+                () =>
+                {
+                    System.Console.WriteLine($"Subscription Completed");
+                    innerCancellationTokenSource.Cancel();
+                });
+
+            try
             {
-	    	//Insert your code managing incoming exception here
-                System.Console.WriteLine(ex.Message);
-            },
-            () =>
+                System.Console.WriteLine("Sending: Test Single Frame");
+                await websocketClient.SendTextAsync("Test Single Frame");
+
+                await websocketClient.SendTextAsync("Test Single Frame again");
+
+                await websocketClient.SendTextAsync(TestString(65538, 65550));
+
+                var strArray = new[] { "Test ", "multiple ", "frames" };
+
+                await websocketClient.SendTextAsync(strArray);
+
+                await websocketClient.SendTextMultiFrameAsync("Start ", FrameType.FirstOfMultipleFrames);
+                await Task.Delay(TimeSpan.FromMilliseconds(200));
+                await websocketClient.SendTextMultiFrameAsync("Continue... #1 ", FrameType.Continuation);
+                await Task.Delay(TimeSpan.FromMilliseconds(300));
+                await websocketClient.SendTextMultiFrameAsync("Continue... #2 ", FrameType.Continuation);
+                await Task.Delay(TimeSpan.FromMilliseconds(150));
+                await websocketClient.SendTextMultiFrameAsync("Continue... #3 ", FrameType.Continuation);
+                await Task.Delay(TimeSpan.FromMilliseconds(400));
+                await websocketClient.SendTextMultiFrameAsync("Stop.", FrameType.LastInMultipleFrames);
+
+                // Close the Websocket connection gracefully telling the server goodbye
+                await websocketClient.CloseAsync();
+
+                subscribeToMessagesReceived.Dispose();
+                websocketLoggerSubscriber.Dispose();
+            }
+            catch (Exception e)
             {
-	    	//Insert your code handling the completion of the subscription here
-                System.Console.WriteLine($"Subscription Completed");
-            });
+                Console.WriteLine(e);
+                innerCancellationTokenSource.Cancel();
+            }
+        }
+    }
 
-	// 2a. ### Optional Subprotocols ###
-        // The echo.websocket.org does not support any sub-protocols and hence this test does not add any.
-        // Adding a sub-protocol that the server does not support causes the client to close down the connection.
-		// Anyhow here is how to add 
-        // List<string> subprotocols = new List<string> {"soap", "json"};
-	List<string> subprotocols = null;
+    private static string TestString(int minlength, int maxlenght)
+    {
 
-	// 2b. ### Optional headers
-	// Adding headers are easy
-	var headers = new Dictionary<string, string>{{"Pragma", "no-cache"}, {"Cache-Control", "no-cache"}};
+        var rng = new Random();
 
-	// 3. Now establish a connection to the server
+        return RandomStrings(AllowedChars, minlength, maxlenght, 25, rng);
+    }
 
-	await websocketClient.ConnectAsync(new Uri("wss://echo.websocket.org:443"),	// use the publicly available test server: http://www.websocket.org/echo.html
-                ignoreServerCertificateErrors: false,		// you can ignore server certificate errors. Good for test, but be careful! 
-		headers: headers,
-                subprotocols:subprotocols,	
-                tlsProtocolVersion:TlsProtocolVersion.Tls12);
+    private static string RandomStrings(
+        string allowedChars,
+        int minLength,
+        int maxLength,
+        int count,
+        Random rng)
+    {
+        var chars = new char[maxLength];
+        var setLength = allowedChars.Length;
 
-	// 4. send a  test to the echo server. It will reply back with what you send. 
-        await websocketClient.SendTextAsync("Test Single Frame");
+        var length = rng.Next(minLength, maxLength + 1);
 
-	// 5. you can also send multiple frames in one batch.
-        var strArray = new[] {"Test ", "multiple ", "frames"};
+        for (var i = 0; i < length; ++i)
+        {
+            chars[i] = allowedChars[rng.Next(setLength)];
+        }
 
-        await websocketClient.SendTextAsync(strArray);
-
-	// 6. or you can send frames one by one. Start with FrameType.FirstOfMultipleFrames
-        await websocketClient.SendTextMultiFrameAsync("Start ", FrameType.FirstOfMultipleFrames);
-        await Task.Delay(TimeSpan.FromMilliseconds(200));
-
-	// ... continue with: FrameType.Continuation
-        await websocketClient.SendTextMultiFrameAsync("Continue... #1 ", FrameType.Continuation);
-        await Task.Delay(TimeSpan.FromMilliseconds(300));
-
-        await websocketClient.SendTextMultiFrameAsync("Continue... #2 ", FrameType.Continuation);
-        await Task.Delay(TimeSpan.FromMilliseconds(150));
-
-        await websocketClient.SendTextMultiFrameAsync("Continue... #3 ", FrameType.Continuation);
-        await Task.Delay(TimeSpan.FromMilliseconds(400));
-
-	// Don't forget the last stop frame!
-        await websocketClient.SendTextMultiFrameAsync("This is the last Stop Frame.", FrameType.LastInMultipleFrames);
+        return new string(chars, 0, length);
     }
 }
 ```

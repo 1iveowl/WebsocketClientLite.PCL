@@ -14,11 +14,14 @@ namespace WebsocketClientLite.PCL.Service
     {
         private bool _isSendingMultipleFrames;
 
+        private readonly WebsocketListener _websocketListener;
+
         private readonly ConcurrentQueue<byte[]> _writePendingData = new ConcurrentQueue<byte[]>();
         private bool _sendingData;
 
-        internal WebsocketSenderService()
+        internal WebsocketSenderService(WebsocketListener websocketListener)
         {
+            _websocketListener = websocketListener;
         }
 
         internal async Task SendTextAsync(ITcpSocketClient tcpSocketClient, string message)
@@ -56,7 +59,7 @@ namespace WebsocketClientLite.PCL.Service
                 {
                     await ComposeFrameAsync(tcpSocketClient, Encoding.UTF8.GetBytes("_sequence aborted error_"), FrameType.LastInMultipleFrames);
                     _isSendingMultipleFrames = false;
-                    throw new Exception("Multiple frames is progress. Frame must be a Continuation Frame or Last Frams in sequence. Multiple frame sequence aborted and finalized");
+                    throw new WebsocketClientLiteException("Multiple frames is progress. Frame must be a Continuation Frame or Last Frams in sequence. Multiple frame sequence aborted and finalized");
                 }
             }
 
@@ -64,7 +67,7 @@ namespace WebsocketClientLite.PCL.Service
             {
                 if (frameType == FrameType.Continuation || frameType == FrameType.LastInMultipleFrames)
                 {
-                    throw new Exception("Multiple frames sequence is not in initiated. Frame cannot be of a Continuation Frame or a Last Frame type");
+                    throw new WebsocketClientLiteException("Multiple frames sequence is not in initiated. Frame cannot be of a Continuation Frame or a Last Frame type");
                 }
             }
 
@@ -133,13 +136,11 @@ namespace WebsocketClientLite.PCL.Service
         {
             if (!tcpSocketClient.IsConnected)
             {
-                throw new Exception("Websocket connection have been closed");
+                throw new WebsocketClientLiteException("Websocket connection have been closed");
             }
 
             await WriteQueuedStreamAsync(tcpSocketClient, frame);
         }
-
-        
 
         private async Task WriteQueuedStreamAsync(ITcpSocketClient tcpSocketClient, byte[] frame)
         {
@@ -163,6 +164,7 @@ namespace WebsocketClientLite.PCL.Service
             {
                 if (_writePendingData.Count > 0 && _writePendingData.TryDequeue(out byte[] buffer))
                 {
+                    await WaitForWebsocketConnection();
                     await tcpSocketClient.WriteStream.WriteAsync(buffer, 0, buffer.Length);
                     await tcpSocketClient.WriteStream.FlushAsync();
                 }
@@ -188,6 +190,14 @@ namespace WebsocketClientLite.PCL.Service
                 {
                     _sendingData = false;
                 }
+            }
+        }
+
+        private async Task WaitForWebsocketConnection()
+        {
+            while (!_websocketListener.IsConnected)
+            {
+                await Task.Delay(TimeSpan.FromMilliseconds(10));
             }
         }
     }
