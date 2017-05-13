@@ -10,7 +10,6 @@ class Program
 {
     private static IDisposable _subscribeToMessagesReceived;
 
-
     const string AllowedChars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 
     static void Main(string[] args)
@@ -114,34 +113,13 @@ class Program
                 await Task.Delay(TimeSpan.FromMilliseconds(400));
                 await websocketClient.SendTextMultiFrameAsync("Stop.", FrameType.LastInMultipleFrames);
 
-                System.Console.WriteLine("Waiting 20 sec.");
-                await Task.Delay(TimeSpan.FromSeconds(20));
+                //await Task.Delay(TimeSpan.FromMinutes(5));
 
-                System.Console.WriteLine("------------");
-                System.Console.WriteLine("Done waiting");
-                System.Console.WriteLine("------------");
+                // Close the Websocket connection gracefully telling the server goodbye
+                await websocketClient.CloseAsync();
 
                 _subscribeToMessagesReceived.Dispose();
-                
-                _subscribeToMessagesReceived = messageObserver.Subscribe(
-                    msg =>
-                    {
-                        System.Console.WriteLine($"Reply from test server: {msg}");
-                    },
-                    ex =>
-                    {
-                        System.Console.WriteLine(ex.Message);
-                        innerCancellationTokenSource.Cancel();
-                    },
-                    () =>
-                    {
-                        System.Console.WriteLine($"Subscription Completed");
-                        innerCancellationTokenSource.Cancel();
-                    });
-
-                await websocketClient.SendTextAsync("Test localhost");
-
-                //_subscribeToMessagesReceived.Dispose();
+                websocketLoggerSubscriber.Dispose();
             }
             catch (Exception e)
             {
@@ -149,8 +127,6 @@ class Program
                 innerCancellationTokenSource.Cancel();
             }
         }
-
-
     }
 
     private static string TestString(int minlength, int maxlenght)

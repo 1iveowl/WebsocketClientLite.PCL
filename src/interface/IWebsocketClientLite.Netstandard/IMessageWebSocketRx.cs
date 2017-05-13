@@ -9,23 +9,28 @@ namespace IWebsocketClientLite.PCL
     {
         #region Obsolete
 
-        [Obsolete("Deprecated")]
-        IObservable<string> ObserveTextMessagesReceived { get; }
+        //[Obsolete("Deprecated")]
+        //IObservable<string> ObserveTextMessagesReceived { get; }
 
-        [Obsolete("Deprecated")]
-        Task ConnectAsync(
-            Uri uri,
-            string origin = null,
-            IDictionary<string, string> headers = null,
-            IEnumerable<string> subProtocols = null,
-            bool ignoreServerCertificateErrors = false,
-            TlsProtocolVersion tlsProtocolType = TlsProtocolVersion.Tls12,
-            bool excludeZeroApplicationDataInPong = false);
-
-        [Obsolete("Deprecated")]
-        Task CloseAsync();
-
+        //[Obsolete("Deprecated")]
+        //Task ConnectAsync(
+        //    Uri uri,
+        //    string origin = null,
+        //    IDictionary<string, string> headers = null,
+        //    IEnumerable<string> subProtocols = null,
+        //    bool ignoreServerCertificateErrors = false,
+        //    TlsProtocolVersion tlsProtocolType = TlsProtocolVersion.Tls12,
+        //    bool excludeZeroApplicationDataInPong = false);
+        
         #endregion
+
+        bool IsConnected { get; }
+
+        bool SubprotocolAccepted { get; }
+
+        string SubprotocolAcceptedName { get; }
+
+        IObservable<ConnectionStatus> ObserveConnectionStatus { get; }
 
         Task<IObservable<string>> CreateObservableMessageReceiver(
             Uri uri,
@@ -36,13 +41,7 @@ namespace IWebsocketClientLite.PCL
             TlsProtocolVersion tlsProtocolType = TlsProtocolVersion.Tls12,
             bool excludeZeroApplicationDataInPong = false);
 
-        IObservable<ConnectionStatus> ObserveConnectionStatus { get; }
-
-        bool IsConnected { get; }
-
-        bool SubprotocolAccepted { get; }
-
-        string SubprotocolAcceptedName { get; }
+        Task CloseAsync();
 
         Task SendTextAsync(string message);
         Task SendTextAsync(string[] messageList);

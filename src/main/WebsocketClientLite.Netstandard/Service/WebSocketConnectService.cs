@@ -1,17 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Reactive.Concurrency;
-using System.Reactive.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using HttpMachine;
 using ISocketLite.PCL.Interface;
-using ISocketLite.PCL.Model;
-using SocketLite.Services;
 using WebsocketClientLite.PCL.Helper;
 using WebsocketClientLite.PCL.Model;
-using WebsocketClientLite.PCL.Parser;
 
 namespace WebsocketClientLite.PCL.Service
 {
@@ -20,131 +13,117 @@ namespace WebsocketClientLite.PCL.Service
 
         #region Obsolete
 
-        [Obsolete("Deprecated")]
-        internal async Task ConnectAsync(
-            Uri uri,
-            bool secure,
-            HttpParserDelegate requestHandler,
-            HttpCombinedParser parserHandler,
-            CancellationTokenSource innerCancellationTokenSource,
-            WebsocketListener websocketListener,
-            string origin = null,
-            IDictionary<string, string> headers = null,
-            IEnumerable<string> subprotocols = null,
-            bool ignoreServerCertificateErrors = false,
-            TlsProtocolVersion tlsProtocolType = TlsProtocolVersion.Tls12)
-        {
-            TcpSocketClient = new TcpSocketClient();
+        //private CancellationTokenSource _innerCancellationTokenSource;
 
-            try
-            {
-                _innerCancellationTokenSource = innerCancellationTokenSource;
+        //[Obsolete("Deprecated")]
+        //internal async Task ConnectAsync(
+        //    Uri uri,
+        //    bool secure,
+        //    HttpParserDelegate requestHandler,
+        //    HttpCombinedParser parserHandler,
+        //    CancellationTokenSource innerCancellationTokenSource,
+        //    WebsocketListener websocketListener,
+        //    string origin = null,
+        //    IDictionary<string, string> headers = null,
+        //    IEnumerable<string> subprotocols = null,
+        //    bool ignoreServerCertificateErrors = false,
+        //    TlsProtocolVersion tlsProtocolType = TlsProtocolVersion.Tls12)
+        //{
+        //    TcpSocketClient = new TcpSocketClient();
 
-                await TcpSocketClient.ConnectAsync(
-                    uri.Host,
-                    uri.Port.ToString(),
-                    secure,
-                    innerCancellationTokenSource.Token,
-                    ignoreServerCertificateErrors,
-                    tlsProtocolType);
+        //    try
+        //    {
+        //        _innerCancellationTokenSource = innerCancellationTokenSource;
 
-                if (TcpSocketClient.IsConnected)
-                {
-                    websocketListener.DataReceiveMode = DataReceiveMode.IsListeningForHandShake;
+        //        await TcpSocketClient.ConnectAsync(
+        //            uri.Host,
+        //            uri.Port.ToString(),
+        //            secure,
+        //            innerCancellationTokenSource.Token,
+        //            ignoreServerCertificateErrors,
+        //            tlsProtocolType);
 
-                    websocketListener.Start(requestHandler, parserHandler, innerCancellationTokenSource);
+        //        if (TcpSocketClient.IsConnected)
+        //        {
+        //            websocketListener.DataReceiveMode = DataReceiveMode.IsListeningForHandShake;
 
-                    await SendConnectHandShakeAsync(uri, secure, origin, headers, subprotocols);
+        //            websocketListener.Start(requestHandler, parserHandler, innerCancellationTokenSource);
 
-                    var waitForHandShakeLoopTask = Task.Run(async () =>
-                    {
-                        while (!requestHandler.HttpRequestReponse.IsEndOfMessage
-                               && !requestHandler.HttpRequestReponse.IsRequestTimedOut
-                               && !requestHandler.HttpRequestReponse.IsUnableToParseHttp)
-                        {
-                            await Task.Delay(TimeSpan.FromMilliseconds(10));
-                        }
-                    });
+        //            await SendConnectHandShakeAsync(uri, secure, origin, headers, subprotocols);
 
-                    var timeout = Task.Delay(TimeSpan.FromSeconds(10));
+        //            var waitForHandShakeLoopTask = Task.Run(async () =>
+        //            {
+        //                while (!requestHandler.HttpRequestReponse.IsEndOfMessage
+        //                       && !requestHandler.HttpRequestReponse.IsRequestTimedOut
+        //                       && !requestHandler.HttpRequestReponse.IsUnableToParseHttp)
+        //                {
+        //                    await Task.Delay(TimeSpan.FromMilliseconds(10));
+        //                }
+        //            });
 
-                    var taskReturn = await Task.WhenAny(waitForHandShakeLoopTask, timeout);
+        //            var timeout = Task.Delay(TimeSpan.FromSeconds(10));
 
-                    if (taskReturn == timeout)
-                    {
-                        throw new TimeoutException("Connection request to server timed out");
-                    }
+        //            var taskReturn = await Task.WhenAny(waitForHandShakeLoopTask, timeout);
 
-                    parserHandler.Execute(default(ArraySegment<byte>));
+        //            if (taskReturn == timeout)
+        //            {
+        //                throw new TimeoutException("Connection request to server timed out");
+        //            }
 
-                    if (requestHandler.HttpRequestReponse.IsUnableToParseHttp)
-                    {
-                        throw new Exception("Invalid response from websocket server");
-                    }
+        //            parserHandler.Execute(default(ArraySegment<byte>));
 
-                    if (requestHandler.HttpRequestReponse.IsRequestTimedOut)
-                    {
-                        throw new TimeoutException("Connection request to server timed out");
-                    }
+        //            if (requestHandler.HttpRequestReponse.IsUnableToParseHttp)
+        //            {
+        //                throw new Exception("Invalid response from websocket server");
+        //            }
 
-                    if (requestHandler.HttpRequestReponse.StatusCode != 101)
-                    {
-                        throw new Exception($"Unable to connect to websocket Server. " +
-                                            $"Error code: {requestHandler.HttpRequestReponse.StatusCode}, " +
-                                            $"Error reason: {requestHandler.HttpRequestReponse.ResponseReason}");
-                    }
+        //            if (requestHandler.HttpRequestReponse.IsRequestTimedOut)
+        //            {
+        //                throw new TimeoutException("Connection request to server timed out");
+        //            }
 
-                    Debug.WriteLine("HandShake completed");
-                }
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
+        //            if (requestHandler.HttpRequestReponse.StatusCode != 101)
+        //            {
+        //                throw new Exception($"Unable to connect to websocket Server. " +
+        //                                    $"Error code: {requestHandler.HttpRequestReponse.StatusCode}, " +
+        //                                    $"Error reason: {requestHandler.HttpRequestReponse.ResponseReason}");
+        //            }
 
-            parserHandler.Execute(default(ArraySegment<byte>));
-        }
+        //            Debug.WriteLine("HandShake completed");
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        throw ex;
+        //    }
 
-        [Obsolete("Deprecated")]
-        internal void Disconnect()
-        {
-            _innerCancellationTokenSource?.Cancel();
-            TcpSocketClient.Disconnect();
-        }
+        //    parserHandler.Execute(default(ArraySegment<byte>));
+        //}
+
+        //[Obsolete("Deprecated")]
+        //internal void Disconnect()
+        //{
+        //    _innerCancellationTokenSource?.Cancel();
+        //    TcpSocketClient.Disconnect();
+        //}
 
         #endregion
-        //private ITcpSocketClient _tcpSocketClient;
-
-        private CancellationTokenSource _innerCancellationTokenSource;
 
         internal ITcpSocketClient TcpSocketClient;
-
-        internal bool IsConnected;
 
         internal WebSocketConnectService()
         {
         }
 
-        private readonly HandshakeParser _handshakeParser = new HandshakeParser();
-
         internal async Task ConnectServer(
-            IObservable<string> observableListener,
             Uri uri,
             bool secure,
-            HttpParserDelegate requestHandler,
-            HttpCombinedParser parserHandler,
-            CancellationTokenSource innerCancellationTokenSource,
-            WebsocketListener websocketListener,
             ITcpSocketClient tcpSocketClient,
             string origin = null,
             IDictionary<string, string> headers = null,
-            IEnumerable<string> subprotocols = null,
-            bool ignoreServerCertificateErrors = false,
-            TlsProtocolVersion tlsProtocolType = TlsProtocolVersion.Tls12)
+            IEnumerable<string> subprotocols = null)
         {
             TcpSocketClient = tcpSocketClient;
-
-            IsConnected = false;
 
             await SendConnectHandShakeAsync(uri, secure, origin, headers, subprotocols);
 
@@ -166,9 +145,8 @@ namespace WebsocketClientLite.PCL.Service
             catch (Exception ex)
             {
                 
-                throw ex;
+                throw new WebsocketClientLiteException("Unable to complete handshake", ex.InnerException);
             }
-            
         }
     }
 }
