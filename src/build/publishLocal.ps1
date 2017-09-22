@@ -9,4 +9,4 @@ else {
 
 .\build.ps1 $version
 
-nuget.exe push -Source "1iveowlNuGetRepo" -ApiKey key .\Nuget\WebsocketClientLite.PCL.$version.nupkg
+c:\tools\nuget\nuget.exe push -Source "1iveowlNuGetRepo" -ApiKey key .\Nuget\WebsocketClientLite.PCL.$version.nupkg

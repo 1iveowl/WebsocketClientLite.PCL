@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26430.4
+VisualStudioVersion = 15.0.26730.16
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test", "Test", "{C6A551EF-FE86-4A13-B9C0-EA8B7FA798C4}"
 EndProject
@@ -21,11 +21,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Nuget", "Nuget", "{E9C88A2B
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Interface", "Interface", "{0388463D-374D-4FE2-90CE-B7CB2C653EAC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IWebsocketClientLite.Netstandard", "..\interface\IWebsocketClientLite.Netstandard\IWebsocketClientLite.Netstandard.csproj", "{7DFE740F-B8B0-4C09-BD3F-C0C54048149E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IWebsocketClientLite.Netstandard", "..\interface\IWebsocketClientLite.Netstandard\IWebsocketClientLite.Netstandard.csproj", "{7DFE740F-B8B0-4C09-BD3F-C0C54048149E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebsocketClientLite.Netstandard", "WebsocketClientLite.Netstandard\WebsocketClientLite.Netstandard.csproj", "{B323455D-61E5-4D21-907C-647A9CFA96F8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebsocketClientLite.Netstandard", "WebsocketClientLite.Netstandard\WebsocketClientLite.Netstandard.csproj", "{B323455D-61E5-4D21-907C-647A9CFA96F8}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NETCore.Console.Test", "..\test\NETCore.Console.Test\NETCore.Console.Test.csproj", "{2C1EEEFA-A547-41E7-9DA5-2D585B946341}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebsocketClientLite.Netstandard20", "WebsocketClientLite.Netstandard20\WebsocketClientLite.Netstandard20.csproj", "{3C949F9B-A627-421D-A373-FD0C40314A28}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -87,6 +89,22 @@ Global
 		{2C1EEEFA-A547-41E7-9DA5-2D585B946341}.Release|x64.Build.0 = Release|Any CPU
 		{2C1EEEFA-A547-41E7-9DA5-2D585B946341}.Release|x86.ActiveCfg = Release|Any CPU
 		{2C1EEEFA-A547-41E7-9DA5-2D585B946341}.Release|x86.Build.0 = Release|Any CPU
+		{3C949F9B-A627-421D-A373-FD0C40314A28}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3C949F9B-A627-421D-A373-FD0C40314A28}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3C949F9B-A627-421D-A373-FD0C40314A28}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{3C949F9B-A627-421D-A373-FD0C40314A28}.Debug|ARM.Build.0 = Debug|Any CPU
+		{3C949F9B-A627-421D-A373-FD0C40314A28}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{3C949F9B-A627-421D-A373-FD0C40314A28}.Debug|x64.Build.0 = Debug|Any CPU
+		{3C949F9B-A627-421D-A373-FD0C40314A28}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{3C949F9B-A627-421D-A373-FD0C40314A28}.Debug|x86.Build.0 = Debug|Any CPU
+		{3C949F9B-A627-421D-A373-FD0C40314A28}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3C949F9B-A627-421D-A373-FD0C40314A28}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3C949F9B-A627-421D-A373-FD0C40314A28}.Release|ARM.ActiveCfg = Release|Any CPU
+		{3C949F9B-A627-421D-A373-FD0C40314A28}.Release|ARM.Build.0 = Release|Any CPU
+		{3C949F9B-A627-421D-A373-FD0C40314A28}.Release|x64.ActiveCfg = Release|Any CPU
+		{3C949F9B-A627-421D-A373-FD0C40314A28}.Release|x64.Build.0 = Release|Any CPU
+		{3C949F9B-A627-421D-A373-FD0C40314A28}.Release|x86.ActiveCfg = Release|Any CPU
+		{3C949F9B-A627-421D-A373-FD0C40314A28}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -94,5 +112,8 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{7DFE740F-B8B0-4C09-BD3F-C0C54048149E} = {0388463D-374D-4FE2-90CE-B7CB2C653EAC}
 		{2C1EEEFA-A547-41E7-9DA5-2D585B946341} = {C6A551EF-FE86-4A13-B9C0-EA8B7FA798C4}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {42E29DC6-2B7B-4046-88F2-858355EEE7BE}
 	EndGlobalSection
 EndGlobal

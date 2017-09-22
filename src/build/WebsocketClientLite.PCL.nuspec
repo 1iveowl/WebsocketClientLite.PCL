@@ -15,6 +15,7 @@ Xamarin cross-platform.
 Can be set to ignore SSL/TLS server certificate issues. 
 Observe incoming message using Reactive Extensions (Rx)</description>
     <releaseNotes>
+      .NET Standard 2.0 support
 Fixed bug that prevented sending payloads larger than 126 charaters.
 Updated dependencies to Rx 3.1.1 and SocketLite 4.0.6.
 Added Slack.RTM API compatibility option. See GitHub for details.
@@ -25,15 +26,31 @@ Added the option to choose TLS Protocol
     <tags>netstandard pcl netcore ios android xamarin uwp websocket rx ssl tls</tags>
     
     <dependencies>
-      <dependency id="System.Reactive" version="3.1.1"/>
-      <dependency id="SocketLite.PCL" version="4.0.6"/>
-      <dependency id="HttpMachine.PCL" version="3.0.1"/>
-      <dependency id="NETStandard.Library" version="1.6.1"/>
+
+      <group targetFramework="netstandard1.2">
+        <dependency id="System.Reactive" version="3.1.1"/>
+        <dependency id="SocketLite.PCL" version="4.1.1"/>
+        <dependency id="HttpMachine.PCL" version="3.0.1"/>
+        <dependency id="NETStandard.Library" version="1.6.1"/>
+        <dependency id="System.Net.NetworkInformation" version="4.3.0" />
+      </group>
+
+      <group targetFramework="netstandard2.0">
+        <dependency id="System.Reactive" version="3.1.1"/>
+        <dependency id="SocketLite.PCL" version="4.1.1"/>
+        <dependency id="HttpMachine.PCL" version="3.0.1"/>
+        <dependency id="NETStandard.Library" version="2.0.0"/>
+      </group>
+      
+
     </dependencies>
     
   </metadata>
     <files>
       <file src="..\main\WebsocketClientLite.Netstandard\bin\Release\netstandard1.2\WebsocketClientLite.*" target="lib\netstandard1.2" />
-      <file src="..\interface\IWebsocketClientLite.Netstandard\bin\Release\netstandard1.2\IWebsocketClientLite.*" target="lib\netstandard1.2" />
+      <file src="..\main\WebsocketClientLite.Netstandard\bin\Release\netstandard1.2\IWebsocketClientLite.*" target="lib\netstandard1.2" />
+
+      <file src="..\main\WebsocketClientLite.Netstandard20\bin\Release\netstandard2.0\WebsocketClientLite.*" target="lib\netstandard2.0" />
+      <file src="..\main\WebsocketClientLite.Netstandard20\bin\Release\netstandard2.0\IWebsocketClientLite.*" target="lib\netstandard2.0" />
     </files>
 </package>

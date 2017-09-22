@@ -9,4 +9,4 @@ else {
 
 .\build.ps1 $version
 
-Nuget.exe push .\Nuget\WebsocketClientLite.PCL.$version.nupkg -Source https://www.nuget.org
+c:\tools\nuget\Nuget.exe push .\Nuget\WebsocketClientLite.PCL.$version.nupkg -Source https://www.nuget.org
