@@ -74,7 +74,7 @@ class Program
             var headers = new Dictionary<string, string> { { "Pragma", "no-cache" }, { "Cache-Control", "no-cache" } };
 
             var messageObserver = await websocketClient.CreateObservableMessageReceiver(
-                new Uri("wss://spc.1iveowl.dk:8088/ws/spc/?username=WS_usr&password=SpecialPostTjenesten_ws"),
+                new Uri("wss://echo.websocket.org"),
                 ignoreServerCertificateErrors: true,
                 headers: headers,
                 subProtocols: subprotocols,

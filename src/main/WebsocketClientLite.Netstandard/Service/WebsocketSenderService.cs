@@ -151,18 +151,18 @@ namespace WebsocketClientLite.PCL.Service
 
             _writePendingData.Enqueue(frame);
 
-            lock (_writePendingData)
-            {
-                if (_sendingData)
-                {
-                    return;
-                }
-                _sendingData = true;
-            }
-
+            //lock (_writePendingData)
+            //{
+            //    if (_sendingData)
+            //    {
+            //        return;
+            //    }
+            //    _sendingData = true;
+            //}
+            
             try
             {
-                if (_writePendingData.Count > 0 && _writePendingData.TryDequeue(out byte[] buffer))
+                if (_writePendingData.Count > 0 && _writePendingData.TryDequeue(out var buffer))
                 {
                     await WaitForWebsocketConnection();
                     await tcpSocketClient.WriteStream.WriteAsync(buffer, 0, buffer.Length);
@@ -170,26 +170,26 @@ namespace WebsocketClientLite.PCL.Service
                 }
                 else
                 {
-                    lock (_writePendingData)
-                    {
-                        _sendingData = false;
-                    }
+                    //lock (_writePendingData)
+                    //{
+                    //    _sendingData = false;
+                    //}
                 }
             }
             catch (Exception)
             {
                 // handle exception then
-                lock (_writePendingData)
-                {
-                    _sendingData = false;
-                }
+                //lock (_writePendingData)
+                //{
+                //    _sendingData = false;
+                //}
             }
             finally
             {
-                lock (_writePendingData)
-                {
-                    _sendingData = false;
-                }
+                //lock (_writePendingData)
+                //{
+                //    _sendingData = false;
+                //}
             }
         }
 
