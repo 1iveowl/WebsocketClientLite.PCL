@@ -15,12 +15,7 @@ Xamarin cross-platform.
 Can be set to ignore SSL/TLS server certificate issues. 
 Observe incoming message using Reactive Extensions (Rx)</description>
     <releaseNotes>
-      .NET Standard 2.0 support
-Fixed bug that prevented sending payloads larger than 126 charaters.
-Updated dependencies to Rx 3.1.1 and SocketLite 4.1.2.
-Added Slack.RTM API compatibility option. See GitHub for details.
-Added support for Sub Protocols and moved to .NET Standard 1.2 Library.
-Added the option to choose TLS Protocol
+Bug fixes.
     </releaseNotes>
     <copyright>Copyright 2017</copyright>
     <tags>netstandard pcl netcore ios android xamarin uwp websocket rx ssl tls</tags>
@@ -31,7 +26,6 @@ Added the option to choose TLS Protocol
         <dependency id="System.Reactive" version="3.1.1"/>
         <dependency id="SocketLite.PCL" version="4.1.2"/>
         <dependency id="HttpMachine.PCL" version="3.0.1"/>
-        <dependency id="NETStandard.Library" version="1.6.1"/>
         <dependency id="System.Net.NetworkInformation" version="4.3.0" />
       </group>
 
@@ -39,7 +33,6 @@ Added the option to choose TLS Protocol
         <dependency id="System.Reactive" version="3.1.1"/>
         <dependency id="SocketLite.PCL" version="4.1.2"/>
         <dependency id="HttpMachine.PCL" version="3.0.1"/>
-        <dependency id="NETStandard.Library" version="2.0.1"/>
       </group>
       
 
