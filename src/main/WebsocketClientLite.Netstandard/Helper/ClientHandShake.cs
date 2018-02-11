@@ -39,8 +39,7 @@ namespace WebsocketClientLite.PCL.Helper
 
             if (subprotocols != null)
             {
-                var subprotocol = subprotocols
-                    .Aggregate("Sec-WebSocket-Protocol: ", (current, protocol) => $"{current}, {protocol}");
+                var subprotocol = $"Sec-WebSocket-Protocol: {subprotocols.Aggregate((current, protocol) => $"{current}, {protocol}")}";
 
                 sb.Append($"{subprotocol}\r\n");
             }

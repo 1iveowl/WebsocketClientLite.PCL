@@ -4,8 +4,8 @@
     <TargetFramework>netstandard1.2</TargetFramework>
     <AssemblyName>IWebsocketClientLite.PCL</AssemblyName>
     <RootNamespace>IWebsocketClientLite.PCL</RootNamespace>
-    <AssemblyVersion>4.1.1.0</AssemblyVersion>
-    <FileVersion>4.1.1.0</FileVersion>
+    <AssemblyVersion>4.1.4.0</AssemblyVersion>
+    <FileVersion>4.1.4.0</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>
