@@ -1,5 +1,6 @@
 ﻿using System;
 using HttpMachine;
+using IHttpMachine;
 using WebsocketClientLite.PCL.Model;
 
 namespace WebsocketClientLite.PCL.Parser
@@ -11,12 +12,12 @@ namespace WebsocketClientLite.PCL.Parser
 
         public readonly HttpWebsocketServerResponse HttpRequestReponse = new HttpWebsocketServerResponse();
 
-        public void OnMessageBegin(HttpCombinedParser combinedParser)
+        public void OnMessageBegin(IHttpCombinedParser combinedParser)
         {
             //throw new NotImplementedException();
         }
 
-        public void OnHeaderName(HttpCombinedParser combinedParser, string name)
+        public void OnHeaderName(IHttpCombinedParser combinedParser, string name)
         {
             // Header Field Names are case-insensitive http://www.w3.org/Protocols/rfc2616/rfc2616-sec4.html#sec4.2
             if (HttpRequestReponse.Headers.ContainsKey(name.ToUpper()))
@@ -26,7 +27,7 @@ namespace WebsocketClientLite.PCL.Parser
             _headerName = name.ToUpper();
         }
 
-        public void OnHeaderValue(HttpCombinedParser combinedParser, string value)
+        public void OnHeaderValue(IHttpCombinedParser combinedParser, string value)
         {
             if (_headerAlreadyExist)
             {
@@ -40,12 +41,12 @@ namespace WebsocketClientLite.PCL.Parser
             }
         }
 
-        public void OnHeadersEnd(HttpCombinedParser combinedParser)
+        public void OnHeadersEnd(IHttpCombinedParser combinedParser)
         {
             //throw new NotImplementedException();
         }
 
-        public void OnBody(HttpCombinedParser combinedParser, ArraySegment<byte> data)
+        public void OnBody(IHttpCombinedParser combinedParser, ArraySegment<byte> data)
         {
             //throw new NotImplementedException();
         }
@@ -58,65 +59,65 @@ namespace WebsocketClientLite.PCL.Parser
 
         public MessageType MessageType { get; private set; }
 
-        public void OnRequestType(HttpCombinedParser combinedParser)
+        public void OnRequestType(IHttpCombinedParser combinedParser)
         {
             HttpRequestReponse.MessageType = MessageType.Request;
             MessageType = MessageType.Request;
         }
 
-        public void OnMethod(HttpCombinedParser combinedParser, string method)
+        public void OnMethod(IHttpCombinedParser combinedParser, string method)
         {
             //throw new NotImplementedException();
         }
 
-        public void OnRequestUri(HttpCombinedParser combinedParser, string requestUri)
+        public void OnRequestUri(IHttpCombinedParser combinedParser, string requestUri)
         {
             //throw new NotImplementedException();
         }
 
-        public void OnPath(HttpCombinedParser combinedParser, string path)
+        public void OnPath(IHttpCombinedParser combinedParser, string path)
         {
             //throw new NotImplementedException();
         }
 
-        public void OnFragment(HttpCombinedParser combinedParser, string fragment)
+        public void OnFragment(IHttpCombinedParser combinedParser, string fragment)
         {
             //throw new NotImplementedException();
         }
 
-        public void OnQueryString(HttpCombinedParser combinedParser, string queryString)
+        public void OnQueryString(IHttpCombinedParser combinedParser, string queryString)
         {
             //throw new NotImplementedException();
         }
 
-        public void OnResponseType(HttpCombinedParser combinedParser)
+        public void OnResponseType(IHttpCombinedParser combinedParser)
         {
             HttpRequestReponse.MessageType = MessageType.Response;
             MessageType = MessageType.Response;
         }
 
-        public void OnResponseCode(HttpCombinedParser combinedParser, int statusCode, string statusReason)
+        public void OnResponseCode(IHttpCombinedParser combinedParser, int statusCode, string statusReason)
         {
             HttpRequestReponse.StatusCode = statusCode;
             HttpRequestReponse.ResponseReason = statusReason;
         }
 
-        public void OnTransferEncodingChunked(HttpCombinedParser combinedParser, bool isChunked)
+        public void OnTransferEncodingChunked(IHttpCombinedParser combinedParser, bool isChunked)
         {
 
         }
 
-        public void OnChunkedLength(HttpCombinedParser combinedParser, int length)
+        public void OnChunkedLength(IHttpCombinedParser combinedParser, int length)
         {
 
         }
 
-        public void OnChunkReceived(HttpCombinedParser combinedParser)
+        public void OnChunkReceived(IHttpCombinedParser combinedParser)
         {
 
         }
 
-        public void OnMessageEnd(HttpCombinedParser combinedParser)
+        public void OnMessageEnd(IHttpCombinedParser combinedParser)
         {
             HttpRequestReponse.IsEndOfMessage = true;
         }
