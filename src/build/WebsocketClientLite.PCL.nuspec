@@ -15,7 +15,8 @@ Xamarin cross-platform.
 Can be set to ignore SSL/TLS server certificate issues. 
 Observe incoming message using Reactive Extensions (Rx)</description>
     <releaseNotes>
-      .NET Standard 2.0 support
+Updated to HttpMachine 3.1.0 (bug fix)
+.NET Standard 2.0 support
 Fixed bug that prevented sending payloads larger than 126 charaters.
 Updated dependencies to Rx 3.1.1 and SocketLite 4.0.6.
 Added Slack.RTM API compatibility option. See GitHub for details.
