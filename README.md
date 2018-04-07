@@ -99,7 +99,7 @@ class Program
             List<string> subprotocols = null; //new List<string> {"soap", "json"};
 
             var headers = new Dictionary<string, string> { { "Pragma", "no-cache" }, { "Cache-Control", "no-cache" } };
-
+			
 			var createTokenSource = new CancellationTokenSource();
 
             var messageObserver = await websocketClient.CreateObservableMessageReceiver(
