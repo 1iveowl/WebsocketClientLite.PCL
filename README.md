@@ -100,12 +100,15 @@ class Program
 
             var headers = new Dictionary<string, string> { { "Pragma", "no-cache" }, { "Cache-Control", "no-cache" } };
 
+			var createTokenSource = new CancellationTokenSource();
+
             var messageObserver = await websocketClient.CreateObservableMessageReceiver(
-                new Uri("wss://echo.websocket.org:443"),
+                new Uri("wss://echo.websocket.org"),
                 ignoreServerCertificateErrors: true,
                 headers: headers,
                 subProtocols: subprotocols,
-                tlsProtocolType: TlsProtocolVersion.Tls12);
+                tlsProtocolType: TlsProtocolVersion.Tls12, 
+                token: createTokenSource.Token);
 
              var subscribeToMessagesReceived = messageObserver.Subscribe(
                 msg =>

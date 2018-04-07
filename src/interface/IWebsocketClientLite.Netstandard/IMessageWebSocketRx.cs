@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using ISocketLite.PCL.Model;
 
@@ -39,7 +40,8 @@ namespace IWebsocketClientLite.PCL
             IEnumerable<string> subProtocols = null,
             bool ignoreServerCertificateErrors = false,
             TlsProtocolVersion tlsProtocolType = TlsProtocolVersion.Tls12,
-            bool excludeZeroApplicationDataInPong = false);
+            bool excludeZeroApplicationDataInPong = false,
+            CancellationToken token = default (CancellationToken));
 
         Task CloseAsync();
 

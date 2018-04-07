@@ -123,6 +123,7 @@ namespace WebsocketClientLite.PCL.Service
         internal async Task ConnectServer(
             Uri uri,
             bool secure,
+            CancellationToken token,
             ITcpSocketClient tcpSocketClient,
             string origin = null,
             IDictionary<string, string> headers = null,
@@ -131,22 +132,24 @@ namespace WebsocketClientLite.PCL.Service
             TcpSocketClient = tcpSocketClient;
             _subjectConnectionStatus.OnNext(ConnectionStatus.Connecting);
 
-            await SendConnectHandShakeAsync(uri, secure, origin, headers, subprotocols);
+            await SendConnectHandShakeAsync(uri, secure, token, origin, headers, subprotocols);
 
         }
 
         private async Task SendConnectHandShakeAsync(
             Uri uri, 
-            bool secure, 
+            bool secure,
+            CancellationToken token,
             string origin = null,
             IDictionary<string, string> headers = null,
-            IEnumerable<string> subprotocols = null)
+            IEnumerable<string> subprotocols = null
+            )
         {
             var handShake = ClientHandShake.Compose(uri, secure, origin, headers, subprotocols);
             try
             {
-                await TcpSocketClient.WriteStream.WriteAsync(handShake, 0, handShake.Length);
-                await TcpSocketClient.WriteStream.FlushAsync();
+                await TcpSocketClient.WriteStream.WriteAsync(handShake, 0, handShake.Length, token);
+                await TcpSocketClient.WriteStream.FlushAsync(token);
             }
             catch (Exception ex)
             {
