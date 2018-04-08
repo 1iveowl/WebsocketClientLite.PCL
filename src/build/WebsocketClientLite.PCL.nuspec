@@ -15,7 +15,7 @@ Xamarin cross-platform.
 Can be set to ignore SSL/TLS server certificate issues. 
 Observe incoming message using Reactive Extensions (Rx)</description>
     <releaseNotes>
-Lowest .NET Standard support is not .NET Standard 1.3
+Addded TokenSource option for CreateObservableMessageReceiver
     </releaseNotes>
     <copyright>Copyright 2017</copyright>
     <tags>netstandard pcl netcore ios android xamarin uwp websocket rx ssl tls</tags>
@@ -24,14 +24,14 @@ Lowest .NET Standard support is not .NET Standard 1.3
 
       <group targetFramework="netstandard1.2">
         <dependency id="System.Reactive" version="3.1.1"/>
-        <dependency id="SocketLite.PCL" version="4.1.5"/>
+        <dependency id="SocketLite.PCL" version="4.2.1"/>
         <dependency id="HttpMachine.PCL" version="3.1.0"/>
         <dependency id="System.Net.NetworkInformation" version="4.3.0" />
       </group>
 
       <group targetFramework="netstandard2.0">
         <dependency id="System.Reactive" version="3.1.1"/>
-        <dependency id="SocketLite.PCL" version="4.1.5"/>
+        <dependency id="SocketLite.PCL" version="4.2.1"/>
         <dependency id="HttpMachine.PCL" version="3.1.0"/>
       </group>
       

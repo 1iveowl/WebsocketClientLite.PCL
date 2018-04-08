@@ -134,12 +134,21 @@ namespace WebsocketClientLite.PCL
             IEnumerable<string> subProtocols = null,
             bool ignoreServerCertificateErrors = false,
             TlsProtocolVersion tlsProtocolType = TlsProtocolVersion.Tls12,
-            bool excludeZeroApplicationDataInPong = false)
+            bool excludeZeroApplicationDataInPong = false,
+            CancellationToken token = default (CancellationToken))
         {
             _websocketListener.ExcludeZeroApplicationDataInPong = excludeZeroApplicationDataInPong;
             _subjectConnectionStatus.OnNext(ConnectionStatus.Connecting);
             _innerCancellationTokenSource = new CancellationTokenSource();
 
+            if (token != default(CancellationToken))
+            {
+                token.Register(() =>
+                {
+                    _innerCancellationTokenSource.Cancel();
+                });
+            }
+            
             ITcpSocketClient socketClient = new TcpSocketClient();
 
             await socketClient.ConnectAsync(
@@ -149,10 +158,16 @@ namespace WebsocketClientLite.PCL
                 _innerCancellationTokenSource.Token,
                 ignoreServerCertificateErrors,
                 tlsProtocolType);
+
+            if (!socketClient.IsConnected)
+            {
+                throw new Exception($"Websocket Lite unable to connect to host: {uri.Host}");
+            }
             
             await _webSocketConnectService.ConnectServer(
                 uri,
                 IsSecureWebsocket(uri),
+                token,
                 socketClient,
                 origin,
                 headers,
@@ -168,12 +183,12 @@ namespace WebsocketClientLite.PCL
                             str => obs.OnNext(str),
                             ex =>
                             {
-                                WaitForServerToCloseConnectionAsync().Wait();
+                                WaitForServerToCloseConnectionAsync().Wait(token);
                                 throw ex;
                             },
                             () =>
                             {
-                                WaitForServerToCloseConnectionAsync().Wait();
+                                WaitForServerToCloseConnectionAsync().Wait(token);
                                 obs.OnCompleted();
                             });
 

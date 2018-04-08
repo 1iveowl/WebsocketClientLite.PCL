@@ -27,7 +27,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebsocketClientLite.Netstan
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NETCore.Console.Test", "..\test\NETCore.Console.Test\NETCore.Console.Test.csproj", "{2C1EEEFA-A547-41E7-9DA5-2D585B946341}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebsocketClientLite.Netstandard20", "WebsocketClientLite.Netstandard20\WebsocketClientLite.Netstandard20.csproj", "{3C949F9B-A627-421D-A373-FD0C40314A28}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebsocketClientLite.Netstandard20", "WebsocketClientLite.Netstandard20\WebsocketClientLite.Netstandard20.csproj", "{3C949F9B-A627-421D-A373-FD0C40314A28}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
