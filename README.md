@@ -1,7 +1,6 @@
 # Websocket Client Lite (Rx)
 [![NuGet Badge](https://buildstats.info/nuget/WebsocketClientLite.PCL)](https://www.nuget.org/packages/WebsocketClientLite.PCL)
 
-[![.NET Standard](http://img.shields.io/badge/.NET_Standard-v1.3-green.svg)](https://docs.microsoft.com/da-dk/dotnet/articles/standard/library)
 [![.NET Standard](http://img.shields.io/badge/.NET_Standard-v2.0-red.svg)](https://docs.microsoft.com/da-dk/dotnet/articles/standard/library) 
 
 Note: From version 3.6.0 this library support .NET Core.
@@ -21,6 +20,9 @@ The library allows developers to establish secure wss websocket connections to w
 This project is based on [SocketLite.PCL](https://github.com/1iveowl/SocketLite.PCL) for cross platform TCP sockets support. 
 
 This project utilizes [Reactive Extensions](http://reactivex.io/). Although this has an added learning curve its a learning worth while and it makes creating a library like this much more elegant compared to using call-back or events. 
+
+## New in version 5.0.
+From hereon only .NET Standard 2.0 and later are supported.
 
 ## New in Version 4.0
 Version 4.0 represents a major overhaul. Unfortunately version 4.0 is **not** backwards compatible with the previous version. There were just to many things I wanted to change. That said, version 4.0 does not have any new functionality, so if you don't want to upgrade you don't have to - at least not in the short term. Version 4.0 is a bit fast, and future versions might add new functionality, so I do recommend the small effort involved in upgrading your code to version 4.0.
