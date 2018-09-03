@@ -1,7 +1,7 @@
 ﻿using System;
-using System.Diagnostics;
+using System.IO;
 using System.Text;
-using ISocketLite.PCL.Interface;
+using System.Threading.Tasks;
 using IWebsocketClientLite.PCL;
 using WebsocketClientLite.PCL.Helper;
 using WebsocketClientLite.PCL.Model;
@@ -61,11 +61,11 @@ namespace WebsocketClientLite.PCL.Parser
             IsCloseRecieved = false;
         }
 
-        internal void Parse(ITcpSocketClient tcpSocketClient, byte data, bool excludeZeroApplicationDataInPong = false)
+        internal async Task ParseAsync(Stream tcpSocketClient, byte data, bool excludeZeroApplicationDataInPong = false)
         {
             if (!_isFrameBeingReceived)
             {
-                if (IsControlFrame(tcpSocketClient, data, excludeZeroApplicationDataInPong))
+                if (await IsControlFrameAsync(tcpSocketClient, data, excludeZeroApplicationDataInPong))
                 {
                     return;
                 }
@@ -92,12 +92,12 @@ namespace WebsocketClientLite.PCL.Parser
             }
         }
 
-        private bool IsControlFrame(
-            ITcpSocketClient tcpSocketClient, 
+        private async Task<bool> IsControlFrameAsync(
+            Stream tcpSocketClient, 
             byte data, 
             bool excludeZeroApplicationDataInPong = false)
         {
-            var controlFrame = _controlFrameHandler.CheckForPingOrCloseControlFrame(tcpSocketClient, data, excludeZeroApplicationDataInPong);
+            var controlFrame = await _controlFrameHandler.CheckForPingOrCloseControlFrameAsync(tcpSocketClient, data, excludeZeroApplicationDataInPong);
 
             switch (controlFrame)
             {

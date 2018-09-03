@@ -4,12 +4,8 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <AssemblyName>IWebsocketClientLite.PCL</AssemblyName>
     <RootNamespace>IWebsocketClientLite.PCL</RootNamespace>
-    <AssemblyVersion>5.1.1.0</AssemblyVersion>
-    <FileVersion>5.1.1.0</FileVersion>
+    <AssemblyVersion>6.0.0.0</AssemblyVersion>
+    <FileVersion>6.0.0.0</FileVersion>
   </PropertyGroup>
-
-  <ItemGroup>
-    <PackageReference Include="SocketLite.PCL" Version="5.1.1" />
-  </ItemGroup>
 
 </Project>

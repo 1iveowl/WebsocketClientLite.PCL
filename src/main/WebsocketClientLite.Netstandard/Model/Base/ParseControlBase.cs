@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using HttpMachine;
-using ISocketLite.PCL.Interface;
+﻿using HttpMachine;
 
 namespace WebsocketClientLite.PCL.Model.Base
 {

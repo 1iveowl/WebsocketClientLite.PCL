@@ -1,118 +1,35 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
+using System.Net.Security;
+using System.Net.Sockets;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
+using System.Security.Authentication;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading;
 using System.Threading.Tasks;
-using HttpMachine;
-using ISocketLite.PCL.Interface;
-using ISocketLite.PCL.Model;
 using IWebsocketClientLite.PCL;
-using SocketLite.Services;
 using WebsocketClientLite.PCL.Model;
-using WebsocketClientLite.PCL.Parser;
 using WebsocketClientLite.PCL.Service;
 
 namespace WebsocketClientLite.PCL
 {
     public class MessageWebSocketRx : IMessageWebSocketRx
     {
-
-        #region Obsolete
-
-        //private HttpParserDelegate _httpParserDelegate;
-        //private HttpCombinedParser _httpParserHandler;
-
-        //[Obsolete("Deprecated")]
-        //public IObservable<string> ObserveTextMessagesReceived => _websocketListener.ObserveTextMessageSequence;
-
-        //[Obsolete("Deprecated")]
-        //public async Task ConnectAsync(
-        //    Uri uri,
-        //    string origin = null,
-        //    IDictionary<string, string> headers = null,
-        //    IEnumerable<string> subprotocols = null,
-        //    bool ignoreServerCertificateErrors = false,
-        //    TlsProtocolVersion tlsProtocolVersion = TlsProtocolVersion.Tls12,
-        //    bool excludeZeroApplicationDataInPong = false)
-        //{
-        //    _websocketListener.ExcludeZeroApplicationDataInPong = excludeZeroApplicationDataInPong;
-
-        //    _subjectConnectionStatus.OnNext(ConnectionStatus.Connecting);
-
-        //    _innerCancellationTokenSource = new CancellationTokenSource();
-
-        //    using (_httpParserDelegate = new HttpParserDelegate())
-        //    using (_httpParserHandler = new HttpCombinedParser(_httpParserDelegate))
-        //    {
-        //        var isSecure = IsSecureWebsocket(uri);
-
-        //        try
-        //        {
-        //            await _webSocketConnectService.ConnectAsync(
-        //                uri,
-        //                isSecure,
-        //                _httpParserDelegate,
-        //                _httpParserHandler,
-        //                _innerCancellationTokenSource,
-        //                _websocketListener,
-        //                origin,
-        //                headers,
-        //                subprotocols,
-        //                ignoreServerCertificateErrors,
-        //                tlsProtocolVersion);
-        //        }
-        //        catch (Exception ex)
-        //        {
-        //            _subjectConnectionStatus.OnNext(ConnectionStatus.ConnectionFailed);
-        //            throw ex;
-        //        }
-
-        //        if (_httpParserDelegate.HttpRequestReponse.StatusCode == 101)
-        //        {
-        //            if (subprotocols != null)
-        //            {
-        //                _websocketListener.SubprotocolAccepted = _httpParserDelegate?.HttpRequestReponse?.Headers?.ContainsKey("SEC-WEBSOCKET-PROTOCOL") ?? false;
-
-        //                if (SubprotocolAccepted)
-        //                {
-        //                    _websocketListener.SubprotocolAcceptedName = _httpParserDelegate?.HttpRequestReponse?.Headers?["SEC-WEBSOCKET-PROTOCOL"];
-        //                    if (!string.IsNullOrEmpty(SubprotocolAcceptedName))
-        //                    {
-        //                        _subjectConnectionStatus.OnNext(ConnectionStatus.Connected);
-        //                        _websocketListener.IsConnected = true;
-        //                    }
-        //                    else
-        //                    {
-        //                        throw new WebsocketClientLiteException("Server responded with blank Sub Protocol name");
-        //                    }
-        //                }
-        //                else
-        //                {
-        //                    throw new WebsocketClientLiteException("Server did not support any of the needed Sub Protocols");
-        //                }
-        //            }
-        //            else
-        //            {
-        //                _subjectConnectionStatus.OnNext(ConnectionStatus.Connected);
-        //                _websocketListener.IsConnected = true;
-        //            }
-        //            _websocketListener.DataReceiveMode = DataReceiveMode.IsListeningForTextData;
-        //        }
-        //    }
-        //}
-
-
-        #endregion
-
         public IObservable<ConnectionStatus> ObserveConnectionStatus => _subjectConnectionStatus.AsObservable();
 
-        private readonly ITcpSocketClient _tcpSocketClient = new TcpSocketClient();
+        //private readonly Stream _tcpSocketClient = new TcpSocketClient();
         private readonly ISubject<ConnectionStatus> _subjectConnectionStatus = new Subject<ConnectionStatus>();
         private readonly WebSocketConnectService _webSocketConnectService;
         private readonly WebsocketListener _websocketListener;
         private readonly WebsocketSenderService _websocketSenderService;
         private CancellationTokenSource _innerCancellationTokenSource;
+
+        private Stream _tcpStream; 
+
+        private bool _ignoreCertificateErrors;
 
         public bool IsConnected => _websocketListener.IsConnected;
         public bool SubprotocolAccepted => _websocketListener.SubprotocolAccepted;
@@ -133,13 +50,15 @@ namespace WebsocketClientLite.PCL
             IDictionary<string, string> headers = null,
             IEnumerable<string> subProtocols = null,
             bool ignoreServerCertificateErrors = false,
-            TlsProtocolVersion tlsProtocolType = TlsProtocolVersion.Tls12,
+            SslProtocols tlsProtocolType = SslProtocols.Tls12,
             bool excludeZeroApplicationDataInPong = false,
             CancellationToken token = default (CancellationToken))
         {
             _websocketListener.ExcludeZeroApplicationDataInPong = excludeZeroApplicationDataInPong;
             _subjectConnectionStatus.OnNext(ConnectionStatus.Connecting);
             _innerCancellationTokenSource = new CancellationTokenSource();
+
+            _ignoreCertificateErrors = ignoreServerCertificateErrors;
 
             if (token != default(CancellationToken))
             {
@@ -148,18 +67,65 @@ namespace WebsocketClientLite.PCL
                     _innerCancellationTokenSource.Cancel();
                 });
             }
-            
-            ITcpSocketClient socketClient = new TcpSocketClient();
 
-            await socketClient.ConnectAsync(
-                uri.Host,
-                uri.Port.ToString(),
-                IsSecureWebsocket(uri),
-                _innerCancellationTokenSource.Token,
-                ignoreServerCertificateErrors,
-                tlsProtocolType);
+            var tcpClient = new TcpClient();
 
-            if (!socketClient.IsConnected)
+            var connectTask = tcpClient.ConnectAsync(uri.Host, uri.Port);
+            var timeOut = Task.Delay(TimeSpan.FromSeconds(10), token);
+
+            try
+            {
+                var resultTask = await Task.WhenAny(connectTask, timeOut);
+
+                if (resultTask == connectTask)
+                {
+
+                }
+                else
+                {
+
+                }
+            }
+            catch (ObjectDisposedException)
+            {
+                // OK to ignore
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
+            if (tcpClient.Connected)
+            {
+                Debug.WriteLine("Connected");
+            }
+            else
+            {
+                throw new SocketException();
+                Debug.WriteLine("Unable to connect");
+            }
+
+            if (uri.Scheme.ToLower() == "wss")
+            {
+                var secureStream = new SslStream(tcpClient.GetStream(), true, ValidateServerCertificate);
+
+                try
+                {
+                    await secureStream.AuthenticateAsClientAsync(uri.Host, null, tlsProtocolType, false);
+
+                    _tcpStream = secureStream;
+                }
+                catch (Exception ex)
+                {
+                    throw ex;
+                }
+            }
+            else
+            {
+                _tcpStream = tcpClient.GetStream();
+            }
+
+            if (!tcpClient.Connected)
             {
                 throw new Exception($"Websocket Lite unable to connect to host: {uri.Host}");
             }
@@ -168,23 +134,23 @@ namespace WebsocketClientLite.PCL
                 uri,
                 IsSecureWebsocket(uri),
                 token,
-                socketClient,
+                _tcpStream,
                 origin,
                 headers,
                 subProtocols);
 
-            var observer = Observable.Create<string>(
+            var observableWebsocket = Observable.Create<string>(
                 obs =>
                 {
-                    var disp = _websocketListener.CreateObservableListener(
+                    var disposableWebsocketListener = _websocketListener.CreateObservableListener(
                             _innerCancellationTokenSource,
-                            socketClient)
+                            _tcpStream)
                         .Subscribe(
                             str => obs.OnNext(str),
                             ex =>
                             {
                                 WaitForServerToCloseConnectionAsync().Wait(token);
-                                throw ex;
+                                obs.OnError(ex);
                             },
                             () =>
                             {
@@ -192,10 +158,10 @@ namespace WebsocketClientLite.PCL
                                 obs.OnCompleted();
                             });
 
-                    return disp;
+                    return disposableWebsocketListener;
                 });
 
-            return observer;
+            return observableWebsocket;
         }
 
         public async Task CloseAsync()
@@ -207,17 +173,17 @@ namespace WebsocketClientLite.PCL
             // Wait for data or timeout after 1 second
             var dataReceivedDone = await Task.WhenAny(dataReceiveDone, timeoutDataTask);
 
-            if (_tcpSocketClient.IsConnected)
+            if (_tcpStream.CanRead)
             {
-                await _websocketSenderService.SendCloseHandshakeAsync(_webSocketConnectService.TcpSocketClient, StatusCodes.GoingAway);
+                await _websocketSenderService.SendCloseHandshakeAsync(_webSocketConnectService.tcpStream, StatusCodes.GoingAway);
             }
 
             var serverDisconnect = WaitForServerToCloseConnectionAsync();
             var timeoutServerCloseTask = Task.Delay(TimeSpan.FromSeconds(2));
 
             // Wait for server to close the connection or force a close.
-            var disconnectresult = await Task.WhenAny(serverDisconnect, timeoutServerCloseTask);
-            if (disconnectresult != serverDisconnect)
+            var disconnectResult = await Task.WhenAny(serverDisconnect, timeoutServerCloseTask);
+            if (disconnectResult != serverDisconnect)
             {
                 _websocketListener.StopReceivingData();
             }
@@ -229,7 +195,7 @@ namespace WebsocketClientLite.PCL
         public async Task SendTextAsync(string message)
         {
             _subjectConnectionStatus.OnNext(ConnectionStatus.Sending);
-            await _websocketSenderService.SendTextAsync(_webSocketConnectService.TcpSocketClient, message);
+            await _websocketSenderService.SendTextAsync(_webSocketConnectService.tcpStream, message);
             _subjectConnectionStatus.OnNext(ConnectionStatus.DeliveryAcknowledged);
 
         }
@@ -253,17 +219,16 @@ namespace WebsocketClientLite.PCL
                         break;
                 }
                 
-                await _websocketSenderService.SendTextMultiFrameAsync(_webSocketConnectService.TcpSocketClient, message, frameType);
+                await _websocketSenderService.SendTextMultiFrameAsync(_webSocketConnectService.tcpStream, message, frameType);
                 _subjectConnectionStatus.OnNext(ConnectionStatus.FrameDeliveryAcknowledged);
         }
 
         public async Task SendTextAsync(string[] messageList)
         {
             _subjectConnectionStatus.OnNext(ConnectionStatus.Sending);
-            await _websocketSenderService.SendTextAsync(_webSocketConnectService.TcpSocketClient, messageList);
+            await _websocketSenderService.SendTextAsync(_webSocketConnectService.tcpStream, messageList);
             _subjectConnectionStatus.OnNext(ConnectionStatus.DeliveryAcknowledged);
         }
-
 
         private async Task WaitForServerToCloseConnectionAsync()
         {
@@ -273,7 +238,7 @@ namespace WebsocketClientLite.PCL
                 await Task.Delay(TimeSpan.FromMilliseconds(50));
             }
 
-            while (_tcpSocketClient.IsConnected)
+            while (_tcpStream.CanRead)
             {
                 await Task.Delay(TimeSpan.FromMilliseconds(50));
             }
@@ -285,6 +250,30 @@ namespace WebsocketClientLite.PCL
             {
                 await Task.Delay(TimeSpan.FromMilliseconds(50));
             }
+        }
+
+        private bool ValidateServerCertificate(
+            object sender,
+            X509Certificate certificate,
+            X509Chain chain,
+            SslPolicyErrors sslPolicyErrors)
+        {
+            if (_ignoreCertificateErrors) return true;
+
+            switch (sslPolicyErrors)
+            {
+                case SslPolicyErrors.RemoteCertificateNameMismatch:
+                    throw new Exception($"SSL/TLS error: {SslPolicyErrors.RemoteCertificateChainErrors.ToString()}");
+                case SslPolicyErrors.RemoteCertificateNotAvailable:
+                    throw new Exception($"SSL/TLS error: {SslPolicyErrors.RemoteCertificateNotAvailable.ToString()}");
+                case SslPolicyErrors.RemoteCertificateChainErrors:
+                    throw new Exception($"SSL/TLS error: {SslPolicyErrors.RemoteCertificateChainErrors.ToString()}");
+                case SslPolicyErrors.None:
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(sslPolicyErrors), sslPolicyErrors, null);
+            }
+            return true;
         }
 
         private static bool IsSecureWebsocket(Uri uri)
@@ -310,7 +299,7 @@ namespace WebsocketClientLite.PCL
 
         public void Dispose()
         {
-            _tcpSocketClient.Dispose();
+            _tcpStream.Dispose();
             _websocketListener.StopReceivingData();
         }
     }
