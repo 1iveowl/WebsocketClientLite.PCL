@@ -9,7 +9,6 @@
   <ItemGroup>
     <Compile Include="..\WebsocketClientLite.Netstandard\Helper\ClientHandShake.cs" Link="Helper\ClientHandShake.cs" />
     <Compile Include="..\WebsocketClientLite.Netstandard\Helper\ControlFrameHandler.cs" Link="Helper\ControlFrameHandler.cs" />
-    <Compile Include="..\WebsocketClientLite.Netstandard\Helper\Extensions.cs" Link="Helper\Extensions.cs" />
     <Compile Include="..\WebsocketClientLite.Netstandard\Helper\WebsocketMasking.cs" Link="Helper\WebsocketMasking.cs" />
     <Compile Include="..\WebsocketClientLite.Netstandard\MessageWebSocketRx.cs" Link="MessageWebSocketRx.cs" />
     <Compile Include="..\WebsocketClientLite.Netstandard\Model\Base\HttpHeaderBase.cs" Link="Model\Base\HttpHeaderBase.cs" />
@@ -38,7 +37,6 @@
 
   <ItemGroup>
     <PackageReference Include="HttpMachine.PCL" Version="3.1.0" />
-    <PackageReference Include="SocketLite.PCL" Version="5.1.1" />
     <PackageReference Include="System.Reactive" Version="4.1.0" />
   </ItemGroup>
 

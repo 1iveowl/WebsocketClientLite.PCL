@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Security.Authentication;
 using System.Threading;
 using System.Threading.Tasks;
-using ISocketLite.PCL.Model;
 using IWebsocketClientLite.PCL;
 using WebsocketClientLite.PCL;
 
@@ -11,14 +11,13 @@ class Program
 
     const string AllowedChars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 
-    private static bool _isConnected;
 
-    static void Main(string[] args)
+    static async Task Main(string[] args)
     {
 
         var outerCancellationSource = new CancellationTokenSource();
 
-        Task.Run(() => StartWebSocketAsyncWithRetry(outerCancellationSource), outerCancellationSource.Token);
+        await StartWebSocketAsyncWithRetry(outerCancellationSource);
 
         System.Console.WriteLine("Waiting...");
         System.Console.ReadKey();
@@ -78,9 +77,9 @@ class Program
             var messageObserver = await websocketClient.CreateObservableMessageReceiver(
                 new Uri("wss://echo.websocket.org"),
                 ignoreServerCertificateErrors: true,
-                headers: headers,
-                subProtocols: subprotocols,
-                tlsProtocolType: TlsProtocolVersion.Tls12, 
+                //headers: headers,
+                //subProtocols: subprotocols,
+                tlsProtocolType: SslProtocols.Tls12, 
                 token: createTokenSource.Token);
 
              var subscribeToMessagesReceived = messageObserver.Subscribe(

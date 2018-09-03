@@ -21,6 +21,9 @@ This project is based on [SocketLite](https://github.com/1iveowl/SocketLite) for
 
 This project utilizes [Reactive Extensions](http://reactivex.io/). Although this has an added learning curve it is an added learning curve worth while persuing, as it IMHO makes creating a library like this much more elegant compared to using call-back or events. 
 
+## New in version 6.0.
+Simplifications and no longer relies on SocketLite but utilizes the cross platform capabilities of .NET Standard 2.0.
+
 ## New in version 5.0.
 From hereon only .NET Standard 2.0 and later are supported.
 
@@ -109,7 +112,7 @@ class Program
                 ignoreServerCertificateErrors: true,
                 headers: headers,
                 subProtocols: subprotocols,
-                tlsProtocolType: TlsProtocolVersion.Tls12, 
+                tlsProtocolType: SslProtocols.Tls12, 
                 token: createTokenSource.Token);
 
              var subscribeToMessagesReceived = messageObserver.Subscribe(
