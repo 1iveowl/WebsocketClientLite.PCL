@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net.Security;
 using System.Security.Authentication;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading;
 using System.Threading.Tasks;
 using IWebsocketClientLite.PCL;
@@ -44,16 +46,22 @@ class Program
 
     private static async Task StartWebSocketAsync(CancellationTokenSource innerCancellationTokenSource)
     {
-        using (var websocketClient = new MessageWebSocketRx())
+        using (var websocketClient = new MessageWebSocketRx
+        {
+            IgnoreServerCertificateErrors = true,
+            Headers = new Dictionary<string, string> { { "Pragma", "no-cache" }, { "Cache-Control", "no-cache" } },
+            TlsProtocolType = SslProtocols.Tls12
+             
+        })
         {
             System.Console.WriteLine("Start");
 
-            var websocketLoggerSubscriber = websocketClient.ObserveConnectionStatus.Subscribe(
+            var websocketLoggerSubscriber = websocketClient.ConnectionStatusObservable.Subscribe(
                 s =>
                 {
                     System.Console.WriteLine(s.ToString());
-                    if (s == ConnectionStatus.Disconnected 
-                    || s == ConnectionStatus.Aborted 
+                    if (s == ConnectionStatus.Disconnected
+                    || s == ConnectionStatus.Aborted
                     || s == ConnectionStatus.ConnectionFailed)
                     {
                         innerCancellationTokenSource.Cancel();
@@ -67,36 +75,27 @@ class Program
                 {
                     innerCancellationTokenSource.Cancel();
                 });
-
-            List<string> subprotocols = null; //new List<string> {"soap", "json"};
-
-            var headers = new Dictionary<string, string> { { "Pragma", "no-cache" }, { "Cache-Control", "no-cache" } };
-
+            
             var createTokenSource = new CancellationTokenSource();
 
-            var messageObserver = await websocketClient.CreateObservableMessageReceiver(
-                new Uri("wss://echo.websocket.org"),
-                ignoreServerCertificateErrors: true,
-                //headers: headers,
-                //subProtocols: subprotocols,
-                tlsProtocolType: SslProtocols.Tls12, 
-                token: createTokenSource.Token);
+            await websocketClient.ConnectAsync(
+                new Uri("wss://echo.websocket.org"), createTokenSource.Token);
 
-             var subscribeToMessagesReceived = messageObserver.Subscribe(
-                msg =>
-                {
-                    System.Console.WriteLine($"Reply from test server: {msg}");
-                },
-                ex =>
-                {
-                    System.Console.WriteLine(ex.Message);
-                    innerCancellationTokenSource.Cancel();
-                },
-                () =>
-                {
-                    System.Console.WriteLine($"Subscription Completed");
-                    innerCancellationTokenSource.Cancel();
-                });
+            var subscribeToMessagesReceived = websocketClient.MessageReceiverObservable.Subscribe(
+               msg =>
+               {
+                   System.Console.WriteLine($"Reply from test server: {msg}");
+               },
+               ex =>
+               {
+                   System.Console.WriteLine(ex.Message);
+                   innerCancellationTokenSource.Cancel();
+               },
+               () =>
+               {
+                   System.Console.WriteLine($"Subscription Completed");
+                   innerCancellationTokenSource.Cancel();
+               });
 
             try
             {
@@ -122,7 +121,7 @@ class Program
                 await websocketClient.SendTextMultiFrameAsync("Stop.", FrameType.LastInMultipleFrames);
 
                 // Close the Websocket connection gracefully telling the server goodbye
-                await websocketClient.CloseAsync();
+                await websocketClient.DisconnectAsync();
 
                 subscribeToMessagesReceived.Dispose();
                 websocketLoggerSubscriber.Dispose();

@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Reactive.Linq;
-using System.Reactive.Subjects;
 using System.Threading;
 using System.Threading.Tasks;
 using IWebsocketClientLite.PCL;
@@ -15,7 +14,7 @@ namespace WebsocketClientLite.PCL.Service
 {
     internal class WebsocketListener
     {
-        private readonly ISubject<ConnectionStatus> _subjectConnectionStatus;
+        private readonly IObserver<ConnectionStatus> _observerConnectionStatus;
 
         private readonly HandshakeParser _handshakeParser = new HandshakeParser();
         private readonly WebSocketConnectService _webSocketConnectService;
@@ -39,10 +38,10 @@ namespace WebsocketClientLite.PCL.Service
 
         internal bool HasReceivedCloseFromServer { get; private set; }
 
-        internal WebsocketListener(WebSocketConnectService webSocketConnectService, ISubject<ConnectionStatus> subjectConnectionStatus)
+        internal WebsocketListener(WebSocketConnectService webSocketConnectService, IObserver<ConnectionStatus> observerConnectionStatus)
         {
             _webSocketConnectService = webSocketConnectService;
-            _subjectConnectionStatus = subjectConnectionStatus;
+            _observerConnectionStatus = observerConnectionStatus;
             TextDataParser = new TextDataParser();
         }
         
@@ -107,7 +106,7 @@ namespace WebsocketClientLite.PCL.Service
         {
             if (_hasHandshakeTimedout)
             {
-                _subjectConnectionStatus.OnNext(ConnectionStatus.Aborted);
+                _observerConnectionStatus.OnNext(ConnectionStatus.Aborted);
                 throw new WebsocketClientLiteException("Connection request to server timed out");
             }
 
@@ -160,13 +159,13 @@ namespace WebsocketClientLite.PCL.Service
                             }
                             else
                             {
-                                _subjectConnectionStatus.OnNext(ConnectionStatus.Aborted);
+                                _observerConnectionStatus.OnNext(ConnectionStatus.Aborted);
                                 throw new WebsocketClientLiteException("Server responded with blank Sub Protocol name");
                             }
                         }
                         else
                         {
-                            _subjectConnectionStatus.OnNext(ConnectionStatus.Aborted);
+                            _observerConnectionStatus.OnNext(ConnectionStatus.Aborted);
                             throw new WebsocketClientLiteException("Server did not support any of the needed Sub Protocols");
                         }
                     }
@@ -177,7 +176,7 @@ namespace WebsocketClientLite.PCL.Service
 
                     void Success()
                     {
-                        _subjectConnectionStatus.OnNext(ConnectionStatus.Connected);
+                        _observerConnectionStatus.OnNext(ConnectionStatus.Connected);
                         System.Diagnostics.Debug.WriteLine("HandShake completed");
                         DataReceiveMode = DataReceiveMode.IsListeningForTextData;
                         IsConnected = true;

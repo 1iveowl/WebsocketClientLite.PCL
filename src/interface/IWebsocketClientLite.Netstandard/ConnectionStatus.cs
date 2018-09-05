@@ -8,6 +8,7 @@ namespace IWebsocketClientLite.PCL
 {
     public enum ConnectionStatus
     {
+        Initialized,
         Connecting,
         Connected,
         Disconnected,

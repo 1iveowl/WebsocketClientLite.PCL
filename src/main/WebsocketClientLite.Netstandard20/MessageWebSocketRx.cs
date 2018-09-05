@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Net.Security;
 using System.Net.Sockets;
+using System.Reactive;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using System.Security.Authentication;
@@ -18,47 +19,62 @@ namespace WebsocketClientLite.PCL
 {
     public class MessageWebSocketRx : IMessageWebSocketRx
     {
-        public IObservable<ConnectionStatus> ObserveConnectionStatus => _subjectConnectionStatus.AsObservable();
+        private readonly IObserver<ConnectionStatus> _observerConnectionStatus;
+        private readonly IObserver<string> _observerMessage;
 
-        //private readonly Stream _tcpSocketClient = new TcpSocketClient();
-        private readonly ISubject<ConnectionStatus> _subjectConnectionStatus = new Subject<ConnectionStatus>();
         private readonly WebSocketConnectService _webSocketConnectService;
         private readonly WebsocketListener _websocketListener;
         private readonly WebsocketSenderService _websocketSenderService;
         private CancellationTokenSource _innerCancellationTokenSource;
 
-        private Stream _tcpStream; 
-
-        private bool _ignoreCertificateErrors;
+        private Stream _tcpStream;
+        private IDisposable _disposableMessage;
 
         public bool IsConnected => _websocketListener.IsConnected;
         public bool SubprotocolAccepted => _websocketListener.SubprotocolAccepted;
 
         public string SubprotocolAcceptedName => _websocketListener.SubprotocolAcceptedName;
+        public string Origin { get; set; }
+        public IDictionary<string, string> Headers { get; set; }
+        public IEnumerable<string> Subprotocols { get; set; }
+        public SslProtocols TlsProtocolType { get; set; }
+
+        public bool ExcludeZeroApplicationDataInPong { get; set; }
+        public bool IgnoreServerCertificateErrors { get; set; }
+
+        public IObservable<ConnectionStatus> ConnectionStatusObservable { get; }
+        public IObservable<string> MessageReceiverObservable { get; }
         
         public MessageWebSocketRx()
         {
-            _webSocketConnectService = new WebSocketConnectService(_subjectConnectionStatus);
             
-            _websocketListener = new WebsocketListener(_webSocketConnectService, _subjectConnectionStatus);
+            var subjectMessageReceiver = new Subject<string>();
+
+            MessageReceiverObservable = subjectMessageReceiver.AsObservable();
+            _observerMessage = subjectMessageReceiver.AsObserver();
+
+            var subjectConnectionStatus = new BehaviorSubject<ConnectionStatus>(ConnectionStatus.Initialized);
+
+            ConnectionStatusObservable = subjectConnectionStatus.AsObservable();
+            _observerConnectionStatus = subjectConnectionStatus.AsObserver();
+            
+
+            _webSocketConnectService = new WebSocketConnectService(_observerConnectionStatus);
+            
+            _websocketListener = new WebsocketListener(_webSocketConnectService, _observerConnectionStatus);
             _websocketSenderService = new WebsocketSenderService(_websocketListener);
         }
         
-        public async Task<IObservable<string>> CreateObservableMessageReceiver(
+        public async Task ConnectAsync(
             Uri uri,
-            string origin = null,
-            IDictionary<string, string> headers = null,
-            IEnumerable<string> subProtocols = null,
-            bool ignoreServerCertificateErrors = false,
-            SslProtocols tlsProtocolType = SslProtocols.Tls12,
-            bool excludeZeroApplicationDataInPong = false,
             CancellationToken token = default (CancellationToken))
         {
-            _websocketListener.ExcludeZeroApplicationDataInPong = excludeZeroApplicationDataInPong;
-            _subjectConnectionStatus.OnNext(ConnectionStatus.Connecting);
+            _websocketListener.ExcludeZeroApplicationDataInPong = ExcludeZeroApplicationDataInPong;
+
+            _observerConnectionStatus.OnNext(ConnectionStatus.Connecting);
             _innerCancellationTokenSource = new CancellationTokenSource();
 
-            _ignoreCertificateErrors = ignoreServerCertificateErrors;
+            //_ignoreCertificateErrors = IgnoreServerCertificateErrors;
 
             if (token != default(CancellationToken))
             {
@@ -111,7 +127,7 @@ namespace WebsocketClientLite.PCL
 
                 try
                 {
-                    await secureStream.AuthenticateAsClientAsync(uri.Host, null, tlsProtocolType, false);
+                    await secureStream.AuthenticateAsClientAsync(uri.Host, null, TlsProtocolType, false);
 
                     _tcpStream = secureStream;
                 }
@@ -135,38 +151,54 @@ namespace WebsocketClientLite.PCL
                 IsSecureWebsocket(uri),
                 token,
                 _tcpStream,
-                origin,
-                headers,
-                subProtocols);
+                Origin,
+                Headers,
+                Subprotocols);
 
-            var observableWebsocket = Observable.Create<string>(
-                obs =>
-                {
-                    var disposableWebsocketListener = _websocketListener.CreateObservableListener(
-                            _innerCancellationTokenSource,
-                            _tcpStream)
-                        .Subscribe(
-                            str => obs.OnNext(str),
-                            ex =>
-                            {
-                                WaitForServerToCloseConnectionAsync().Wait(token);
-                                obs.OnError(ex);
-                            },
-                            () =>
-                            {
-                                WaitForServerToCloseConnectionAsync().Wait(token);
-                                obs.OnCompleted();
-                            });
+            _disposableMessage = _websocketListener.CreateObservableListener(
+                    _innerCancellationTokenSource,
+                    _tcpStream)
+                .Subscribe(
+                    str => _observerMessage.OnNext(str),
+                    ex =>
+                    {
+                        WaitForServerToCloseConnectionAsync().Wait(token);
+                        _observerMessage.OnError(ex);
+                    },
+                    () =>
+                    {
+                        WaitForServerToCloseConnectionAsync().Wait(token);
+                        _observerMessage.OnCompleted();
+                    });
 
-                    return disposableWebsocketListener;
-                });
+            //var observableWebsocket = Observable.Create<string>(
+            //    obs =>
+            //    {
+            //        var disposableWebsocketListener = _websocketListener.CreateObservableListener(
+            //                _innerCancellationTokenSource,
+            //                _tcpStream)
+            //            .Subscribe(
+            //                str => obs.OnNext(str),
+            //                ex =>
+            //                {
+            //                    WaitForServerToCloseConnectionAsync().Wait(token);
+            //                    obs.OnError(ex);
+            //                },
+            //                () =>
+            //                {
+            //                    WaitForServerToCloseConnectionAsync().Wait(token);
+            //                    obs.OnCompleted();
+            //                });
 
-            return observableWebsocket;
+            //        return disposableWebsocketListener;
+            //    })
+            //    .Subscribe();
+
         }
 
-        public async Task CloseAsync()
+        public async Task DisconnectAsync()
         {
-            _subjectConnectionStatus.OnNext(ConnectionStatus.Disconnecting);
+            _observerConnectionStatus.OnNext(ConnectionStatus.Disconnecting);
             var dataReceiveDone = WaitForDataAsync();
             var timeoutDataTask = Task.Delay(TimeSpan.FromSeconds(1));
 
@@ -188,15 +220,15 @@ namespace WebsocketClientLite.PCL
                 _websocketListener.StopReceivingData();
             }
 
-            _subjectConnectionStatus.OnNext(ConnectionStatus.Disconnected);
+            _observerConnectionStatus.OnNext(ConnectionStatus.Disconnected);
             //_websocketListener.IsConnected = false;
         }
 
         public async Task SendTextAsync(string message)
         {
-            _subjectConnectionStatus.OnNext(ConnectionStatus.Sending);
+            _observerConnectionStatus.OnNext(ConnectionStatus.Sending);
             await _websocketSenderService.SendTextAsync(_webSocketConnectService.tcpStream, message);
-            _subjectConnectionStatus.OnNext(ConnectionStatus.DeliveryAcknowledged);
+            _observerConnectionStatus.OnNext(ConnectionStatus.DeliveryAcknowledged);
 
         }
 
@@ -205,13 +237,13 @@ namespace WebsocketClientLite.PCL
             switch (frameType)
                 {
                     case FrameType.FirstOfMultipleFrames:
-                        _subjectConnectionStatus.OnNext(ConnectionStatus.MultiFrameSendingBegin);
+                        _observerConnectionStatus.OnNext(ConnectionStatus.MultiFrameSendingBegin);
                         break;
                     case FrameType.Continuation:
-                        _subjectConnectionStatus.OnNext(ConnectionStatus.MultiFrameSendingContinue);
+                        _observerConnectionStatus.OnNext(ConnectionStatus.MultiFrameSendingContinue);
                         break;
                     case FrameType.LastInMultipleFrames:
-                        _subjectConnectionStatus.OnNext(ConnectionStatus.MultiFrameSendingLast);
+                        _observerConnectionStatus.OnNext(ConnectionStatus.MultiFrameSendingLast);
                         break;
                     case FrameType.CloseControlFrame:
                         break;
@@ -220,14 +252,14 @@ namespace WebsocketClientLite.PCL
                 }
                 
                 await _websocketSenderService.SendTextMultiFrameAsync(_webSocketConnectService.tcpStream, message, frameType);
-                _subjectConnectionStatus.OnNext(ConnectionStatus.FrameDeliveryAcknowledged);
+            _observerConnectionStatus.OnNext(ConnectionStatus.FrameDeliveryAcknowledged);
         }
 
         public async Task SendTextAsync(string[] messageList)
         {
-            _subjectConnectionStatus.OnNext(ConnectionStatus.Sending);
+            _observerConnectionStatus.OnNext(ConnectionStatus.Sending);
             await _websocketSenderService.SendTextAsync(_webSocketConnectService.tcpStream, messageList);
-            _subjectConnectionStatus.OnNext(ConnectionStatus.DeliveryAcknowledged);
+            _observerConnectionStatus.OnNext(ConnectionStatus.DeliveryAcknowledged);
         }
 
         private async Task WaitForServerToCloseConnectionAsync()
@@ -252,13 +284,13 @@ namespace WebsocketClientLite.PCL
             }
         }
 
-        private bool ValidateServerCertificate(
+        public virtual bool ValidateServerCertificate(
             object sender,
             X509Certificate certificate,
             X509Chain chain,
             SslPolicyErrors sslPolicyErrors)
         {
-            if (_ignoreCertificateErrors) return true;
+            if (IgnoreServerCertificateErrors) return true;
 
             switch (sslPolicyErrors)
             {
@@ -299,8 +331,9 @@ namespace WebsocketClientLite.PCL
 
         public void Dispose()
         {
-            _tcpStream.Dispose();
-            _websocketListener.StopReceivingData();
+            _tcpStream?.Dispose();
+            _websocketListener?.StopReceivingData();
+            _disposableMessage?.Dispose();
         }
     }
 }

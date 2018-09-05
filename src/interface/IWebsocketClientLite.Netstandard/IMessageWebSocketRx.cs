@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net.Security;
 using System.Security.Authentication;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -10,27 +12,37 @@ namespace IWebsocketClientLite.PCL
     {
 
         bool IsConnected { get; }
-
         bool SubprotocolAccepted { get; }
-
         string SubprotocolAcceptedName { get; }
+        string Origin { get; }
 
-        IObservable<ConnectionStatus> ObserveConnectionStatus { get; }
+        IDictionary<string, string> Headers { get; }
 
-        Task<IObservable<string>> CreateObservableMessageReceiver(
+        IEnumerable<string> Subprotocols { get; }
+
+        SslProtocols TlsProtocolType { get; }
+        
+        bool ExcludeZeroApplicationDataInPong { get; }
+
+        bool IgnoreServerCertificateErrors { get; }
+
+        IObservable<ConnectionStatus> ConnectionStatusObservable { get; }
+        IObservable<string> MessageReceiverObservable { get; }
+
+        Task ConnectAsync(
             Uri uri,
-            string origin = null,
-            IDictionary<string, string> headers = null,
-            IEnumerable<string> subProtocols = null,
-            bool ignoreServerCertificateErrors = false,
-            SslProtocols tlsProtocolType = SslProtocols.Tls12,
-            bool excludeZeroApplicationDataInPong = false,
             CancellationToken token = default (CancellationToken));
 
-        Task CloseAsync();
+        Task DisconnectAsync();
 
         Task SendTextAsync(string message);
         Task SendTextAsync(string[] messageList);
         Task SendTextMultiFrameAsync(string message, FrameType frameType);
+
+        bool ValidateServerCertificate(
+            object sender,
+            X509Certificate certificate,
+            X509Chain chain,
+            SslPolicyErrors sslPolicyErrors);
     }
 }
