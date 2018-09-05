@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Security.Authentication;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -15,9 +16,9 @@ namespace IWebsocketClientLite.PCL
 
         string SubprotocolAcceptedName { get; }
 
-        IObservable<ConnectionStatus> ObserveConnectionStatus { get; }
+        IObservable<ConnectionStatus> ConnectionStatusObservable { get; }
 
-        Task<IObservable<string>> CreateObservableMessageReceiver(
+        IObservable<string> CreateObservableMessageReceiver(
             Uri uri,
             string origin = null,
             IDictionary<string, string> headers = null,
@@ -25,6 +26,7 @@ namespace IWebsocketClientLite.PCL
             bool ignoreServerCertificateErrors = false,
             SslProtocols tlsProtocolType = SslProtocols.Tls12,
             bool excludeZeroApplicationDataInPong = false,
+            X509CertificateCollection x509CertificateCollection = null,
             CancellationToken token = default (CancellationToken));
 
         Task CloseAsync();

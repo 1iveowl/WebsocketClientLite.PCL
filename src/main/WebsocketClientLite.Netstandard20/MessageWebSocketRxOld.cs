@@ -5,10 +5,8 @@ using System.IO;
 using System.Net.Security;
 using System.Net.Sockets;
 using System.Reactive;
-using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
-using System.Reactive.Threading.Tasks;
 using System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading;
@@ -19,7 +17,7 @@ using WebsocketClientLite.PCL.Service;
 
 namespace WebsocketClientLite.PCL
 {
-    public class MessageWebSocketRx : IMessageWebSocketRx
+    public class MessageWebSocketRxOld : IMessageWebSocketRx
     {
         public IObservable<ConnectionStatus> ConnectionStatusObservable { get; }
 
@@ -29,7 +27,7 @@ namespace WebsocketClientLite.PCL
         private readonly WebsocketSenderService _websocketSenderService;
         private CancellationTokenSource _innerCancellationTokenSource;
 
-        private Stream _tcpStream; 
+        private Stream _tcpStream;
 
         private bool _ignoreCertificateErrors;
 
@@ -37,8 +35,8 @@ namespace WebsocketClientLite.PCL
         public bool SubprotocolAccepted => _websocketListener.SubprotocolAccepted;
 
         public string SubprotocolAcceptedName => _websocketListener.SubprotocolAcceptedName;
-        
-        public MessageWebSocketRx()
+
+        public MessageWebSocketRxOld()
         {
             var subjectConnectionStatus = new BehaviorSubject<ConnectionStatus>(ConnectionStatus.Initialized);
 
@@ -46,11 +44,11 @@ namespace WebsocketClientLite.PCL
             _observerConnectionStatus = subjectConnectionStatus.AsObserver();
 
             _webSocketConnectService = new WebSocketConnectService(_observerConnectionStatus);
-            
+
             _websocketListener = new WebsocketListener(_observerConnectionStatus);
-            _websocketSenderService = new WebsocketSenderService(_websocketListener, _webSocketConnectService);
+            _websocketSenderService = new WebsocketSenderService(_websocketListener);
         }
-        
+
         public IObservable<string> CreateObservableMessageReceiver(
             Uri uri,
             string origin = null,
@@ -77,88 +75,97 @@ namespace WebsocketClientLite.PCL
                 });
             }
 
+            var tcpClient = new TcpClient();
+
+            var connectTask = tcpClient.ConnectAsync(uri.Host, uri.Port);
+            var timeOut = Task.Delay(TimeSpan.FromSeconds(10), token);
+
+            try
+            {
+                var resultTask = await Task.WhenAny(connectTask, timeOut);
+
+                if (resultTask == connectTask)
+                {
+
+                }
+                else
+                {
+
+                }
+            }
+            catch (ObjectDisposedException)
+            {
+                // OK to ignore
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
+            if (tcpClient.Connected)
+            {
+                Debug.WriteLine("Connected");
+            }
+            else
+            {
+                throw new SocketException();
+                Debug.WriteLine("Unable to connect");
+            }
+
+            if (IsSecureWebsocket(uri))
+            {
+                var secureStream = new SslStream(tcpClient.GetStream(), true, ValidateServerCertificate);
+
+                try
+                {
+                    await secureStream.AuthenticateAsClientAsync(uri.Host, x509CertificateCollection, tlsProtocolType, false);
+
+                    _tcpStream = secureStream;
+                }
+                catch (Exception ex)
+                {
+                    throw ex;
+                }
+            }
+            else
+            {
+                _tcpStream = tcpClient.GetStream();
+            }
+
+            if (!tcpClient.Connected)
+            {
+                throw new Exception($"Websocket Lite unable to connect to host: {uri.Host}");
+            }
+
+             await _webSocketConnectService.ConnectWebsocketServerAsync(
+                uri,
+                IsSecureWebsocket(uri),
+                token,
+                _tcpStream,
+                origin,
+                headers,
+                subProtocols);
+
             var observableWebsocket = Observable.Create<string>(
                 obs =>
                 {
-                    var isConnecting = true;
-
-                    var tcpClient = new TcpClient();
-
-                    //var waitForWebsocketHandshakeCompleteObservable = Observable.While(
-                    //    () => isConnecting,
-                    //    Task.Delay(TimeSpan.FromMilliseconds(10), token).ToObservable());
-
-                    var tcpClientObservable = Observable.FromAsync(ct => TcpConnectAsync(tcpClient, uri, ct, TimeSpan.FromSeconds(2)))
-                        .Catch<bool, Exception>(r => Observable.Return(false))
-                        .Select(cr =>
-                        {
-                            if (!cr)
+                    var disposableWebsocketListener = _websocketListener.CreateObservableListener(
+                            _innerCancellationTokenSource,
+                            _tcpStream)
+                        .Subscribe(
+                            str => obs.OnNext(str),
+                            ex =>
                             {
-                                Debug.WriteLine("Unable to connect to socket...");
-                                isConnecting = false;
-                                return false;
-                            }
-                            else
+                                WaitForServerToCloseConnectionAsync().Wait(token);
+                                obs.OnError(ex);
+                            },
+                            () =>
                             {
-                                return true;
-                            }
-                        })
-                        .Where(cr => cr)
-                        .Where(x =>
-                        {
-                            if (tcpClient.Connected)
-                            {
-                                return true;
-                            }
+                                WaitForServerToCloseConnectionAsync().Wait(token);
+                                obs.OnCompleted();
+                            });
 
-                            throw new SocketException();
-
-                        })
-                        .Select(x => tcpClient.GetStream() as Stream)
-                        .Where(s => s != null)
-                        .Select(stream => Observable.FromAsync(() => DetermineStreamTypeAsync(stream, uri, tcpClient, x509CertificateCollection, tlsProtocolType)))
-                        .Concat()
-                        .Do(stream =>
-                        {
-                            _tcpStream = stream;
-                        })
-                        .Select(stream => Observable.FromAsync(ct =>
-                        {
-                            return _webSocketConnectService
-                                .ConnectWebsocketServerAsync(uri, IsSecureWebsocket(uri), ct, stream, origin, headers,
-                                    subProtocols);
-                        }))
-                        .Concat()
-                        .Do(x => isConnecting = false)
-                        .SelectMany(stream =>
-                        {
-                            return _websocketListener.CreateObservableListener(_innerCancellationTokenSource,
-                                    stream);
-                        });
-
-
-                    var tcpClientDisposable  = tcpClientObservable.Subscribe(
-                        str =>
-                        {
-                            obs.OnNext(str);
-                        },
-                        ex =>
-                        {
-                            WaitForServerToCloseConnectionAsync().Wait(token);
-                            obs.OnError(ex);
-                        },
-                        () =>
-                        {
-                            WaitForServerToCloseConnectionAsync().Wait(token);
-                            obs.OnCompleted();
-                        });
-
-                    while (isConnecting)
-                    {
-
-                    }
-
-                    return tcpClientDisposable;
+                    return disposableWebsocketListener;
                 });
 
             return observableWebsocket;
@@ -203,24 +210,24 @@ namespace WebsocketClientLite.PCL
         public async Task SendTextMultiFrameAsync(string message, FrameType frameType)
         {
             switch (frameType)
-                {
-                    case FrameType.FirstOfMultipleFrames:
-                        _observerConnectionStatus.OnNext(ConnectionStatus.MultiFrameSendingBegin);
-                        break;
-                    case FrameType.Continuation:
-                        _observerConnectionStatus.OnNext(ConnectionStatus.MultiFrameSendingContinue);
-                        break;
-                    case FrameType.LastInMultipleFrames:
-                        _observerConnectionStatus.OnNext(ConnectionStatus.MultiFrameSendingLast);
-                        break;
-                    case FrameType.CloseControlFrame:
-                        break;
-                    default:
-                        break;
-                }
-                
-                await _websocketSenderService.SendTextMultiFrameAsync(_tcpStream, message, frameType);
-                _observerConnectionStatus.OnNext(ConnectionStatus.FrameDeliveryAcknowledged);
+            {
+                case FrameType.FirstOfMultipleFrames:
+                    _observerConnectionStatus.OnNext(ConnectionStatus.MultiFrameSendingBegin);
+                    break;
+                case FrameType.Continuation:
+                    _observerConnectionStatus.OnNext(ConnectionStatus.MultiFrameSendingContinue);
+                    break;
+                case FrameType.LastInMultipleFrames:
+                    _observerConnectionStatus.OnNext(ConnectionStatus.MultiFrameSendingLast);
+                    break;
+                case FrameType.CloseControlFrame:
+                    break;
+                default:
+                    break;
+            }
+
+            await _websocketSenderService.SendTextMultiFrameAsync(_tcpStream, message, frameType);
+            _observerConnectionStatus.OnNext(ConnectionStatus.FrameDeliveryAcknowledged);
         }
 
         public async Task SendTextAsync(string[] messageList)
@@ -297,53 +304,9 @@ namespace WebsocketClientLite.PCL
             return secure;
         }
 
-        private async Task<bool> TcpConnectAsync(TcpClient tcpClient, Uri uri, CancellationToken token, TimeSpan timeout)
-        {
-            var connectTask = tcpClient.ConnectAsync(uri.Host, uri.Port);
-            var timeOut = Task.Delay(timeout, token);
-
-            try
-            {
-                var resultTask = await Task.WhenAny(connectTask, timeOut);
-
-                return resultTask == connectTask;
-            }
-            catch (ObjectDisposedException)
-            {
-                return true;
-            }
-            catch (Exception ex)
-            {
-                return false;
-            }
-        }
-
-        private async Task<Stream> DetermineStreamTypeAsync(Stream tcpStream, Uri uri, TcpClient tcpClient, X509CertificateCollection x509CertificateCollection, SslProtocols tlsProtocolType)
-        {
-            if (IsSecureWebsocket(uri))
-            {
-                var secureStream = new SslStream(tcpClient.GetStream(), true, ValidateServerCertificate);
-
-                try
-                {
-                    await secureStream.AuthenticateAsClientAsync(uri.Host, x509CertificateCollection, tlsProtocolType, false);
-
-                    return secureStream;
-                }
-                catch (Exception ex)
-                {
-                    throw ex;
-                }
-            }
-            else
-            {
-                return tcpStream;
-            }
-        }
-
         public void Dispose()
         {
-            _tcpStream?.Dispose();
+            _tcpStream.Dispose();
             _websocketListener.StopReceivingData();
             _innerCancellationTokenSource.Dispose();
         }

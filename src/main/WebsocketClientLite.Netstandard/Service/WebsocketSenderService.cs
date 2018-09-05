@@ -15,20 +15,21 @@ namespace WebsocketClientLite.PCL.Service
         private bool _isSendingMultipleFrames;
 
         private readonly WebsocketListener _websocketListener;
+        private readonly WebSocketConnectService _webSocketConnectService;
 
         private readonly ConcurrentQueue<byte[]> _writePendingData = new ConcurrentQueue<byte[]>();
-        private bool _sendingData;
 
-        internal WebsocketSenderService(WebsocketListener websocketListener)
+        internal WebsocketSenderService(WebsocketListener websocketListener, WebSocketConnectService webSocketConnectService)
         {
             _websocketListener = websocketListener;
+            _webSocketConnectService = webSocketConnectService;
         }
 
         internal async Task SendTextAsync(Stream tcpStream, string message)
         {
             var msgAsBytes = Encoding.UTF8.GetBytes(message);
 
-            await ComposeFrameAsync(tcpStream, msgAsBytes, FrameType.Single);
+            await ComposeAndSendFrameAsync(tcpStream, msgAsBytes, FrameType.Single);
         }
 
         internal async Task SendTextAsync(Stream tcpStream, string[] messageList)
@@ -38,16 +39,16 @@ namespace WebsocketClientLite.PCL.Service
 
             if (messageList.Length == 1)
             {
-                await ComposeFrameAsync(tcpStream, Encoding.UTF8.GetBytes(messageList[0]), FrameType.Single);
+                await ComposeAndSendFrameAsync(tcpStream, Encoding.UTF8.GetBytes(messageList[0]), FrameType.Single);
             }
 
-            await ComposeFrameAsync(tcpStream, Encoding.UTF8.GetBytes(messageList[0]), FrameType.FirstOfMultipleFrames);
+            await ComposeAndSendFrameAsync(tcpStream, Encoding.UTF8.GetBytes(messageList[0]), FrameType.FirstOfMultipleFrames);
 
             for (var i = 1; i < messageList.Length - 1; i++)
             {
-                await ComposeFrameAsync(tcpStream, Encoding.UTF8.GetBytes(messageList[i]), FrameType.Continuation);
+                await ComposeAndSendFrameAsync(tcpStream, Encoding.UTF8.GetBytes(messageList[i]), FrameType.Continuation);
             }
-            await ComposeFrameAsync(tcpStream, Encoding.UTF8.GetBytes(messageList.Last()), FrameType.LastInMultipleFrames);
+            await ComposeAndSendFrameAsync(tcpStream, Encoding.UTF8.GetBytes(messageList.Last()), FrameType.LastInMultipleFrames);
         }
 
         
@@ -57,7 +58,7 @@ namespace WebsocketClientLite.PCL.Service
             {
                 if (frameType == FrameType.FirstOfMultipleFrames || frameType == FrameType.Single)
                 {
-                    await ComposeFrameAsync(tcpStream, Encoding.UTF8.GetBytes("_sequence aborted error_"), FrameType.LastInMultipleFrames);
+                    await ComposeAndSendFrameAsync(tcpStream, Encoding.UTF8.GetBytes("_sequence aborted error_"), FrameType.LastInMultipleFrames);
                     _isSendingMultipleFrames = false;
                     throw new WebsocketClientLiteException("Multiple frames is progress. Frame must be a Continuation Frame or Last Frams in sequence. Multiple frame sequence aborted and finalized");
                 }
@@ -74,18 +75,18 @@ namespace WebsocketClientLite.PCL.Service
             switch (frameType)
             {
                 case FrameType.Single:
-                    await ComposeFrameAsync(tcpStream, Encoding.UTF8.GetBytes(message), FrameType.Single);
+                    await ComposeAndSendFrameAsync(tcpStream, Encoding.UTF8.GetBytes(message), FrameType.Single);
                     break;
                 case FrameType.FirstOfMultipleFrames:
                     _isSendingMultipleFrames = true;
-                    await ComposeFrameAsync(tcpStream, Encoding.UTF8.GetBytes(message), FrameType.FirstOfMultipleFrames);
+                    await ComposeAndSendFrameAsync(tcpStream, Encoding.UTF8.GetBytes(message), FrameType.FirstOfMultipleFrames);
                     break;
                 case FrameType.LastInMultipleFrames:
-                    await ComposeFrameAsync(tcpStream, Encoding.UTF8.GetBytes(message), FrameType.LastInMultipleFrames);
+                    await ComposeAndSendFrameAsync(tcpStream, Encoding.UTF8.GetBytes(message), FrameType.LastInMultipleFrames);
                     _isSendingMultipleFrames = false;
                     break;
                 case FrameType.Continuation:
-                    await ComposeFrameAsync(tcpStream, Encoding.UTF8.GetBytes(message), FrameType.Continuation);
+                    await ComposeAndSendFrameAsync(tcpStream, Encoding.UTF8.GetBytes(message), FrameType.Continuation);
                     break;
             }
         }
@@ -95,11 +96,11 @@ namespace WebsocketClientLite.PCL.Service
             var closeFrameBodyCode = BitConverter.GetBytes((ushort)statusCode);
             var reason = Encoding.UTF8.GetBytes(statusCode.ToString());
 
-            await ComposeFrameAsync(tcpStream, closeFrameBodyCode.Concat(reason).ToArray(),
+            await ComposeAndSendFrameAsync(tcpStream, closeFrameBodyCode.Concat(reason).ToArray(),
                 FrameType.CloseControlFrame);
         }
 
-        private async Task ComposeFrameAsync(Stream tcpStream, byte[] content, FrameType frameType)
+        private async Task ComposeAndSendFrameAsync(Stream tcpStream, byte[] content, FrameType frameType)
         {
             var firstByte = new byte[1];
 
@@ -134,7 +135,7 @@ namespace WebsocketClientLite.PCL.Service
 
         private async Task SendFrameAsync(Stream tcpStream, byte[] frame)
         {
-            if (!tcpStream.CanRead)
+            if (!_webSocketConnectService.IsConnected && _webSocketConnectService.IsHandshakeDone)
             {
                 throw new WebsocketClientLiteException("Websocket connection have been closed");
             }
@@ -150,25 +151,19 @@ namespace WebsocketClientLite.PCL.Service
             }
 
             _writePendingData.Enqueue(frame);
-
-            try
+            
+            if (_writePendingData.Count > 0 && _writePendingData.TryDequeue(out var buffer))
             {
-                if (_writePendingData.Count > 0 && _writePendingData.TryDequeue(out var buffer))
-                {
-                    await WaitForWebsocketConnection();
-                    await tcpStream.WriteAsync(buffer, 0, buffer.Length);
-                    await tcpStream.FlushAsync();
-                }
-            }
-            catch (Exception)
-            {
+                //await WaitForWebsocketConnectionIfNotConnected();
+                await tcpStream.WriteAsync(buffer, 0, buffer.Length);
+                await tcpStream.FlushAsync();
             }
 
         }
 
-        private async Task WaitForWebsocketConnection()
+        private async Task WaitForWebsocketConnectionIfNotConnected()
         {
-            while (!_websocketListener.IsConnected)
+            while ( !_webSocketConnectService.IsHandshakeDone || !_webSocketConnectService.IsConnected)
             {
                 await Task.Delay(TimeSpan.FromMilliseconds(10));
             }

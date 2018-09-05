@@ -4,7 +4,12 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <AssemblyName>WebsocketClientLite.PCL</AssemblyName>
     <RootNamespace>WebsocketClientLite.PCL</RootNamespace>
+    <LangVersion>7.3</LangVersion>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="MessageWebSocketRxOld.cs" />
+  </ItemGroup>
 
   <ItemGroup>
     <Compile Include="..\WebsocketClientLite.Netstandard\Helper\ClientHandShake.cs" Link="Helper\ClientHandShake.cs" />

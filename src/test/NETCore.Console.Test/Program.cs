@@ -48,7 +48,7 @@ class Program
         {
             System.Console.WriteLine("Start");
 
-            var websocketLoggerSubscriber = websocketClient.ObserveConnectionStatus.Subscribe(
+            var websocketLoggerSubscriber = websocketClient.ConnectionStatusObservable.Subscribe(
                 s =>
                 {
                     System.Console.WriteLine(s.ToString());
@@ -74,7 +74,7 @@ class Program
 
             var createTokenSource = new CancellationTokenSource();
 
-            var messageObserver = await websocketClient.CreateObservableMessageReceiver(
+            var messageObserver = websocketClient.CreateObservableMessageReceiver(
                 new Uri("wss://echo.websocket.org"),
                 ignoreServerCertificateErrors: true,
                 //headers: headers,
