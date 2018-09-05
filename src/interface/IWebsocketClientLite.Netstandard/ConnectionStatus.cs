@@ -10,8 +10,10 @@ namespace IWebsocketClientLite.PCL
     {
         Initialized,
         Connecting,
-        Connected,
+        TcpSocketConnected,
+        WebsocketConnected,
         Disconnected,
+        ForcefullyDisconnected,
         Disconnecting,
         Aborted,
         Sending,
@@ -20,6 +22,8 @@ namespace IWebsocketClientLite.PCL
         MultiFrameSendingContinue,
         FrameDeliveryAcknowledged,
         MultiFrameSendingLast,
-        ConnectionFailed
+        ConnectionFailed,
+        ReceivedPing,
+        SendPong,
     }
 }

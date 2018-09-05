@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using IWebsocketClientLite.PCL;
+using WebsocketClientLite.PCL.CustomException;
 using WebsocketClientLite.PCL.Model;
 using static WebsocketClientLite.PCL.Helper.WebsocketMasking;
 
@@ -160,7 +161,7 @@ namespace WebsocketClientLite.PCL.Service
                     await tcpStream.FlushAsync();
                 }
             }
-            catch (Exception)
+            catch (System.Exception)
             {
             }
 

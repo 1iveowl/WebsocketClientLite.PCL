@@ -18,7 +18,7 @@ namespace WebsocketClientLite.PCL.Parser
                     parserDelegate.HttpRequestReponse.IsUnableToParseHttp = true;
                 }
             }
-            catch (Exception)
+            catch (System.Exception)
             {
                 parserDelegate.HttpRequestReponse.IsUnableToParseHttp = true;
             }

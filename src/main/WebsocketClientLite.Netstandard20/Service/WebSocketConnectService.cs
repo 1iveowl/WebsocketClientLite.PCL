@@ -5,6 +5,7 @@ using System.Reactive.Subjects;
 using System.Threading;
 using System.Threading.Tasks;
 using IWebsocketClientLite.PCL;
+using WebsocketClientLite.PCL.CustomException;
 using WebsocketClientLite.PCL.Helper;
 using WebsocketClientLite.PCL.Model;
 
@@ -12,8 +13,7 @@ namespace WebsocketClientLite.PCL.Service
 {
     internal class WebSocketConnectService
     {
-
-        internal Stream tcpStream;
+        internal Stream TcpStream;
 
         private readonly IObserver<ConnectionStatus> _observerConnectionStatus;
 
@@ -26,12 +26,12 @@ namespace WebsocketClientLite.PCL.Service
             Uri uri,
             bool secure,
             CancellationToken token,
-            Stream tcpSocketClient,
+            Stream tcpStream,
             string origin = null,
             IDictionary<string, string> headers = null,
             IEnumerable<string> subprotocols = null)
         {
-            tcpStream = tcpSocketClient;
+            TcpStream = tcpStream;
             _observerConnectionStatus.OnNext(ConnectionStatus.Connecting);
 
             await SendConnectHandShakeAsync(uri, secure, token, origin, headers, subprotocols);
@@ -50,10 +50,10 @@ namespace WebsocketClientLite.PCL.Service
             var handShake = ClientHandShake.Compose(uri, secure, origin, headers, subprotocol);
             try
             {
-                await tcpStream.WriteAsync(handShake, 0, handShake.Length, token);
-                await tcpStream.FlushAsync(token);
+                await TcpStream.WriteAsync(handShake, 0, handShake.Length, token);
+                await TcpStream.FlushAsync(token);
             }
-            catch (Exception ex)
+            catch (System.Exception ex)
             {
                 _observerConnectionStatus.OnNext(ConnectionStatus.Aborted);
                 throw new WebsocketClientLiteException("Unable to complete handshake", ex.InnerException);

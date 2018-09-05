@@ -78,8 +78,6 @@ class Program
             
             var createTokenSource = new CancellationTokenSource();
 
-            await websocketClient.ConnectAsync(
-                new Uri("wss://echo.websocket.org"), createTokenSource.Token);
 
             var subscribeToMessagesReceived = websocketClient.MessageReceiverObservable.Subscribe(
                msg =>
@@ -96,6 +94,19 @@ class Program
                    System.Console.WriteLine($"Subscription Completed");
                    innerCancellationTokenSource.Cancel();
                });
+
+            
+            await websocketClient.ConnectAsync(
+                new Uri("wss://echo.websocket.org"), createTokenSource.Token);
+
+            await Task.Delay(TimeSpan.FromSeconds(1), createTokenSource.Token);
+
+            await websocketClient.DisconnectAsync();
+
+            await Task.Delay(TimeSpan.FromSeconds(5), createTokenSource.Token);
+
+            await websocketClient.ConnectAsync(
+                new Uri("wss://echo.websocket.org"), createTokenSource.Token);
 
             try
             {

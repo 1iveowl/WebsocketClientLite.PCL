@@ -10,7 +10,6 @@ namespace IWebsocketClientLite.PCL
 {
     public interface IMessageWebSocketRx : IDisposable
     {
-
         bool IsConnected { get; }
         bool SubprotocolAccepted { get; }
         string SubprotocolAcceptedName { get; }
@@ -28,6 +27,8 @@ namespace IWebsocketClientLite.PCL
 
         IObservable<ConnectionStatus> ConnectionStatusObservable { get; }
         IObservable<string> MessageReceiverObservable { get; }
+
+        X509CertificateCollection X509CertCollection { get; }
 
         Task ConnectAsync(
             Uri uri,

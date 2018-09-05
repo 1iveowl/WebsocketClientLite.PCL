@@ -7,6 +7,7 @@ using System.Reactive.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using IWebsocketClientLite.PCL;
+using WebsocketClientLite.PCL.CustomException;
 using WebsocketClientLite.PCL.Model;
 using WebsocketClientLite.PCL.Parser;
 
@@ -176,7 +177,7 @@ namespace WebsocketClientLite.PCL.Service
 
                     void Success()
                     {
-                        _observerConnectionStatus.OnNext(ConnectionStatus.Connected);
+                        _observerConnectionStatus.OnNext(ConnectionStatus.WebsocketConnected);
                         System.Diagnostics.Debug.WriteLine("HandShake completed");
                         DataReceiveMode = DataReceiveMode.IsListeningForTextData;
                         IsConnected = true;
