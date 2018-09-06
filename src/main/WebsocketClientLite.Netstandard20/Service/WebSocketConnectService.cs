@@ -44,7 +44,7 @@ namespace WebsocketClientLite.PCL.Service
 
             var waitForHandShakeResult = await _websocketParserHandler.ParserDelegate
                 .HandshakeParserCompletionObservable
-                .Timeout(TimeSpan.FromSeconds(5))
+                .Timeout(TimeSpan.FromSeconds(30))
                 .Catch<ParserState, TimeoutException>(tx => Observable.Return(ParserState.HandshakeTimedOut));
 
             switch (waitForHandShakeResult)
