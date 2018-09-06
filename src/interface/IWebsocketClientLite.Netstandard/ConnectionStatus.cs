@@ -10,6 +10,7 @@ namespace IWebsocketClientLite.PCL
     {
         Initialized,
         Connecting,
+        HandshakeCompletedSuccessfully,
         TcpSocketConnected,
         WebsocketConnected,
         Disconnected,

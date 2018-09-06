@@ -18,12 +18,10 @@ namespace WebsocketClientLite.PCL.Service
         private readonly IObserver<ConnectionStatus> _observerConnectionStatus;
 
         private readonly HandshakeParser _handshakeParser = new HandshakeParser();
-        private readonly WebSocketConnectService _webSocketConnectService;
 
         private DataReceiveMode DataReceiveMode { get; set; } = DataReceiveMode.IsListeningForHandShake;
 
         private Stream _tcpStream;
-        private CancellationTokenSource _innerCancellationTokenSource;
 
         private bool _isHandshaking;
 
@@ -41,9 +39,8 @@ namespace WebsocketClientLite.PCL.Service
 
         internal bool HasReceivedCloseFromServer { get; private set; }
 
-        internal WebsocketParserHandler(WebSocketConnectService webSocketConnectService, IObserver<ConnectionStatus> observerConnectionStatus)
+        internal WebsocketParserHandler(IObserver<ConnectionStatus> observerConnectionStatus)
         {
-            _webSocketConnectService = webSocketConnectService;
             _observerConnectionStatus = observerConnectionStatus;
             TextDataParser = new TextDataParser();
         }
@@ -57,8 +54,6 @@ namespace WebsocketClientLite.PCL.Service
             var parserHandler = new HttpCombinedParser(ParserDelegate);
 
             TextDataParser.Reinitialize();
-
-            _innerCancellationTokenSource = innerCancellationTokenSource;
 
             _tcpStream = tcpStream;
 
@@ -191,29 +186,6 @@ namespace WebsocketClientLite.PCL.Service
                 }
             }
         }
-
-        //private async Task WatchHandshakeForTimeout(HttpParserDelegate parserDelegate, CancellationTokenSource cancellationTokenSource)
-        //{
-        //    var handshakeTimer = Task.Run(async () =>
-        //    {
-        //        while (!parserDelegate.HttpRequestReponse.IsEndOfMessage
-        //               && !parserDelegate.HttpRequestReponse.IsRequestTimedOut
-        //               && !parserDelegate.HttpRequestReponse.IsUnableToParseHttp)
-        //        {
-        //            await Task.Delay(TimeSpan.FromMilliseconds(10));
-        //        }
-        //    }, cancellationTokenSource.Token);
-
-        //    var timeout = Task.Delay(TimeSpan.FromSeconds(10), cancellationTokenSource.Token);
-
-        //    var taskRetun = await Task.WhenAny(handshakeTimer, timeout);
-
-        //    if (taskRetun == timeout)
-        //    {
-        //        HasHandshakeTimedout = true;
-        //    }
-        //}
-
         internal void StopReceivingData()
         {
             HasReceivedCloseFromServer = true;

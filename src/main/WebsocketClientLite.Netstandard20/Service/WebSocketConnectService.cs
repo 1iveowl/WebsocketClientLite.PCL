@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Reactive;
-using System.Reactive.Concurrency;
 using System.Reactive.Linq;
-using System.Reactive.Threading.Tasks;
 using System.Threading;
 using System.Threading.Tasks;
 using IWebsocketClientLite.PCL;
@@ -53,6 +50,7 @@ namespace WebsocketClientLite.PCL.Service
             switch (waitForHandShakeResult)
             {
                 case ParserState.HandshakeCompletedSuccessfully:
+                    _observerConnectionStatus.OnNext(ConnectionStatus.HandshakeCompletedSuccessfully);
                     break;
                 case ParserState.HandshakeFailed:
                     throw new WebsocketClientLiteException("Unable to complete handshake");

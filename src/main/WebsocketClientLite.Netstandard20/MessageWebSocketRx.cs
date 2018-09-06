@@ -64,7 +64,7 @@ namespace WebsocketClientLite.PCL
 
             _webSocketConnectService = new WebSocketConnectService(_observerConnectionStatus);
             
-            _websocketParserHandler = new WebsocketParserHandler(_webSocketConnectService, _observerConnectionStatus);
+            _websocketParserHandler = new WebsocketParserHandler(_observerConnectionStatus);
             _websocketSenderService = new WebsocketSenderService( _observerConnectionStatus);
         }
 
