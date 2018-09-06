@@ -99,14 +99,14 @@ class Program
             await websocketClient.ConnectAsync(
                 new Uri("wss://echo.websocket.org"), createTokenSource.Token);
 
-            await Task.Delay(TimeSpan.FromSeconds(1), createTokenSource.Token);
+            //await Task.Delay(TimeSpan.FromSeconds(1), createTokenSource.Token);
 
-            await websocketClient.DisconnectAsync();
+            //await websocketClient.DisconnectAsync();
 
-            await Task.Delay(TimeSpan.FromSeconds(5), createTokenSource.Token);
+            //await Task.Delay(TimeSpan.FromSeconds(5), createTokenSource.Token);
 
-            await websocketClient.ConnectAsync(
-                new Uri("wss://echo.websocket.org"), createTokenSource.Token);
+            //await websocketClient.ConnectAsync(
+            //    new Uri("wss://echo.websocket.org"), createTokenSource.Token);
 
             try
             {
@@ -132,10 +132,26 @@ class Program
                 await websocketClient.SendTextMultiFrameAsync("Stop.", FrameType.LastInMultipleFrames);
 
                 // Close the Websocket connection gracefully telling the server goodbye
-                await websocketClient.DisconnectAsync();
+                //await websocketClient.DisconnectAsync();
 
-                subscribeToMessagesReceived.Dispose();
-                websocketLoggerSubscriber.Dispose();
+                //subscribeToMessagesReceived.Dispose();
+                //websocketLoggerSubscriber.Dispose();
+
+                await Task.Delay(TimeSpan.FromSeconds(30), createTokenSource.Token);
+
+                await websocketClient.SendTextAsync(TestString(65538, 65550));
+
+                await websocketClient.SendTextAsync(strArray);
+
+                await websocketClient.SendTextMultiFrameAsync("Start ", FrameType.FirstOfMultipleFrames);
+                await Task.Delay(TimeSpan.FromMilliseconds(200));
+                await websocketClient.SendTextMultiFrameAsync("Continue... #1 ", FrameType.Continuation);
+                await Task.Delay(TimeSpan.FromMilliseconds(300));
+                await websocketClient.SendTextMultiFrameAsync("Continue... #2 ", FrameType.Continuation);
+                await Task.Delay(TimeSpan.FromMilliseconds(150));
+                await websocketClient.SendTextMultiFrameAsync("Continue... #3 ", FrameType.Continuation);
+                await Task.Delay(TimeSpan.FromMilliseconds(400));
+                await websocketClient.SendTextMultiFrameAsync("Stop.", FrameType.LastInMultipleFrames);
             }
             catch (Exception e)
             {

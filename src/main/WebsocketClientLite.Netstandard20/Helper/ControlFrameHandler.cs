@@ -40,7 +40,7 @@ namespace WebsocketClientLite.PCL.Helper
             return ControlFrameType.None;
         }
 
-        private async Task AddPingPayload(Stream tcpSocketClient, byte data, bool excludeZeroApplicationDataInPong = false)
+        private async Task AddPingPayload(Stream tcpStream, byte data, bool excludeZeroApplicationDataInPong = false)
         {
             if (_isNextBytePayloadLength)
             {
@@ -53,7 +53,7 @@ namespace WebsocketClientLite.PCL.Helper
                         ? new byte[1] { 138} 
                         : new byte[2] { 138, 0 };
                     
-                    await SendPongAsync(tcpSocketClient);
+                    await SendPongAsync(tcpStream);
                 }
                 else
                 {
@@ -76,7 +76,7 @@ namespace WebsocketClientLite.PCL.Helper
                 else
                 {
                     ReinitializePing();
-                    await SendPongAsync(tcpSocketClient);
+                    await SendPongAsync(tcpStream);
                 }
             }
         }

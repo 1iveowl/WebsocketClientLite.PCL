@@ -13,6 +13,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using IWebsocketClientLite.PCL;
 using WebsocketClientLite.PCL.CustomException;
+using WebsocketClientLite.PCL.Extension;
 using WebsocketClientLite.PCL.Model;
 using WebsocketClientLite.PCL.Service;
 
@@ -24,19 +25,19 @@ namespace WebsocketClientLite.PCL
         private readonly IObserver<string> _observerMessage;
 
         private readonly WebSocketConnectService _webSocketConnectService;
-        private readonly WebsocketListener _websocketListener;
+        private readonly WebsocketParserHandler _websocketParserHandler;
         private readonly WebsocketSenderService _websocketSenderService;
         private CancellationTokenSource _innerCancellationTokenSource;
 
         private TcpClient _tcpClient;
         private Stream _tcpStream;
         
-        private IDisposable _disposableMessage;
+        private IDisposable _disposableWebsocketMessageListener;
 
-        public bool IsConnected => _websocketListener.IsConnected;
-        public bool SubprotocolAccepted => _websocketListener.SubprotocolAccepted;
+        public bool IsConnected => _websocketParserHandler.IsConnected;
+        public bool SubprotocolAccepted => _websocketParserHandler.SubprotocolAccepted;
 
-        public string SubprotocolAcceptedName => _websocketListener.SubprotocolAcceptedName;
+        public string SubprotocolAcceptedName => _websocketParserHandler.SubprotocolAcceptedName;
         public string Origin { get; set; }
         public IDictionary<string, string> Headers { get; set; }
         public IEnumerable<string> Subprotocols { get; set; }
@@ -60,12 +61,11 @@ namespace WebsocketClientLite.PCL
 
             ConnectionStatusObservable = subjectConnectionStatus.AsObservable();
             _observerConnectionStatus = subjectConnectionStatus.AsObserver();
-            
 
             _webSocketConnectService = new WebSocketConnectService(_observerConnectionStatus);
             
-            _websocketListener = new WebsocketListener(_webSocketConnectService, _observerConnectionStatus);
-            _websocketSenderService = new WebsocketSenderService(_websocketListener);
+            _websocketParserHandler = new WebsocketParserHandler(_webSocketConnectService, _observerConnectionStatus);
+            _websocketSenderService = new WebsocketSenderService( _observerConnectionStatus);
         }
 
        
@@ -73,7 +73,7 @@ namespace WebsocketClientLite.PCL
             Uri uri,
             CancellationToken token = default (CancellationToken))
         {
-            _websocketListener.ExcludeZeroApplicationDataInPong = ExcludeZeroApplicationDataInPong;
+            _websocketParserHandler.ExcludeZeroApplicationDataInPong = ExcludeZeroApplicationDataInPong;
 
             _observerConnectionStatus.OnNext(ConnectionStatus.Connecting);
 
@@ -91,7 +91,26 @@ namespace WebsocketClientLite.PCL
 
             _tcpStream = await DetermineStreamTypeAsync(uri, _tcpClient, X509CertCollection, TlsProtocolType);
 
-            await _webSocketConnectService.ConnectServer(
+            var listenerObservable = _websocketParserHandler.CreateWebsocketListenerObservable(
+                _innerCancellationTokenSource,
+                _tcpStream);
+
+            _disposableWebsocketMessageListener = listenerObservable
+                // https://stackoverflow.com/a/45217578/4140832
+                .FinallyAsync(async () => await WaitForServerToCloseConnectionAsync())
+                .Subscribe(
+                    str => _observerMessage.OnNext(str),
+                    ex =>
+                    {
+                        _observerMessage.OnError(ex);
+                    },
+                    () =>
+                    {
+                        _observerMessage.OnCompleted();
+                    });
+
+            await _webSocketConnectService.ConnectToWebSocketServer(
+                _websocketParserHandler,
                 uri,
                 IsSecureWebsocket(uri),
                 token,
@@ -99,22 +118,6 @@ namespace WebsocketClientLite.PCL
                 Origin,
                 Headers,
                 Subprotocols);
-
-            _disposableMessage = _websocketListener.CreateObservableListener(
-                    _innerCancellationTokenSource,
-                    _tcpStream)
-                .Subscribe(
-                    str => _observerMessage.OnNext(str),
-                    ex =>
-                    {
-                        WaitForServerToCloseConnectionAsync().Wait(token);
-                        _observerMessage.OnError(ex);
-                    },
-                    () =>
-                    {
-                        WaitForServerToCloseConnectionAsync().Wait(token);
-                        _observerMessage.OnCompleted();
-                    });
         }
 
         public async Task DisconnectAsync()
@@ -126,7 +129,7 @@ namespace WebsocketClientLite.PCL
             // Wait for data or timeout after 1 second
             var dataReceivedDone = await Task.WhenAny(dataReceiveDone, timeoutDataTask);
 
-            if (_tcpStream.CanRead)
+            if (_tcpStream.CanWrite)
             {
                 await _websocketSenderService.SendCloseHandshakeAsync(_webSocketConnectService.TcpStream, StatusCodes.GoingAway);
             }
@@ -140,14 +143,14 @@ namespace WebsocketClientLite.PCL
             if (disconnectResult != serverDisconnect)
             {
                 _observerConnectionStatus.OnNext(ConnectionStatus.ForcefullyDisconnected);
-                _websocketListener.StopReceivingData();
+                _websocketParserHandler.StopReceivingData();
             }
             else
             {
                 _observerConnectionStatus.OnNext(ConnectionStatus.Disconnected);
             }
 
-            _disposableMessage?.Dispose();
+            _disposableWebsocketMessageListener?.Dispose();
             _tcpStream?.Dispose();
             //_websocketListener.IsConnected = false;
         }
@@ -254,21 +257,16 @@ namespace WebsocketClientLite.PCL
 
         private async Task WaitForServerToCloseConnectionAsync()
         {
-            _websocketListener.IsConnected = false;
-            while (!_websocketListener.HasReceivedCloseFromServer)
+            _websocketParserHandler.IsConnected = false;
+            while (!_websocketParserHandler.HasReceivedCloseFromServer)
             {
                 await Task.Delay(TimeSpan.FromMilliseconds(50));
             }
-
-            //while (_tcpStream.CanRead)
-            //{
-            //    await Task.Delay(TimeSpan.FromMilliseconds(50));
-            //}
         }
 
         private async Task WaitForDataAsync()
         {
-            while (!_websocketListener.TextDataParser.IsCloseRecieved)
+            while (!_websocketParserHandler.TextDataParser.IsCloseRecieved)
             {
                 await Task.Delay(TimeSpan.FromMilliseconds(50));
             }
@@ -322,8 +320,8 @@ namespace WebsocketClientLite.PCL
         public void Dispose()
         {
             _tcpStream?.Dispose();
-            _websocketListener?.StopReceivingData();
-            _disposableMessage?.Dispose();
+            _websocketParserHandler?.StopReceivingData();
+            _disposableWebsocketMessageListener?.Dispose();
         }
     }
 }

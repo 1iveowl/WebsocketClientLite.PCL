@@ -1,4 +1,8 @@
 ﻿using System;
+using System.Reactive;
+using System.Reactive.Linq;
+using System.Reactive.Subjects;
+using System.Threading.Tasks;
 using HttpMachine;
 using IHttpMachine;
 using WebsocketClientLite.PCL.Model;
@@ -10,7 +14,21 @@ namespace WebsocketClientLite.PCL.Parser
         private string _headerName;
         private bool _headerAlreadyExist;
 
-        public readonly HttpWebsocketServerResponse HttpRequestReponse = new HttpWebsocketServerResponse();
+        private readonly IObserver<ParserState> _observerHandshakeParserState;
+
+        internal IObservable<ParserState> HandshakeParserCompletionObservable { get; }
+        
+
+        internal HttpParserDelegate()
+        {
+            var handshakeParserStateSubject = new BehaviorSubject<ParserState>(ParserState.Start);
+
+            _observerHandshakeParserState = handshakeParserStateSubject.AsObserver();
+            HandshakeParserCompletionObservable = handshakeParserStateSubject.AsObservable();
+
+        }
+
+        internal readonly HttpWebsocketServerResponse HttpRequestResponse = new HttpWebsocketServerResponse();
 
         public void OnMessageBegin(IHttpCombinedParser combinedParser)
         {
@@ -20,7 +38,7 @@ namespace WebsocketClientLite.PCL.Parser
         public void OnHeaderName(IHttpCombinedParser combinedParser, string name)
         {
             // Header Field Names are case-insensitive http://www.w3.org/Protocols/rfc2616/rfc2616-sec4.html#sec4.2
-            if (HttpRequestReponse.Headers.ContainsKey(name.ToUpper()))
+            if (HttpRequestResponse.Headers.ContainsKey(name.ToUpper()))
             {
                 _headerAlreadyExist = true;
             }
@@ -32,12 +50,12 @@ namespace WebsocketClientLite.PCL.Parser
             if (_headerAlreadyExist)
             {
                 // Join multiple message-header fields into one comma seperated list http://www.w3.org/Protocols/rfc2616/rfc2616-sec4.html#sec4.2
-                HttpRequestReponse.Headers[_headerName] = $"{HttpRequestReponse.Headers[_headerName]}, {value}";
+                HttpRequestResponse.Headers[_headerName] = $"{HttpRequestResponse.Headers[_headerName]}, {value}";
                 _headerAlreadyExist = false;
             }
             else
             {
-                HttpRequestReponse.Headers[_headerName] = value;
+                HttpRequestResponse.Headers[_headerName] = value;
             }
         }
 
@@ -54,14 +72,14 @@ namespace WebsocketClientLite.PCL.Parser
 
         public void OnParserError()
         {
-            HttpRequestReponse.IsUnableToParseHttp = true;
+            HttpRequestResponse.IsUnableToParseHttp = true;
         }
 
         public MessageType MessageType { get; private set; }
 
         public void OnRequestType(IHttpCombinedParser combinedParser)
         {
-            HttpRequestReponse.MessageType = MessageType.Request;
+            HttpRequestResponse.MessageType = MessageType.Request;
             MessageType = MessageType.Request;
         }
 
@@ -92,14 +110,14 @@ namespace WebsocketClientLite.PCL.Parser
 
         public void OnResponseType(IHttpCombinedParser combinedParser)
         {
-            HttpRequestReponse.MessageType = MessageType.Response;
+            HttpRequestResponse.MessageType = MessageType.Response;
             MessageType = MessageType.Response;
         }
 
         public void OnResponseCode(IHttpCombinedParser combinedParser, int statusCode, string statusReason)
         {
-            HttpRequestReponse.StatusCode = statusCode;
-            HttpRequestReponse.ResponseReason = statusReason;
+            HttpRequestResponse.StatusCode = statusCode;
+            HttpRequestResponse.ResponseReason = statusReason;
         }
 
         public void OnTransferEncodingChunked(IHttpCombinedParser combinedParser, bool isChunked)
@@ -119,7 +137,20 @@ namespace WebsocketClientLite.PCL.Parser
 
         public void OnMessageEnd(IHttpCombinedParser combinedParser)
         {
-            HttpRequestReponse.IsEndOfMessage = true;
+            HttpRequestResponse.IsEndOfMessage = true;
+
+            if (!HttpRequestResponse.IsRequestTimedOut && !HttpRequestResponse.IsUnableToParseHttp)
+            {
+                _observerHandshakeParserState.OnNext(ParserState.HandshakeCompletedSuccessfully);
+            }
+            else
+            {
+                _observerHandshakeParserState.OnNext(ParserState.HandshakeFailed);
+                _observerHandshakeParserState.OnError(new Exception("Unable to complete handshake"));
+                return;
+            }
+
+            _observerHandshakeParserState.OnCompleted();
         }
 
         public void Dispose()
