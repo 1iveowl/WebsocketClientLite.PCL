@@ -10,7 +10,7 @@ namespace IWebsocketClientLite.PCL
 {
     public interface IMessageWebSocketRx : IDisposable
     {
-        bool IsConnected { get; }
+        //bool IsConnected { get; }
         bool SubprotocolAccepted { get; }
         string SubprotocolAcceptedName { get; }
         string Origin { get; }

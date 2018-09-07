@@ -3,12 +3,6 @@
 
 [![.NET Standard](http://img.shields.io/badge/.NET_Standard-v2.0-red.svg)](https://docs.microsoft.com/da-dk/dotnet/articles/standard/library) 
 
-Note: From version 3.6.0 this library support .NET Core.
-
-For PCL Profile111 compatibility use legacy version 1.6.2:
-
-[![NuGet](https://img.shields.io/badge/nuget-1.6.2_(Profile_111)-yellow.svg)](https://www.nuget.org/packages/WebsocketClientLite.PCL/1.6.2)
-
 *Please star this project if you find it useful. Thank you.*
 
 ## A Light Weight Cross Platform Websocket Client 
@@ -21,8 +15,11 @@ This project is based on [SocketLite](https://github.com/1iveowl/SocketLite) for
 
 This project utilizes [Reactive Extensions](http://reactivex.io/). Although this has an added learning curve it is an added learning curve worth while persuing, as it IMHO makes creating a library like this much more elegant compared to using call-back or events. 
 
+## New in version 6.1.
+Updates, stability and fundamental improvements to the library. See examples below for changes in usage. 
+
 ## New in version 6.0.
-Simplifications and no longer relies on SocketLite but utilizes the cross platform capabilities of .NET Standard 2.0.
+Simplifications and no longer relies on SocketLite but utilizes the cross platform capabilities of .NET Standard 2.0 and .NET Core 2.1+.
 
 ## New in version 5.0.
 From hereon only .NET Standard 2.0 and later are supported.
@@ -43,14 +40,13 @@ class Program
 
     const string AllowedChars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 
-    private static bool _isConnected;
 
-    static void Main(string[] args)
+    static async Task Main(string[] args)
     {
 
         var outerCancellationSource = new CancellationTokenSource();
 
-        Task.Run(() => StartWebSocketAsyncWithRetry(outerCancellationSource), outerCancellationSource.Token);
+        await StartWebSocketAsyncWithRetry(outerCancellationSource);
 
         System.Console.WriteLine("Waiting...");
         System.Console.ReadKey();
@@ -77,16 +73,22 @@ class Program
 
     private static async Task StartWebSocketAsync(CancellationTokenSource innerCancellationTokenSource)
     {
-        using (var websocketClient = new MessageWebSocketRx())
+        using (var websocketClient = new MessageWebSocketRx
+        {
+            IgnoreServerCertificateErrors = true,
+            Headers = new Dictionary<string, string> { { "Pragma", "no-cache" }, { "Cache-Control", "no-cache" } },
+            TlsProtocolType = SslProtocols.Tls12
+             
+        })
         {
             System.Console.WriteLine("Start");
 
-            var websocketLoggerSubscriber = websocketClient.ObserveConnectionStatus.Subscribe(
+            var disposableWebsocketStatus = websocketClient.ConnectionStatusObservable.Subscribe(
                 s =>
                 {
                     System.Console.WriteLine(s.ToString());
-                    if (s == ConnectionStatus.Disconnected 
-                    || s == ConnectionStatus.Aborted 
+                    if (s == ConnectionStatus.Disconnected
+                    || s == ConnectionStatus.Aborted
                     || s == ConnectionStatus.ConnectionFailed)
                     {
                         innerCancellationTokenSource.Cancel();
@@ -94,43 +96,37 @@ class Program
                 },
                 ex =>
                 {
+                    Console.WriteLine($"Connection status error: {ex}.");
                     innerCancellationTokenSource.Cancel();
                 },
                 () =>
                 {
+                    Console.WriteLine($"Connection status completed.");
                     innerCancellationTokenSource.Cancel();
                 });
+            
+            var createTokenSource = new CancellationTokenSource();
 
-            List<string> subprotocols = null; //new List<string> {"soap", "json"};
 
-            var headers = new Dictionary<string, string> { { "Pragma", "no-cache" }, { "Cache-Control", "no-cache" } };
-			
-			var createTokenSource = new CancellationTokenSource();
+            var disposableMessageReceiver = websocketClient.MessageReceiverObservable.Subscribe(
+               msg =>
+               {
+                   Console.WriteLine($"Reply from test server: {msg}");
+               },
+               ex =>
+               {
+                   Console.WriteLine(ex.Message);
+                   innerCancellationTokenSource.Cancel();
+               },
+               () =>
+               {
+                   System.Console.WriteLine($"Message listener subscription Completed");
+                   innerCancellationTokenSource.Cancel();
+               });
 
-            var messageObserver = await websocketClient.CreateObservableMessageReceiver(
-                new Uri("wss://echo.websocket.org"),
-                ignoreServerCertificateErrors: true,
-                headers: headers,
-                subProtocols: subprotocols,
-                tlsProtocolType: SslProtocols.Tls12, 
-                token: createTokenSource.Token);
-
-             var subscribeToMessagesReceived = messageObserver.Subscribe(
-                msg =>
-                {
-                    System.Console.WriteLine($"Reply from test server: {msg}");
-                },
-                ex =>
-                {
-                    System.Console.WriteLine(ex.Message);
-                    innerCancellationTokenSource.Cancel();
-                },
-                () =>
-                {
-                    System.Console.WriteLine($"Subscription Completed");
-                    innerCancellationTokenSource.Cancel();
-                });
-
+            
+            await websocketClient.ConnectAsync(
+                new Uri("wss://echo.websocket.org"), createTokenSource.Token);
             try
             {
                 System.Console.WriteLine("Sending: Test Single Frame");
@@ -154,11 +150,10 @@ class Program
                 await Task.Delay(TimeSpan.FromMilliseconds(400));
                 await websocketClient.SendTextMultiFrameAsync("Stop.", FrameType.LastInMultipleFrames);
 
-                // Close the Websocket connection gracefully telling the server goodbye
-                await websocketClient.CloseAsync();
+                await websocketClient.DisconnectAsync();
 
-                subscribeToMessagesReceived.Dispose();
-                websocketLoggerSubscriber.Dispose();
+                disposableMessageReceiver.Dispose();
+                disposableWebsocketStatus.Dispose();
             }
             catch (Exception e)
             {
@@ -168,12 +163,12 @@ class Program
         }
     }
 
-    private static string TestString(int minlength, int maxlenght)
+    private static string TestString(int minlength, int maxlength)
     {
 
         var rng = new Random();
 
-        return RandomStrings(AllowedChars, minlength, maxlenght, 25, rng);
+        return RandomStrings(AllowedChars, minlength, maxlength, 25, rng);
     }
 
     private static string RandomStrings(
@@ -195,7 +190,6 @@ class Program
 
         return new string(chars, 0, length);
     }
-}
 ```
 
 #### Working With Slack (And maybe also other Websocket server implementations)

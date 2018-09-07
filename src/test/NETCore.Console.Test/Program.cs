@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Net.Security;
 using System.Security.Authentication;
-using System.Security.Cryptography.X509Certificates;
 using System.Threading;
 using System.Threading.Tasks;
 using IWebsocketClientLite.PCL;
@@ -56,7 +54,7 @@ class Program
         {
             System.Console.WriteLine("Start");
 
-            var websocketLoggerSubscriber = websocketClient.ConnectionStatusObservable.Subscribe(
+            var disposableWebsocketStatus = websocketClient.ConnectionStatusObservable.Subscribe(
                 s =>
                 {
                     System.Console.WriteLine(s.ToString());
@@ -69,47 +67,37 @@ class Program
                 },
                 ex =>
                 {
+                    Console.WriteLine($"Connection status error: {ex}.");
                     innerCancellationTokenSource.Cancel();
                 },
                 () =>
                 {
+                    Console.WriteLine($"Connection status completed.");
                     innerCancellationTokenSource.Cancel();
                 });
             
             var createTokenSource = new CancellationTokenSource();
 
 
-            var subscribeToMessagesReceived = websocketClient.MessageReceiverObservable.Subscribe(
+            var disposableMessageReceiver = websocketClient.MessageReceiverObservable.Subscribe(
                msg =>
                {
-                   System.Console.WriteLine($"Reply from test server: {msg}");
+                   Console.WriteLine($"Reply from test server: {msg}");
                },
                ex =>
                {
-                   System.Console.WriteLine(ex.Message);
+                   Console.WriteLine(ex.Message);
                    innerCancellationTokenSource.Cancel();
                },
                () =>
                {
-                   System.Console.WriteLine($"Subscription Completed");
+                   System.Console.WriteLine($"Message listener subscription Completed");
                    innerCancellationTokenSource.Cancel();
                });
 
             
             await websocketClient.ConnectAsync(
                 new Uri("wss://echo.websocket.org"), createTokenSource.Token);
-
-
-
-            await Task.Delay(TimeSpan.FromSeconds(1), createTokenSource.Token);
-
-            await websocketClient.DisconnectAsync();
-
-            await Task.Delay(TimeSpan.FromSeconds(5000), createTokenSource.Token);
-
-            await websocketClient.ConnectAsync(
-                new Uri("wss://echo.websocket.org"), createTokenSource.Token);
-
             try
             {
                 System.Console.WriteLine("Sending: Test Single Frame");
@@ -133,27 +121,10 @@ class Program
                 await Task.Delay(TimeSpan.FromMilliseconds(400));
                 await websocketClient.SendTextMultiFrameAsync("Stop.", FrameType.LastInMultipleFrames);
 
-                // Close the Websocket connection gracefully telling the server goodbye
-                //await websocketClient.DisconnectAsync();
+                await websocketClient.DisconnectAsync();
 
-                //subscribeToMessagesReceived.Dispose();
-                //websocketLoggerSubscriber.Dispose();
-
-                await Task.Delay(TimeSpan.FromSeconds(300), createTokenSource.Token);
-
-                await websocketClient.SendTextAsync(TestString(65538, 65550));
-
-                await websocketClient.SendTextAsync(strArray);
-
-                await websocketClient.SendTextMultiFrameAsync("Start ", FrameType.FirstOfMultipleFrames);
-                await Task.Delay(TimeSpan.FromMilliseconds(200));
-                await websocketClient.SendTextMultiFrameAsync("Continue... #1 ", FrameType.Continuation);
-                await Task.Delay(TimeSpan.FromMilliseconds(300));
-                await websocketClient.SendTextMultiFrameAsync("Continue... #2 ", FrameType.Continuation);
-                await Task.Delay(TimeSpan.FromMilliseconds(150));
-                await websocketClient.SendTextMultiFrameAsync("Continue... #3 ", FrameType.Continuation);
-                await Task.Delay(TimeSpan.FromMilliseconds(400));
-                await websocketClient.SendTextMultiFrameAsync("Stop.", FrameType.LastInMultipleFrames);
+                disposableMessageReceiver.Dispose();
+                disposableWebsocketStatus.Dispose();
             }
             catch (Exception e)
             {
@@ -163,12 +134,12 @@ class Program
         }
     }
 
-    private static string TestString(int minlength, int maxlenght)
+    private static string TestString(int minlength, int maxlength)
     {
 
         var rng = new Random();
 
-        return RandomStrings(AllowedChars, minlength, maxlenght, 25, rng);
+        return RandomStrings(AllowedChars, minlength, maxlength, 25, rng);
     }
 
     private static string RandomStrings(
