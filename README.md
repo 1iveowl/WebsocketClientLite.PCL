@@ -24,11 +24,6 @@ Simplifications and no longer relies on SocketLite but utilizes the cross platfo
 ## New in version 5.0.
 From hereon only .NET Standard 2.0 and later are supported.
 
-## New in Version 4.0
-Version 4.0 represents a major overhaul. Unfortunately version 4.0 is **not** backwards compatible with the previous version. There were just to many things I wanted to change. That said, version 4.0 does not have any new functionality, so if you don't want to upgrade you don't have to - at least not in the short term. Version 4.0 is a bit faster, and future versions might add new functionality, so I do recommend the small effort involved in upgrading your code to version 4.0.
-
-On the of changes in version 4.0 is that it is no longer required to do a `ConnectAsync`. All you have to do is to subscribe to the observable and you are set. I still recommened that you do a `CloseAsync` to close the connection to the server gracefully. After closing the websocket connection, you should dispose of your subscrptions. Also to reconnect you should create a new `MessageWebSocketRx`object. 
-
 ## Usage
 The library is easy to use, as illustated with the examples below.
 
