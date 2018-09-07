@@ -9,9 +9,10 @@ namespace IWebsocketClientLite.PCL
     public enum ConnectionStatus
     {
         Initialized,
-        Connecting,
-        HandshakeCompletedSuccessfully,
+        ConnectingToTcpSocket,
         TcpSocketConnected,
+        HandshakeSendToWebsocketServer,
+        HandshakeCompletedSuccessfully,
         WebsocketConnected,
         Disconnected,
         ForcefullyDisconnected,

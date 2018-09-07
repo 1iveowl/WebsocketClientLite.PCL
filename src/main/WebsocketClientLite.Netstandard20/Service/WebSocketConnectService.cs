@@ -38,7 +38,7 @@ namespace WebsocketClientLite.PCL.Service
 
             TcpStream = tcpStream;
 
-            _observerConnectionStatus.OnNext(ConnectionStatus.Connecting);
+            _observerConnectionStatus.OnNext(ConnectionStatus.HandshakeSendToWebsocketServer);
 
             await SendConnectHandShakeAsync(uri, secure, token, origin, headers, subprotocols);
 

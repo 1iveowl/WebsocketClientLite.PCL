@@ -5,6 +5,7 @@ using System.IO;
 using System.Net.Security;
 using System.Net.Sockets;
 using System.Reactive;
+using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using System.Security.Authentication;
@@ -75,7 +76,7 @@ namespace WebsocketClientLite.PCL
         {
             _websocketParserHandler.ExcludeZeroApplicationDataInPong = ExcludeZeroApplicationDataInPong;
 
-            _observerConnectionStatus.OnNext(ConnectionStatus.Connecting);
+            _observerConnectionStatus.OnNext(ConnectionStatus.ConnectingToTcpSocket);
 
             _innerCancellationTokenSource = new CancellationTokenSource();
 
@@ -96,6 +97,7 @@ namespace WebsocketClientLite.PCL
                 _tcpStream);
 
             _disposableWebsocketMessageListener = listenerObservable
+                //.ObserveOn(Scheduler.Default)
                 // https://stackoverflow.com/a/45217578/4140832
                 .FinallyAsync(async () => await WaitForServerToCloseConnectionAsync())
                 .Subscribe(
@@ -123,7 +125,9 @@ namespace WebsocketClientLite.PCL
         public async Task DisconnectAsync()
         {
             _observerConnectionStatus.OnNext(ConnectionStatus.Disconnecting);
+
             var dataReceiveDone = WaitForDataAsync();
+
             var timeoutDataTask = Task.Delay(TimeSpan.FromSeconds(1));
 
             // Wait for data or timeout after 1 second
@@ -258,6 +262,7 @@ namespace WebsocketClientLite.PCL
         private async Task WaitForServerToCloseConnectionAsync()
         {
             _websocketParserHandler.IsConnected = false;
+
             while (!_websocketParserHandler.HasReceivedCloseFromServer)
             {
                 await Task.Delay(TimeSpan.FromMilliseconds(50));

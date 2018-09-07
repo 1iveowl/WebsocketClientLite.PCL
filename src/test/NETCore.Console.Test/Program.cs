@@ -99,14 +99,16 @@ class Program
             await websocketClient.ConnectAsync(
                 new Uri("wss://echo.websocket.org"), createTokenSource.Token);
 
-            //await Task.Delay(TimeSpan.FromSeconds(1), createTokenSource.Token);
 
-            //await websocketClient.DisconnectAsync();
 
-            //await Task.Delay(TimeSpan.FromSeconds(5), createTokenSource.Token);
+            await Task.Delay(TimeSpan.FromSeconds(1), createTokenSource.Token);
 
-            //await websocketClient.ConnectAsync(
-            //    new Uri("wss://echo.websocket.org"), createTokenSource.Token);
+            await websocketClient.DisconnectAsync();
+
+            await Task.Delay(TimeSpan.FromSeconds(5000), createTokenSource.Token);
+
+            await websocketClient.ConnectAsync(
+                new Uri("wss://echo.websocket.org"), createTokenSource.Token);
 
             try
             {
@@ -137,7 +139,7 @@ class Program
                 //subscribeToMessagesReceived.Dispose();
                 //websocketLoggerSubscriber.Dispose();
 
-                await Task.Delay(TimeSpan.FromSeconds(30), createTokenSource.Token);
+                await Task.Delay(TimeSpan.FromSeconds(300), createTokenSource.Token);
 
                 await websocketClient.SendTextAsync(TestString(65538, 65550));
 
