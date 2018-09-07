@@ -6,9 +6,11 @@ using System.Threading.Tasks;
 
 namespace WebsocketClientLite.PCL.Model
 {
-    internal enum DataReceiveMode
+    internal enum DataReceiveState
     {
+        Start,
         IsListeningForHandShake,
-        IsListeningForTextData,
+        IsListening,
+        Exiting
     }
 }

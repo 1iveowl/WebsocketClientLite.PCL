@@ -7,32 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="..\WebsocketClientLite.Netstandard\Helper\ClientHandShake.cs" Link="Helper\ClientHandShake.cs" />
-    <Compile Include="..\WebsocketClientLite.Netstandard\Helper\ControlFrameHandler.cs" Link="Helper\ControlFrameHandler.cs" />
-    <Compile Include="..\WebsocketClientLite.Netstandard\Helper\WebsocketMasking.cs" Link="Helper\WebsocketMasking.cs" />
-    <Compile Include="..\WebsocketClientLite.Netstandard\MessageWebSocketRx.cs" Link="MessageWebSocketRx.cs" />
-    <Compile Include="..\WebsocketClientLite.Netstandard\Model\Base\HttpHeaderBase.cs" Link="Model\Base\HttpHeaderBase.cs" />
-    <Compile Include="..\WebsocketClientLite.Netstandard\Model\Base\IParseControl.cs" Link="Model\Base\IParseControl.cs" />
-    <Compile Include="..\WebsocketClientLite.Netstandard\Model\Base\ParseControlBase.cs" Link="Model\Base\ParseControlBase.cs" />
-    <Compile Include="..\WebsocketClientLite.Netstandard\Model\ControlFrameType.cs" Link="Model\ControlFrameType.cs" />
-    <Compile Include="..\WebsocketClientLite.Netstandard\Model\DataReceiveMode.cs" Link="Model\DataReceiveMode.cs" />
-    <Compile Include="..\WebsocketClientLite.Netstandard\Model\HttpWebsocketServerResponse.cs" Link="Model\HttpWebsocketServerResponse.cs" />
-    <Compile Include="..\WebsocketClientLite.Netstandard\Model\PayloadLenghtType.cs" Link="Model\PayloadLenghtType.cs" />
-    <Compile Include="..\WebsocketClientLite.Netstandard\Model\StatusCodes.cs" Link="Model\StatusCodes.cs" />
-    <Compile Include="..\WebsocketClientLite.Netstandard\Model\WebsocketClientLiteException.cs" Link="Model\WebsocketClientLiteException.cs" />
-    <Compile Include="..\WebsocketClientLite.Netstandard\Parser\HandshakeParser.cs" Link="Parser\HandshakeParser.cs" />
-    <Compile Include="..\WebsocketClientLite.Netstandard\Parser\HttpParserDelegate.cs" Link="Parser\HttpParserDelegate.cs" />
-    <Compile Include="..\WebsocketClientLite.Netstandard\Parser\TextDataParser.cs" Link="Parser\TextDataParser.cs" />
-    <Compile Include="..\WebsocketClientLite.Netstandard\Service\WebSocketConnectService.cs" Link="Service\WebSocketConnectService.cs" />
-    <Compile Include="..\WebsocketClientLite.Netstandard\Service\WebsocketListener.cs" Link="Service\WebsocketListener.cs" />
-    <Compile Include="..\WebsocketClientLite.Netstandard\Service\WebsocketSenderService.cs" Link="Service\WebsocketSenderService.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Folder Include="Helper\" />
     <Folder Include="Model\Base\" />
-    <Folder Include="Service\" />
-    <Folder Include="Parser\" />
   </ItemGroup>
 
   <ItemGroup>
