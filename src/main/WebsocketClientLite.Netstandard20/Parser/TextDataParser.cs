@@ -13,7 +13,7 @@ namespace WebsocketClientLite.PCL.Parser
     {
         private readonly ControlFrameHandler _controlFrameHandler;
 
-        private PayloadLenghtType _payloadLenghtTypeInBits;
+        private PayloadLenghtType _payloadLengthTypeInBits;
         private FrameType _frameType;
 
         private bool _isFrameBeingReceived;
@@ -28,14 +28,14 @@ namespace WebsocketClientLite.PCL.Parser
         private byte _payloadLengthPosition;
         private byte _maskBytePosition;
 
-        private byte[] _payloadLenghtByteArray;
+        private byte[] _payloadLengthByteArray;
         private byte[] _maskKey;
         private byte[] _contentByteArray;
 
-        private ulong _payloadLenght;
+        private ulong _payloadLength;
         private ulong _contentPosition;
 
-        internal bool IsCloseRecieved { get; private set; }
+        internal bool IsCloseReceived { get; private set; }
 
         private string _newMessage;
 
@@ -58,7 +58,7 @@ namespace WebsocketClientLite.PCL.Parser
 
         internal void Reinitialize()
         {
-            IsCloseRecieved = false;
+            IsCloseReceived = false;
         }
 
         internal async Task ParseAsync(Stream tcpSocketClient, byte data, bool excludeZeroApplicationDataInPong = false)
@@ -104,7 +104,7 @@ namespace WebsocketClientLite.PCL.Parser
                 case ControlFrameType.Ping:
                     return true;
                 case ControlFrameType.Close:
-                    IsCloseRecieved = true;
+                    IsCloseReceived = true;
                     return true;
                 case ControlFrameType.Pong:
                     return true;
@@ -117,7 +117,7 @@ namespace WebsocketClientLite.PCL.Parser
 
         private void HandleContent(byte data)
         {
-            if (_contentPosition < _payloadLenght - 1)
+            if (_contentPosition < _payloadLength - 1)
             {
                 _contentByteArray[_contentPosition] = data;
                 _contentPosition++;
@@ -165,7 +165,7 @@ namespace WebsocketClientLite.PCL.Parser
                 }
 
                 _isFrameBeingReceived = false;
-                _payloadLenghtTypeInBits = PayloadLenghtType.Unspecified;
+                _payloadLengthTypeInBits = PayloadLenghtType.Unspecified;
             }
         }
 
@@ -191,25 +191,20 @@ namespace WebsocketClientLite.PCL.Parser
                 return;
             }
 
-            HandlePayloadLenght(data);
-        }
-
-        private void HandlePayloadLenght(byte data)
-        {
             if (_payloadLengthPosition >= 1)
             {
-                AddByteToPayloadLenght(data);
+                AddByteToPayloadLength(data);
             }
             else
             {
-                AddByteToPayloadLenght(data);
+                AddByteToPayloadLength(data);
                 InitializeContentRead();
             }
         }
 
-        private void AddByteToPayloadLenght(byte data)
+        private void AddByteToPayloadLength(byte data)
         {
-            _payloadLenghtByteArray[_payloadLengthPosition] = data;
+            _payloadLengthByteArray[_payloadLengthPosition] = data;
             _payloadLengthPosition--;
         }
 
@@ -229,53 +224,51 @@ namespace WebsocketClientLite.PCL.Parser
 
             if (firstByteLength <= 125)
             {
-                _payloadLenghtTypeInBits = PayloadLenghtType.Bits8;
+                _payloadLengthTypeInBits = PayloadLenghtType.Bits8;
                 _payloadLengthPosition = 0;
 
-                _payloadLenghtByteArray = new byte[1] { (byte)firstByteLength };
+                _payloadLengthByteArray = new byte[1] { (byte)firstByteLength };
                 InitializeContentRead();
             }
             else
                 switch (firstByteLength)
                 {
                     case 126:
-                        _payloadLenghtTypeInBits = PayloadLenghtType.Bits16;
+                        _payloadLengthTypeInBits = PayloadLenghtType.Bits16;
 
-                        _payloadLenghtByteArray = new byte[2];
+                        _payloadLengthByteArray = new byte[2];
                         _payloadLengthPosition = 1;
                         break;
                     case 127:
-                        _payloadLenghtTypeInBits = PayloadLenghtType.Bits64;
+                        _payloadLengthTypeInBits = PayloadLenghtType.Bits64;
                         _payloadLengthPosition = 7;
 
-                        _payloadLenghtByteArray = new byte[8];
+                        _payloadLengthByteArray = new byte[8];
                         break;
                     default:
                         break;
                 }
-
-            //_payloadLengthPosition = 0;
             _isFirstPayloadByte = false;
         }
 
         private void InitializeContentRead()
         {
-            switch (_payloadLenghtTypeInBits)
+            switch (_payloadLengthTypeInBits)
             {
                 case PayloadLenghtType.Bits8:
-                    _payloadLenght = _payloadLenghtByteArray[0];
+                    _payloadLength = _payloadLengthByteArray[0];
                     break;
                 case PayloadLenghtType.Bits16:
-                    _payloadLenght = BitConverter.ToUInt16(_payloadLenghtByteArray, 0);
+                    _payloadLength = BitConverter.ToUInt16(_payloadLengthByteArray, 0);
                     break;
                 case PayloadLenghtType.Bits64:
-                    _payloadLenght = BitConverter.ToUInt64(_payloadLenghtByteArray, 0);
+                    _payloadLength = BitConverter.ToUInt64(_payloadLengthByteArray, 0);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
 
-            _contentByteArray = new byte[_payloadLenght];
+            _contentByteArray = new byte[_payloadLength];
             _contentPosition = 0;
 
             _isNextBytePayloadLengthByte = false;
@@ -333,7 +326,6 @@ namespace WebsocketClientLite.PCL.Parser
                     break;
             }
         }
-
         private void InitFrameMessage()
         {
             _isFrameBeingReceived = true;

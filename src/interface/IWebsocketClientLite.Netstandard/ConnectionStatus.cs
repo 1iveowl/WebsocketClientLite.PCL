@@ -8,9 +8,14 @@ namespace IWebsocketClientLite.PCL
 {
     public enum ConnectionStatus
     {
-        Connecting,
-        Connected,
+        Initialized,
+        ConnectingToTcpSocket,
+        TcpSocketConnected,
+        HandshakeSendToWebsocketServer,
+        HandshakeCompletedSuccessfully,
+        WebsocketConnected,
         Disconnected,
+        ForcefullyDisconnected,
         Disconnecting,
         Aborted,
         Sending,
@@ -19,6 +24,8 @@ namespace IWebsocketClientLite.PCL
         MultiFrameSendingContinue,
         FrameDeliveryAcknowledged,
         MultiFrameSendingLast,
-        ConnectionFailed
+        ConnectionFailed,
+        ReceivedPing,
+        SendPong,
     }
 }
