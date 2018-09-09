@@ -97,8 +97,9 @@ class Program
                });
 
             
-            await websocketClient.ConnectAsync(
-                new Uri("wss://echo.websocket.org"), createTokenSource.Token);
+            await websocketClient.ConnectAsync(new Uri("wss://echo.websocket.org"), createTokenSource.Token);
+
+     
             try
             {
                 System.Console.WriteLine("Sending: Test Single Frame");

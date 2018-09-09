@@ -13,7 +13,7 @@ using WebsocketClientLite.PCL.Model;
 
 namespace WebsocketClientLite.PCL.Service
 {
-    internal class WebSocketConnectService
+    internal class WebSocketConnectHandler
     {
         internal Stream TcpStream;
 
@@ -21,9 +21,9 @@ namespace WebsocketClientLite.PCL.Service
         private readonly IObserver<string> _observerMessage;
 
         private WebsocketParserHandler _websocketParserHandler;
-        private WebsocketSenderService _websocketSenderService;
+        private WebsocketSenderHandler _websocketSenderHandler;
 
-        internal WebSocketConnectService(
+        internal WebSocketConnectHandler(
             IObserver<ConnectionStatus> observerConnectionStatus,
             IObserver<string> observerMessage)
         {
@@ -34,7 +34,7 @@ namespace WebsocketClientLite.PCL.Service
 
         internal async Task ConnectToWebSocketServer(
             WebsocketParserHandler websocketParserHandler,
-            WebsocketSenderService websocketSenderService,
+            WebsocketSenderHandler websocketSenderHandler,
             Uri uri,
             bool secure,
             CancellationToken token,
@@ -44,7 +44,7 @@ namespace WebsocketClientLite.PCL.Service
             IEnumerable<string> subprotocols = null)
         {
             _websocketParserHandler = websocketParserHandler;
-            _websocketSenderService = websocketSenderService;
+            _websocketSenderHandler = websocketSenderHandler;
 
             TcpStream = tcpStream;
 
@@ -77,7 +77,7 @@ namespace WebsocketClientLite.PCL.Service
 
             try
             {
-                await _websocketSenderService.SendCloseHandshakeAsync(TcpStream, StatusCodes.GoingAway);
+                await _websocketSenderHandler.SendCloseHandshakeAsync(TcpStream, StatusCodes.GoingAway);
             }
             catch (Exception ex)
             {

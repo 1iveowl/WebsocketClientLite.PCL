@@ -23,9 +23,9 @@ namespace WebsocketClientLite.PCL
         private readonly IObserver<ConnectionStatus> _observerConnectionStatus;
         private readonly IObserver<string> _observerMessage;
 
-        private readonly WebSocketConnectService _webSocketConnectService;
+        private readonly WebSocketConnectHandler _webSocketConnectService;
         private readonly WebsocketParserHandler _websocketParserHandler;
-        private readonly WebsocketSenderService _websocketSenderService;
+        private readonly WebsocketSenderHandler _websocketSenderHandler;
         private CancellationTokenSource _innerCancellationTokenSource;
 
         private TcpClient _tcpClient;
@@ -61,14 +61,14 @@ namespace WebsocketClientLite.PCL
             ConnectionStatusObservable = subjectConnectionStatus.AsObservable();
             _observerConnectionStatus = subjectConnectionStatus.AsObserver();
 
-            _webSocketConnectService = new WebSocketConnectService(_observerConnectionStatus, _observerMessage);
+            _webSocketConnectService = new WebSocketConnectHandler(_observerConnectionStatus, _observerMessage);
             
             _websocketParserHandler = new WebsocketParserHandler(
                 _observerConnectionStatus, 
                 SubprotocolAccepted, 
                 ExcludeZeroApplicationDataInPong);
 
-            _websocketSenderService = new WebsocketSenderService( _observerConnectionStatus);
+            _websocketSenderHandler = new WebsocketSenderHandler( _observerConnectionStatus);
         }
 
        
@@ -95,7 +95,6 @@ namespace WebsocketClientLite.PCL
             var websocketListenerObservable = _websocketParserHandler.CreateWebsocketListenerObservable(_tcpStream);
 
             _disposableWebsocketListener = websocketListenerObservable
-                //.ObserveOn(Scheduler.Default)
                 // https://stackoverflow.com/a/45217578/4140832
                 .FinallyAsync(async () =>
                 {
@@ -114,7 +113,7 @@ namespace WebsocketClientLite.PCL
 
             await _webSocketConnectService.ConnectToWebSocketServer(
                 _websocketParserHandler,
-                _websocketSenderService,
+                _websocketSenderHandler,
                 uri,
                 IsSecureWebsocket(uri),
                 token,
@@ -126,21 +125,20 @@ namespace WebsocketClientLite.PCL
 
         public async Task DisconnectAsync()
         {
-
             await _webSocketConnectService.DisconnectWebsocketServer();
 
             _tcpClient?.Dispose();
-
             _disposableWebsocketListener?.Dispose();
         }
 
         public async Task SendTextAsync(string message)
         {
             _observerConnectionStatus.OnNext(ConnectionStatus.Sending);
-            await _websocketSenderService.SendTextAsync(_webSocketConnectService.TcpStream, message);
-            _observerConnectionStatus.OnNext(ConnectionStatus.DeliveryAcknowledged);
 
-        }
+            await _websocketSenderHandler.SendTextAsync(_webSocketConnectService.TcpStream, message);
+
+            _observerConnectionStatus.OnNext(ConnectionStatus.DeliveryAcknowledged);
+            }
 
         public async Task SendTextMultiFrameAsync(string message, FrameType frameType)
         {
@@ -157,18 +155,23 @@ namespace WebsocketClientLite.PCL
                         break;
                     case FrameType.CloseControlFrame:
                         break;
-                    default:
+                    case FrameType.Single:
                         break;
+                    default:
+                        throw new ArgumentOutOfRangeException(nameof(frameType), frameType, null);
                 }
                 
-                await _websocketSenderService.SendTextMultiFrameAsync(_webSocketConnectService.TcpStream, message, frameType);
+            await _websocketSenderHandler.SendTextMultiFrameAsync(_webSocketConnectService.TcpStream, message, frameType);
+
             _observerConnectionStatus.OnNext(ConnectionStatus.FrameDeliveryAcknowledged);
         }
 
         public async Task SendTextAsync(string[] messageList)
         {
             _observerConnectionStatus.OnNext(ConnectionStatus.Sending);
-            await _websocketSenderService.SendTextAsync(_webSocketConnectService.TcpStream, messageList);
+
+            await _websocketSenderHandler.SendTextAsync(_webSocketConnectService.TcpStream, messageList);
+
             _observerConnectionStatus.OnNext(ConnectionStatus.DeliveryAcknowledged);
         }
 
@@ -184,15 +187,13 @@ namespace WebsocketClientLite.PCL
 
                     return secureStream;
                 }
-                catch (System.Exception ex)
+                catch (Exception ex)
                 {
-                    throw ex;
+                    throw new WebsocketClientLiteException("Unable to determine stream type", ex);
                 }
             }
-            else
-            {
-                return tcpClient.GetStream();
-            }
+
+            return tcpClient.GetStream();
         }
 
         private async Task ConnectTcpClient(Uri uri, CancellationToken ct)

@@ -10,13 +10,13 @@ using static WebsocketClientLite.PCL.Helper.WebsocketMasking;
 
 namespace WebsocketClientLite.PCL.Service
 {
-    internal class WebsocketSenderService
+    internal class WebsocketSenderHandler
     {
         private bool _isSendingMultipleFrames;
 
         private readonly IObserver<ConnectionStatus> _observerConnectionStatus;
 
-        internal WebsocketSenderService(
+        internal WebsocketSenderHandler(
             IObserver<ConnectionStatus> observerConnectionStatus)
         {
             _observerConnectionStatus = observerConnectionStatus;

@@ -80,12 +80,6 @@ namespace WebsocketClientLite.PCL.Helper
                 }
             }
         }
-
-        //private void SendPong(Stream tcpStream)
-        //{
-        //    Task.Run(async () => await SendPongAsync(tcpStream)).ConfigureAwait(false);
-        //}
-
         private void InitPingStart()
         {
             Debug.WriteLine("Ping received");

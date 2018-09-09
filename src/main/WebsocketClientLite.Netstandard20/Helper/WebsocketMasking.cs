@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using WebsocketClientLite.PCL.CustomException;
 
 namespace WebsocketClientLite.PCL.Helper
 {
@@ -14,11 +16,11 @@ namespace WebsocketClientLite.PCL.Helper
             return EncodeDecodeSymmetric(data, key);
         }
 
-        private static byte[] EncodeDecodeSymmetric(byte[] data, byte[] key)
+        private static byte[] EncodeDecodeSymmetric(IReadOnlyList<byte> data, IReadOnlyList<byte> key)
         {
-            var result = new byte[data.Length];
+            var result = new byte[data.Count];
 
-            for (var i = 0; i < data.Length; i++)
+            for (var i = 0; i < data.Count; i++)
             {
                 result[i] = (byte)(data[i] ^ key[i % 4]);
             }
@@ -91,8 +93,7 @@ namespace WebsocketClientLite.PCL.Helper
                 return byteArray;
             }
 
-            throw new ArgumentException("Too long message for one frame");
-
+            throw new WebsocketClientLiteException("Unable to send message", new ArgumentException("Message too long for one frame"));
         }
     }
 }
