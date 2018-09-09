@@ -48,10 +48,11 @@ class Program
         {
             IgnoreServerCertificateErrors = true,
             Headers = new Dictionary<string, string> { { "Pragma", "no-cache" }, { "Cache-Control", "no-cache" } },
-            TlsProtocolType = SslProtocols.Tls12
+            TlsProtocolType = SslProtocols.Tls12,
              
         })
         {
+            websocketClient.ExcludeZeroApplicationDataInPong = true;
             System.Console.WriteLine("Start");
 
             var disposableWebsocketStatus = websocketClient.ConnectionStatusObservable.Subscribe(
@@ -125,6 +126,8 @@ class Program
 
                 disposableMessageReceiver.Dispose();
                 disposableWebsocketStatus.Dispose();
+
+                await Task.Delay(TimeSpan.FromDays(1));
             }
             catch (Exception e)
             {

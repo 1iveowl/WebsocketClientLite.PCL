@@ -51,7 +51,6 @@ namespace WebsocketClientLite.PCL.Service
         }
         
         internal IObservable<string> CreateWebsocketListenerObservable(
-            CancellationTokenSource innerCancellationTokenSource,
             Stream tcpStream,
             IEnumerable<string> subProtocols = null)
         {
