@@ -92,9 +92,7 @@ namespace WebsocketClientLite.PCL
 
             _tcpStream = await DetermineStreamTypeAsync(uri, _tcpClient, X509CertCollection, TlsProtocolType);
 
-            var websocketListenerObservable = _websocketParserHandler.CreateWebsocketListenerObservable(
-                _innerCancellationTokenSource,
-                _tcpStream);
+            var websocketListenerObservable = _websocketParserHandler.CreateWebsocketListenerObservable(_tcpStream);
 
             _disposableWebsocketListener = websocketListenerObservable
                 //.ObserveOn(Scheduler.Default)

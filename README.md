@@ -192,9 +192,10 @@ The [RFC 6455 section defining how ping/pong works](https://tools.ietf.org/html/
 
 When testing against [websocket.org](http://websocket.org/echo) the byte is expected and should have the value: 0 (zero). However when used with the [slack.rtm](https://api.slack.com/rtm) api the byte should **not** be there and if it is, the slack websocket server will disconnect.
 
-To manage this *byte-issue* the following connect parameter can be set to true, in which case the byte with the zero value will not be added to the pong. Like this:
+To manage this *byte-issue* the following property can be set to true, in which case the byte with the zero value will NOT be added to the pong. For instance like this:
 ```csharp
-await _webSocket.ConnectAsync(_uri, excludeZeroApplicationDataInPong:true);
+var websocketClient = new MessageWebSocketRx()
+websocketClient.ExcludeZeroApplicationDataInPong = true;
 ```
 
 To futher complicate matters the [slack.rtm api](https://api.slack.com/rtm) also [seems to requires a ping at the Slack application layer too](http://stackoverflow.com/questions/38171620/slack-rtm-api-disconnection-following-message-in-scala). A simplified implementation of this could look like this:
