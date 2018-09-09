@@ -1,7 +1,4 @@
-﻿using System;
-using System.Reactive.Subjects;
-using HttpMachine;
-using WebsocketClientLite.PCL.Parser;
+﻿using HttpMachine;
 
 namespace WebsocketClientLite.PCL.Model.Base
 {

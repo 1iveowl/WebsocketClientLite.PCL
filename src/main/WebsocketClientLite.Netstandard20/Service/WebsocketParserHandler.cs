@@ -181,8 +181,6 @@ namespace WebsocketClientLite.PCL.Service
                         _observerConnectionStatus.OnNext(ConnectionStatus.WebsocketConnected);
                         Debug.WriteLine("HandShake completed");
                         _observerDataReceiveMode.OnNext(DataReceiveState.IsListening);
-                        //DataReceiveState = DataReceiveState.IsListeningForTextData;
-                        //IsConnected = true;
                     }
                 }
                 else
@@ -193,11 +191,11 @@ namespace WebsocketClientLite.PCL.Service
                 }
             }
         }
-        internal void StopReceivingData()
+
+        private void StopReceivingData()
         {
             _observerDataReceiveMode.OnNext(DataReceiveState.Exiting);
             _observerDataReceiveMode.OnCompleted();
-            //HasReceivedCloseFromServer = true;
         }
 
         private async Task<byte[]> ReadOneByteAtTheTimeAsync(Stream stream)
