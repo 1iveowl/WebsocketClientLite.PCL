@@ -32,7 +32,7 @@ namespace IWebsocketClientLite.PCL
 
         Task ConnectAsync(
             Uri uri,
-            CancellationToken token = default (CancellationToken));
+            TimeSpan timeout = default);
 
         Task DisconnectAsync();
 

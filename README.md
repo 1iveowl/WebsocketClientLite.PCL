@@ -100,9 +100,6 @@ class Program
                     innerCancellationTokenSource.Cancel();
                 });
             
-            var createTokenSource = new CancellationTokenSource();
-
-
             var disposableMessageReceiver = websocketClient.MessageReceiverObservable.Subscribe(
                msg =>
                {
@@ -121,7 +118,7 @@ class Program
 
             
             await websocketClient.ConnectAsync(
-                new Uri("wss://echo.websocket.org"), createTokenSource.Token);
+                new Uri("wss://echo.websocket.org"));
             try
             {
                 System.Console.WriteLine("Sending: Test Single Frame");
@@ -186,6 +183,13 @@ class Program
         return new string(chars, 0, length);
     }
 ```
+
+### Alternative Constructor (Advanced)
+It is also possible to pass you own managed TcpClient to the WebsocketClientLite. The TcpClient should not be connected. Connection will be maanged by the library. However, this enables you to defined Socket Options etc. to the TcpClient. 
+
+Use:
+
+`MessageWebSocketRx(tcpClient)`
 
 #### Working With Slack (And maybe also other Websocket server implementations)
 The [RFC 6455 section defining how ping/pong works](https://tools.ietf.org/html/rfc6455#section-5.5.2) seems to be ambigious on the question of whether or not a pong should include the byte defining the length of "Application Data" in the special case when the length is just zero. 

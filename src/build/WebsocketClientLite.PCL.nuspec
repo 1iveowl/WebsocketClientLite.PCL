@@ -15,7 +15,8 @@ Xamarin cross-platform.
 Can be set to ignore SSL/TLS server certificate issues. 
 Observe incoming message using Reactive Extensions (Rx)</description>
     <releaseNotes>
-[General] Minor improvements.
+      [General] Minor improvements.
+      [General] Added new MessageWebSocketRx constructor: 'MessageWebSocketRx(tcpClient)'
     </releaseNotes>
     <copyright>Copyright 2018</copyright>
     <tags>netstandard pcl netcore ios android xamarin uwp websocket rx ssl tls</tags>
@@ -23,7 +24,7 @@ Observe incoming message using Reactive Extensions (Rx)</description>
     <dependencies>
 
       <group targetFramework="netstandard2.0">
-        <dependency id="System.Reactive" version="4.1.0"/>
+        <dependency id="System.Reactive" version="4.1.2"/>
         <dependency id="HttpMachine.PCL" version="3.1.0"/>
       </group>
       

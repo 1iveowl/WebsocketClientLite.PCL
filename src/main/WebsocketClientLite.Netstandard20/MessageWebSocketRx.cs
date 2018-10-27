@@ -2,11 +2,13 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Net;
 using System.Net.Security;
 using System.Net.Sockets;
 using System.Reactive;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
+using System.Reactive.Threading.Tasks;
 using System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading;
@@ -26,7 +28,6 @@ namespace WebsocketClientLite.PCL
         private readonly WebSocketConnectHandler _webSocketConnectService;
         private readonly WebsocketParserHandler _websocketParserHandler;
         private readonly WebsocketSenderHandler _websocketSenderHandler;
-        private CancellationTokenSource _innerCancellationTokenSource;
 
         private TcpClient _tcpClient;
         private Stream _tcpStream;
@@ -47,6 +48,14 @@ namespace WebsocketClientLite.PCL
 
         public IObservable<ConnectionStatus> ConnectionStatusObservable { get; }
         public IObservable<string> MessageReceiverObservable { get; }
+
+        private readonly bool _isTcpClientProvided;
+
+        public MessageWebSocketRx(TcpClient tcpClient)  : this()
+        {
+            _tcpClient = tcpClient;
+            _isTcpClientProvided = true;
+        }
         
         public MessageWebSocketRx()
         {
@@ -74,21 +83,11 @@ namespace WebsocketClientLite.PCL
        
         public async Task ConnectAsync(
             Uri uri,
-            CancellationToken token = default (CancellationToken))
+            TimeSpan timeout = default)
         {
             _observerConnectionStatus.OnNext(ConnectionStatus.ConnectingToTcpSocket);
-
-            _innerCancellationTokenSource = new CancellationTokenSource();
-
-            if (token != default(CancellationToken))
-            {
-                token.Register(() =>
-                {
-                    _innerCancellationTokenSource.Cancel();
-                });
-            }
             
-            await ConnectTcpClient(uri, _innerCancellationTokenSource.Token);
+            await ConnectTcpClient(uri, timeout);
 
             _tcpStream = await DetermineStreamTypeAsync(uri, _tcpClient, X509CertCollection, TlsProtocolType);
 
@@ -116,7 +115,6 @@ namespace WebsocketClientLite.PCL
                 _websocketSenderHandler,
                 uri,
                 IsSecureWebsocket(uri),
-                token,
                 _tcpStream,
                 Origin,
                 Headers,
@@ -196,24 +194,28 @@ namespace WebsocketClientLite.PCL
             return tcpClient.GetStream();
         }
 
-        private async Task ConnectTcpClient(Uri uri, CancellationToken ct)
+        private async Task ConnectTcpClient(Uri uri, TimeSpan timeout = default)
         {
-            _tcpClient?.Dispose();
-
-            _tcpClient = new TcpClient();
-
-            var connectTask = _tcpClient.ConnectAsync(uri.Host, uri.Port);
-            var timeOut = Task.Delay(TimeSpan.FromSeconds(10), ct);
+            if (!_isTcpClientProvided)
+            {
+                _tcpClient?.Dispose();
+                _tcpClient = new TcpClient();
+            }
+            else
+            {
+                if (_tcpClient is null)
+                {
+                    throw new WebsocketClientLiteException($"When using the 'MessageWebSocketRx(TcpClient tcpClient)' constructor a valid TcpClient must be provided.");
+                }
+            }
 
             try
             {
-                var resultTask = await Task.WhenAny(connectTask, timeOut);
-
-                if (resultTask != connectTask)
-                {
-                    throw new WebsocketClientLiteTcpConnectException($"TCP Socket connection timed-out to {uri.Host}:{uri.Port}.");
-                }
-
+                await _tcpClient.ConnectAsync(uri.Host, uri.Port).ToObservable().Timeout(timeout != default ? timeout : TimeSpan.FromSeconds(5));
+            }
+            catch (TimeoutException ex)
+            {
+                throw new WebsocketClientLiteTcpConnectException($"TCP Socket connection timed-out to {uri.Host}:{uri.Port}.", ex);
             }
             catch (ObjectDisposedException)
             {
@@ -285,6 +287,11 @@ namespace WebsocketClientLite.PCL
             _tcpStream?.Dispose();
             _websocketParserHandler?.Dispose();
             _disposableWebsocketListener?.Dispose();
+
+            if (!_isTcpClientProvided)
+            {
+                _tcpClient?.Dispose();
+            }
         }
     }
 }

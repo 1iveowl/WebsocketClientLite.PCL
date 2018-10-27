@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Reactive.Linq;
+using System.Reactive.Threading.Tasks;
 using System.Threading;
 using System.Threading.Tasks;
 using IWebsocketClientLite.PCL;
@@ -37,7 +38,6 @@ namespace WebsocketClientLite.PCL.Service
             WebsocketSenderHandler websocketSenderHandler,
             Uri uri,
             bool secure,
-            CancellationToken token,
             Stream tcpStream,
             string origin = null,
             IDictionary<string, string> headers = null,
@@ -50,7 +50,7 @@ namespace WebsocketClientLite.PCL.Service
 
             _observerConnectionStatus.OnNext(ConnectionStatus.HandshakeSendToWebsocketServer);
 
-            await SendConnectHandShakeAsync(uri, secure, token, origin, headers, subprotocols);
+            await SendConnectHandShakeAsync(uri, secure, origin, headers, subprotocols);
 
             var waitForHandShakeResult = await _websocketParserHandler.ParserDelegate
                 .HandshakeParserCompletionObservable
@@ -77,7 +77,7 @@ namespace WebsocketClientLite.PCL.Service
 
             try
             {
-                await _websocketSenderHandler.SendCloseHandshakeAsync(TcpStream, StatusCodes.GoingAway);
+                await _websocketSenderHandler.SendCloseHandshakeAsync(TcpStream, StatusCodes.GoingAway).ToObservable().Timeout(TimeSpan.FromSeconds(5));
             }
             catch (Exception ex)
             {
@@ -86,8 +86,7 @@ namespace WebsocketClientLite.PCL.Service
 
             try
             {
-                await _websocketParserHandler.DataReceiveStateObservable.Timeout(TimeSpan.FromSeconds(30));
-
+                await _websocketParserHandler.DataReceiveStateObservable.Timeout(TimeSpan.FromSeconds(10));
             }
             catch (InvalidOperationException)
             {
@@ -101,26 +100,28 @@ namespace WebsocketClientLite.PCL.Service
             {
                 throw new WebsocketClientLiteException("Unable to disconnect gracefully.", ex);
             }
-
-            _observerConnectionStatus.OnNext(ConnectionStatus.Disconnected);
-            _observerConnectionStatus.OnCompleted();
-            _observerMessage.OnCompleted();
+            finally
+            {
+                _observerConnectionStatus.OnNext(ConnectionStatus.Disconnected);
+                _observerConnectionStatus.OnCompleted();
+                _observerMessage.OnCompleted();
+            }
         }
         
         private async Task SendConnectHandShakeAsync(
             Uri uri,
             bool secure,
-            CancellationToken token,
             string origin = null,
             IDictionary<string, string> headers = null,
             IEnumerable<string> subprotocol = null
         )
         {
             var handShake = ClientHandShake.Compose(uri, secure, origin, headers, subprotocol);
+
             try
             {
-                await TcpStream.WriteAsync(handShake, 0, handShake.Length, token);
-                await TcpStream.FlushAsync(token);
+                await TcpStream.WriteAsync(handShake, 0, handShake.Length);
+                await TcpStream.FlushAsync();
             }
             catch (Exception ex)
             {

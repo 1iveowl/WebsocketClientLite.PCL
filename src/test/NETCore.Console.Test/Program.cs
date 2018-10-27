@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net.Sockets;
 using System.Security.Authentication;
 using System.Threading;
 using System.Threading.Tasks;
@@ -44,7 +45,8 @@ class Program
 
     private static async Task StartWebSocketAsync(CancellationTokenSource innerCancellationTokenSource)
     {
-        using (var websocketClient = new MessageWebSocketRx
+        using (var tcpClient = new TcpClient{LingerState = new LingerOption(true, 0)})
+        using (var websocketClient = new MessageWebSocketRx(tcpClient)
         {
             IgnoreServerCertificateErrors = true,
             Headers = new Dictionary<string, string> { { "Pragma", "no-cache" }, { "Cache-Control", "no-cache" } },
@@ -52,8 +54,8 @@ class Program
              
         })
         {
-            websocketClient.ExcludeZeroApplicationDataInPong = true;
-            System.Console.WriteLine("Start");
+            //websocketClient.ExcludeZeroApplicationDataInPong = false;
+            Console.WriteLine("Start");
 
             var disposableWebsocketStatus = websocketClient.ConnectionStatusObservable.Subscribe(
                 s =>
@@ -77,9 +79,6 @@ class Program
                     innerCancellationTokenSource.Cancel();
                 });
             
-            var createTokenSource = new CancellationTokenSource();
-
-
             var disposableMessageReceiver = websocketClient.MessageReceiverObservable.Subscribe(
                msg =>
                {
@@ -97,7 +96,7 @@ class Program
                });
 
             
-            await websocketClient.ConnectAsync(new Uri("wss://echo.websocket.org"), createTokenSource.Token);
+            await websocketClient.ConnectAsync(new Uri("wss://echo.websocket.org"));
 
      
             try
