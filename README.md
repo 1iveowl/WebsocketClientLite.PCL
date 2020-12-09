@@ -214,7 +214,7 @@ For details read the **Ping and Pong** section of the [slack.rtm api documentati
 #### Monitoring Status
 Monitoring connection status is easy: 
 ```csharp
-var websocketLoggerSubscriber = websocketClient.ObserveConnectionStatus.Subscribe(
+var websocketLoggerSubscriber = websocketClient.ConnectionStatusObservable.Subscribe(
     status =>
     {
         // Insert code here for logging or handling connection status
