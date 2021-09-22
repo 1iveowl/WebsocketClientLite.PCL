@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net.Security;
+using System.Net.Sockets;
 using System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading;
@@ -32,7 +33,8 @@ namespace IWebsocketClientLite.PCL
 
         Task ConnectAsync(
             Uri uri,
-            TimeSpan timeout = default);
+            TimeSpan timeout = default,
+            AddressFamily addressFamily = AddressFamily.InterNetwork);
 
         Task DisconnectAsync();
 

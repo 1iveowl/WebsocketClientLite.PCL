@@ -83,11 +83,12 @@ namespace WebsocketClientLite.PCL
        
         public async Task ConnectAsync(
             Uri uri,
-            TimeSpan timeout = default)
+            TimeSpan timeout = default,
+            AddressFamily addressFamily = AddressFamily.InterNetwork)
         {
             _observerConnectionStatus.OnNext(ConnectionStatus.ConnectingToTcpSocket);
             
-            await ConnectTcpClient(uri, timeout);
+            await ConnectTcpClient(uri, timeout, addressFamily);
 
             _tcpStream = await DetermineStreamTypeAsync(uri, _tcpClient, X509CertCollection, TlsProtocolType);
 
@@ -194,12 +195,12 @@ namespace WebsocketClientLite.PCL
             return tcpClient.GetStream();
         }
 
-        private async Task ConnectTcpClient(Uri uri, TimeSpan timeout = default)
+        private async Task ConnectTcpClient(Uri uri, TimeSpan timeout = default, AddressFamily addressFamily = AddressFamily.InterNetwork)
         {
             if (!_isTcpClientProvided)
             {
                 _tcpClient?.Dispose();
-                _tcpClient = new TcpClient();
+                _tcpClient = new TcpClient(addressFamily);
             }
             else
             {
