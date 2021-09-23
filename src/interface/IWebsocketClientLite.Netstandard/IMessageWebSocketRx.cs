@@ -33,8 +33,7 @@ namespace IWebsocketClientLite.PCL
 
         Task ConnectAsync(
             Uri uri,
-            TimeSpan timeout = default,
-            AddressFamily addressFamily = AddressFamily.InterNetwork);
+            TimeSpan timeout = default);
 
         Task DisconnectAsync();
 
