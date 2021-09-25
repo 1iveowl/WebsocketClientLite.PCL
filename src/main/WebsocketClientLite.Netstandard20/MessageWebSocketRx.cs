@@ -199,7 +199,7 @@ namespace WebsocketClientLite.PCL
             if (!_isTcpClientProvided)
             {
                 _tcpClient?.Dispose();
-                _tcpClient = new TcpClient();
+                _tcpClient = new TcpClient(uri.HostNameType == UriHostNameType.IPv6 ? AddressFamily.InterNetworkV6 : AddressFamily.InterNetwork);
             }
             else
             {
