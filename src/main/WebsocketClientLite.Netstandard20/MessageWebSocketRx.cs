@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Net;
 using System.Net.Security;
 using System.Net.Sockets;
 using System.Reactive;
@@ -11,7 +10,6 @@ using System.Reactive.Subjects;
 using System.Reactive.Threading.Tasks;
 using System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
-using System.Threading;
 using System.Threading.Tasks;
 using IWebsocketClientLite.PCL;
 using WebsocketClientLite.PCL.CustomException;
@@ -39,14 +37,21 @@ namespace WebsocketClientLite.PCL
         public string SubprotocolAcceptedName => _websocketParserHandler.SubprotocolAcceptedName;
 
         public string Origin { get; set; }
+
         public IDictionary<string, string> Headers { get; set; }
+
         public IEnumerable<string> Subprotocols { get; set; }
+
         public SslProtocols TlsProtocolType { get; set; }
+
         public X509CertificateCollection X509CertCollection { get; set; }
+
         public bool ExcludeZeroApplicationDataInPong { get; set; }
+
         public bool IgnoreServerCertificateErrors { get; set; }
 
         public IObservable<ConnectionStatus> ConnectionStatusObservable { get; }
+
         public IObservable<string> MessageReceiverObservable { get; }
 
         private readonly bool _isTcpClientProvided;
@@ -199,7 +204,10 @@ namespace WebsocketClientLite.PCL
             if (!_isTcpClientProvided)
             {
                 _tcpClient?.Dispose();
-                _tcpClient = new TcpClient(uri.HostNameType == UriHostNameType.IPv6 ? AddressFamily.InterNetworkV6 : AddressFamily.InterNetwork);
+                _tcpClient = new TcpClient(
+                    uri.HostNameType == UriHostNameType.IPv6 
+                        ? AddressFamily.InterNetworkV6 
+                        : AddressFamily.InterNetwork);
             }
             else
             {
@@ -248,11 +256,11 @@ namespace WebsocketClientLite.PCL
             switch (sslPolicyErrors)
             {
                 case SslPolicyErrors.RemoteCertificateNameMismatch:
-                    throw new System.Exception($"SSL/TLS error: {SslPolicyErrors.RemoteCertificateChainErrors.ToString()}");
+                    throw new Exception($"SSL/TLS error: {SslPolicyErrors.RemoteCertificateChainErrors}");
                 case SslPolicyErrors.RemoteCertificateNotAvailable:
-                    throw new System.Exception($"SSL/TLS error: {SslPolicyErrors.RemoteCertificateNotAvailable.ToString()}");
+                    throw new Exception($"SSL/TLS error: {SslPolicyErrors.RemoteCertificateNotAvailable}");
                 case SslPolicyErrors.RemoteCertificateChainErrors:
-                    throw new System.Exception($"SSL/TLS error: {SslPolicyErrors.RemoteCertificateChainErrors.ToString()}");
+                    throw new Exception($"SSL/TLS error: {SslPolicyErrors.RemoteCertificateChainErrors}");
                 case SslPolicyErrors.None:
                     break;
                 default:

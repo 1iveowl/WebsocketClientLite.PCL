@@ -3,14 +3,12 @@ using System.Collections.Generic;
 using System.Net.Security;
 using System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace IWebsocketClientLite.PCL
 {
     public interface IMessageWebSocketRx : IDisposable
     {
-        //bool IsConnected { get; }
         bool SubprotocolAccepted { get; }
         string SubprotocolAcceptedName { get; }
         string Origin { get; }

@@ -332,9 +332,9 @@ namespace WebsocketClientLite.PCL.Parser
             _isFirstPayloadByte = true;
             _isNextBytePayloadLengthByte = true;
         }
-
         public void Dispose()
         {
+
         }
     }
 }

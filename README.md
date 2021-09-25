@@ -13,6 +13,12 @@ The library allows developers to establish secure wss websocket connections to w
 
 This project utilizes [Reactive Extensions](http://reactivex.io/). Although this has an added learning curve it is an added learning curve worth while persuing, as it IMHO makes creating a library like this much more elegant compared to using call-back or events. 
 
+## New in version 6.3
+- Fixed bug related to connecting to IPv6 enpoints. 
+- Updated System.Reactive to v5.0.0.
+- Successfully tested with .NET 5.0.
+- Updated Readme
+
 ## New in version 6.1.
 Updates, stability and fundamental improvements to the library. See examples below for changes in usage. 
 

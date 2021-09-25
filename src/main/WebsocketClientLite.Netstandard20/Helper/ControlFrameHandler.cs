@@ -16,6 +16,7 @@ namespace WebsocketClientLite.PCL.Helper
 
         internal ControlFrameHandler()
         {
+
         }
 
         internal async Task<ControlFrameType> CheckForPingOrCloseControlFrameAsync(

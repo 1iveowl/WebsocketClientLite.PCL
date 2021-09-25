@@ -31,7 +31,7 @@ namespace WebsocketClientLite.PCL.Parser
 
         public void OnMessageBegin(IHttpCombinedParser combinedParser)
         {
-            //throw new NotImplementedException();
+
         }
 
         public void OnHeaderName(IHttpCombinedParser combinedParser, string name)
@@ -60,12 +60,12 @@ namespace WebsocketClientLite.PCL.Parser
 
         public void OnHeadersEnd(IHttpCombinedParser combinedParser)
         {
-            //throw new NotImplementedException();
+
         }
 
         public void OnBody(IHttpCombinedParser combinedParser, ArraySegment<byte> data)
         {
-            //throw new NotImplementedException();
+
         }
 
 
@@ -84,27 +84,27 @@ namespace WebsocketClientLite.PCL.Parser
 
         public void OnMethod(IHttpCombinedParser combinedParser, string method)
         {
-            //throw new NotImplementedException();
+
         }
 
         public void OnRequestUri(IHttpCombinedParser combinedParser, string requestUri)
         {
-            //throw new NotImplementedException();
+
         }
 
         public void OnPath(IHttpCombinedParser combinedParser, string path)
         {
-            //throw new NotImplementedException();
+
         }
 
         public void OnFragment(IHttpCombinedParser combinedParser, string fragment)
         {
-            //throw new NotImplementedException();
+
         }
 
         public void OnQueryString(IHttpCombinedParser combinedParser, string queryString)
         {
-            //throw new NotImplementedException();
+
         }
 
         public void OnResponseType(IHttpCombinedParser combinedParser)

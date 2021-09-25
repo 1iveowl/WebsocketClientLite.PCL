@@ -3,23 +3,23 @@
   <metadata>
     <id>WebsocketClientLite.PCL</id>
     <version>0</version>
-    <title>Websocket Client Lite for .NET Standard 2.0</title>
-    <authors>Jasper H. Bojsen</authors>
+    <title>Websocket Client Lite (.NET Standard 2.0)</title>
+    <authors>1iveowl Developement</authors>
     <owners>Jasper H. Bojsen</owners>
-    <licenseUrl>https://github.com/1iveowl/WebsocketClientLite.PCL/blob/master/License.md</licenseUrl>
+    <license type="expression">MIT</license>
     <projectUrl>https://github.com/1iveowl/WebsocketClientLite.PCL/blob/master/README.md</projectUrl>
-    <iconUrl>https://nuget.org/Content/Images/packageDefaultIcon.png</iconUrl>
+    <icon>images\1iveowl-logo.png</icon>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>A simple and light Websocket client. 
 Xamarin cross-platform.
 Can be set to ignore SSL/TLS server certificate issues. 
 Observe incoming message using Reactive Extensions (Rx)</description>
     <releaseNotes>
-      [General] Minor improvements.
-      [General] Added new MessageWebSocketRx constructor: 'MessageWebSocketRx(tcpClient)'
+[Bug] Fixed IPv6 bug
+[General] System.Reactive 5.0.0
     </releaseNotes>
-    <copyright>Copyright 2018</copyright>
-    <tags>netstandard pcl netcore ios android xamarin uwp websocket rx ssl tls</tags>
+    <copyright>Copyright 2021</copyright>
+    <tags>netstandard net5 netcore ios android xamarin uwp websocket rx ssl tls</tags>
     
     <dependencies>
 
@@ -32,6 +32,7 @@ Observe incoming message using Reactive Extensions (Rx)</description>
     
   </metadata>
     <files>
+      <file src="1iveowl-logo.png" target="images\" />
       <file src="..\main\WebsocketClientLite.Netstandard20\bin\Release\netstandard2.0\WebsocketClientLite.*" target="lib\netstandard2.0" />
       <file src="..\main\WebsocketClientLite.Netstandard20\bin\Release\netstandard2.0\IWebsocketClientLite.*" target="lib\netstandard2.0" />
     </files>
