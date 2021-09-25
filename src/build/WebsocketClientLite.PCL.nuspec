@@ -24,7 +24,7 @@ Observe incoming message using Reactive Extensions (Rx)</description>
     <dependencies>
 
       <group targetFramework="netstandard2.0">
-        <dependency id="System.Reactive" version="4.1.2"/>
+        <dependency id="System.Reactive" version="5.0.0"/>
         <dependency id="HttpMachine.PCL" version="3.1.0"/>
       </group>
       

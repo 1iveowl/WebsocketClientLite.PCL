@@ -11,6 +11,7 @@ class Program
 {
 
     const string AllowedChars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+    const string WebsocketTestServerUrl = "ws.ifelse.io";
 
 
     static async Task Main(string[] args)
@@ -96,7 +97,7 @@ class Program
                });
 
             
-            await websocketClient.ConnectAsync(new Uri("wss://echo.websocket.org"));
+            await websocketClient.ConnectAsync(new Uri($"wss://{WebsocketTestServerUrl}"));
 
      
             try
