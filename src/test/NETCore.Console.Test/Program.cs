@@ -21,8 +21,8 @@ class Program
 
         await StartWebSocketAsyncWithRetry(outerCancellationSource);
 
-        System.Console.WriteLine("Waiting...");
-        System.Console.ReadKey();
+        Console.WriteLine("Waiting...");
+        Console.ReadKey();
         outerCancellationSource.Cancel();
     }
 
@@ -46,96 +46,96 @@ class Program
 
     private static async Task StartWebSocketAsync(CancellationTokenSource innerCancellationTokenSource)
     {
-        using (var tcpClient = new TcpClient{LingerState = new LingerOption(true, 0)})
-        using (var websocketClient = new MessageWebSocketRx(tcpClient)
+        using var tcpClient = new TcpClient { LingerState = new LingerOption(true, 0) };
+        using var websocketClient = new MessageWebSocketRx(tcpClient)
         {
             IgnoreServerCertificateErrors = true,
             Headers = new Dictionary<string, string> { { "Pragma", "no-cache" }, { "Cache-Control", "no-cache" } },
             TlsProtocolType = SslProtocols.Tls12,
-             
-        })
-        {
-            //websocketClient.ExcludeZeroApplicationDataInPong = false;
-            Console.WriteLine("Start");
 
-            var disposableWebsocketStatus = websocketClient.ConnectionStatusObservable.Subscribe(
-                s =>
+        };
+        
+        //websocketClient.ExcludeZeroApplicationDataInPong = false;
+        Console.WriteLine("Start");
+
+        var disposableWebsocketStatus = websocketClient.ConnectionStatusObservable.Subscribe(
+            s =>
+            {
+                System.Console.WriteLine(s.ToString());
+                if (s == ConnectionStatus.Disconnected
+                || s == ConnectionStatus.Aborted
+                || s == ConnectionStatus.ConnectionFailed)
                 {
-                    System.Console.WriteLine(s.ToString());
-                    if (s == ConnectionStatus.Disconnected
-                    || s == ConnectionStatus.Aborted
-                    || s == ConnectionStatus.ConnectionFailed)
-                    {
-                        innerCancellationTokenSource.Cancel();
-                    }
-                },
-                ex =>
-                {
-                    Console.WriteLine($"Connection status error: {ex}.");
                     innerCancellationTokenSource.Cancel();
-                },
-                () =>
-                {
-                    Console.WriteLine($"Connection status completed.");
-                    innerCancellationTokenSource.Cancel();
-                });
+                }
+            },
+            ex =>
+            {
+                Console.WriteLine($"Connection status error: {ex}.");
+                innerCancellationTokenSource.Cancel();
+            },
+            () =>
+            {
+                Console.WriteLine($"Connection status completed.");
+                innerCancellationTokenSource.Cancel();
+            });
             
-            var disposableMessageReceiver = websocketClient.MessageReceiverObservable.Subscribe(
-               msg =>
-               {
-                   Console.WriteLine($"Reply from test server: {msg}");
-               },
-               ex =>
-               {
-                   Console.WriteLine(ex.Message);
-                   innerCancellationTokenSource.Cancel();
-               },
-               () =>
-               {
-                   System.Console.WriteLine($"Message listener subscription Completed");
-                   innerCancellationTokenSource.Cancel();
-               });
+        var disposableMessageReceiver = websocketClient.MessageReceiverObservable.Subscribe(
+            msg =>
+            {
+                Console.WriteLine($"Reply from test server: {msg}");
+            },
+            ex =>
+            {
+                Console.WriteLine(ex.Message);
+                innerCancellationTokenSource.Cancel();
+            },
+            () =>
+            {
+                System.Console.WriteLine($"Message listener subscription Completed");
+                innerCancellationTokenSource.Cancel();
+            });
 
             
-            await websocketClient.ConnectAsync(new Uri($"wss://{WebsocketTestServerUrl}"));
+        await websocketClient.ConnectAsync(new Uri($"wss://{WebsocketTestServerUrl}"));
 
      
-            try
-            {
-                System.Console.WriteLine("Sending: Test Single Frame");
-                await websocketClient.SendTextAsync("Test Single Frame");
+        try
+        {
+            System.Console.WriteLine("Sending: Test Single Frame");
+            await websocketClient.SendTextAsync("Test Single Frame");
 
-                await websocketClient.SendTextAsync("Test Single Frame again");
+            await websocketClient.SendTextAsync("Test Single Frame again");
 
-                await websocketClient.SendTextAsync(TestString(65538, 65550));
+            await websocketClient.SendTextAsync(TestString(65538, 65550));
 
-                var strArray = new[] { "Test ", "multiple ", "frames" };
+            var strArray = new[] { "Test ", "multiple ", "frames" };
 
-                await websocketClient.SendTextAsync(strArray);
+            await websocketClient.SendTextAsync(strArray);
 
-                await websocketClient.SendTextMultiFrameAsync("Start ", FrameType.FirstOfMultipleFrames);
-                await Task.Delay(TimeSpan.FromMilliseconds(200));
-                await websocketClient.SendTextMultiFrameAsync("Continue... #1 ", FrameType.Continuation);
-                await Task.Delay(TimeSpan.FromMilliseconds(300));
-                await websocketClient.SendTextMultiFrameAsync("Continue... #2 ", FrameType.Continuation);
-                await Task.Delay(TimeSpan.FromMilliseconds(150));
-                await websocketClient.SendTextMultiFrameAsync("Continue... #3 ", FrameType.Continuation);
-                await Task.Delay(TimeSpan.FromMilliseconds(400));
-                await websocketClient.SendTextMultiFrameAsync("Stop.", FrameType.LastInMultipleFrames);
+            await websocketClient.SendTextMultiFrameAsync("Start ", FrameType.FirstOfMultipleFrames);
+            await Task.Delay(TimeSpan.FromMilliseconds(200));
+            await websocketClient.SendTextMultiFrameAsync("Continue... #1 ", FrameType.Continuation);
+            await Task.Delay(TimeSpan.FromMilliseconds(300));
+            await websocketClient.SendTextMultiFrameAsync("Continue... #2 ", FrameType.Continuation);
+            await Task.Delay(TimeSpan.FromMilliseconds(150));
+            await websocketClient.SendTextMultiFrameAsync("Continue... #3 ", FrameType.Continuation);
+            await Task.Delay(TimeSpan.FromMilliseconds(400));
+            await websocketClient.SendTextMultiFrameAsync("Stop.", FrameType.LastInMultipleFrames);
 
-                await websocketClient.DisconnectAsync();
+            await websocketClient.DisconnectAsync();
 
-                disposableMessageReceiver.Dispose();
-                disposableWebsocketStatus.Dispose();
+            disposableMessageReceiver.Dispose();
+            disposableWebsocketStatus.Dispose();
 
-                await Task.Delay(TimeSpan.FromDays(1));
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                innerCancellationTokenSource.Cancel();
-            }
+            await Task.Delay(TimeSpan.FromDays(1));
         }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            innerCancellationTokenSource.Cancel();
+        }
+        
     }
 
     private static string TestString(int minlength, int maxlength)
