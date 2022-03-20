@@ -13,6 +13,10 @@ The library allows developers to establish secure wss websocket connections to w
 
 This project utilizes [Reactive Extensions](http://reactivex.io/). Although this has an added learning curve it is an added learning curve worth while persuing, as it IMHO makes creating a library like this much more elegant compared to using call-back or events. 
 
+## New in version 6.4
+- Successfully tested with .NET 6.0.
+- Previously the library on accepted the `ws` and `wss` scheme. Now also `http` and `https` is supported. To further extend supported scheme override the `IsSecureConnectionScheme` method of the `MessageWebSocketRx` class.
+
 ## New in version 6.3
 - Fixed bug related to connecting to IPv6 enpoints. 
 - Updated System.Reactive to v5.0.0.
@@ -216,6 +220,15 @@ while (true)
 }
 ```
 For details read the **Ping and Pong** section of the [slack.rtm api documentation](https://api.slack.com/rtm) 
+
+#### Working with socket.io v4+
+The library have been tested with [socket.io](https://socket.io/docs/v4/). A typical connection will look like this:
+
+```csharp
+websocketClient.ConnectAsync(new Uri($"http://{url}:{port}/socket.io/?EIO=4&transport=websocket");
+```
+
+This will connect on the websocket layer. To further connect on socket.io level see documentation. Typically a text message with the content `40` need to be send. For more see here: [Websocket client not connecting to the socket.io server](https://github.com/socketio/socket.io/discussions/4299).
 
 #### Monitoring Status
 Monitoring connection status is easy: 

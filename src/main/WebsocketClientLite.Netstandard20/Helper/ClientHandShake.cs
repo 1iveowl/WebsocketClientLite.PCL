@@ -8,11 +8,11 @@ namespace WebsocketClientLite.PCL.Helper
     internal static class ClientHandShake
     {
         internal static byte[] Compose(
-            Uri uri, 
-            bool isSecure, 
+            Uri uri,
             string origin = null, 
             IDictionary<string, string> headers = null,
-            IEnumerable<string> subprotocols = null)
+            IEnumerable<string> subprotocols = null,
+            bool isSocketIOv4 = false)
         {
             var sb = new StringBuilder();
 

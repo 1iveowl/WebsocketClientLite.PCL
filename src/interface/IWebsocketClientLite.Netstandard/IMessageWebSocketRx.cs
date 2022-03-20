@@ -43,5 +43,7 @@ namespace IWebsocketClientLite.PCL
             X509Certificate certificate,
             X509Chain chain,
             SslPolicyErrors sslPolicyErrors);
+
+        bool IsSecureConnectionScheme(Uri uri);
     }
 }

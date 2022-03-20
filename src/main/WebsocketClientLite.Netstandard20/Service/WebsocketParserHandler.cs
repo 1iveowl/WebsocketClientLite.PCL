@@ -7,7 +7,6 @@ using System.Reactive;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
-using System.Threading;
 using System.Threading.Tasks;
 using IWebsocketClientLite.PCL;
 using WebsocketClientLite.PCL.CustomException;
@@ -61,9 +60,8 @@ namespace WebsocketClientLite.PCL.Service
 
             _tcpStream = tcpStream;
 
-            _observerDataReceiveMode.OnNext(DataReceiveState.IsListeningForHandShake);
-
             _dataReceiveState = DataReceiveState.IsListeningForHandShake;
+            _observerDataReceiveMode.OnNext(_dataReceiveState);
 
             var listenerObservable = Observable.Create<string>(
                 obs =>
@@ -83,9 +81,10 @@ namespace WebsocketClientLite.PCL.Service
                             () => _dataReceiveState == DataReceiveState.IsListeningForHandShake 
                                 || _dataReceiveState == DataReceiveState.IsListening,
                             Observable.FromAsync(() => ReadOneByteAtTheTimeAsync(tcpStream)))
-                        .Select(b => Observable.FromAsync(() => ParseWebSocketAsync(b, ParserDelegate, parserHandler, subProtocols, obs)))
+                        .Select(b => 
+                            Observable.FromAsync(() => 
+                                ParseWebSocketAsync(b, ParserDelegate, parserHandler, subProtocols, obs)))
                         .Concat()
-
                         .Subscribe(
                         _ =>
                         {
@@ -145,7 +144,7 @@ namespace WebsocketClientLite.PCL.Service
             {
                 if (parserDelegate.HttpRequestResponse.StatusCode == 101)
                 {
-                    if (subProtocols != null)
+                    if (subProtocols is not null)
                     {
                         SubprotocolAccepted =
                             parserDelegate?.HttpRequestResponse?.Headers?.ContainsKey(
@@ -155,11 +154,8 @@ namespace WebsocketClientLite.PCL.Service
                         {
                             SubprotocolAcceptedName =
                                 parserDelegate?.HttpRequestResponse?.Headers?["SEC-WEBSOCKET-PROTOCOL"];
-                            if (!string.IsNullOrEmpty(SubprotocolAcceptedName))
-                            {
-                                Success();
-                            }
-                            else
+
+                            if (string.IsNullOrEmpty(SubprotocolAcceptedName))
                             {
                                 _observerConnectionStatus.OnNext(ConnectionStatus.Aborted);
                                 throw new WebsocketClientLiteException("Server responded with blank Sub Protocol name");
@@ -171,17 +167,11 @@ namespace WebsocketClientLite.PCL.Service
                             throw new WebsocketClientLiteException("Server did not support any of the needed Sub Protocols");
                         }
                     }
-                    else
-                    {
-                        Success();
-                    }
 
-                    void Success()
-                    {
-                        _observerConnectionStatus.OnNext(ConnectionStatus.WebsocketConnected);
-                        Debug.WriteLine("HandShake completed");
-                        _observerDataReceiveMode.OnNext(DataReceiveState.IsListening);
-                    }
+                    _observerConnectionStatus.OnNext(ConnectionStatus.WebsocketConnected);
+                    Debug.WriteLine("HandShake completed");
+                    _observerDataReceiveMode.OnNext(DataReceiveState.IsListening);
+
                 }
                 else
                 {
@@ -218,7 +208,7 @@ namespace WebsocketClientLite.PCL.Service
 
                 if (bytesRead < oneByteArray.Length)
                 {
-                    throw new WebsocketClientLiteException("Websocket connection aborted expectantly. Check connection and socket security version/TLS version).");
+                    throw new WebsocketClientLiteException("Websocket connection aborted unexpectedly. Check connection and socket security version/TLS version).");
                 }
             }
             catch (ObjectDisposedException)

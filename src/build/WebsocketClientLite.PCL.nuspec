@@ -15,8 +15,7 @@ Xamarin cross-platform.
 Can be set to ignore SSL/TLS server certificate issues. 
 Observe incoming message using Reactive Extensions (Rx)</description>
     <releaseNotes>
-[Bug] Fixed IPv6 bug
-[General] System.Reactive 5.0.0
+[General] Extended connection scheme support.
     </releaseNotes>
     <copyright>Copyright 2021</copyright>
     <tags>netstandard net5 netcore ios android xamarin uwp websocket rx ssl tls</tags>

@@ -119,7 +119,6 @@ namespace WebsocketClientLite.PCL
                 _websocketParserHandler,
                 _websocketSenderHandler,
                 uri,
-                IsSecureWebsocket(uri),
                 _tcpStream,
                 Origin,
                 Headers,
@@ -178,9 +177,14 @@ namespace WebsocketClientLite.PCL
             _observerConnectionStatus.OnNext(ConnectionStatus.DeliveryAcknowledged);
         }
 
-        private async Task<Stream> DetermineStreamTypeAsync(Uri uri, TcpClient tcpClient, X509CertificateCollection x509CertificateCollection, SslProtocols tlsProtocolType)
+        private async Task<Stream> DetermineStreamTypeAsync(
+            Uri uri, 
+            TcpClient tcpClient, 
+            X509CertificateCollection x509CertificateCollection, 
+            SslProtocols tlsProtocolType)
         {
-            if (IsSecureWebsocket(uri))
+
+            if (IsSecureConnectionScheme(uri))
             {
                 var secureStream = new SslStream(tcpClient.GetStream(), true, ValidateServerCertificate);
 
@@ -198,6 +202,15 @@ namespace WebsocketClientLite.PCL
 
             return tcpClient.GetStream();
         }
+
+        public virtual bool IsSecureConnectionScheme(Uri uri) => uri.Scheme switch
+        {
+            "ws" => false,
+            "http" => false,
+            "wss" => true,
+            "https" => true,
+            _ => throw new ArgumentException("Unknown Uri type.")
+        };
 
         private async Task ConnectTcpClient(Uri uri, TimeSpan timeout = default)
         {
@@ -267,27 +280,6 @@ namespace WebsocketClientLite.PCL
                     throw new ArgumentOutOfRangeException(nameof(sslPolicyErrors), sslPolicyErrors, null);
             }
             return true;
-        }
-
-        private static bool IsSecureWebsocket(Uri uri)
-        {
-            bool secure;
-
-            switch (uri.Scheme.ToLower())
-            {
-                case "ws":
-                    {
-                        secure = false;
-                        break;
-                    }
-                case "wss":
-                    {
-                        secure = true;
-                        break; ;
-                    }
-                default: throw new ArgumentException("Uri is not Websocket kind.");
-            }
-            return secure;
         }
 
         public void Dispose()

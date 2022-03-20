@@ -4,7 +4,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Reactive.Linq;
 using System.Reactive.Threading.Tasks;
-using System.Threading;
 using System.Threading.Tasks;
 using IWebsocketClientLite.PCL;
 using WebsocketClientLite.PCL.CustomException;
@@ -37,7 +36,6 @@ namespace WebsocketClientLite.PCL.Service
             WebsocketParserHandler websocketParserHandler,
             WebsocketSenderHandler websocketSenderHandler,
             Uri uri,
-            bool secure,
             Stream tcpStream,
             string origin = null,
             IDictionary<string, string> headers = null,
@@ -50,7 +48,7 @@ namespace WebsocketClientLite.PCL.Service
 
             _observerConnectionStatus.OnNext(ConnectionStatus.HandshakeSendToWebsocketServer);
 
-            await SendConnectHandShakeAsync(uri, secure, origin, headers, subprotocols);
+            await SendConnectHandShakeAsync(uri, origin, headers, subprotocols);
 
             var waitForHandShakeResult = await _websocketParserHandler.ParserDelegate
                 .HandshakeParserCompletionObservable
@@ -107,16 +105,16 @@ namespace WebsocketClientLite.PCL.Service
                 _observerMessage.OnCompleted();
             }
         }
-        
+
         private async Task SendConnectHandShakeAsync(
             Uri uri,
-            bool secure,
             string origin = null,
             IDictionary<string, string> headers = null,
-            IEnumerable<string> subprotocol = null
+            IEnumerable<string> subprotocol = null,
+            bool isSocketIOv4 = false
         )
         {
-            var handShake = ClientHandShake.Compose(uri, secure, origin, headers, subprotocol);
+            var handShake = ClientHandShake.Compose(uri, origin, headers, subprotocol, isSocketIOv4);
 
             try
             {
