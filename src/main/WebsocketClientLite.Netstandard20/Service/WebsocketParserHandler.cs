@@ -12,6 +12,7 @@ using IWebsocketClientLite.PCL;
 using WebsocketClientLite.PCL.CustomException;
 using WebsocketClientLite.PCL.Model;
 using WebsocketClientLite.PCL.Parser;
+using System.Linq;
 
 namespace WebsocketClientLite.PCL.Service
 {
@@ -25,11 +26,11 @@ namespace WebsocketClientLite.PCL.Service
         private DataReceiveState _dataReceiveState;
         private Stream _tcpStream;
         private bool ExcludeZeroApplicationDataInPong { get; }
-        private bool SubprotocolAccepted { get; set; }
+        private bool IsSubprotocolAccepted { get; set; }
 
         internal readonly IObservable<DataReceiveState> DataReceiveStateObservable;
-        internal string SubprotocolAcceptedName { get; private set; }
-        internal HttpParserDelegate ParserDelegate { get; private set; }
+        internal IEnumerable<string> SubprotocolAcceptedNames { get; private set; }
+        internal HttpWebSocketParserDelegate ParserDelegate { get; private set; }
 
         internal WebsocketParserHandler(
             IObserver<ConnectionStatus> observerConnectionStatus,
@@ -43,7 +44,7 @@ namespace WebsocketClientLite.PCL.Service
             _observerConnectionStatus = observerConnectionStatus;
             _observerDataReceiveMode = dataReceiveSubject.AsObserver();
 
-            SubprotocolAccepted = subprotocolAccepted;
+            IsSubprotocolAccepted = subprotocolAccepted;
             ExcludeZeroApplicationDataInPong = excludeZeroApplicationDataInPong;
 
             DataReceiveStateObservable = dataReceiveSubject.AsObservable(); 
@@ -53,7 +54,7 @@ namespace WebsocketClientLite.PCL.Service
             Stream tcpStream,
             IEnumerable<string> subProtocols = null)
         {
-            ParserDelegate = new HttpParserDelegate();
+            ParserDelegate = new HttpWebSocketParserDelegate();
             var parserHandler = new HttpCombinedParser(ParserDelegate);
 
             _textDataParser.Reinitialize();
@@ -105,7 +106,7 @@ namespace WebsocketClientLite.PCL.Service
 
         private async Task ParseWebSocketAsync(
             byte[] b, 
-            HttpParserDelegate parserDelegate, 
+            HttpWebSocketParserDelegate parserDelegate, 
             HttpCombinedParser parserHandler,
             IEnumerable<string> subProtocols,
             IObserver<string> obs)
@@ -138,24 +139,25 @@ namespace WebsocketClientLite.PCL.Service
             }
         }
 
-        private void HandshakeController(HttpParserDelegate parserDelegate, IEnumerable<string> subProtocols)
+        private void HandshakeController(HttpWebSocketParserDelegate parserDelegate, IEnumerable<string> subProtocols)
         {
-            if (parserDelegate.HttpRequestResponse.IsEndOfMessage)
+            if (parserDelegate.HttpRequestResponse is not null 
+                && parserDelegate.HttpRequestResponse.IsEndOfMessage)
             {
                 if (parserDelegate.HttpRequestResponse.StatusCode == 101)
                 {
                     if (subProtocols is not null)
                     {
-                        SubprotocolAccepted =
+                        IsSubprotocolAccepted =
                             parserDelegate?.HttpRequestResponse?.Headers?.ContainsKey(
                                 "SEC-WEBSOCKET-PROTOCOL") ?? false;
 
-                        if (SubprotocolAccepted)
+                        if (IsSubprotocolAccepted)
                         {
-                            SubprotocolAcceptedName =
+                            SubprotocolAcceptedNames =
                                 parserDelegate?.HttpRequestResponse?.Headers?["SEC-WEBSOCKET-PROTOCOL"];
 
-                            if (string.IsNullOrEmpty(SubprotocolAcceptedName))
+                            if (!SubprotocolAcceptedNames?.Any(sp => sp.Length > 0) ?? false)
                             {
                                 _observerConnectionStatus.OnNext(ConnectionStatus.Aborted);
                                 throw new WebsocketClientLiteException("Server responded with blank Sub Protocol name");

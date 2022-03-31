@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace WebsocketClientLite.PCL.Parser
+﻿namespace WebsocketClientLite.PCL.Parser
 {
     internal enum ParserState
     {

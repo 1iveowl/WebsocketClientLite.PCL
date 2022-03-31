@@ -1,19 +1,18 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFramework>netstandard2.1</TargetFramework>
     <AssemblyName>WebsocketClientLite.PCL</AssemblyName>
     <RootNamespace>WebsocketClientLite.PCL</RootNamespace>
-    <LangVersion>9.0</LangVersion>
+    <LangVersion>10.0</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>
     <Folder Include="Helper\" />
-    <Folder Include="Model\Base\" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="HttpMachine.PCL" Version="3.1.0" />
+    <PackageReference Include="HttpMachine.PCL" Version="4.0.2" />
     <PackageReference Include="System.Reactive" Version="5.0.0" />
   </ItemGroup>
 

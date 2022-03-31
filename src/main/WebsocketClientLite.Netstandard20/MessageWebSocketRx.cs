@@ -34,7 +34,7 @@ namespace WebsocketClientLite.PCL
 
         public bool SubprotocolAccepted { get; set; }
 
-        public string SubprotocolAcceptedName => _websocketParserHandler.SubprotocolAcceptedName;
+        public IEnumerable<string> SubprotocolAcceptedNames => _websocketParserHandler.SubprotocolAcceptedNames;
 
         public string Origin { get; set; }
 
