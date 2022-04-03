@@ -1,17 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace IWebsocketClientLite.PCL
+﻿namespace IWebsocketClientLite.PCL
 {
     public enum ConnectionStatus
     {
         Initialized,
         ConnectingToTcpSocket,
         TcpSocketConnected,
-        HandshakeSendToWebsocketServer,
+        SendingHandshakeToWebsocketServer,
         HandshakeCompletedSuccessfully,
         WebsocketConnected,
         Disconnected,
@@ -19,11 +13,15 @@ namespace IWebsocketClientLite.PCL
         Disconnecting,
         Aborted,
         Sending,
+        SendComplete,
+        SendError,
         DeliveryAcknowledged,
+        MultiFrameSendingSingle,
         MultiFrameSendingBegin,
+        MultiFrameSendingFirst,
         MultiFrameSendingContinue,
-        FrameDeliveryAcknowledged,
         MultiFrameSendingLast,
+        FrameDeliveryAcknowledged,
         ConnectionFailed,
         ReceivedPing,
         SendPong,

@@ -61,7 +61,50 @@ class Program
         //websocketClient.ExcludeZeroApplicationDataInPong = false;
         Console.WriteLine("Start");
 
-        var disposableWebsocketStatus = websocketClient.ConnectionStatusObservable.Subscribe(
+        //var disposableWebsocketStatus = websocketClient.ConnectionStatusObservable.Subscribe(
+        //    s =>
+        //    {
+        //        System.Console.WriteLine(s.ToString());
+        //        if (s == ConnectionStatus.Disconnected
+        //        || s == ConnectionStatus.Aborted
+        //        || s == ConnectionStatus.ConnectionFailed)
+        //        {
+        //            innerCancellationTokenSource.Cancel();
+        //        }
+        //    },
+        //    ex =>
+        //    {
+        //        Console.WriteLine($"Connection status error: {ex}.");
+        //        innerCancellationTokenSource.Cancel();
+        //    },
+        //    () =>
+        //    {
+        //        Console.WriteLine($"Connection status completed.");
+        //        innerCancellationTokenSource.Cancel();
+        //    });
+
+        //var disposableMessageReceiver = websocketClient.MessageReceiverObservable.Subscribe(
+        //    msg =>
+        //    {
+        //        Console.WriteLine($"Reply from test server: {msg}");
+        //    },
+        //    ex =>
+        //    {
+        //        Console.WriteLine(ex.Message);
+        //        innerCancellationTokenSource.Cancel();
+        //    },
+        //    () =>
+        //    {
+        //        Console.WriteLine($"Message listener subscription Completed");
+        //        innerCancellationTokenSource.Cancel();
+        //    });
+
+        //await websocketClient.ConnectAsync(new Uri($"http://ubuntusrv2.my.home:3000/socket.io/?EIO=4&transport=websocket")/*, isSocketIOv4:true*/);
+        //await websocketClient.ConnectAsync(new Uri($"wss://{WebsocketTestServerUrl}"));
+
+        var (connectionStatusObservable, messageObservable, sender) = websocketClient.WebsocketObservableConnect(new Uri($"wss://{WebsocketTestServerUrl}"));
+
+        var disposableMessageReceiver = connectionStatusObservable.Subscribe(
             s =>
             {
                 System.Console.WriteLine(s.ToString());
@@ -82,9 +125,8 @@ class Program
                 Console.WriteLine($"Connection status completed.");
                 innerCancellationTokenSource.Cancel();
             });
-            
-        var disposableMessageReceiver = websocketClient.MessageReceiverObservable.Subscribe(
-            msg =>
+
+        var disposableWebsocketStatus = messageObservable.Subscribe(msg =>
             {
                 Console.WriteLine($"Reply from test server: {msg}");
             },
@@ -99,12 +141,11 @@ class Program
                 innerCancellationTokenSource.Cancel();
             });
 
-        //await websocketClient.ConnectAsync(new Uri($"http://ubuntusrv2.my.home:3000/socket.io/?EIO=4&transport=websocket")/*, isSocketIOv4:true*/);
-        await websocketClient.ConnectAsync(new Uri($"wss://{WebsocketTestServerUrl}"));
+        await Task.Delay(TimeSpan.FromSeconds(30));
 
         try
         {
-            System.Console.WriteLine("Sending: Test Single Frame");
+            Console.WriteLine("Sending: Test Single Frame");
             await websocketClient.SendTextAsync("Test Single Frame");
 
             await websocketClient.SendTextAsync("Test Single Frame again");

@@ -9,8 +9,12 @@ namespace IWebsocketClientLite.PCL
 {
     public interface IMessageWebSocketRx : IDisposable
     {
+        bool IsConnected { get; }
+
         bool SubprotocolAccepted { get; }
-        IEnumerable<string> SubprotocolAcceptedNames { get; }
+
+        //IEnumerable<string> SubprotocolAcceptedNames { get; }
+
         string Origin { get; }
 
         IDictionary<string, string> Headers { get; }
@@ -23,20 +27,13 @@ namespace IWebsocketClientLite.PCL
 
         bool IgnoreServerCertificateErrors { get; }
 
-        IObservable<ConnectionStatus> ConnectionStatusObservable { get; }
-        IObservable<string> MessageReceiverObservable { get; }
+        //[Obsolete("Use ConnectObservable instead")]
+        //IObservable<ConnectionStatus> ConnectionStatusObservable { get; }
+
+        //[Obsolete("Use ConnectObservable instead.")]
+        //IObservable<string> MessageReceiverObservable { get; }
 
         X509CertificateCollection X509CertCollection { get; }
-
-        Task ConnectAsync(
-            Uri uri,
-            TimeSpan timeout = default);
-
-        Task DisconnectAsync();
-
-        Task SendTextAsync(string message);
-        Task SendTextAsync(string[] messageList);
-        Task SendTextMultiFrameAsync(string message, FrameType frameType);
 
         bool ValidateServerCertificate(
             object sender,
@@ -45,5 +42,22 @@ namespace IWebsocketClientLite.PCL
             SslPolicyErrors sslPolicyErrors);
 
         bool IsSecureConnectionScheme(Uri uri);
+
+        //[Obsolete("Use ConnectObservable instead.")]
+        //Task ConnectAsync(
+        //    Uri uri,
+        //    TimeSpan timeout = default);
+
+        (IObservable<ConnectionStatus> connectionStatusObservable, IObservable<string> messageObservable) 
+            WebsocketObservableConnect(
+                Uri uri,
+                TimeSpan timeout = default);
+
+        ISender GetSender();
+
+        //[Obsolete("Use ConnectObservable instead. To disconnect simply dispose of the message observable.")]
+        //Task DisconnectAsync();
+
+        
     }
 }
