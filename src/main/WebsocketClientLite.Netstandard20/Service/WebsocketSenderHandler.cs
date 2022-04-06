@@ -170,10 +170,10 @@ namespace WebsocketClientLite.PCL.Service
             var maskedMessage = Encode(content, maskKey);
             var frame = firstByte.Concat(payloadBytes).Concat(maskKey).Concat(maskedMessage).ToArray();
 
-            await SendFrameAsync(frame);
+            await SendFrameAsync(frame, frameType);
         }
 
-        private async Task SendFrameAsync(byte[] frame)
+        private async Task SendFrameAsync(byte[] frame, FrameType frameType)
         {
             if (!_tcpStream.CanWrite)
             {
@@ -182,9 +182,25 @@ namespace WebsocketClientLite.PCL.Service
 
             try
             {
-                _observerConnectionStatus.OnNext(ConnectionStatus.Sending);
+                if (frameType == FrameType.CloseControlFrame)
+                {
+                    _observerConnectionStatus.OnNext(ConnectionStatus.Disconnecting);
+                }
+                else
+                {
+                    _observerConnectionStatus.OnNext(ConnectionStatus.Sending);
+                }                
+                   
                 await _writeFunc(frame, _tcpStream);
-                _observerConnectionStatus.OnNext(ConnectionStatus.SendComplete);
+
+                if (frameType == FrameType.CloseControlFrame)
+                {
+                    _observerConnectionStatus.OnNext(ConnectionStatus.Disconnected);
+                }
+                else
+                {
+                    _observerConnectionStatus.OnNext(ConnectionStatus.SendComplete);
+                }                
             }
             catch (Exception ex)
             {

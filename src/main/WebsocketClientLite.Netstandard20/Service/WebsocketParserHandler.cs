@@ -13,7 +13,6 @@ using WebsocketClientLite.PCL.CustomException;
 using WebsocketClientLite.PCL.Model;
 using WebsocketClientLite.PCL.Parser;
 using System.Linq;
-using WebsocketClientLite.PCL.Extension;
 
 namespace WebsocketClientLite.PCL.Service
 {
@@ -21,7 +20,6 @@ namespace WebsocketClientLite.PCL.Service
     {
         private readonly IObserver<ConnectionStatus> _observerConnectionStatus;
         private readonly IObserver<DataReceiveState> _observerDataReceiveMode;
-        //private readonly HandshakeParser _handshakeParser;
         private readonly TextDataParser _textDataParser;
 
         private DataReceiveState _dataReceiveState;
@@ -39,7 +37,6 @@ namespace WebsocketClientLite.PCL.Service
             HttpWebSocketParserDelegate httpWebSocketParserDelegate,
             IObserver<ConnectionStatus> observerConnectionStatus)
         {
-            //_handshakeParser = new HandshakeParser();
             var dataReceiveSubject = new BehaviorSubject<DataReceiveState>(DataReceiveState.Start);
             _textDataParser = new TextDataParser();
 
@@ -53,93 +50,6 @@ namespace WebsocketClientLite.PCL.Service
 
             DataReceiveStateObservable = dataReceiveSubject.AsObservable(); 
         }
-
-        //internal IObservable<string> CreateWebsocketListenerObservable(
-        //    Stream tcpStream,
-        //    Func<Task> connectToWebsocketFunc,
-        //    Func<Task> disconnectFunc,
-        //    IEnumerable<string> subProtocols = null) =>
-        //        Observable.Create<string>(obs =>
-        //        {
-        //            _observerConnectionStatus.OnNext(ConnectionStatus.ConnectingToTcpSocket);
-
-        //            var parserDelegate = new HttpWebSocketParserDelegate();
-        //            ParserDelegate = new HttpWebSocketParserDelegate();
-        //            var parserHandler = new HttpCombinedParser(parserDelegate);
-
-        //            _textDataParser.Reinitialize();
-
-        //            _dataReceiveState = DataReceiveState.IsListeningForHandShake;
-        //            _observerDataReceiveMode.OnNext(_dataReceiveState);
-
-        //            var disposableReceiveState = DataReceiveStateObservable.Subscribe(
-        //                s =>
-        //                {
-        //                    _dataReceiveState = s;
-        //                },
-        //                obs.OnError,
-        //                () =>
-        //                {
-        //                    Debug.WriteLine("DataReceiveObservable completed");
-        //                });
-
-        //            var disposableStreamListener =
-        //                Observable.While(
-        //                    () => _dataReceiveState == DataReceiveState.IsListeningForHandShake
-        //                        || _dataReceiveState == DataReceiveState.IsListening,
-        //                    Observable.FromAsync(() => ReadOneByteAtTheTimeAsync(tcpStream)))
-        //                .Select(b =>
-        //                    Observable.FromAsync(() =>
-        //                        ParseWebSocketAsync(
-        //                            b,
-        //                            tcpStream,
-        //                            parserDelegate,
-        //                            parserHandler,
-        //                            subProtocols,
-        //                            obs)))
-        //                .Concat()
-        //                .Subscribe(
-        //                _ =>
-        //                {
-        //                    if (_textDataParser.IsCloseReceived)
-        //                    {
-        //                        _observerDataReceiveMode.OnNext(DataReceiveState.Exiting);
-        //                        _observerDataReceiveMode.OnCompleted();
-        //                    }
-        //                },
-        //                obs.OnError,
-        //                obs.OnCompleted);
-
-        //            var disposableConnectToWebsocketServer = Observable.Return(tcpStream)
-        //            .Select(tc => Observable.FromAsync(connectToWebsocketFunc))
-        //            .Concat()
-        //                .Subscribe(
-        //                    s =>
-        //                    {
-        //                        Debug.WriteLine("Connected to websocket server");
-        //                    },
-        //                    ex =>
-        //                    {
-        //                        Debug.WriteLine(ex);
-        //                    },
-        //                    () =>
-        //                    {
-        //                        Debug.WriteLine("Connected to websocket server complete");
-        //                    });
-
-
-        //            return new CompositeDisposable(
-        //                disposableReceiveState, 
-        //                disposableStreamListener,
-        //                disposableConnectToWebsocketServer);
-
-        //        })
-        //        // https://stackoverflow.com/a/45217578/4140832
-        //        .FinallyAsync(async () =>
-        //        {
-        //            await disconnectFunc();
-        //        });
-
         internal IObservable<string> CreateWebsocketListenerObservable(
             Stream tcpStream,
             IEnumerable<string> subProtocols = null) =>

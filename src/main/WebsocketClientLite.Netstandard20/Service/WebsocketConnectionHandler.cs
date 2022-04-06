@@ -66,23 +66,6 @@ namespace WebsocketClientLite.PCL.Service
                     await DisconnectWebsocket(sender);
                 });
 
-            //_handshakeListener = _websocketParserHandler
-            //    .CreateWebsocketListenerObservable(stream, Subprotocols);
-
-            //try
-            //{
-            //    _observerConnectionStatus.OnNext(ConnectionStatus.SendingHandshakeToWebsocketServer);
-            //    await WebsocketSenderHandler.SendConnectHandShakeAsync(
-            //        uri, 
-            //        origin, 
-            //        headers, 
-            //        _websocketParserHandler.SubprotocolAcceptedNames);                
-            //}
-            //catch (Exception ex)
-            //{
-            //    _observerConnectionStatus.OnError(ex);
-            //}
-
             await SendHandShake(
                 uri,
                 sender,
@@ -109,21 +92,6 @@ namespace WebsocketClientLite.PCL.Service
             var handshakeListener = _websocketParserHandler
                 .CreateWebsocketListenerObservable(stream, subprotocols);
 
-            //var scheduler = DefaultScheduler.Instance;
-
-            //var handshakeObservable = _websocketParserHandler
-            //    .ParserDelegate
-            //    .HandshakeParserCompletionObservable
-            //    .Timeout(TimeSpan.FromSeconds(30))
-            //    .Catch<ParserState, TimeoutException>(tx => Observable.Return(ParserState.HandshakeTimedOut))
-            //    .ToTask();
-
-            //var sendObservable = websocketSenderHandler.SendConnectHandShake(
-            //    uri,
-            //    origin,
-            //    headers,
-            //    _websocketParserHandler.SubprotocolAcceptedNames);
-
             var handshakeListnerDisposable = handshakeListener
                 .Subscribe(_ =>
                 {
@@ -142,16 +110,6 @@ namespace WebsocketClientLite.PCL.Service
             try
             {
                 _observerConnectionStatus.OnNext(ConnectionStatus.SendingHandshakeToWebsocketServer);
-
-
-
-                //await WaitForHandShake();
-
-                //await websocketSenderHandler.SendConnectHandShake(
-                //        uri,
-                //        origin,
-                //        headers,
-                //        _websocketParserHandler.SubprotocolAcceptedNames); 
 
                 await Task.WhenAll(
                     WaitForHandShake(sender, setSenderAction),
@@ -203,11 +161,11 @@ namespace WebsocketClientLite.PCL.Service
 
         internal async Task DisconnectWebsocket(WebsocketSenderHandler sender)
         {
-            _observerConnectionStatus.OnNext(ConnectionStatus.Disconnecting);
-
             try
             {
-                await sender.SendCloseHandshakeAsync(StatusCodes.GoingAway).ToObservable().Timeout(TimeSpan.FromSeconds(5));
+                await sender.SendCloseHandshakeAsync(StatusCodes.GoingAway)
+                    .ToObservable()
+                    .Timeout(TimeSpan.FromSeconds(5));
             }
             catch (Exception ex)
             {
@@ -216,7 +174,8 @@ namespace WebsocketClientLite.PCL.Service
 
             try
             {
-                await _websocketParserHandler.DataReceiveStateObservable.Timeout(TimeSpan.FromSeconds(10));
+                await _websocketParserHandler.DataReceiveStateObservable
+                    .Timeout(TimeSpan.FromSeconds(10));
             }
             catch (InvalidOperationException)
             {

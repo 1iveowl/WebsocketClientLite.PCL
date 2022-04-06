@@ -154,7 +154,7 @@ class Program
                 innerCancellationTokenSource.Cancel();
             });
 
-        
+        await Task.Delay(TimeSpan.FromSeconds(100));
 
         async Task SendTest1()
         {
