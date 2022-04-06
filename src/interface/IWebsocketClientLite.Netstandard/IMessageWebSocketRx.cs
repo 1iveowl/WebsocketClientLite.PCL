@@ -28,7 +28,7 @@ namespace IWebsocketClientLite.PCL
         bool IgnoreServerCertificateErrors { get; }
 
         //[Obsolete("Use ConnectObservable instead")]
-        //IObservable<ConnectionStatus> ConnectionStatusObservable { get; }
+        IObservable<ConnectionStatus> ConnectionStatusObservable { get; }
 
         //[Obsolete("Use ConnectObservable instead.")]
         //IObservable<string> MessageReceiverObservable { get; }
@@ -48,10 +48,7 @@ namespace IWebsocketClientLite.PCL
         //    Uri uri,
         //    TimeSpan timeout = default);
 
-        (IObservable<ConnectionStatus> connectionStatusObservable, IObservable<string> messageObservable) 
-            WebsocketObservableConnect(
-                Uri uri,
-                TimeSpan timeout = default);
+        IObservable<string> WebsocketConnectObservable(Uri uri, TimeSpan timeout = default);
 
         ISender GetSender();
 

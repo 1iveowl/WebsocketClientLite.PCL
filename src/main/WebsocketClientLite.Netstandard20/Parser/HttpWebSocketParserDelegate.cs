@@ -20,6 +20,16 @@ namespace WebsocketClientLite.PCL.Parser
             HandshakeParserCompletionObservable = handshakeParserStateSubject.AsObservable();
         }
 
+        public override void OnMessageBegin(IHttpCombinedParser combinedParser)
+        {
+            base.OnMessageBegin(combinedParser);
+        }
+
+        public override void OnHeadersEnd(IHttpCombinedParser combinedParser)
+        {
+            base.OnHeadersEnd(combinedParser);
+        }
+
         public override void OnMessageEnd(IHttpCombinedParser combinedParser)
         {
             base.OnMessageEnd(combinedParser);

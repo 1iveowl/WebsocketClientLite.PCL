@@ -9,7 +9,8 @@ namespace WebsocketClientLite.PCL.Parser
         {
             try
             {
-                if (parserHandler.Execute(new ArraySegment<byte>(data, 0, data.Length)) <= 0)
+                if (parserHandler.Execute(data) <= 0)
+                //if (parserHandler.Execute(new ArraySegment<byte>(data, 0, data.Length)) <= 0)
                 {
                     //parserDelegate.HttpRequestResponse.IsUnableToParseHttp = true;
                 }

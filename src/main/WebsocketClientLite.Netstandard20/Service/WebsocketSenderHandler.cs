@@ -16,18 +16,20 @@ namespace WebsocketClientLite.PCL.Service
     {
         private bool _isSendingMultipleFrames;
         private readonly Stream _tcpStream;
-
         private readonly IObserver<ConnectionStatus> _observerConnectionStatus;
+        private readonly Func<byte[], Stream, Task> _writeFunc;
 
         internal WebsocketSenderHandler(
             IObserver<ConnectionStatus> observerConnectionStatus,
-            Stream tcpStream)
+            Stream tcpStream,
+            Func<byte[], Stream, Task> writeFunc)
         {
             _observerConnectionStatus = observerConnectionStatus;
             _tcpStream = tcpStream;
+            _writeFunc = writeFunc;
         }
 
-        internal async Task SendConnectHandShakeAsync(
+        internal async Task SendConnectHandShake(
             Uri uri,
             string origin = null,
             IDictionary<string, string> headers = null,
@@ -39,8 +41,9 @@ namespace WebsocketClientLite.PCL.Service
 
             try
             {
-                await _tcpStream.WriteAsync(handShake, 0, handShake.Length);
-                await _tcpStream.FlushAsync();
+                await _writeFunc(handShake, _tcpStream);
+                //await _tcpStream.WriteAsync(handShake, 0, handShake.Length);
+                //await _tcpStream.FlushAsync();
             }
             catch (Exception ex)
             {
@@ -180,8 +183,7 @@ namespace WebsocketClientLite.PCL.Service
             try
             {
                 _observerConnectionStatus.OnNext(ConnectionStatus.Sending);
-                await _tcpStream.WriteAsync(frame, 0, frame.Length);
-                await _tcpStream.FlushAsync();
+                await _writeFunc(frame, _tcpStream);
                 _observerConnectionStatus.OnNext(ConnectionStatus.SendComplete);
             }
             catch (Exception ex)

@@ -36,7 +36,7 @@ namespace WebsocketClientLite.PCL.Service
             _tcpClient = tcpClient;
         }
 
-        internal async Task<Stream> Connect(
+        internal virtual async Task<Stream> ConnectStream(
             Uri uri,
             Action reportConnected,
             X509CertificateCollection x509CertificateCollection,

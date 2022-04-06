@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net.Sockets;
+using System.Reactive.Linq;
 using System.Security.Authentication;
 using System.Threading;
 using System.Threading.Tasks;
@@ -9,14 +10,12 @@ using WebsocketClientLite.PCL;
 
 class Program
 {
-
     const string AllowedChars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
     const string WebsocketTestServerUrl = "ws.ifelse.io";
 
     //const string WebsocketTestServerUrl = "/socket.io/?EIO=4&transport=websocket";
     //const string WebsocketTestServerUrl = "172.19.128.84:3000";
     //const string WebsocketTestServerUrl = "localhost:3000";
-
 
     static async Task Main(string[] args)
     {
@@ -32,15 +31,18 @@ class Program
 
     private static async Task StartWebSocketAsyncWithRetry(CancellationTokenSource outerCancellationTokenSource)
     {
+        var tcpClient = new TcpClient { LingerState = new LingerOption(true, 0) };
+
+
         while (!outerCancellationTokenSource.IsCancellationRequested)
         {
             var innerCancellationSource = new CancellationTokenSource();
 
-            await StartWebSocketAsync(innerCancellationSource);
+            await StartWebSocketAsync(tcpClient, innerCancellationSource);
 
             while (!innerCancellationSource.IsCancellationRequested)
             {
-                await Task.Delay(TimeSpan.FromSeconds(10), innerCancellationSource.Token);
+                await Task.Delay(TimeSpan.FromSeconds(30), innerCancellationSource.Token);
             }
 
             // Wait 5 seconds before trying again
@@ -48,10 +50,12 @@ class Program
         }
     }
 
-    private static async Task StartWebSocketAsync(CancellationTokenSource innerCancellationTokenSource)
+    private static async Task StartWebSocketAsync(
+        TcpClient tcpClient,
+        CancellationTokenSource innerCancellationTokenSource)
     {
-        using var tcpClient = new TcpClient { LingerState = new LingerOption(true, 0) };
-        using var websocketClient = new MessageWebSocketRx(tcpClient)
+
+        var websocketClient = new MessageWebSocketRx(tcpClient)
         {
             IgnoreServerCertificateErrors = true,
             Headers = new Dictionary<string, string> { { "Pragma", "no-cache" }, { "Cache-Control", "no-cache" } },
@@ -102,19 +106,28 @@ class Program
         //await websocketClient.ConnectAsync(new Uri($"http://ubuntusrv2.my.home:3000/socket.io/?EIO=4&transport=websocket")/*, isSocketIOv4:true*/);
         //await websocketClient.ConnectAsync(new Uri($"wss://{WebsocketTestServerUrl}"));
 
-        var (connectionStatusObservable, messageObservable, sender) = websocketClient.WebsocketObservableConnect(new Uri($"wss://{WebsocketTestServerUrl}"));
+        var websocketConnectionObservable = websocketClient.WebsocketConnectObservable(new Uri($"wss://{WebsocketTestServerUrl}"));
 
-        var disposableMessageReceiver = connectionStatusObservable.Subscribe(
-            s =>
+        //var websocketSender = websocketClient.GetSender();
+
+        var disposableConnectionStatus = websocketClient.ConnectionStatusObservable
+            .Do(status =>
             {
-                System.Console.WriteLine(s.ToString());
-                if (s == ConnectionStatus.Disconnected
-                || s == ConnectionStatus.Aborted
-                || s == ConnectionStatus.ConnectionFailed)
+                Console.WriteLine(status.ToString());
+                if (status == ConnectionStatus.Disconnected
+                || status == ConnectionStatus.Aborted
+                || status == ConnectionStatus.ConnectionFailed)
                 {
                     innerCancellationTokenSource.Cancel();
                 }
-            },
+            })
+            .Where(status => status == ConnectionStatus.HandshakeCompletedSuccessfully)
+            .Select(status => Observable.FromAsync(_ => SendTest1()))
+            .Concat()
+            .Select(status => Observable.FromAsync(_ => SendTest2()))
+            .Concat()
+            .Subscribe(
+            _ => { },
             ex =>
             {
                 Console.WriteLine($"Connection status error: {ex}.");
@@ -126,7 +139,7 @@ class Program
                 innerCancellationTokenSource.Cancel();
             });
 
-        var disposableWebsocketStatus = messageObservable.Subscribe(msg =>
+        var disposableWebsocketMessage = websocketConnectionObservable.Subscribe(msg =>
             {
                 Console.WriteLine($"Reply from test server: {msg}");
             },
@@ -141,43 +154,68 @@ class Program
                 innerCancellationTokenSource.Cancel();
             });
 
-        await Task.Delay(TimeSpan.FromSeconds(30));
+        
 
-        try
+        async Task SendTest1()
         {
-            Console.WriteLine("Sending: Test Single Frame");
-            await websocketClient.SendTextAsync("Test Single Frame");
+            var sender = websocketClient.GetSender();
 
-            await websocketClient.SendTextAsync("Test Single Frame again");
+            await sender.SendTextAsync("Test Single Frame");
 
-            await websocketClient.SendTextAsync(TestString(65538, 65550));
+            await sender.SendTextAsync("Test Single Frame again");
+
+            await sender.SendTextAsync(TestString(65538, 65550));
 
             var strArray = new[] { "Test ", "multiple ", "frames" };
 
-            await websocketClient.SendTextAsync(strArray);
+            await sender.SendTextAsync(strArray);
 
-            await websocketClient.SendTextMultiFrameAsync("Start ", FrameType.FirstOfMultipleFrames);
+            await sender.SendTextAsync("Start ", FrameType.FirstOfMultipleFrames);
             await Task.Delay(TimeSpan.FromMilliseconds(200));
-            await websocketClient.SendTextMultiFrameAsync("Continue... #1 ", FrameType.Continuation);
+            await sender.SendTextAsync("Continue... #1 ", FrameType.Continuation);
             await Task.Delay(TimeSpan.FromMilliseconds(300));
-            await websocketClient.SendTextMultiFrameAsync("Continue... #2 ", FrameType.Continuation);
+            await sender.SendTextAsync("Continue... #2 ", FrameType.Continuation);
             await Task.Delay(TimeSpan.FromMilliseconds(150));
-            await websocketClient.SendTextMultiFrameAsync("Continue... #3 ", FrameType.Continuation);
+            await sender.SendTextAsync("Continue... #3 ", FrameType.Continuation);
             await Task.Delay(TimeSpan.FromMilliseconds(400));
-            await websocketClient.SendTextMultiFrameAsync("Stop.", FrameType.LastInMultipleFrames);
+            await sender.SendTextAsync("Stop.", FrameType.LastInMultipleFrames);
 
-            await websocketClient.DisconnectAsync();
+            await Task.Delay(TimeSpan.FromSeconds(30));
+        }
 
-            disposableMessageReceiver.Dispose();
-            disposableWebsocketStatus.Dispose();
+        async Task SendTest2()
+        {
+            var sender = websocketClient.GetSender();
+
+            Console.WriteLine("Sending: Test Single Frame");
+            await sender.SendTextAsync("Test Single Frame");
+
+            await sender.SendTextAsync("Test Single Frame again");
+
+            await sender.SendTextAsync(TestString(65538, 65550));
+
+            var strArray = new[] { "Test ", "multiple ", "frames" };
+
+            await sender.SendTextAsync(strArray);
+
+            await sender.SendTextAsync("Start ", FrameType.FirstOfMultipleFrames);
+            await Task.Delay(TimeSpan.FromMilliseconds(200));
+            await sender.SendTextAsync("Continue... #1 ", FrameType.Continuation);
+            await Task.Delay(TimeSpan.FromMilliseconds(300));
+            await sender.SendTextAsync("Continue... #2 ", FrameType.Continuation);
+            await Task.Delay(TimeSpan.FromMilliseconds(150));
+            await sender.SendTextAsync("Continue... #3 ", FrameType.Continuation);
+            await Task.Delay(TimeSpan.FromMilliseconds(400));
+            await sender.SendTextAsync("Stop.", FrameType.LastInMultipleFrames);
+
 
             await Task.Delay(TimeSpan.FromDays(1));
         }
-        catch (Exception e)
-        {
-            Console.WriteLine(e);
-            innerCancellationTokenSource.Cancel();
-        }
+        //catch (Exception e)
+        //{
+        //    Console.WriteLine(e);
+        //    innerCancellationTokenSource.Cancel();
+        //}
         
     }
 
