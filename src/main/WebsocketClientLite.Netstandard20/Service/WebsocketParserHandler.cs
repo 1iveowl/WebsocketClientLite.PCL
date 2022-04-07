@@ -231,7 +231,6 @@ namespace WebsocketClientLite.PCL.Service
 
         public void Dispose()
         {
-            //_tcpStream?.Dispose();
             _textDataParser?.Dispose();
             ParserDelegate?.Dispose();
         }

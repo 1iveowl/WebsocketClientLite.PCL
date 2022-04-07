@@ -54,7 +54,6 @@ class Program
         TcpClient tcpClient,
         CancellationTokenSource innerCancellationTokenSource)
     {
-
         var websocketClient = new MessageWebSocketRx(tcpClient)
         {
             IgnoreServerCertificateErrors = true,
@@ -62,53 +61,9 @@ class Program
             TlsProtocolType = SslProtocols.Tls12
         };
 
-        //websocketClient.ExcludeZeroApplicationDataInPong = false;
         Console.WriteLine("Start");
 
-        //var disposableWebsocketStatus = websocketClient.ConnectionStatusObservable.Subscribe(
-        //    s =>
-        //    {
-        //        System.Console.WriteLine(s.ToString());
-        //        if (s == ConnectionStatus.Disconnected
-        //        || s == ConnectionStatus.Aborted
-        //        || s == ConnectionStatus.ConnectionFailed)
-        //        {
-        //            innerCancellationTokenSource.Cancel();
-        //        }
-        //    },
-        //    ex =>
-        //    {
-        //        Console.WriteLine($"Connection status error: {ex}.");
-        //        innerCancellationTokenSource.Cancel();
-        //    },
-        //    () =>
-        //    {
-        //        Console.WriteLine($"Connection status completed.");
-        //        innerCancellationTokenSource.Cancel();
-        //    });
-
-        //var disposableMessageReceiver = websocketClient.MessageReceiverObservable.Subscribe(
-        //    msg =>
-        //    {
-        //        Console.WriteLine($"Reply from test server: {msg}");
-        //    },
-        //    ex =>
-        //    {
-        //        Console.WriteLine(ex.Message);
-        //        innerCancellationTokenSource.Cancel();
-        //    },
-        //    () =>
-        //    {
-        //        Console.WriteLine($"Message listener subscription Completed");
-        //        innerCancellationTokenSource.Cancel();
-        //    });
-
-        //await websocketClient.ConnectAsync(new Uri($"http://ubuntusrv2.my.home:3000/socket.io/?EIO=4&transport=websocket")/*, isSocketIOv4:true*/);
-        //await websocketClient.ConnectAsync(new Uri($"wss://{WebsocketTestServerUrl}"));
-
         var websocketConnectionObservable = websocketClient.WebsocketConnectObservable(new Uri($"wss://{WebsocketTestServerUrl}"));
-
-        //var websocketSender = websocketClient.GetSender();
 
         var disposableConnectionStatus = websocketClient.ConnectionStatusObservable
             .Do(status =>
@@ -166,9 +121,7 @@ class Program
 
             await sender.SendTextAsync(TestString(65538, 65550));
 
-            var strArray = new[] { "Test ", "multiple ", "frames" };
-
-            await sender.SendTextAsync(strArray);
+            var strArray = new[] { "Test ", "multiple ", "frames ", "1 ", "2 ", "3 ", "4 ", "5 ", "6 ", "7 ", "8 ", "9 "};         
 
             await sender.SendTextAsync("Start ", FrameType.FirstOfMultipleFrames);
             await Task.Delay(TimeSpan.FromMilliseconds(200));
@@ -180,7 +133,9 @@ class Program
             await Task.Delay(TimeSpan.FromMilliseconds(400));
             await sender.SendTextAsync("Stop.", FrameType.LastInMultipleFrames);
 
-            await Task.Delay(TimeSpan.FromSeconds(30));
+            await sender.SendTextAsync(strArray);
+
+            await Task.Delay(TimeSpan.FromSeconds(10));
         }
 
         async Task SendTest2()

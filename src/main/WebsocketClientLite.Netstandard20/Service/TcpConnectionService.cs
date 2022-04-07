@@ -21,22 +21,26 @@ namespace WebsocketClientLite.PCL.Service
         
         private readonly Func<bool> _isSecureConnectionSchemeFunc;
         private readonly Func<object, X509Certificate, X509Chain, SslPolicyErrors, bool> _validateServerCertificateFunc;
+        private readonly Func<TcpClient, Uri, Task> _connectTcpClient;
 
         internal Stream ConnectionStream => _tcpStream;
 
         public TcpConnectionService(           
             Func<bool> isSecureConnectionSchemeFunc,
             Func<object, X509Certificate, X509Chain, SslPolicyErrors, bool> validateServerCertificateFunc,
+            Func<TcpClient, Uri, Task> connectTcpClientFunc,
             TcpClient tcpClient = null)
         {
             _keepTcpClientAlive = tcpClient is not null;
             
             _isSecureConnectionSchemeFunc = isSecureConnectionSchemeFunc;
             _validateServerCertificateFunc = validateServerCertificateFunc;
+            _connectTcpClient = connectTcpClientFunc;
+
             _tcpClient = tcpClient;
         }
 
-        internal virtual async Task<Stream> ConnectStream(
+        internal virtual async Task<Stream> ConnectTcpClientAndStream(
             Uri uri,
             Action reportConnected,
             X509CertificateCollection x509CertificateCollection,
@@ -55,7 +59,7 @@ namespace WebsocketClientLite.PCL.Service
             Action reportConnected,
             TimeSpan timeout = default)
         {
-            if (_tcpClient is not null)
+            if (_tcpClient is null)
             {
                 _tcpClient = new TcpClient(
                     uri.HostNameType == UriHostNameType.IPv6
@@ -65,8 +69,7 @@ namespace WebsocketClientLite.PCL.Service
 
             try
             {
-                await _tcpClient
-                    .ConnectAsync(uri.Host, uri.Port)
+                await _connectTcpClient(_tcpClient, uri)
                     .ToObservable().Timeout(timeout != default ? timeout : TimeSpan.FromSeconds(5));
             }
             catch (TimeoutException ex)

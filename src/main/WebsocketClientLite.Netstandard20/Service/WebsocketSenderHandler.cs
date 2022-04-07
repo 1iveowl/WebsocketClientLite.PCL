@@ -42,8 +42,6 @@ namespace WebsocketClientLite.PCL.Service
             try
             {
                 await _writeFunc(handShake, _tcpStream);
-                //await _tcpStream.WriteAsync(handShake, 0, handShake.Length);
-                //await _tcpStream.FlushAsync();
             }
             catch (Exception ex)
             {
@@ -83,16 +81,7 @@ namespace WebsocketClientLite.PCL.Service
             finally
             {
                 _isSendingMultipleFrames = false;
-            }
-
-            _observerConnectionStatus.OnNext(ConnectionStatus.MultiFrameSendingBegin);
-
-            for (var i = 1; i < messageList.Length - 1; i++)
-            {
-                _observerConnectionStatus.OnNext(ConnectionStatus.MultiFrameSendingContinue);
-                await ComposeFrameAndSendAsync(Encoding.UTF8.GetBytes(messageList[i]), FrameType.Continuation);
-            }
-            await ComposeFrameAndSendAsync(Encoding.UTF8.GetBytes(messageList.Last()), FrameType.LastInMultipleFrames);            
+            }   
         }
 
         
@@ -120,21 +109,17 @@ namespace WebsocketClientLite.PCL.Service
             switch (frameType)
             {
                 case FrameType.Single:
-                    _observerConnectionStatus.OnNext(ConnectionStatus.MultiFrameSendingSingle);
                     await ComposeFrameAndSendAsync(Encoding.UTF8.GetBytes(message), FrameType.Single);
                     break;
                 case FrameType.FirstOfMultipleFrames:
-                    _observerConnectionStatus.OnNext(ConnectionStatus.MultiFrameSendingBegin);
                     _isSendingMultipleFrames = true;
                     await ComposeFrameAndSendAsync(Encoding.UTF8.GetBytes(message), FrameType.FirstOfMultipleFrames);
                     break;
                 case FrameType.LastInMultipleFrames:
-                    _observerConnectionStatus.OnNext(ConnectionStatus.MultiFrameSendingLast);
                     await ComposeFrameAndSendAsync(Encoding.UTF8.GetBytes(message), FrameType.LastInMultipleFrames);
                     _isSendingMultipleFrames = false;
                     break;
                 case FrameType.Continuation:
-                    _observerConnectionStatus.OnNext(ConnectionStatus.MultiFrameSendingContinue);
                     await ComposeFrameAndSendAsync(Encoding.UTF8.GetBytes(message), FrameType.Continuation);
                     break;
                 default:
@@ -180,16 +165,41 @@ namespace WebsocketClientLite.PCL.Service
                 throw new WebsocketClientLiteException("Websocket connection have been closed");
             }
 
+            switch (frameType)
+            {
+                case FrameType.Single:
+                    _observerConnectionStatus.OnNext(ConnectionStatus.MultiFrameSendingSingle);
+                    break;
+                case FrameType.FirstOfMultipleFrames:
+                    _observerConnectionStatus.OnNext(ConnectionStatus.MultiFrameSendingBegin);
+                    _isSendingMultipleFrames = true;
+                    break;
+                case FrameType.LastInMultipleFrames:
+                    _observerConnectionStatus.OnNext(ConnectionStatus.MultiFrameSendingLast);
+                    _isSendingMultipleFrames = false;
+                    break;
+                case FrameType.Continuation:
+                    _observerConnectionStatus.OnNext(ConnectionStatus.MultiFrameSendingContinue);
+                   break;
+                case FrameType.CloseControlFrame:
+                    _observerConnectionStatus.OnNext(ConnectionStatus.Disconnecting);
+                    break;
+                default:
+                    _observerConnectionStatus.OnNext(ConnectionStatus.Sending);
+                    break;
+                    //throw new ArgumentOutOfRangeException(nameof(frameType), frameType, null);
+            }
+
             try
             {
-                if (frameType == FrameType.CloseControlFrame)
-                {
-                    _observerConnectionStatus.OnNext(ConnectionStatus.Disconnecting);
-                }
-                else
-                {
-                    _observerConnectionStatus.OnNext(ConnectionStatus.Sending);
-                }                
+                //if (frameType == FrameType.CloseControlFrame)
+                //{
+                //    _observerConnectionStatus.OnNext(ConnectionStatus.Disconnecting);
+                //}
+                //else
+                //{
+                //    _observerConnectionStatus.OnNext(ConnectionStatus.Sending);
+                //}                
                    
                 await _writeFunc(frame, _tcpStream);
 

@@ -12,8 +12,6 @@ using System.Security.Cryptography.X509Certificates;
 using System.Security.Authentication;
 using System.IO;
 using WebsocketClientLite.PCL.Extension;
-using System.Reactive.Concurrency;
-using System.Reactive;
 
 namespace WebsocketClientLite.PCL.Service
 {
@@ -23,8 +21,6 @@ namespace WebsocketClientLite.PCL.Service
         private readonly WebsocketParserHandler _websocketParserHandler;
         private readonly TcpConnectionService _tcpConnectionService;
         private readonly Func<Stream, IObserver<ConnectionStatus>, WebsocketSenderHandler> _createWebsocketSenderFunc;
-
-        //internal WebsocketSenderHandler WebsocketSenderHandler { get; private set; }
 
         internal WebsocketConnectionHandler(
             TcpConnectionService tcpConnectionService,
@@ -49,7 +45,7 @@ namespace WebsocketClientLite.PCL.Service
                     IDictionary<string, string> headers = null,
                     IEnumerable<string> subprotocols = null)
         {
-            var stream = await _tcpConnectionService.ConnectStream(
+            var stream = await _tcpConnectionService.ConnectTcpClientAndStream(
                 uri, 
                 () => _observerConnectionStatus.OnNext(ConnectionStatus.TcpSocketConnected),
                 x509CertificateCollection,
