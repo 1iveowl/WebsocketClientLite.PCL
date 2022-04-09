@@ -1,35 +1,44 @@
-﻿using HttpMachine;
-using IWebsocketClientLite.PCL;
-using System;
+﻿using System;
 using System.IO;
 using System.Net.Security;
 using System.Net.Sockets;
+using System.Reactive.Concurrency;
+using System.Reactive.Linq;
+using System.Reactive.Subjects;
+using System.Reactive.Threading.Tasks;
 using System.Security.Cryptography.X509Certificates;
+using System.Threading;
 using System.Threading.Tasks;
+using IWebsocketClientLite.PCL;
+using WebsocketClientLite.PCL.Helper;
+using WebsocketClientLite.PCL.Model;
 using WebsocketClientLite.PCL.Parser;
 using WebsocketClientLite.PCL.Service;
 
 namespace WebsocketClientLite.PCL.Factory
 {
-    internal class WebsocketServiceFactory : IDisposable
+    internal class WebsocketServiceFactory
     {
-        internal WebsocketConnectionHandler WebsocketConnectHandler { get; private set; }
-
-        private WebsocketServiceFactory()
+        private WebsocketServiceFactory() 
         {
 
         }
 
-        internal static async Task<WebsocketServiceFactory> Create(
+        internal static async Task<WebsocketService> Create(
             Func<bool> isSecureConnectionSchemeFunc,
             Func<object, X509Certificate, X509Chain, SslPolicyErrors, bool> validateServerCertificateFunc,
+            EventLoopScheduler eventLoopScheduler,
             IObserver<ConnectionStatus> observerConnectionStatus,
-            MessageWebSocketRx messageWebSocketRx)
-        {
-            var websocketServices = new WebsocketServiceFactory
-            {
-                WebsocketConnectHandler =
-                    new WebsocketConnectionHandler(
+            MessageWebsocketRx messageWebSocketRx)
+        {           
+            var controlFramHandler = new ControlFrameHandler(
+                writeFunc: (stream, bytes, cts) => RunOnScheduler(WriteToStream(stream, bytes, cts),
+                scheduler: eventLoopScheduler));
+
+            var dataReceiveSubject = new Subject<DataReceiveState>();
+
+            var websocketServices = new WebsocketService(
+                new WebsocketConnectionHandler(
                         new TcpConnectionService(
                             isSecureConnectionSchemeFunc,
                             validateServerCertificateFunc,
@@ -39,35 +48,45 @@ namespace WebsocketClientLite.PCL.Factory
                             messageWebSocketRx.SubprotocolAccepted,
                             messageWebSocketRx.ExcludeZeroApplicationDataInPong,
                             new HttpWebSocketParserDelegate(),
-                            observerConnectionStatus),
+                            ReadOneByteFromStream,
+                            controlFramHandler,
+                            ConnectionStatusAction),
+                        controlFramHandler,
                         observerConnectionStatus,
                         (stream, observerConnectionStatus) => new WebsocketSenderHandler(
                             observerConnectionStatus,
                             stream,
-                            WriteStream))
-            };
+                            (stream, bytes, cts) => RunOnScheduler(WriteToStream(stream, bytes, cts), eventLoopScheduler))));
+            
 
             await Task.CompletedTask;
 
             return websocketServices;
-
-            static async Task WriteStream(byte[] b, Stream stream)
+       
+            void ConnectionStatusAction(ConnectionStatus status)
             {
-                await stream.WriteAsync(b, 0, b.Length).ConfigureAwait(false);
-                await stream.FlushAsync().ConfigureAwait(false);
+                observerConnectionStatus.OnNext(status);
             }
 
-            static async Task ConnectTcpClient(TcpClient tcpClient, Uri uri)
+            async Task<bool> WriteToStream(Stream stream, byte[] b, CancellationToken ct)
             {
-                await tcpClient
+                await stream.WriteAsync(b, 0, b.Length, ct).ConfigureAwait(false);
+                await stream.FlushAsync().ConfigureAwait(false);
+
+                return true;
+            }
+
+            async Task<int> ReadOneByteFromStream(Stream stream, byte[] b, CancellationToken ct) 
+                => await stream.ReadAsync(b, 0, 1, ct).ConfigureAwait(false);
+
+            async Task ConnectTcpClient(TcpClient tcpClient, Uri uri) 
+                => await tcpClient
                     .ConnectAsync(uri.Host, uri.Port)
                     .ConfigureAwait(false);
-            }
-        }
 
-        public void Dispose()
-        {
-            WebsocketConnectHandler.Dispose();         
+            // Running sends and writes on the Event Loop Scheduler serializes them.
+            async Task<T> RunOnScheduler<T>(Task<T> task, IScheduler scheduler) 
+                => await task.ToObservable().ObserveOn(scheduler);
         }
     }
 }

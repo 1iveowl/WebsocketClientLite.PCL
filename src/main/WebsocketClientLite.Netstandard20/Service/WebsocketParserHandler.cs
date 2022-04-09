@@ -13,21 +13,24 @@ using WebsocketClientLite.PCL.CustomException;
 using WebsocketClientLite.PCL.Model;
 using WebsocketClientLite.PCL.Parser;
 using System.Linq;
+using System.Threading;
+using System.Reactive.Concurrency;
+using WebsocketClientLite.PCL.Helper;
 
 namespace WebsocketClientLite.PCL.Service
 {
     internal class WebsocketParserHandler : IDisposable
     {
-        private readonly IObserver<ConnectionStatus> _observerConnectionStatus;
-        private readonly IObserver<DataReceiveState> _observerDataReceiveMode;
+        //private readonly IObserver<DataReceiveState> _observerDataReceiveMode;
         private readonly TextDataParser _textDataParser;
+        private readonly Func<Stream, byte[], CancellationToken, Task<int>> _readOneByteFunc;
+        private readonly Action<ConnectionStatus> _connectionStatusAction;
 
-        private DataReceiveState _dataReceiveState;
-
+        //private DataReceiveState _dataReceiveState;
         private bool ExcludeZeroApplicationDataInPong { get; }
         private bool IsSubprotocolAccepted { get; set; }
 
-        internal readonly IObservable<DataReceiveState> DataReceiveStateObservable;
+        //internal readonly IObservable<DataReceiveState> DataReceiveStateObservable;
         internal IEnumerable<string> SubprotocolAcceptedNames { get; private set; }
         internal HttpWebSocketParserDelegate ParserDelegate { get; private set; }
 
@@ -35,120 +38,275 @@ namespace WebsocketClientLite.PCL.Service
             bool subprotocolAccepted,
             bool excludeZeroApplicationDataInPong,
             HttpWebSocketParserDelegate httpWebSocketParserDelegate,
-            IObserver<ConnectionStatus> observerConnectionStatus)
+            Func<Stream, byte[], CancellationToken, Task<int>> readOneByteFunc,
+            ControlFrameHandler controlFrameHandler,
+            Action<ConnectionStatus> connectionStatusAction)
         {
-            var dataReceiveSubject = new BehaviorSubject<DataReceiveState>(DataReceiveState.Start);
-            _textDataParser = new TextDataParser();
+            _textDataParser = new TextDataParser(controlFrameHandler);
 
-            _observerConnectionStatus = observerConnectionStatus;
-            _observerDataReceiveMode = dataReceiveSubject.AsObserver();
+            _connectionStatusAction = connectionStatusAction;
+            _readOneByteFunc = readOneByteFunc;
+
+            //_observerDataReceiveMode = dataReceiveSubject.AsObserver();
 
             ParserDelegate = httpWebSocketParserDelegate;
 
             IsSubprotocolAccepted = subprotocolAccepted;
             ExcludeZeroApplicationDataInPong = excludeZeroApplicationDataInPong;
 
-            DataReceiveStateObservable = dataReceiveSubject.AsObservable(); 
+            //DataReceiveStateObservable = dataReceiveSubject.AsObservable(); 
         }
-        internal IObservable<string> CreateWebsocketListenerObservable(
-            Stream tcpStream,
-            IEnumerable<string> subProtocols = null) =>
-                Observable.Create<string>(obs =>
-                {
-                    _observerConnectionStatus.OnNext(ConnectionStatus.ConnectingToTcpSocket);
+        //internal IObservable<string> CreateWebsocketListenerObservable(
+        //    Stream stream,
+        //    IEnumerable<string> subProtocols = null,
+        //    IScheduler scheduler = default,
+        //    IObservable<Unit> _clientPingObservable = default,
+        //    bool isListeningForHandshake = false) =>
+        //        Observable.Create<string>(obs =>
+        //        {   
+        //            using var parserHandler = new HttpCombinedParser(ParserDelegate);
 
-                    //var parserDelegate = new HttpWebSocketParserDelegate();
-                    //ParserDelegate = new HttpWebSocketParserDelegate();
-                    using var parserHandler = new HttpCombinedParser(ParserDelegate);
+        //            _textDataParser.Reinitialize();
 
-                    _textDataParser.Reinitialize();
+        //            IObservable<DataReceiveState> dataReceiveStateObservable;
 
-                    _dataReceiveState = DataReceiveState.IsListeningForHandShake;
-                    _observerDataReceiveMode.OnNext(_dataReceiveState);
+        //            if (isListeningForHandshake)
+        //            {
+        //                _connectionStatusAction(ConnectionStatus.ConnectingToTcpSocket);
+        //                dataReceiveStateObservable = Observable.Return(DataReceiveState.IsListeningForHandShake);
+        //                //_dataReceiveState = DataReceiveState.IsListeningForHandShake;
+        //                //_observerDataReceiveMode.OnNext(_dataReceiveState);
+        //            }
+        //            else
+        //            {
+        //                dataReceiveStateObservable = Observable.Return(DataReceiveState.IsListening);
+        //            }
 
-                    var disposableReceiveState = DataReceiveStateObservable.Subscribe(s =>
-                        {
-                            _dataReceiveState = s;
-                        },
-                        obs.OnError,
-                        () =>
-                        {
-                            Debug.WriteLine("DataReceiveObservable completed");
-                        });
+        //            //var disposableReceiveState = DataReceiveStateObservable.Subscribe(s =>
+        //            //    {
+        //            //        _dataReceiveState = s;
+        //            //    },
+        //            //    obs.OnError,
+        //            //    () =>
+        //            //    {
+        //            //        Debug.WriteLine("DataReceiveObservable completed");
+        //            //    });
 
-                    var disposableStreamListener =
-                        Observable.While(
-                            () => _dataReceiveState == DataReceiveState.IsListeningForHandShake
-                                || _dataReceiveState == DataReceiveState.IsListening,
-                            Observable.FromAsync(() => ReadOneByteAtTheTimeAsync(tcpStream)))
-                        .Select(b =>
-                            Observable.FromAsync(() =>
-                                ParseWebSocketAsync(
-                                    b,
-                                    tcpStream, 
-                                    ParserDelegate, 
-                                    parserHandler, 
-                                    subProtocols, 
-                                    obs)))
-                        .Concat()
-                        .Subscribe(
-                        _ =>
-                        {
-                            if (_textDataParser.IsCloseReceived)
-                            {
-                                _observerDataReceiveMode.OnNext(DataReceiveState.Exiting);
-                                _observerDataReceiveMode.OnCompleted();
-                            }
-                        },
-                        obs.OnError,
-                        obs.OnCompleted);
+        //            //var disposableStreamListener =
+        //            //    Observable.While(
+        //            //        () => _dataReceiveState == DataReceiveState.IsListeningForHandShake
+        //            //            || _dataReceiveState == DataReceiveState.IsListening,
+        //            //        Observable.FromAsync(ct => ReadOneByte(stream, ct)))
+        //            //    .Select(bytes => ParseObservable(stream, bytes))
+        //            //    .Concat()
+        //            //    .Subscribe(
+        //            //    _ =>
+        //            //    {
+        //            //        if (_textDataParser.IsCloseReceived)
+        //            //        {
+        //            //            _observerDataReceiveMode.OnNext(DataReceiveState.Exiting);
+        //            //            _observerDataReceiveMode.OnCompleted();
+        //            //        }
+        //            //    },
+        //            //    obs.OnError,
+        //            //    obs.OnCompleted);
 
-                    return new CompositeDisposable(disposableReceiveState, disposableStreamListener);
-                })
-            .Publish().RefCount();
 
-        private async Task ParseWebSocketAsync(
-            byte[] byteArray, 
+        //            //var disposableStreamListener = dataReceiveStateObservable
+        //            //    .CombineLatest(Observable.FromAsync(ct => ReadOneByte(stream, ct))
+        //            //    .SelectMany(x => x)
+        //            //    );
+        //            //.Select(bytes => ParseObservable(stream, bytes))
+        //            //.Concat());
+
+
+        //            var disposableStreamListener = Observable.FromAsync(ct => ReadOneByte(stream, ct))
+        //                .CombineLatest(dataReceiveStateObservable)
+        //                .Select(tuple => ParseObservable(stream, tuple.First, tuple.Second));
+
+
+
+        //            if (_clientPingObservable is not null)
+        //            {
+        //                var clientPingDisposable = _clientPingObservable.Subscribe();
+
+        //                return new CompositeDisposable(
+        //                    clientPingDisposable,
+        //                    //disposableReceiveState,
+        //                    disposableStreamListener);
+        //            }
+
+        //            return new CompositeDisposable(
+        //                //disposableReceiveState, 
+        //                disposableStreamListener);
+
+        //            IObservable<(DataReceiveState dataReceiveState, string message)> ParseObservable(
+        //                Stream stream, 
+        //                byte[] @byte, 
+        //                DataReceiveState dataReceiveState) => 
+        //                    scheduler is null 
+        //                        ? Observable.FromAsync(ct => Parse(
+        //                                @byte,
+        //                                stream,
+        //                                ParserDelegate,
+        //                                parserHandler,
+        //                                subProtocols,
+        //                                dataReceiveState,
+        //                                ct))
+        //                        : Observable.FromAsync(ct => Parse(
+        //                            @byte,
+        //                            stream,
+        //                            ParserDelegate,
+        //                            parserHandler,
+        //                            subProtocols,
+        //                            dataReceiveState,
+        //                            ct))
+        //                            .ObserveOn(scheduler);
+
+        //        })
+        //    .Publish().RefCount();
+
+        internal IObservable<(DataReceiveState dataReceiveState, string message)> CreateWebsocketListenerObservable(
+            Stream stream,
+            IEnumerable<string> subProtocols = null,
+            IScheduler scheduler = default,
+            IObservable<Unit> _clientPingObservable = default,
+            bool isListeningForHandshake = false)
+        {
+            using var parserHandler = new HttpCombinedParser(ParserDelegate);
+
+            //IObservable<DataReceiveState> dataReceiveStateObservable;
+
+            //if (isListeningForHandshake)
+            //{
+            //    _connectionStatusAction(ConnectionStatus.ConnectingToTcpSocket);
+            //    dataReceiveStateObservable = Observable.Return(DataReceiveState.IsListeningForHandShake);
+            //    //_dataReceiveState = DataReceiveState.IsListeningForHandShake;
+            //    //_observerDataReceiveMode.OnNext(_dataReceiveState);
+            //}
+            //else
+            //{
+            //    dataReceiveStateObservable = Observable.Return(DataReceiveState.IsListening);
+            //}
+
+            DataReceiveState dataReceiveState = isListeningForHandshake
+                ? DataReceiveState.IsListeningForHandShake
+                : DataReceiveState.IsListening;
+
+            return Observable.Return(DataReceiveState.IsListeningForHandShake)
+                .Select(d => 
+                    Observable.While(
+                        () => true, 
+                        Observable.FromAsync(ct => ReadOneByte(stream, ct))
+                        //.CombineLatest(Observable.Return(dataReceiveState))
+                            .Select(@byte => ParseObservable(stream, @byte, d))
+                            .Concat()))
+                .Concat()
+                .Do(tuple => dataReceiveState = tuple.dataReceiveState)
+                .Distinct(x => x.message);
+                
+
+            //var t = Observable.FromAsync(ct => ReadOneByte(stream, ct))
+            //    .CombineLatest(Observable.Return(dataReceiveState))
+            //    .Select(tuple => ParseObservable(stream, tuple.First, tuple.Second))
+            //    .Concat()
+            //    .Do(tuple => dataReceiveState = tuple.dataReceiveState);
+
+            //var u = Observable.While(() => true, t);
+
+            //return Observable.FromAsync(ct => ReadOneByte(stream, ct))
+            //    .CombineLatest(dataReceiveStateObservable)
+            //    .Select(tuple => ParseObservable(stream, tuple.First, tuple.Second))
+            //    .Concat()          
+            //    .Publish().RefCount();
+
+                //if (_clientPingObservable is not null)
+                //{
+                //    var clientPingDisposable = _clientPingObservable.Subscribe();
+
+                //    return new CompositeDisposable(
+                //        clientPingDisposable,
+                //        //disposableReceiveState,
+                //        disposableStreamListener);
+                //}
+
+                //return new CompositeDisposable(
+                //    //disposableReceiveState, 
+                //    disposableStreamListener);
+
+                IObservable<(DataReceiveState dataReceiveState, string message)> ParseObservable(
+                    Stream stream,
+                    byte[] @byte,
+                    DataReceiveState dataReceiveState) =>
+                        scheduler is null
+                            ? Observable.FromAsync(ct => Parse(
+                                    @byte,
+                                    stream,
+                                    ParserDelegate,
+                                    parserHandler,
+                                    subProtocols,
+                                    dataReceiveState,
+                                    ct))
+                            : Observable.FromAsync(ct => Parse(
+                                @byte,
+                                stream,
+                                ParserDelegate,
+                                parserHandler,
+                                subProtocols,
+                                dataReceiveState,
+                                ct))
+                                .ObserveOn(scheduler);
+        }
+            //.Publish().RefCount();
+
+        private async Task<(DataReceiveState dataReceiveState, string message)> Parse(
+            byte[] bytes, 
             Stream tcpStream,
             HttpWebSocketParserDelegate parserDelegate, 
             HttpCombinedParser parserHandler,
             IEnumerable<string> subProtocols,
-            IObserver<string> obs)
+            DataReceiveState dataReceiveState,
+            CancellationToken ct)
         {
-
-            switch (_dataReceiveState)
+            switch (dataReceiveState)
             {
                 case DataReceiveState.IsListeningForHandShake:
-
-                    //var handshakeParser = new HandshakeParser();
-                    //handshakeParser.Parse(b, parserDelegate, parserHandler);
-
-                    parserHandler.Execute(byteArray);
-
-                    HandshakeController(parserDelegate, subProtocols);
-                    break;
+                    
+                    parserHandler.Execute(bytes);
+                    
+                    return (
+                        HandshakeController(parserDelegate, subProtocols, dataReceiveState), 
+                        null);
 
                 case DataReceiveState.IsListening:
 
-                    await _textDataParser.ParseAsync(tcpStream, byteArray[0], ExcludeZeroApplicationDataInPong);
+                    await _textDataParser
+                        .Parse(
+                            tcpStream, 
+                            bytes[0], 
+                            ct,
+                            ExcludeZeroApplicationDataInPong);
 
                     if (_textDataParser.IsCloseReceived)
                     {
-                        StopReceivingData();
+                        return (DataReceiveState.Exiting, null);
                     }
 
                     if (_textDataParser.HasNewMessage)
                     {
-                        obs.OnNext(_textDataParser.NewMessage);
+                        return (dataReceiveState, _textDataParser.NewMessage);
+                        //obs.OnNext(_textDataParser.NewMessage);
                     }
-
                     break;
             }
+
+            return (dataReceiveState, null);
         }
 
-        private void HandshakeController(
+        private DataReceiveState HandshakeController(
             HttpWebSocketParserDelegate parserDelegate, 
-            IEnumerable<string> subProtocols)
+            IEnumerable<string> subProtocols,
+            DataReceiveState dataReceiveState)
         {
             if (parserDelegate.HttpRequestResponse is not null 
                 && parserDelegate.HttpRequestResponse.IsEndOfMessage)
@@ -168,21 +326,24 @@ namespace WebsocketClientLite.PCL.Service
 
                             if (!SubprotocolAcceptedNames?.Any(sp => sp.Length > 0) ?? false)
                             {
-                                _observerConnectionStatus.OnNext(ConnectionStatus.Aborted);
+                                _connectionStatusAction(ConnectionStatus.Aborted);
                                 throw new WebsocketClientLiteException("Server responded with blank Sub Protocol name");
                             }
                         }
                         else
                         {
-                            _observerConnectionStatus.OnNext(ConnectionStatus.Aborted);
+                            _connectionStatusAction(ConnectionStatus.Aborted);
                             throw new WebsocketClientLiteException("Server did not support any of the needed Sub Protocols");
                         }
                     }
 
-                    _observerConnectionStatus.OnNext(ConnectionStatus.WebsocketConnected);
-                    Debug.WriteLine("HandShake completed");
-                    _observerDataReceiveMode.OnNext(DataReceiveState.IsListening);
+                    //_dataReceiveState = DataReceiveState.IsListening;
+                    _connectionStatusAction(ConnectionStatus.WebsocketConnected);
 
+                    Debug.WriteLine("HandShake completed");
+                    //_observerDataReceiveMode.OnNext(DataReceiveState.IsListening);
+
+                    return DataReceiveState.IsListening;
                 }
                 else
                 {
@@ -191,17 +352,21 @@ namespace WebsocketClientLite.PCL.Service
                                         $"Error reason: {parserDelegate.HttpRequestResponse.ResponseReason}");
                 }
             }
+
+            return dataReceiveState;
         }
 
-        private void StopReceivingData()
-        {
-            _observerDataReceiveMode.OnNext(DataReceiveState.Exiting);
-            _observerDataReceiveMode.OnCompleted();
-        }
+        //private void StopReceivingData()
+        //{
+        //    _observerDataReceiveMode.OnNext(DataReceiveState.Exiting);
+        //    _observerDataReceiveMode.OnCompleted();
+        //}
 
-        private async Task<byte[]> ReadOneByteAtTheTimeAsync(Stream stream)
+        private async Task<byte[]> ReadOneByte(
+            Stream stream,
+            CancellationToken ct)
         {
-            var oneByteArray = new byte[1];
+            var oneByte = new byte[1];
 
             try
             {
@@ -215,9 +380,11 @@ namespace WebsocketClientLite.PCL.Service
                     throw new WebsocketClientLiteException("Websocket connection have been closed.");
                 }
 
-                var bytesRead = await stream.ReadAsync(oneByteArray, 0, 1);
+                var length = await _readOneByteFunc(stream, oneByte, ct);
 
-                if (bytesRead < oneByteArray.Length)
+                //var bytesRead = await stream.ReadAsync(oneByte, 0, 1);
+
+                if (length == 0)
                 {
                     throw new WebsocketClientLiteException("Websocket connection aborted unexpectedly. Check connection and socket security version/TLS version).");
                 }
@@ -226,7 +393,7 @@ namespace WebsocketClientLite.PCL.Service
             {
                 Debug.WriteLine("Ignoring Object Disposed Exception - This is an expected exception");
             }
-            return oneByteArray;
+            return oneByte;
         }
 
         public void Dispose()

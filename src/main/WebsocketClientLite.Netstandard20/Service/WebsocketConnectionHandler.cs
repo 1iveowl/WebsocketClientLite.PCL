@@ -12,25 +12,32 @@ using System.Security.Cryptography.X509Certificates;
 using System.Security.Authentication;
 using System.IO;
 using WebsocketClientLite.PCL.Extension;
+using System.Threading;
+using System.Reactive.Concurrency;
+using WebsocketClientLite.PCL.Helper;
+using System.Reactive;
 
 namespace WebsocketClientLite.PCL.Service
 {
     internal class WebsocketConnectionHandler : IDisposable
     {
-        private readonly IObserver<ConnectionStatus> _observerConnectionStatus;
-        private readonly WebsocketParserHandler _websocketParserHandler;
         private readonly TcpConnectionService _tcpConnectionService;
+        private readonly WebsocketParserHandler _websocketParserHandler;
+        private readonly ControlFrameHandler _controlFrameHandler;
+        private readonly IObserver<ConnectionStatus> _observerConnectionStatus;
         private readonly Func<Stream, IObserver<ConnectionStatus>, WebsocketSenderHandler> _createWebsocketSenderFunc;
 
         internal WebsocketConnectionHandler(
             TcpConnectionService tcpConnectionService,
             WebsocketParserHandler websocketParserHandler,
+            ControlFrameHandler controlFrameHandler,
             IObserver<ConnectionStatus> observerConnectionStatus,
             Func<Stream, IObserver<ConnectionStatus>, WebsocketSenderHandler> createWebsocketSenderFunc)
         {
-            _tcpConnectionService = tcpConnectionService;
-            _observerConnectionStatus = observerConnectionStatus;
+            _tcpConnectionService = tcpConnectionService;            
             _websocketParserHandler = websocketParserHandler;
+            _controlFrameHandler = controlFrameHandler;
+            _observerConnectionStatus = observerConnectionStatus;
             _createWebsocketSenderFunc = createWebsocketSenderFunc;
         }
 
@@ -39,12 +46,21 @@ namespace WebsocketClientLite.PCL.Service
                     Uri uri,
                     X509CertificateCollection x509CertificateCollection,
                     SslProtocols tlsProtocolType,
-                    Action<ISender> setSenderAction,
+                    Action<ISender> setSenderAction,                    
+                    CancellationToken ct,
+                    bool hasClientPing = false,
+                    TimeSpan clientPingTimeSpan = default,
+                    EventLoopScheduler eventLoopScheduler = default,
                     TimeSpan timeout = default,
                     string origin = null,
                     IDictionary<string, string> headers = null,
                     IEnumerable<string> subprotocols = null)
         {
+            if (hasClientPing && clientPingTimeSpan == default)
+            {
+                clientPingTimeSpan = TimeSpan.FromSeconds(30);
+            }
+
             var stream = await _tcpConnectionService.ConnectTcpClientAndStream(
                 uri, 
                 () => _observerConnectionStatus.OnNext(ConnectionStatus.TcpSocketConnected),
@@ -55,11 +71,15 @@ namespace WebsocketClientLite.PCL.Service
             var sender = _createWebsocketSenderFunc(stream, _observerConnectionStatus);
 
             var listener = _websocketParserHandler
-                .CreateWebsocketListenerObservable(stream, subprotocols)
+                .CreateWebsocketListenerObservable(
+                    stream,                     
+                    subprotocols,
+                    eventLoopScheduler,
+                    hasClientPing ? ClientPing() : default)
                 // https://stackoverflow.com/a/45217578/4140832
                 .FinallyAsync(async () =>
                 {
-                    await DisconnectWebsocket(sender);
+                    await DisconnectWebsocket(sender, ct);
                 });
 
             await SendHandShake(
@@ -68,11 +88,18 @@ namespace WebsocketClientLite.PCL.Service
                 stream,
                 sender,
                 setSenderAction,
+                ct,
                 origin,
                 headers,
                 subprotocols);
 
-            return listener;
+            return listener.Select(tuple => tuple.message);
+
+            IObservable<Unit> ClientPing() =>
+                Observable.Interval(clientPingTimeSpan)
+                            .ObserveOn(eventLoopScheduler)
+                            .Select(_ => Observable.FromAsync(ct => _controlFrameHandler.SendPing(stream, ct)))
+                            .Concat();
         }
 
         private async Task SendHandShake(
@@ -81,12 +108,16 @@ namespace WebsocketClientLite.PCL.Service
             Stream stream,
             ISender sender,
             Action<ISender> setSenderAction,
+            CancellationToken ct,
             string origin = null,
             IDictionary<string, string> headers = null,
             IEnumerable<string> subprotocols = null)
         {
             var handshakeListener = _websocketParserHandler
-                .CreateWebsocketListenerObservable(stream, subprotocols);
+                .CreateWebsocketListenerObservable(
+                    stream,
+                    subprotocols,
+                    isListeningForHandshake: true);
 
             var handshakeListnerDisposable = handshakeListener
                 .Subscribe(_ =>
@@ -102,7 +133,6 @@ namespace WebsocketClientLite.PCL.Service
 
                 });
 
-
             try
             {
                 _observerConnectionStatus.OnNext(ConnectionStatus.SendingHandshakeToWebsocketServer);
@@ -111,11 +141,10 @@ namespace WebsocketClientLite.PCL.Service
                     WaitForHandShake(sender, setSenderAction),
                     websocketSenderHandler.SendConnectHandShake(
                         uri,
-                        origin,
+                        ct,
+                        origin,                        
                         headers,
-                        _websocketParserHandler.SubprotocolAcceptedNames));
-
-                
+                        _websocketParserHandler.SubprotocolAcceptedNames));                
             }
             catch (Exception ex)
             {
@@ -155,11 +184,13 @@ namespace WebsocketClientLite.PCL.Service
             return handShakeResult;
         }
 
-        internal async Task DisconnectWebsocket(WebsocketSenderHandler sender)
+        internal async Task DisconnectWebsocket(
+            WebsocketSenderHandler sender,
+            CancellationToken ct)
         {
             try
             {
-                await sender.SendCloseHandshakeAsync(StatusCodes.GoingAway)
+                await sender.SendCloseHandshakeAsync(StatusCodes.GoingAway, ct)
                     .ToObservable()
                     .Timeout(TimeSpan.FromSeconds(5));
             }
@@ -170,8 +201,8 @@ namespace WebsocketClientLite.PCL.Service
 
             try
             {
-                await _websocketParserHandler.DataReceiveStateObservable
-                    .Timeout(TimeSpan.FromSeconds(10));
+                //await _websocketParserHandler.DataReceiveStateObservable
+                //    .Timeout(TimeSpan.FromSeconds(10));
             }
             catch (InvalidOperationException)
             {

@@ -48,7 +48,11 @@ namespace IWebsocketClientLite.PCL
         //    Uri uri,
         //    TimeSpan timeout = default);
 
-        IObservable<string> WebsocketConnectObservable(Uri uri, TimeSpan timeout = default);
+        IObservable<string> WebsocketConnectObservable(
+            Uri uri, 
+            bool hasClientPing = false,
+            TimeSpan clientPingTimeSpan = default, 
+            TimeSpan timeout = default);
 
         ISender GetSender();
 

@@ -8,15 +8,17 @@ using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
+using System.Threading;
 using System.Threading.Tasks;
 using IWebsocketClientLite.PCL;
 using WebsocketClientLite.PCL.Factory;
+using WebsocketClientLite.PCL.Service;
 
 namespace WebsocketClientLite.PCL
 {
-    public class MessageWebSocketRx : IMessageWebSocketRx
+    public class MessageWebsocketRx : IMessageWebSocketRx
     {
-        private readonly BehaviorSubject<ConnectionStatus> _observerConnectionStatus;
+        private readonly BehaviorSubject<ConnectionStatus> _connectionStatusSubject;
         private readonly EventLoopScheduler _eventLoopScheduler;
 
         internal TcpClient TcpClient { get; private set; }
@@ -47,46 +49,55 @@ namespace WebsocketClientLite.PCL
 
         public IObservable<ConnectionStatus> ConnectionStatusObservable { get; private set; } 
                 
-        public MessageWebSocketRx(TcpClient tcpClient) 
+        public MessageWebsocketRx(TcpClient tcpClient) 
         {
             _eventLoopScheduler = new EventLoopScheduler();
 
             TcpClient = tcpClient;
             Subprotocols = null;
 
-            _observerConnectionStatus = new BehaviorSubject<ConnectionStatus>(ConnectionStatus.Initialized);
-            ConnectionStatusObservable = _observerConnectionStatus
+            _connectionStatusSubject = new BehaviorSubject<ConnectionStatus>(ConnectionStatus.Initialized);
+
+            ConnectionStatusObservable = _connectionStatusSubject
                 .AsObservable()
                 .ObserveOn(_eventLoopScheduler);
         }
 
-        public MessageWebSocketRx() : this(null)
+        public MessageWebsocketRx() : this(null)
         {
             
         }
 
-        public IObservable<string> WebsocketConnectObservable (Uri uri, TimeSpan timeout = default)
+        public IObservable<string> WebsocketConnectObservable (
+            Uri uri,
+            bool hasClientPing = false,
+            TimeSpan clientPingTimeSpan = default,
+            TimeSpan timeout = default)
         {
             var observableListener = Observable.Using(
-                resourceFactoryAsync: ct => WebsocketServiceFactory.Create(
+                resourceFactoryAsync: cts => WebsocketServiceFactory.Create(
                      () => IsSecureConnectionScheme(uri),
                      ValidateServerCertificate,
-                     _observerConnectionStatus.AsObserver(),
+                     _eventLoopScheduler,
+                     _connectionStatusSubject.AsObserver(),
                      this),
                 observableFactoryAsync: (websocketServices, ct) =>
                     Task.FromResult(Observable.Return(websocketServices)))
-                .Select(websocketService => Observable.FromAsync(_ => ConnectWebsocket(websocketService)).Concat())
-                .Concat()
-                .ObserveOn(_eventLoopScheduler);
+                .Select(websocketService => Observable.FromAsync(ct => ConnectWebsocket(websocketService, ct)).Concat())
+                .Concat();
 
             return observableListener;
 
-            async Task<IObservable<string>> ConnectWebsocket(WebsocketServiceFactory ws) =>
+            async Task<IObservable<string>> ConnectWebsocket(WebsocketService ws, CancellationToken ct) =>
                 await ws.WebsocketConnectHandler.ConnectWebsocket(
                                     uri,
                                     X509CertCollection,
                                     TlsProtocolType,
                                     InitializeSender,
+                                    ct,
+                                    hasClientPing,
+                                    clientPingTimeSpan,
+                                    _eventLoopScheduler,
                                     timeout,
                                     Origin,
                                     Headers,
@@ -135,7 +146,7 @@ namespace WebsocketClientLite.PCL
 
         public void Dispose()
         {
-            _observerConnectionStatus.Dispose();
+            _connectionStatusSubject.Dispose();
         }
     }
 }

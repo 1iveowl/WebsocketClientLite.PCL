@@ -70,7 +70,8 @@ namespace WebsocketClientLite.PCL.Service
             try
             {
                 await _connectTcpClient(_tcpClient, uri)
-                    .ToObservable().Timeout(timeout != default ? timeout : TimeSpan.FromSeconds(5));
+                    .ToObservable()
+                    .Timeout(timeout != default ? timeout : TimeSpan.FromSeconds(5));
             }
             catch (TimeoutException ex)
             {

@@ -9,5 +9,5 @@ namespace WebsocketClientLite.PCL.Model
         public IObservable<string> MessageObservable { get; init; }
 
         public ISender Sender {get; init;}
-}
+    }
 }

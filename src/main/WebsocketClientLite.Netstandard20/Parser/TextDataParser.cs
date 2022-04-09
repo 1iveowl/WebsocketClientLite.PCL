@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using IWebsocketClientLite.PCL;
 using WebsocketClientLite.PCL.Helper;
@@ -50,22 +51,35 @@ namespace WebsocketClientLite.PCL.Parser
 
         internal bool HasNewMessage { get; private set; }
 
-        internal TextDataParser()
+        internal TextDataParser(ControlFrameHandler controlFrameHandler)
         {
-            _controlFrameHandler = new ControlFrameHandler();
-
+            _controlFrameHandler = controlFrameHandler;
         }
+
+        //internal TextDataParser(
+        //        Func<Stream, byte[], CancellationToken, Task> writeFunc)
+        //{
+        //    _controlFrameHandler = new ControlFrameHandler(writeFunc);
+        //}
 
         internal void Reinitialize()
         {
             IsCloseReceived = false;
         }
 
-        internal async Task ParseAsync(Stream tcpSocketClient, byte data, bool excludeZeroApplicationDataInPong = false)
+        internal async Task Parse(
+            Stream stream, 
+            byte data,
+            CancellationToken ct,
+            bool excludeZeroApplicationDataInPong = false)
         {
             if (!_isFrameBeingReceived)
             {
-                if (await IsControlFrameAsync(tcpSocketClient, data, excludeZeroApplicationDataInPong))
+                if (await IsControlFrame(
+                    stream, 
+                    data, 
+                    ct,
+                    excludeZeroApplicationDataInPong))
                 {
                     return;
                 }
@@ -92,28 +106,23 @@ namespace WebsocketClientLite.PCL.Parser
             }
         }
 
-        private async Task<bool> IsControlFrameAsync(
-            Stream tcpSocketClient, 
-            byte data, 
-            bool excludeZeroApplicationDataInPong = false)
-        {
-            var controlFrame = await _controlFrameHandler.CheckForPingOrCloseControlFrameAsync(tcpSocketClient, data, excludeZeroApplicationDataInPong);
-
-            switch (controlFrame)
-            {
-                case ControlFrameType.Ping:
-                    return true;
-                case ControlFrameType.Close:
-                    IsCloseReceived = true;
-                    return true;
-                case ControlFrameType.Pong:
-                    return true;
-                case ControlFrameType.None:
-                    return false;
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
-        }
+        private async Task<bool> IsControlFrame(
+            Stream stream,
+            byte data,
+            CancellationToken ct,
+            bool excludeZeroApplicationDataInPong = false) =>            
+                await _controlFrameHandler.CheckForControlFrame(
+                        stream,
+                        data,
+                        ct,
+                        excludeZeroApplicationDataInPong) switch
+                {
+                    ControlFrameType.Ping => true,
+                    ControlFrameType.Pong => true,
+                    ControlFrameType.Close => true,
+                    ControlFrameType.None => false,
+                    _ => throw new ArgumentOutOfRangeException($"Unknown control frame type."),
+                };
 
         private void HandleContent(byte data)
         {
@@ -145,17 +154,17 @@ namespace WebsocketClientLite.PCL.Parser
                         break;
 
                     case FrameType.FirstOfMultipleFrames:
-                        _newMessage = _newMessage + frameContent;
+                        _newMessage += frameContent;
                         HasNewMessage = false;
                         break;
 
                     case FrameType.Continuation:
-                        _newMessage = _newMessage + frameContent;
+                        _newMessage += frameContent;
                         HasNewMessage = false;
                         break;
 
                     case FrameType.LastInMultipleFrames:
-                        _newMessage = _newMessage + frameContent;
+                        _newMessage += frameContent;
                         _isMultiFrameContent = false;
                         HasNewMessage = true;
                         break;
@@ -253,20 +262,13 @@ namespace WebsocketClientLite.PCL.Parser
 
         private void InitializeContentRead()
         {
-            switch (_payloadLengthTypeInBits)
+            _payloadLength = _payloadLengthTypeInBits switch
             {
-                case PayloadLenghtType.Bits8:
-                    _payloadLength = _payloadLengthByteArray[0];
-                    break;
-                case PayloadLenghtType.Bits16:
-                    _payloadLength = BitConverter.ToUInt16(_payloadLengthByteArray, 0);
-                    break;
-                case PayloadLenghtType.Bits64:
-                    _payloadLength = BitConverter.ToUInt64(_payloadLengthByteArray, 0);
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
+                PayloadLenghtType.Bits8 => _payloadLengthByteArray[0],
+                PayloadLenghtType.Bits16 => BitConverter.ToUInt16(_payloadLengthByteArray, 0),
+                PayloadLenghtType.Bits64 => BitConverter.ToUInt64(_payloadLengthByteArray, 0),
+                _ => throw new ArgumentOutOfRangeException(),
+            };
 
             _contentByteArray = new byte[_payloadLength];
             _contentPosition = 0;

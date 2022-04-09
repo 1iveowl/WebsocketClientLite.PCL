@@ -1,5 +1,7 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 using WebsocketClientLite.PCL.Model;
 
@@ -7,26 +9,33 @@ namespace WebsocketClientLite.PCL.Helper
 {
     internal class ControlFrameHandler
     {
-        private byte[] _pong;
+        private readonly Func<Stream, byte[], CancellationToken, Task> _writeFunc;
 
+        private byte[] _pong;
         private bool _isReceivingPingData = false;
         private int _payloadLength = 0;
         private int _payloadPosition = 0;
         private bool _isNextBytePayloadLength = false;
 
-        internal ControlFrameHandler()
+        internal ControlFrameHandler(Func<Stream, byte[], CancellationToken, Task> writeFunc)
         {
-
+            _writeFunc = writeFunc;
         }
 
-        internal async Task<ControlFrameType> CheckForPingOrCloseControlFrameAsync(
-            Stream tcpSocketClient, 
-            byte data, 
+        internal async Task<ControlFrameType> CheckForControlFrame(
+            Stream stream, 
+            byte data,
+            CancellationToken ct,
             bool excludeZeroApplicationDataInPong = false)
         {
             if (_isReceivingPingData)
             {
-                await AddPingPayload(tcpSocketClient, data, excludeZeroApplicationDataInPong);
+                await AddPingPayload(
+                    stream, 
+                    data, 
+                    ct,
+                    excludeZeroApplicationDataInPong);
+
                 return ControlFrameType.Ping;
             }
 
@@ -41,20 +50,37 @@ namespace WebsocketClientLite.PCL.Helper
             return ControlFrameType.None;
         }
 
-        private async Task AddPingPayload(Stream tcpStream, byte data, bool excludeZeroApplicationDataInPong = false)
+        internal async Task SendPing(
+            Stream stream,
+            CancellationToken ct,
+            bool isExcludingZeroApplicationDataInPong = false)
+        {
+            var ping = isExcludingZeroApplicationDataInPong
+                        ? new byte[1] { 137 }
+                        : new byte[2] { 137, 0 };
+
+            await SendAsync(stream, ping, ct, "Ping");
+        }
+
+        private async Task AddPingPayload(
+            Stream stream, 
+            byte data,
+            CancellationToken ct,
+            bool isExcludingZeroApplicationDataInPong = false)
         {
             if (_isNextBytePayloadLength)
             {
                 var b = data;
+
                 if (b == 0)
                 {
                     ReinitializePing();
 
-                    _pong = excludeZeroApplicationDataInPong 
+                    _pong = isExcludingZeroApplicationDataInPong 
                         ? new byte[1] { 138} 
                         : new byte[2] { 138, 0 };
                     
-                    await SendPongAsync(tcpStream);
+                    await SendAsync(stream, _pong, ct);
                 }
                 else
                 {
@@ -77,7 +103,7 @@ namespace WebsocketClientLite.PCL.Helper
                 else
                 {
                     ReinitializePing();
-                    await SendPongAsync(tcpStream);
+                    await SendAsync(stream, _pong, ct);
                 }
             }
         }
@@ -94,11 +120,10 @@ namespace WebsocketClientLite.PCL.Helper
             _isNextBytePayloadLength = false;
         }
 
-        private async Task SendPongAsync(Stream tcpStream)
+        private async Task SendAsync(Stream stream, byte[] pp, CancellationToken ct, string pingpong = "Pong")
         {
-            await tcpStream.WriteAsync(_pong, 0, _pong.Length);
-            await tcpStream.FlushAsync();
-            Debug.WriteLine("Pong send");
+            await _writeFunc(stream, pp, ct);
+            Debug.WriteLine($"{pingpong} send.");
         }
     }
 }
