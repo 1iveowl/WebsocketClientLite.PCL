@@ -5,6 +5,8 @@
         Start,
         IsListeningForHandShake,
         IsListening,
+        IsParsing,
+        MessageReceived,
         Exiting
     }
 }

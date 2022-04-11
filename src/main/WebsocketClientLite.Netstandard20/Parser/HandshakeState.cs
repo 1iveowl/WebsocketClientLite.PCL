@@ -1,8 +1,10 @@
 ﻿namespace WebsocketClientLite.PCL.Parser
 {
-    internal enum ParserState
+    internal enum HandshakeState
     {
         Start,
+        HandshakeSend,
+        HandshakeSendFailed,
         HandshakeCompletedSuccessfully,
         HandshakeFailed,
         HandshakeTimedOut,

@@ -16,7 +16,7 @@ namespace WebsocketClientLite.PCL.Service
     internal class WebsocketSenderHandler : ISender
     {
         private bool _isSendingMultipleFrames;
-        private readonly Stream _tcpStream;
+        private readonly Stream _stream;
         private readonly IObserver<ConnectionStatus> _observerConnectionStatus;
         private readonly Func<Stream, byte[], CancellationToken, Task> _writeFunc;
 
@@ -26,7 +26,7 @@ namespace WebsocketClientLite.PCL.Service
             Func<Stream, byte[], CancellationToken, Task> writeFunc)
         {
             _observerConnectionStatus = observerConnectionStatus;
-            _tcpStream = tcpStream;
+            _stream = tcpStream;
             _writeFunc = writeFunc;
         }
 
@@ -44,7 +44,7 @@ namespace WebsocketClientLite.PCL.Service
 
             try
             {
-                await _writeFunc(_tcpStream, handShakeBytes, ct);
+                await _writeFunc(_stream, handShakeBytes, ct);
             }
             catch (Exception ex)
             {
@@ -198,7 +198,7 @@ namespace WebsocketClientLite.PCL.Service
             FrameType frameType, 
             CancellationToken ct)
         {
-            if (!_tcpStream.CanWrite)
+            if (!_stream.CanWrite)
             {
                 throw new WebsocketClientLiteException("Websocket connection have been closed");
             }
@@ -237,7 +237,7 @@ namespace WebsocketClientLite.PCL.Service
                     ct = cts.Token;
                 }
 
-                await _writeFunc(_tcpStream, frame, ct);
+                await _writeFunc(_stream, frame, ct);
 
                 if (frameType == FrameType.CloseControlFrame)
                 {

@@ -35,24 +35,28 @@ namespace WebsocketClientLite.PCL.Factory
                 writeFunc: (stream, bytes, cts) => RunOnScheduler(WriteToStream(stream, bytes, cts),
                 scheduler: eventLoopScheduler));
 
+            var tcpConnectionHandler = new TcpConnectionService(
+                            isSecureConnectionSchemeFunc,
+                            validateServerCertificateFunc,
+                            ConnectTcpClient,
+                            ReadOneByteFromStream,
+                            messageWebSocketRx.TcpClient);
+
             var dataReceiveSubject = new Subject<DataReceiveState>();
 
             var websocketServices = new WebsocketService(
                 new WebsocketConnectionHandler(
-                        new TcpConnectionService(
-                            isSecureConnectionSchemeFunc,
-                            validateServerCertificateFunc,
-                            ConnectTcpClient,
-                            messageWebSocketRx.TcpClient),
+                        tcpConnectionHandler,
                         new WebsocketParserHandler(
+                            tcpConnectionHandler,
                             messageWebSocketRx.SubprotocolAccepted,
                             messageWebSocketRx.ExcludeZeroApplicationDataInPong,
-                            new HttpWebSocketParserDelegate(),
                             ReadOneByteFromStream,
                             controlFramHandler,
                             ConnectionStatusAction),
                         controlFramHandler,
                         observerConnectionStatus,
+                        ConnectionStatusAction,
                         (stream, observerConnectionStatus) => new WebsocketSenderHandler(
                             observerConnectionStatus,
                             stream,

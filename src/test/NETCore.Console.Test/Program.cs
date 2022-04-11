@@ -125,7 +125,7 @@ class Program
         {
             var sender = websocketClient.GetSender();
 
-            await Task.Delay(TimeSpan.FromSeconds(5));
+            await Task.Delay(TimeSpan.FromSeconds(4));
 
             await sender.SendTextAsync("Test Single Frame 1");
 
@@ -142,13 +142,13 @@ class Program
             await sender.SendTextAsync(new[] { "Test ", "multiple ", "frames ", "1 ", "2 ", "3 ", "4 ", "5 ", "6 ", "7 ", "8 ", "9 " });
 
             await sender.SendTextAsync("Start ", FrameType.FirstOfMultipleFrames);
-            await Task.Delay(TimeSpan.FromMilliseconds(200));
+            await Task.Delay(TimeSpan.FromMilliseconds(500));
             await sender.SendTextAsync("Continue... #1 ", FrameType.Continuation);
-            await Task.Delay(TimeSpan.FromMilliseconds(300));
+            await Task.Delay(TimeSpan.FromMilliseconds(500));
             await sender.SendTextAsync("Continue... #2 ", FrameType.Continuation);
-            await Task.Delay(TimeSpan.FromMilliseconds(150));
+            await Task.Delay(TimeSpan.FromMilliseconds(550));
             await sender.SendTextAsync("Continue... #3 ", FrameType.Continuation);
-            await Task.Delay(TimeSpan.FromMilliseconds(400));
+            await Task.Delay(TimeSpan.FromMilliseconds(500));
             await sender.SendTextAsync("Stop.", FrameType.LastInMultipleFrames);           
 
             await Task.Delay(TimeSpan.FromSeconds(20));
@@ -168,13 +168,13 @@ class Program
             await sender.SendTextAsync(new[] { "Test ", "multiple ", "frames" });
 
             await sender.SendTextAsync("Start ", FrameType.FirstOfMultipleFrames);
-            await Task.Delay(TimeSpan.FromMilliseconds(200));
+            await Task.Delay(TimeSpan.FromMilliseconds(500));
             await sender.SendTextAsync("Continue... #1 ", FrameType.Continuation);
-            await Task.Delay(TimeSpan.FromMilliseconds(300));
+            await Task.Delay(TimeSpan.FromMilliseconds(500));
             await sender.SendTextAsync("Continue... #2 ", FrameType.Continuation);
-            await Task.Delay(TimeSpan.FromMilliseconds(150));
+            await Task.Delay(TimeSpan.FromMilliseconds(550));
             await sender.SendTextAsync("Continue... #3 ", FrameType.Continuation);
-            await Task.Delay(TimeSpan.FromMilliseconds(400));
+            await Task.Delay(TimeSpan.FromMilliseconds(500));
             await sender.SendTextAsync("Stop.", FrameType.LastInMultipleFrames);
 
             await Task.Delay(TimeSpan.FromDays(1));

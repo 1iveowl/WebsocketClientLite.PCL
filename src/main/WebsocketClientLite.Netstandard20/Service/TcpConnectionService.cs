@@ -7,6 +7,7 @@ using System.Reactive.Linq;
 using System.Reactive.Threading.Tasks;
 using System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
+using System.Threading;
 using System.Threading.Tasks;
 using WebsocketClientLite.PCL.CustomException;
 
@@ -17,18 +18,20 @@ namespace WebsocketClientLite.PCL.Service
         private readonly bool _keepTcpClientAlive;
 
         private TcpClient _tcpClient;
-        private Stream _tcpStream;
+        private Stream _stream;
         
         private readonly Func<bool> _isSecureConnectionSchemeFunc;
         private readonly Func<object, X509Certificate, X509Chain, SslPolicyErrors, bool> _validateServerCertificateFunc;
         private readonly Func<TcpClient, Uri, Task> _connectTcpClient;
+        private readonly Func<Stream, byte[], CancellationToken, Task<int>> _readOneByteFunc;
 
-        internal Stream ConnectionStream => _tcpStream;
+        internal Stream ConnectionStream => _stream;
 
         public TcpConnectionService(           
             Func<bool> isSecureConnectionSchemeFunc,
             Func<object, X509Certificate, X509Chain, SslPolicyErrors, bool> validateServerCertificateFunc,
             Func<TcpClient, Uri, Task> connectTcpClientFunc,
+            Func<Stream, byte[], CancellationToken, Task<int>> readOneByteFunc,
             TcpClient tcpClient = null)
         {
             _keepTcpClientAlive = tcpClient is not null;
@@ -36,6 +39,7 @@ namespace WebsocketClientLite.PCL.Service
             _isSecureConnectionSchemeFunc = isSecureConnectionSchemeFunc;
             _validateServerCertificateFunc = validateServerCertificateFunc;
             _connectTcpClient = connectTcpClientFunc;
+            _readOneByteFunc = readOneByteFunc;
 
             _tcpClient = tcpClient;
         }
@@ -49,9 +53,51 @@ namespace WebsocketClientLite.PCL.Service
         {
             await ConnectTcpClient(uri, reportConnected, timeout);
 
-            _tcpStream = await CreateStream(uri, _tcpClient, x509CertificateCollection, tlsProtocolType);
+            _stream = await CreateStream(uri, _tcpClient, x509CertificateCollection, tlsProtocolType);
 
-            return _tcpStream;
+            return _stream;
+        }
+
+        internal IObservable<byte[]> ByteStreamObservable() =>
+            Observable.Defer(() => Observable.FromAsync(ct => ReadOneByteFromStream(ct)))
+            .Repeat()
+            .TakeWhile(@byte => @byte is not null)
+            .Publish()
+            .RefCount();
+
+        internal async Task<byte[]> ReadOneByteFromStream(CancellationToken ct)
+        {
+            if(_stream is null || !_stream.CanRead)
+            {
+                throw new WebsocketClientLiteException("Stream not ready or not connected.");
+            }
+
+            var @byte = new byte[1];
+
+            try
+            {
+                if (_stream == null)
+                {
+                    throw new WebsocketClientLiteException("Read stream cannot be null.");
+                }
+
+                if (!_stream.CanRead)
+                {
+                    throw new WebsocketClientLiteException("Websocket connection have been closed.");
+                }
+
+                var length = await _readOneByteFunc(_stream, @byte, ct);
+
+                if (length == 0)
+                {
+                    throw new WebsocketClientLiteException("Websocket connection aborted unexpectedly. Check connection and socket security version/TLS version).");
+                }
+            }
+            catch (ObjectDisposedException)
+            {
+                Debug.WriteLine("Ignoring Object Disposed Exception - This is an expected exception");
+            }
+            return @byte;
         }
 
         private async Task ConnectTcpClient(
@@ -125,9 +171,10 @@ namespace WebsocketClientLite.PCL.Service
 
             return tcpClient.GetStream();
         }
+
         public void Dispose()
         {
-            _tcpStream?.Dispose();
+            _stream?.Dispose();
 
             if (!_keepTcpClientAlive)
             {
