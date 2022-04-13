@@ -2,10 +2,8 @@
 using System.Collections.Generic;
 using System.Net.Security;
 using System.Net.Sockets;
-using System.Reactive;
 using System.Reactive.Concurrency;
 using System.Reactive.Linq;
-using System.Reactive.Subjects;
 using System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading;
@@ -18,7 +16,7 @@ namespace WebsocketClientLite.PCL
 {
     public class MessageWebsocketRx : IMessageWebSocketRx
     {
-        private readonly BehaviorSubject<ConnectionStatus> _connectionStatusSubject;
+        // private readonly BehaviorSubject<ConnectionStatus> _connectionStatusSubject;
         private readonly EventLoopScheduler _eventLoopScheduler;
 
         internal TcpClient TcpClient { get; private set; }
@@ -47,7 +45,7 @@ namespace WebsocketClientLite.PCL
             ? _sender 
             : throw new InvalidOperationException("No sender available, Websocket not connected. You need to subscribe to WebsocketConnectObservable first.");
 
-        public IObservable<ConnectionStatus> ConnectionStatusObservable { get; private set; } 
+        //public IObservable<ConnectionStatus> ConnectionStatusObservable { get; private set; } 
                 
         public MessageWebsocketRx(TcpClient tcpClient) 
         {
@@ -56,11 +54,11 @@ namespace WebsocketClientLite.PCL
             TcpClient = tcpClient;
             Subprotocols = null;
 
-            _connectionStatusSubject = new BehaviorSubject<ConnectionStatus>(ConnectionStatus.Initialized);
+            //_connectionStatusSubject = new BehaviorSubject<ConnectionStatus>(ConnectionStatus.Initialized);
 
-            ConnectionStatusObservable = _connectionStatusSubject
-                .AsObservable()
-                .ObserveOn(_eventLoopScheduler);
+            //ConnectionStatusObservable = _connectionStatusSubject
+            //    .AsObservable()
+            //    .ObserveOn(_eventLoopScheduler);
         }
 
         public MessageWebsocketRx() : this(null)
@@ -68,40 +66,79 @@ namespace WebsocketClientLite.PCL
             
         }
 
-        public IObservable<string> WebsocketConnectObservable (
+        public IObservable<string> WebsocketConnectObservable(
             Uri uri,
             bool hasClientPing = false,
             TimeSpan clientPingTimeSpan = default,
-            TimeSpan timeout = default)
-        {
-            var observableListener = Observable.Using(
-                resourceFactoryAsync: cts => WebsocketServiceFactory.Create(
-                     () => IsSecureConnectionScheme(uri),
-                     ValidateServerCertificate,
-                     _eventLoopScheduler,
-                     _connectionStatusSubject.AsObserver(),
-                     this),
-                observableFactoryAsync: (websocketServices, ct) =>
-                    Task.FromResult(Observable.Return(websocketServices)))
-                .Select(websocketService => Observable.FromAsync(ct => ConnectWebsocket(websocketService, ct)).Concat())
-                .Concat();
+            TimeSpan timeout = default) =>
+                WebsocketConnectWithStatusObservable(uri, hasClientPing, clientPingTimeSpan, timeout)
+                    .Where(tuple => tuple.state == ConnectionStatus.MessageReceived)
+                    .Select(tuple => tuple.message);
 
-            return observableListener;
+        public IObservable<(string message, ConnectionStatus state)>
+            WebsocketConnectWithStatusObservable (
+                Uri uri,
+                bool hasClientPing = false,
+                TimeSpan clientPingTimeSpan = default,
+                TimeSpan timeout = default)
+        {
+            return Observable.Create<(string message, ConnectionStatus state)>(obsTuple =>
+            {
+                return Observable.Create<ConnectionStatus>(obsStatus =>
+                {
+                    obsStatus.OnNext(ConnectionStatus.Initialized);
+
+                    return Observable.Using(
+                        resourceFactoryAsync: cts => WebsocketServiceFactory.Create(
+                             () => IsSecureConnectionScheme(uri),
+                             ValidateServerCertificate,
+                             _eventLoopScheduler,
+                             obsStatus,
+                             this),
+                        observableFactoryAsync: (websocketServices, ct) => 
+                            Task.FromResult(Observable.Return(websocketServices)))
+                                .Select(websocketService => Observable
+                                    .FromAsync(ct => ConnectWebsocket(websocketService, ct)).Concat())
+                                .Concat()
+                                .Subscribe(
+                                    msg => { obsTuple.OnNext((msg, ConnectionStatus.MessageReceived)); },
+                                    ex => { obsTuple.OnError(ex); },
+                                    () => { obsTuple.OnCompleted(); });
+                        })
+                    .Subscribe(
+                        state =>{ obsTuple.OnNext((null, state));},
+                        ex => { obsTuple.OnError(ex); },
+                        () => { obsTuple.OnCompleted(); });
+            });
+
+            //var observableListener = Observable.Using(
+            //    resourceFactoryAsync: cts => WebsocketServiceFactory.Create(
+            //         () => IsSecureConnectionScheme(uri),
+            //         ValidateServerCertificate,
+            //         _eventLoopScheduler,
+            //         _connectionStatusSubject.AsObserver(),
+            //         this),
+            //    observableFactoryAsync: (websocketServices, ct) =>
+            //        Task.FromResult(Observable.Return(websocketServices)))
+            //    .Select(websocketService => Observable.FromAsync(ct => ConnectWebsocket(websocketService, ct)).Concat())
+            //    .Concat();
+
+            //return observableListener;
 
             async Task<IObservable<string>> ConnectWebsocket(WebsocketService ws, CancellationToken ct) =>
                 await ws.WebsocketConnectHandler.ConnectWebsocket(
-                                    uri,
-                                    X509CertCollection,
-                                    TlsProtocolType,
-                                    InitializeSender,
-                                    ct,
-                                    hasClientPing,
-                                    clientPingTimeSpan,
-                                    _eventLoopScheduler,
-                                    timeout,
-                                    Origin,
-                                    Headers,
-                                    Subprotocols);
+                    uri,
+                    X509CertCollection,
+                    TlsProtocolType,
+                    InitializeSender,
+                    _eventLoopScheduler,
+                    ct,
+                    hasClientPing,
+                    clientPingTimeSpan,                                    
+                    timeout,
+                    Origin,
+                    Headers,
+                    Subprotocols);
 
             void InitializeSender(ISender sender)
             {
@@ -146,7 +183,7 @@ namespace WebsocketClientLite.PCL
 
         public void Dispose()
         {
-            _connectionStatusSubject.Dispose();
+            //_connectionStatusSubject.Dispose();
         }
     }
 }

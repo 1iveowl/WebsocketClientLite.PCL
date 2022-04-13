@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Net.Security;
 using System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
-using System.Threading.Tasks;
 
 namespace IWebsocketClientLite.PCL
 {
@@ -27,12 +26,6 @@ namespace IWebsocketClientLite.PCL
 
         bool IgnoreServerCertificateErrors { get; }
 
-        //[Obsolete("Use ConnectObservable instead")]
-        IObservable<ConnectionStatus> ConnectionStatusObservable { get; }
-
-        //[Obsolete("Use ConnectObservable instead.")]
-        //IObservable<string> MessageReceiverObservable { get; }
-
         X509CertificateCollection X509CertCollection { get; }
 
         bool ValidateServerCertificate(
@@ -43,22 +36,19 @@ namespace IWebsocketClientLite.PCL
 
         bool IsSecureConnectionScheme(Uri uri);
 
-        //[Obsolete("Use ConnectObservable instead.")]
-        //Task ConnectAsync(
-        //    Uri uri,
-        //    TimeSpan timeout = default);
+        ISender GetSender();
 
         IObservable<string> WebsocketConnectObservable(
+            Uri uri,
+            bool hasClientPing = false,
+            TimeSpan clientPingTimeSpan = default,
+            TimeSpan timeout = default);
+
+        IObservable<(string message, ConnectionStatus state)> WebsocketConnectWithStatusObservable(
             Uri uri, 
             bool hasClientPing = false,
             TimeSpan clientPingTimeSpan = default, 
             TimeSpan timeout = default);
 
-        ISender GetSender();
-
-        //[Obsolete("Use ConnectObservable instead. To disconnect simply dispose of the message observable.")]
-        //Task DisconnectAsync();
-
-        
     }
 }

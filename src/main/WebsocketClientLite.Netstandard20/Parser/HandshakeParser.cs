@@ -11,7 +11,7 @@ namespace WebsocketClientLite.PCL.Parser
 {
     internal class HandshakeParser
     {
-        private readonly Action<ConnectionStatus> _connectionStatusAction;
+        private readonly Action<ConnectionStatus, Exception> _connectionStatusAction;
         private readonly HttpCombinedParser _parserHandler;
         private readonly WebsocketHandshakeParserDelegate _parserDelegate;
 
@@ -20,14 +20,14 @@ namespace WebsocketClientLite.PCL.Parser
         public HandshakeParser(
             HttpCombinedParser parserHandler,
             WebsocketHandshakeParserDelegate parserDelegate,
-            Action<ConnectionStatus> connectionStatusAction)
+            Action<ConnectionStatus, Exception> connectionStatusAction)
         {
             _parserDelegate = parserDelegate;
             _parserHandler = parserHandler;
             _connectionStatusAction = connectionStatusAction;
         }
 
-        internal DataReceiveState Parse(
+        internal HandshakeStateKind Parse(
             byte[] @byte,
             IEnumerable<string> subProtocols)
         {
@@ -50,51 +50,35 @@ namespace WebsocketClientLite.PCL.Parser
 
                             if (!SubprotocolAcceptedNames?.Any() ?? true)
                             {
-                                _connectionStatusAction(ConnectionStatus.Aborted);
-                                throw new WebsocketClientLiteException("Server responded only with subprotocols not known by client.");
+                                _connectionStatusAction(
+                                    ConnectionStatus.Aborted,
+                                    new WebsocketClientLiteException("Server responded only with subprotocols not known by client."));
                             }
                         }
                         else
                         {
-                            _connectionStatusAction(ConnectionStatus.Aborted);
-                            throw new WebsocketClientLiteException("Server responded with blank Sub Protocol name");
+                            _connectionStatusAction(
+                                ConnectionStatus.Aborted,
+                                new WebsocketClientLiteException("Server responded with blank Sub Protocol name")
+                                );
                         }
-
-                        //if (_parserDelegate?.HttpRequestResponse?.Headers?.ContainsKey("SEC-WEBSOCKET-PROTOCOL") 
-                        //    ?? false)
-                        //{
-                        //    SubprotocolAcceptedNames =
-                        //        _parserDelegate?.HttpRequestResponse?.Headers?["SEC-WEBSOCKET-PROTOCOL"];
-
-                        //    if (!SubprotocolAcceptedNames?.Any(sp => sp.Length > 0) ?? false)
-                        //    {
-                        //        _connectionStatusAction(ConnectionStatus.Aborted);
-                        //        throw new WebsocketClientLiteException("Server responded with blank Sub Protocol name");
-                        //    }
-                        //}
-                        //else
-                        //{
-                        //    _connectionStatusAction(ConnectionStatus.Aborted);
-                        //    throw new WebsocketClientLiteException("Server did not support any of the needed Sub Protocols");
-                        //}
                     }
 
-                    //_dataReceiveState = DataReceiveState.IsListening;
-                    _connectionStatusAction(ConnectionStatus.WebsocketConnected);
-
+                    _connectionStatusAction(ConnectionStatus.WebsocketConnected, null);
                     Debug.WriteLine("HandShake completed");
-                    //_observerDataReceiveMode.OnNext(DataReceiveState.IsListening);
 
-                    return DataReceiveState.IsListening;
+                    return HandshakeStateKind.IsListening;
                 }
                 else
                 {
-                    throw new WebsocketClientLiteException($"Unable to connect to websocket Server. " +
+                    _connectionStatusAction(
+                        ConnectionStatus.Aborted,
+                        new WebsocketClientLiteException($"Unable to connect to websocket Server. " +
                                         $"Error code: {_parserDelegate.HttpRequestResponse.StatusCode}, " +
-                                        $"Error reason: {_parserDelegate.HttpRequestResponse.ResponseReason}");
+                                        $"Error reason: {_parserDelegate.HttpRequestResponse.ResponseReason}"));
                 }
             }
-            return DataReceiveState.IsListeningForHandShake;
+            return HandshakeStateKind.IsListeningForHandShake;
         }
     }
 }

@@ -1,6 +1,6 @@
 ﻿namespace WebsocketClientLite.PCL.Model
 {
-    internal enum DataReceiveState
+    internal enum HandshakeStateKind
     {
         Start,
         IsListeningForHandShake,

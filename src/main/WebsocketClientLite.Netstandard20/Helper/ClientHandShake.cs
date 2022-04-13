@@ -11,8 +11,7 @@ namespace WebsocketClientLite.PCL.Helper
             Uri uri,
             string origin = null, 
             IDictionary<string, string> headers = null,
-            IEnumerable<string> subprotocols = null,
-            bool isSocketIOv4 = false)
+            IEnumerable<string> subprotocols = null)
         {
             var sb = new StringBuilder();
 
@@ -21,7 +20,7 @@ namespace WebsocketClientLite.PCL.Helper
             sb.Append($"Upgrade: websocket\r\n");
             sb.Append($"Connection: Upgrade\r\n");
 
-            if (headers != null)
+            if (headers is not null)
             {
                 foreach (var header in headers)
                 {
@@ -38,7 +37,8 @@ namespace WebsocketClientLite.PCL.Helper
 
             if (subprotocols != null)
             {
-                var subprotocol = $"Sec-WebSocket-Protocol: {subprotocols.Aggregate((current, protocol) => $"{current}, {protocol}")}";
+                var subprotocol = $"Sec-WebSocket-Protocol: " +
+                    $"{subprotocols.Aggregate((current, protocol) => $"{current}, {protocol}")}";
 
                 sb.Append($"{subprotocol}\r\n");
             }

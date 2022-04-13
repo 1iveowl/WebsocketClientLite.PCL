@@ -15,12 +15,12 @@ namespace WebsocketClientLite.PCL.Service
     {
         private readonly TcpConnectionService _tcpConnectionService;
         private readonly WebsocketParserHandler _websocketParserHandler;
-        private readonly Action<ConnectionStatus> _connectionStatusAction;
+        private readonly Action<ConnectionStatus, Exception> _connectionStatusAction;
 
         public HandshakeHandler(
             TcpConnectionService tcpConnectionService,
             WebsocketParserHandler websocketParserHandler,
-            Action<ConnectionStatus> connectionStatusAction)
+            Action<ConnectionStatus, Exception> connectionStatusAction)
         {
             _tcpConnectionService = tcpConnectionService;
             _websocketParserHandler = websocketParserHandler;
@@ -34,43 +34,47 @@ namespace WebsocketClientLite.PCL.Service
             string origin = null,
             IDictionary<string, string> headers = null,
             IEnumerable<string> subprotocols = null) =>
-            Observable.Create<(HandshakeState handshakeState, WebsocketClientLiteException ex)>(async obs =>
-            {
-                using var parserDelegate = new WebsocketHandshakeParserDelegate(obs);
-                using var parserHandler = new HttpCombinedParser(parserDelegate);
+                Observable.Create<(HandshakeState handshakeState, WebsocketClientLiteException ex)>(async obs =>
+                {
+                    using var parserDelegate = new WebsocketHandshakeParserDelegate(obs);
+                    using var parserHandler = new HttpCombinedParser(parserDelegate);
 
-                var handshakeParser = new HandshakeParser(
-                    parserHandler,
-                    parserDelegate,
-                    _connectionStatusAction);
+                    var handshakeParser = new HandshakeParser(
+                        parserHandler,
+                        parserDelegate,
+                        _connectionStatusAction);
 
-                obs.OnNext(await SendHandshake(uri, sender, ct, origin, headers));
+                    obs.OnNext(await SendHandshake(uri, sender, ct, origin, headers));
 
-                return _tcpConnectionService.ByteStreamObservable()
-                    .Select(b => handshakeParser.Parse(b, subprotocols))
-                    .TakeWhile(d => d == DataReceiveState.IsListeningForHandShake)
-                    .Subscribe();
-            })
-            .Timeout(TimeSpan.FromSeconds(30))
-            .Catch<
-                (HandshakeState handshakeState, WebsocketClientLiteException ex),
-                TimeoutException>(
-                    tx => Observable.Return(
-                        (HandshakeState.HandshakeTimedOut, 
-                        new WebsocketClientLiteException("Handshake times out.", tx))
-                    )
-                );
+                    return _tcpConnectionService.ByteStreamObservable()
+                        .Select(b => handshakeParser.Parse(b, subprotocols))
+                        .TakeWhile(d => d == HandshakeStateKind.IsListeningForHandShake)
+                        .Subscribe(
+                        _ => { },
+                        ex => { obs.OnNext((HandshakeState.HandshakeFailed, new WebsocketClientLiteException("Unknown error", ex))); },
+                        () => { });
+                })
+                .Timeout(TimeSpan.FromSeconds(30))
+                .Catch<
+                    (HandshakeState handshakeState, WebsocketClientLiteException ex),
+                    TimeoutException>(
+                        tx => Observable.Return(
+                            (HandshakeState.HandshakeTimedOut, 
+                            new WebsocketClientLiteException("Handshake times out.", tx))
+                        )
+                    );
 
-        private async Task<(HandshakeState handshakeState, WebsocketClientLiteException ex)> SendHandshake(
-            Uri uri,
-            WebsocketSenderHandler websocketSenderHandler,
-            CancellationToken ct,
-            string origin = null,
-            IDictionary<string, string> headers = null)
+        private async Task<(HandshakeState handshakeState, WebsocketClientLiteException ex)> 
+            SendHandshake(
+                Uri uri,
+                WebsocketSenderHandler websocketSenderHandler,
+                CancellationToken ct,
+                string origin = null,
+                IDictionary<string, string> headers = null)
         {
             try
             {
-                _connectionStatusAction(ConnectionStatus.SendingHandshakeToWebsocketServer);
+                _connectionStatusAction(ConnectionStatus.SendingHandshakeToWebsocketServer, null);
 
                 await websocketSenderHandler.SendConnectHandShake(
                          uri,
@@ -81,7 +85,10 @@ namespace WebsocketClientLite.PCL.Service
             }
             catch (Exception ex)
             {
-                return (HandshakeState.HandshakeSendFailed, new WebsocketClientLiteException("Handshake send failed.", ex));
+                return (
+                    HandshakeState.HandshakeSendFailed, 
+                    new WebsocketClientLiteException("Handshake send failed.", ex)
+                );
             }
 
             return (HandshakeState.HandshakeSend, null);

@@ -1,11 +1,11 @@
-﻿using System;
+﻿using IWebsocketClientLite.PCL;
+using System;
 using System.Diagnostics;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
-using WebsocketClientLite.PCL.Model;
 
-namespace WebsocketClientLite.PCL.Helper
+namespace WebsocketClientLite.PCL.Service
 {
     internal class ControlFrameHandler
     {
@@ -22,32 +22,32 @@ namespace WebsocketClientLite.PCL.Helper
             _writeFunc = writeFunc;
         }
 
-        internal async Task<ControlFrameType> CheckForControlFrame(
-            Stream stream, 
-            byte data,
+        internal async Task<FrameTypeKind> GetControlFrame(
+            Stream stream,
+            byte @byte,
             CancellationToken ct,
             bool excludeZeroApplicationDataInPong = false)
         {
             if (_isReceivingPingData)
             {
                 await AddPingPayload(
-                    stream, 
-                    data, 
+                    stream,
+                    @byte,
                     ct,
                     excludeZeroApplicationDataInPong);
 
-                return ControlFrameType.Ping;
+                return FrameTypeKind.Ping;
             }
 
-            switch (data)
+            switch (@byte)
             {
                 case 136:
-                    return ControlFrameType.Close;
+                    return FrameTypeKind.Close;
                 case 137:
                     InitPingStart();
-                    return ControlFrameType.Ping;
+                    return FrameTypeKind.Ping;
             }
-            return ControlFrameType.None;
+            return FrameTypeKind.None;
         }
 
         internal async Task SendPing(
@@ -63,7 +63,7 @@ namespace WebsocketClientLite.PCL.Helper
         }
 
         private async Task AddPingPayload(
-            Stream stream, 
+            Stream stream,
             byte data,
             CancellationToken ct,
             bool isExcludingZeroApplicationDataInPong = false)
@@ -76,10 +76,10 @@ namespace WebsocketClientLite.PCL.Helper
                 {
                     ReinitializePing();
 
-                    _pong = isExcludingZeroApplicationDataInPong 
-                        ? new byte[1] { 138} 
+                    _pong = isExcludingZeroApplicationDataInPong
+                        ? new byte[1] { 138 }
                         : new byte[2] { 138, 0 };
-                    
+
                     await SendAsync(stream, _pong, ct);
                 }
                 else

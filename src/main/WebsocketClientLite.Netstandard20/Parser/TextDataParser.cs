@@ -4,8 +4,8 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using IWebsocketClientLite.PCL;
-using WebsocketClientLite.PCL.Helper;
 using WebsocketClientLite.PCL.Model;
+using WebsocketClientLite.PCL.Service;
 using static WebsocketClientLite.PCL.Helper.WebsocketMasking;
 
 namespace WebsocketClientLite.PCL.Parser
@@ -15,7 +15,7 @@ namespace WebsocketClientLite.PCL.Parser
         private readonly ControlFrameHandler _controlFrameHandler;
 
         private PayloadLenghtType _payloadLengthTypeInBits;
-        private FrameType _frameType;
+        private FrameTypeKind _frameType;
 
         private bool _isFrameBeingReceived;
         private bool _isMsgMasked;
@@ -56,18 +56,12 @@ namespace WebsocketClientLite.PCL.Parser
             _controlFrameHandler = controlFrameHandler;
         }
 
-        //internal TextDataParser(
-        //        Func<Stream, byte[], CancellationToken, Task> writeFunc)
-        //{
-        //    _controlFrameHandler = new ControlFrameHandler(writeFunc);
-        //}
-
         internal void Reinitialize()
         {
             IsCloseReceived = false;
         }
 
-        internal async Task Parse(
+        internal async Task ParseText(
             Stream stream, 
             byte data,
             CancellationToken ct,
@@ -111,17 +105,17 @@ namespace WebsocketClientLite.PCL.Parser
             byte data,
             CancellationToken ct,
             bool excludeZeroApplicationDataInPong = false) =>            
-                await _controlFrameHandler.CheckForControlFrame(
+                await _controlFrameHandler.GetControlFrame(
                         stream,
                         data,
                         ct,
                         excludeZeroApplicationDataInPong) switch
                 {
-                    ControlFrameType.Ping => true,
-                    ControlFrameType.Pong => true,
-                    ControlFrameType.Close => true,
-                    ControlFrameType.None => false,
-                    _ => throw new ArgumentOutOfRangeException($"Unknown control frame type."),
+                    FrameTypeKind.Ping => true,
+                    FrameTypeKind.Pong => true,
+                    FrameTypeKind.Close => true,
+                    FrameTypeKind.None => false,
+                    _ => throw new ArgumentOutOfRangeException($"Invalid control frame type."),
                 };
 
         private void HandleContent(byte data)
@@ -148,22 +142,22 @@ namespace WebsocketClientLite.PCL.Parser
 
                 switch (_frameType)
                 {
-                    case FrameType.Single:
+                    case FrameTypeKind.Single:
                         _newMessage = frameContent;
                         HasNewMessage = true;
                         break;
 
-                    case FrameType.FirstOfMultipleFrames:
+                    case FrameTypeKind.FirstOfMultipleFrames:
                         _newMessage += frameContent;
                         HasNewMessage = false;
                         break;
 
-                    case FrameType.Continuation:
+                    case FrameTypeKind.Continuation:
                         _newMessage += frameContent;
                         HasNewMessage = false;
                         break;
 
-                    case FrameType.LastInMultipleFrames:
+                    case FrameTypeKind.LastInMultipleFrames:
                         _newMessage += frameContent;
                         _isMultiFrameContent = false;
                         HasNewMessage = true;
@@ -293,7 +287,7 @@ namespace WebsocketClientLite.PCL.Parser
             {
                 //Single frame sequence detected
                 case 129:
-                    _frameType = FrameType.Single;
+                    _frameType = FrameTypeKind.Single;
 
                     _newMessage = null;
                     InitFrameMessage();
@@ -304,7 +298,7 @@ namespace WebsocketClientLite.PCL.Parser
                     // Only accept final frame in sequence if its part of a multi frame sequence 
                     if (_isMultiFrameContent)
                     {
-                        _frameType = FrameType.LastInMultipleFrames;
+                        _frameType = FrameTypeKind.LastInMultipleFrames;
 
                         InitFrameMessage();
                     }
@@ -312,7 +306,7 @@ namespace WebsocketClientLite.PCL.Parser
                 // Multi frame sequence detected
                 case 1:
                     _isMultiFrameContent = true;
-                    _frameType = FrameType.FirstOfMultipleFrames;
+                    _frameType = FrameTypeKind.FirstOfMultipleFrames;
 
                     _newMessage = null;
                     InitFrameMessage();
@@ -322,7 +316,7 @@ namespace WebsocketClientLite.PCL.Parser
                     // Only accept continuation frames if a multi frame content sequence is detected
                     if (_isMultiFrameContent)
                     {
-                        _frameType = FrameType.Continuation;
+                        _frameType = FrameTypeKind.Continuation;
                         InitFrameMessage();
                     }
                     break;

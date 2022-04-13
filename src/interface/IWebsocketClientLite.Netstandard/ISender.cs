@@ -8,6 +8,6 @@ namespace IWebsocketClientLite.PCL
     {
         Task SendTextAsync(string message, CancellationToken ct = default);
         Task SendTextAsync(string[] messageList, CancellationToken ct = default);
-        Task SendTextAsync(string message, FrameType frameType, CancellationToken ct = default);
+        Task SendTextAsync(string message, FrameTypeKind frameType, CancellationToken ct = default);
     }
 }

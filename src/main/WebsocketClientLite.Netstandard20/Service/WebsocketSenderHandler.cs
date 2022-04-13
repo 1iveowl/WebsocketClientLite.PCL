@@ -1,10 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Collections.Generic;
 using IWebsocketClientLite.PCL;
 using WebsocketClientLite.PCL.CustomException;
 using WebsocketClientLite.PCL.Helper;
@@ -15,18 +15,19 @@ namespace WebsocketClientLite.PCL.Service
 {
     internal class WebsocketSenderHandler : ISender
     {
-        private bool _isSendingMultipleFrames;
-        private readonly Stream _stream;
-        private readonly IObserver<ConnectionStatus> _observerConnectionStatus;
+        private readonly TcpConnectionService _tcpConnectionService;
         private readonly Func<Stream, byte[], CancellationToken, Task> _writeFunc;
+        private readonly Action<ConnectionStatus, Exception> _connectionStatusAction;
+
+        private bool _isSendingMultipleFrames;
 
         internal WebsocketSenderHandler(
-            IObserver<ConnectionStatus> observerConnectionStatus,
-            Stream tcpStream,
+            TcpConnectionService tcpConnectionService,
+            Action<ConnectionStatus, Exception> connectionStatusAction,
             Func<Stream, byte[], CancellationToken, Task> writeFunc)
         {
-            _observerConnectionStatus = observerConnectionStatus;
-            _stream = tcpStream;
+            _tcpConnectionService = tcpConnectionService;
+            _connectionStatusAction = connectionStatusAction;
             _writeFunc = writeFunc;
         }
 
@@ -35,28 +36,26 @@ namespace WebsocketClientLite.PCL.Service
             CancellationToken ct,
             string origin = null,            
             IDictionary<string, string> headers = null,
-            IEnumerable<string> subprotocol = null,
-            bool isSocketIOv4 = false
-)
+            IEnumerable<string> subprotocol = null)
         {
-            var handShakeBytes = ClientHandShake
-                .Compose(uri, origin, headers, subprotocol, isSocketIOv4);
+            var handShakeBytes = ClientHandShake.Compose(uri, origin, headers, subprotocol);
 
             try
             {
-                await _writeFunc(_stream, handShakeBytes, ct);
+                await _writeFunc(_tcpConnectionService.ConnectionStream, handShakeBytes, ct);
             }
             catch (Exception ex)
             {
-                _observerConnectionStatus.OnNext(ConnectionStatus.Aborted);
-                throw new WebsocketClientLiteException("Unable to complete handshake", ex.InnerException);
+                _connectionStatusAction(
+                    ConnectionStatus.Aborted, 
+                    new WebsocketClientLiteException("Unable to complete handshake", ex.InnerException));
             }
         }
 
         public async Task SendTextAsync(string message, CancellationToken ct = default) 
            => await ComposeFrameAndSendAsync(
                 message,
-                FrameType.Single,
+                FrameTypeKind.Single,
                 ct);
 
         public async Task SendTextAsync(
@@ -67,25 +66,25 @@ namespace WebsocketClientLite.PCL.Service
 
             if (messageList.Length == 1)
             {
-                await SendTextAsync(messageList[0], FrameType.Single);
+                await SendTextAsync(messageList[0], FrameTypeKind.Single);
                 return;
             }
 
             try
             {
-                await SendTextAsync(messageList[0], FrameType.FirstOfMultipleFrames);
+                await SendTextAsync(messageList[0], FrameTypeKind.FirstOfMultipleFrames);
 
                 for (var i = 1; i < messageList.Length - 1; i++)
                 {
                     await ComposeFrameAndSendAsync(
                         messageList[i], 
-                        FrameType.Continuation, 
+                        FrameTypeKind.Continuation, 
                         ct);
                 }
 
                 await ComposeFrameAndSendAsync(
                     messageList.Last(), 
-                    FrameType.LastInMultipleFrames, 
+                    FrameTypeKind.LastInMultipleFrames, 
                     ct);
             }
             finally
@@ -97,23 +96,23 @@ namespace WebsocketClientLite.PCL.Service
         
         public async Task SendTextAsync(
             string message, 
-            FrameType frameType, 
+            FrameTypeKind frameType, 
             CancellationToken ct = default)
         {
             if (_isSendingMultipleFrames)
             {
-                if (frameType == FrameType.FirstOfMultipleFrames || frameType == FrameType.Single)
+                if (frameType == FrameTypeKind.FirstOfMultipleFrames || frameType == FrameTypeKind.Single)
                 {
-                    await ComposeFrameAndSendAsync(Encoding.UTF8.GetBytes("_sequence aborted error_"), FrameType.LastInMultipleFrames, ct);
+                    await ComposeFrameAndSendAsync(Encoding.UTF8.GetBytes("_sequence aborted error_"), FrameTypeKind.LastInMultipleFrames, ct);
                     _isSendingMultipleFrames = false;
 
                     throw new WebsocketClientLiteException("Multiple frames is progress. Frame must be a Continuation Frame or Last Frams in sequence. Multiple frame sequence aborted and finalized");
                 }
             }
 
-            if (!_isSendingMultipleFrames && frameType != FrameType.FirstOfMultipleFrames)
+            if (!_isSendingMultipleFrames && frameType != FrameTypeKind.FirstOfMultipleFrames)
             {
-                if (frameType == FrameType.Continuation || frameType == FrameType.LastInMultipleFrames)
+                if (frameType == FrameTypeKind.Continuation || frameType == FrameTypeKind.LastInMultipleFrames)
                 {
                     throw new WebsocketClientLiteException("Multiple frames sequence is not in initiated. Frame cannot be of a Continuation Frame or a Last Frame type");
                 }
@@ -121,30 +120,30 @@ namespace WebsocketClientLite.PCL.Service
 
             switch (frameType)
             {
-                case FrameType.Single:
+                case FrameTypeKind.Single:
                     await ComposeFrameAndSendAsync(
                         message, 
-                        FrameType.Single, 
+                        FrameTypeKind.Single, 
                         ct);
                     break;
-                case FrameType.FirstOfMultipleFrames:
+                case FrameTypeKind.FirstOfMultipleFrames:
                     _isSendingMultipleFrames = true;
                     await ComposeFrameAndSendAsync(
                         message, 
-                        FrameType.FirstOfMultipleFrames, 
+                        FrameTypeKind.FirstOfMultipleFrames, 
                         ct);
                     break;
-                case FrameType.LastInMultipleFrames:
+                case FrameTypeKind.LastInMultipleFrames:
                     await ComposeFrameAndSendAsync(
                         message, 
-                        FrameType.LastInMultipleFrames, 
+                        FrameTypeKind.LastInMultipleFrames, 
                         ct);
                     _isSendingMultipleFrames = false;
                     break;
-                case FrameType.Continuation:
+                case FrameTypeKind.Continuation:
                     await ComposeFrameAndSendAsync(
                         message, 
-                        FrameType.Continuation, 
+                        FrameTypeKind.Continuation, 
                         ct);
                     break;
                 default:
@@ -154,20 +153,20 @@ namespace WebsocketClientLite.PCL.Service
 
         internal async Task SendCloseHandshakeAsync(
             StatusCodes statusCode, 
-            CancellationToken ct)
+            CancellationToken ct = default)
         {
             var closeFrameBodyCode = BitConverter.GetBytes((ushort)statusCode);
             var reason = Encoding.UTF8.GetBytes(statusCode.ToString());
 
             await ComposeFrameAndSendAsync(
                 closeFrameBodyCode.Concat(reason).ToArray(),
-                FrameType.CloseControlFrame,
+                FrameTypeKind.Close,
                 ct);
         }
 
         private async Task ComposeFrameAndSendAsync(
             string message,
-            FrameType frameType,
+            FrameTypeKind frameType,
             CancellationToken ct) => 
                 await ComposeFrameAndSendAsync(
                     Encoding.UTF8.GetBytes(message),
@@ -176,7 +175,7 @@ namespace WebsocketClientLite.PCL.Service
 
         private async Task ComposeFrameAndSendAsync(
             byte[] content, 
-            FrameType frameType,
+            FrameTypeKind frameType,
             CancellationToken ct)
         {
             var maskKey = CreateMaskKey();
@@ -195,63 +194,61 @@ namespace WebsocketClientLite.PCL.Service
 
         private async Task SendFrameAsync(
             byte[] frame, 
-            FrameType frameType, 
+            FrameTypeKind frameType, 
             CancellationToken ct)
         {
-            if (!_stream.CanWrite)
+            if (!_tcpConnectionService.ConnectionStream.CanWrite)
             {
-                throw new WebsocketClientLiteException("Websocket connection have been closed");
+                throw new WebsocketClientLiteException("Websocket connection stream have been closed");
             }
 
             switch (frameType)
             {
-                case FrameType.Single:
-                    _observerConnectionStatus.OnNext(ConnectionStatus.Sending);
+                case FrameTypeKind.Single:
+                    _connectionStatusAction(ConnectionStatus.Sending, null);
                     break;
-                case FrameType.FirstOfMultipleFrames:
-                    _observerConnectionStatus.OnNext(ConnectionStatus.MultiFrameSendingBegin);
+                case FrameTypeKind.FirstOfMultipleFrames:
+                    _connectionStatusAction(ConnectionStatus.MultiFrameSendingBegin, null);
                     _isSendingMultipleFrames = true;
                     break;
-                case FrameType.LastInMultipleFrames:
-                    _observerConnectionStatus.OnNext(ConnectionStatus.MultiFrameSendingLast);
+                case FrameTypeKind.LastInMultipleFrames:
+                    _connectionStatusAction(ConnectionStatus.MultiFrameSendingLast, null);
                     _isSendingMultipleFrames = false;
                     break;
-                case FrameType.Continuation:
-                    _observerConnectionStatus.OnNext(ConnectionStatus.MultiFrameSendingContinue);
+                case FrameTypeKind.Continuation:
+                    _connectionStatusAction(ConnectionStatus.MultiFrameSendingContinue, null);
                    break;
-                case FrameType.CloseControlFrame:
-                    _observerConnectionStatus.OnNext(ConnectionStatus.Disconnecting);
+                case FrameTypeKind.Close:
+                    _connectionStatusAction(ConnectionStatus.Disconnecting, null);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(frameType), frameType, null);
-                    //_observerConnectionStatus.OnNext(ConnectionStatus.Sending);
-                    //break;
-                //throw new ArgumentOutOfRangeException(nameof(frameType), frameType, null);
+            }
+
+            if (ct == default)
+            {
+                var cts = new CancellationTokenSource();
+                ct = cts.Token;
             }
 
             try
             {
-                if (ct == default)
-                {
-                    var cts = new CancellationTokenSource();
-                    ct = cts.Token;
-                }
+                await _writeFunc(_tcpConnectionService.ConnectionStream, frame, ct);
 
-                await _writeFunc(_stream, frame, ct);
-
-                if (frameType == FrameType.CloseControlFrame)
+                if (frameType == FrameTypeKind.Close)
                 {
-                    _observerConnectionStatus.OnNext(ConnectionStatus.Disconnected);
+                    _connectionStatusAction(ConnectionStatus.Disconnected, null);
                 }
                 else
                 {
-                    _observerConnectionStatus.OnNext(ConnectionStatus.SendComplete);
+                    _connectionStatusAction(ConnectionStatus.SendComplete, null);
                 }                
             }
             catch (Exception ex)
             {
-                _observerConnectionStatus.OnNext(ConnectionStatus.SendError);
-                _observerConnectionStatus.OnError(ex);
+                _connectionStatusAction(
+                    ConnectionStatus.SendError, 
+                    new WebsocketClientLiteException("Websocket send error occured.", ex));
             }
         }
     }

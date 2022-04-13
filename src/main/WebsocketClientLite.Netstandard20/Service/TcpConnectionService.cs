@@ -1,4 +1,5 @@
-﻿using System;
+﻿using IWebsocketClientLite.PCL;
+using System;
 using System.Diagnostics;
 using System.IO;
 using System.Net.Security;
@@ -15,15 +16,15 @@ namespace WebsocketClientLite.PCL.Service
 {
     internal class TcpConnectionService : IDisposable
     {
-        private readonly bool _keepTcpClientAlive;
-
-        private TcpClient _tcpClient;
-        private Stream _stream;
-        
+        private readonly bool _keepTcpClientAlive;      
         private readonly Func<bool> _isSecureConnectionSchemeFunc;
         private readonly Func<object, X509Certificate, X509Chain, SslPolicyErrors, bool> _validateServerCertificateFunc;
         private readonly Func<TcpClient, Uri, Task> _connectTcpClient;
         private readonly Func<Stream, byte[], CancellationToken, Task<int>> _readOneByteFunc;
+        private readonly Action<ConnectionStatus, Exception> _connectionStatusAction;
+
+        private TcpClient _tcpClient;
+        private Stream _stream;
 
         internal Stream ConnectionStream => _stream;
 
@@ -32,6 +33,7 @@ namespace WebsocketClientLite.PCL.Service
             Func<object, X509Certificate, X509Chain, SslPolicyErrors, bool> validateServerCertificateFunc,
             Func<TcpClient, Uri, Task> connectTcpClientFunc,
             Func<Stream, byte[], CancellationToken, Task<int>> readOneByteFunc,
+            Action<ConnectionStatus, Exception> connectionStatusAction,
             TcpClient tcpClient = null)
         {
             _keepTcpClientAlive = tcpClient is not null;
@@ -39,35 +41,31 @@ namespace WebsocketClientLite.PCL.Service
             _isSecureConnectionSchemeFunc = isSecureConnectionSchemeFunc;
             _validateServerCertificateFunc = validateServerCertificateFunc;
             _connectTcpClient = connectTcpClientFunc;
+            _connectionStatusAction = connectionStatusAction;
             _readOneByteFunc = readOneByteFunc;
 
             _tcpClient = tcpClient;
         }
 
-        internal virtual async Task<Stream> ConnectTcpClientAndStream(
+        internal virtual async Task ConnectTcpStream(
             Uri uri,
-            Action reportConnected,
             X509CertificateCollection x509CertificateCollection,
             SslProtocols tlsProtocolType,
             TimeSpan timeout = default)
         {
-            await ConnectTcpClient(uri, reportConnected, timeout);
+            await CreateTcpClient(uri, timeout);
 
             _stream = await CreateStream(uri, _tcpClient, x509CertificateCollection, tlsProtocolType);
-
-            return _stream;
         }
 
         internal IObservable<byte[]> ByteStreamObservable() =>
             Observable.Defer(() => Observable.FromAsync(ct => ReadOneByteFromStream(ct)))
             .Repeat()
-            .TakeWhile(@byte => @byte is not null)
-            .Publish()
-            .RefCount();
+            .TakeWhile(@byte => @byte is not null);
 
-        internal async Task<byte[]> ReadOneByteFromStream(CancellationToken ct)
-        {
-            if(_stream is null || !_stream.CanRead)
+        private async Task<byte[]> ReadOneByteFromStream(CancellationToken ct)
+        {          
+            if (_stream is null || !_stream.CanRead)
             {
                 throw new WebsocketClientLiteException("Stream not ready or not connected.");
             }
@@ -100,11 +98,12 @@ namespace WebsocketClientLite.PCL.Service
             return @byte;
         }
 
-        private async Task ConnectTcpClient(
+        private async Task CreateTcpClient(
             Uri uri,
-            Action reportConnected,
             TimeSpan timeout = default)
         {
+            _connectionStatusAction(ConnectionStatus.ConnectingToTcpSocket, null);
+
             if (_tcpClient is null)
             {
                 _tcpClient = new TcpClient(
@@ -134,7 +133,7 @@ namespace WebsocketClientLite.PCL.Service
 
             if (_tcpClient.Connected)
             {
-                reportConnected();
+                _connectionStatusAction(ConnectionStatus.TcpSocketConnected, null);
                 Debug.WriteLine("Connected");
             }
             else
@@ -149,6 +148,8 @@ namespace WebsocketClientLite.PCL.Service
             X509CertificateCollection x509CertificateCollection,
             SslProtocols tlsProtocolType)
         {
+            _connectionStatusAction(ConnectionStatus.ConnectingToSocketStream, null);
+
             if (_isSecureConnectionSchemeFunc())
             {
                 var secureStream = new SslStream(
@@ -161,6 +162,7 @@ namespace WebsocketClientLite.PCL.Service
                 {
                     await secureStream.AuthenticateAsClientAsync(uri.Host, x509CertificateCollection, tlsProtocolType, false);
 
+                    _connectionStatusAction(ConnectionStatus.SecureSocketStreamConnected, null);
                     return secureStream;
                 }
                 catch (Exception ex)
@@ -169,6 +171,7 @@ namespace WebsocketClientLite.PCL.Service
                 }
             }
 
+            _connectionStatusAction(ConnectionStatus.SocketStreamConnected, null);
             return tcpClient.GetStream();
         }
 

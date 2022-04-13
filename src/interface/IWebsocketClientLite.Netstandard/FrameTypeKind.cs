@@ -1,11 +1,16 @@
 ﻿namespace IWebsocketClientLite.PCL
 {
-    public enum FrameType
+    public enum FrameTypeKind
     {
         Continuation = 0,
+        Text = 129,
+        Binary = 130,
         FirstOfMultipleFrames = 1,
         LastInMultipleFrames = 128,
         Single = 129,
-        CloseControlFrame = 136
+        Ping = 137,
+        Pong = 138,
+        Close = 136,
+        None = 255
     }
 }

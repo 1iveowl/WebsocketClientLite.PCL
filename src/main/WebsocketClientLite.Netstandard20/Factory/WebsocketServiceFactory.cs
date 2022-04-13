@@ -4,15 +4,12 @@ using System.Net.Security;
 using System.Net.Sockets;
 using System.Reactive.Concurrency;
 using System.Reactive.Linq;
-using System.Reactive.Subjects;
 using System.Reactive.Threading.Tasks;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading;
 using System.Threading.Tasks;
 using IWebsocketClientLite.PCL;
-using WebsocketClientLite.PCL.Helper;
-using WebsocketClientLite.PCL.Model;
-using WebsocketClientLite.PCL.Parser;
+using WebsocketClientLite.PCL.CustomException;
 using WebsocketClientLite.PCL.Service;
 
 namespace WebsocketClientLite.PCL.Factory
@@ -32,43 +29,54 @@ namespace WebsocketClientLite.PCL.Factory
             MessageWebsocketRx messageWebSocketRx)
         {           
             var controlFramHandler = new ControlFrameHandler(
-                writeFunc: (stream, bytes, cts) => RunOnScheduler(WriteToStream(stream, bytes, cts),
-                scheduler: eventLoopScheduler));
+                //WriteToStream
+                writeFunc: (stream, bytes, cts) => RunOnScheduler(WriteToStream(stream, bytes, cts), eventLoopScheduler)
+                );
 
             var tcpConnectionHandler = new TcpConnectionService(
-                            isSecureConnectionSchemeFunc,
-                            validateServerCertificateFunc,
-                            ConnectTcpClient,
-                            ReadOneByteFromStream,
-                            messageWebSocketRx.TcpClient);
-
-            var dataReceiveSubject = new Subject<DataReceiveState>();
+                isSecureConnectionSchemeFunc: isSecureConnectionSchemeFunc,
+                validateServerCertificateFunc: validateServerCertificateFunc,
+                connectTcpClientFunc: ConnectTcpClient,
+                ReadOneByteFromStream,
+                //readOneByteFunc: (stream, bytes, cts) => RunOnScheduler(ReadOneByteFromStream(stream, bytes, cts), eventLoopScheduler),
+                connectionStatusAction: ConnectionStatusAction,
+                tcpClient: messageWebSocketRx.TcpClient);
 
             var websocketServices = new WebsocketService(
                 new WebsocketConnectionHandler(
                         tcpConnectionHandler,
                         new WebsocketParserHandler(
                             tcpConnectionHandler,
-                            messageWebSocketRx.SubprotocolAccepted,
                             messageWebSocketRx.ExcludeZeroApplicationDataInPong,
-                            ReadOneByteFromStream,
-                            controlFramHandler,
-                            ConnectionStatusAction),
+                            controlFramHandler),
                         controlFramHandler,
-                        observerConnectionStatus,
                         ConnectionStatusAction,
-                        (stream, observerConnectionStatus) => new WebsocketSenderHandler(
-                            observerConnectionStatus,
-                            stream,
-                            (stream, bytes, cts) => RunOnScheduler(WriteToStream(stream, bytes, cts), eventLoopScheduler))));
-            
+                        (stream, connectionStatusAction) => 
+                            new WebsocketSenderHandler(
+                                tcpConnectionHandler,
+                                ConnectionStatusAction,
+                                //WriteToStream
+                                (stream, bytes, cts) => RunOnScheduler(WriteToStream(stream, bytes, cts), eventLoopScheduler)
+                        )
+                    )                        
+                );            
 
             await Task.CompletedTask;
 
             return websocketServices;
        
-            void ConnectionStatusAction(ConnectionStatus status)
+            void ConnectionStatusAction(ConnectionStatus status, Exception ex)
             {
+                if (status == ConnectionStatus.Disconnected)
+                {
+                    observerConnectionStatus.OnCompleted();
+                }
+
+                if (status == ConnectionStatus.Aborted)
+                {
+                    observerConnectionStatus.OnError(
+                        ex ?? new WebsocketClientLiteException("Unknown error."));
+                }
                 observerConnectionStatus.OnNext(status);
             }
 
@@ -80,8 +88,10 @@ namespace WebsocketClientLite.PCL.Factory
                 return true;
             }
 
-            async Task<int> ReadOneByteFromStream(Stream stream, byte[] b, CancellationToken ct) 
-                => await stream.ReadAsync(b, 0, 1, ct).ConfigureAwait(false);
+            async Task<int> ReadOneByteFromStream(Stream stream, byte[] b, CancellationToken ct)
+            {
+                return await stream.ReadAsync(b, 0, 1, ct).ConfigureAwait(false);
+            }
 
             async Task ConnectTcpClient(TcpClient tcpClient, Uri uri) 
                 => await tcpClient
