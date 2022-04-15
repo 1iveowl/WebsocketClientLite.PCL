@@ -1,6 +1,6 @@
-﻿namespace WebsocketClientLite.PCL.Model
+﻿namespace IWebsocketClientLite.PCL
 {
-    internal enum PayloadLenghtType
+    public enum PayloadBitLengthKind
     {
         Unspecified,
         Bits8,

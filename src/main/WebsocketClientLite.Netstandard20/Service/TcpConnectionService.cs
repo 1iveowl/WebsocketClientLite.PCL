@@ -58,19 +58,42 @@ namespace WebsocketClientLite.PCL.Service
             _stream = await CreateStream(uri, _tcpClient, x509CertificateCollection, tlsProtocolType);
         }
 
-        internal IObservable<byte[]> ByteStreamObservable() =>
-            Observable.Defer(() => Observable.FromAsync(ct => ReadOneByteFromStream(ct)))
-            .Repeat()
-            .TakeWhile(@byte => @byte is not null);
+        internal IObservable<byte[]> BytesObservable() =>
+            //ByteReadObservable();
+            Observable.FromAsync(ct => ReadByteArrayFromStream(1, ct));
+            //Observable.Defer(() => Observable.FromAsync(ct => ReadOneByteArrayFromStream(ct)));
+            //.Repeat();
+            //.TakeWhile(bytes => bytes is not null);
 
-        private async Task<byte[]> ReadOneByteFromStream(CancellationToken ct)
+        internal IObservable<byte> ByteStreamObservable() =>
+            //BytesObservable()
+            //Observable.FromAsync(ct => ReadOneByteArrayFromStream(ct))
+            Observable.Defer(() => Observable.FromAsync(ct => ReadByteArrayFromStream(1, ct)))
+            .Where(bytes => bytes is not null)
+            .Select(bytes => bytes[0]);
+
+        internal async Task<byte> ReadOneByteFromStream(CancellationToken ct) =>
+            (await ReadByteArrayFromStream(1, ct))[0];
+
+        internal async Task<byte[]> ReadBytesFromStream(ulong size, CancellationToken ct) =>
+            (await ReadByteArrayFromStream(size, ct));
+
+        private IObservable<byte[]> ByteReadObservable() =>
+            Observable.Defer(() => Observable.FromAsync(ct => ReadByteArrayFromStream(1, ct)))
+            .Repeat();
+            //.Replay(1)
+            //.Publish()
+            //.RefCount();
+            //.TakeWhile(bytes => bytes is not null);
+
+        internal async Task<byte[]> ReadByteArrayFromStream(ulong size, CancellationToken ct)
         {          
             if (_stream is null || !_stream.CanRead)
             {
                 throw new WebsocketClientLiteException("Stream not ready or not connected.");
             }
 
-            var @byte = new byte[1];
+            var byteArrayOfOne = new byte[size];
 
             try
             {
@@ -84,9 +107,9 @@ namespace WebsocketClientLite.PCL.Service
                     throw new WebsocketClientLiteException("Websocket connection have been closed.");
                 }
 
-                var length = await _readOneByteFunc(_stream, @byte, ct);
+                var readLength = await _readOneByteFunc(_stream, byteArrayOfOne, ct);
 
-                if (length == 0)
+                if (readLength == 0)
                 {
                     throw new WebsocketClientLiteException("Websocket connection aborted unexpectedly. Check connection and socket security version/TLS version).");
                 }
@@ -95,7 +118,7 @@ namespace WebsocketClientLite.PCL.Service
             {
                 Debug.WriteLine("Ignoring Object Disposed Exception - This is an expected exception");
             }
-            return @byte;
+            return byteArrayOfOne;
         }
 
         private async Task CreateTcpClient(

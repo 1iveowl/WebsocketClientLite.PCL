@@ -27,7 +27,9 @@ namespace WebsocketClientLite.PCL.Factory
             EventLoopScheduler eventLoopScheduler,
             IObserver<ConnectionStatus> observerConnectionStatus,
             MessageWebsocketRx messageWebSocketRx)
-        {           
+        {
+            //var readScheduler = new EventLoopScheduler();
+
             var controlFramHandler = new ControlFrameHandler(
                 //WriteToStream
                 writeFunc: (stream, bytes, cts) => RunOnScheduler(WriteToStream(stream, bytes, cts), eventLoopScheduler)
@@ -80,17 +82,17 @@ namespace WebsocketClientLite.PCL.Factory
                 observerConnectionStatus.OnNext(status);
             }
 
-            async Task<bool> WriteToStream(Stream stream, byte[] b, CancellationToken ct)
+            async Task<bool> WriteToStream(Stream stream, byte[] byteArray, CancellationToken ct)
             {
-                await stream.WriteAsync(b, 0, b.Length, ct).ConfigureAwait(false);
+                await stream.WriteAsync(byteArray, 0, byteArray.Length, ct).ConfigureAwait(false);
                 await stream.FlushAsync().ConfigureAwait(false);
 
                 return true;
             }
 
-            async Task<int> ReadOneByteFromStream(Stream stream, byte[] b, CancellationToken ct)
+            async Task<int> ReadOneByteFromStream(Stream stream, byte[] byteArray, CancellationToken ct)
             {
-                return await stream.ReadAsync(b, 0, 1, ct).ConfigureAwait(false);
+                return await stream.ReadAsync(byteArray, 0, byteArray.Length, ct).ConfigureAwait(false);
             }
 
             async Task ConnectTcpClient(TcpClient tcpClient, Uri uri) 

@@ -2,6 +2,7 @@
 using IHttpMachine;
 using System;
 using WebsocketClientLite.PCL.CustomException;
+using WebsocketClientLite.PCL.Model;
 
 namespace WebsocketClientLite.PCL.Parser
 {
@@ -9,7 +10,9 @@ namespace WebsocketClientLite.PCL.Parser
     {
         private readonly IObserver<(HandshakeState handshakeState, WebsocketClientLiteException ex)> _observerHandshakeParserState;
 
-        public WebsocketHandshakeParserDelegate(IObserver<(HandshakeState handshakeState, WebsocketClientLiteException ex)> observerHandshakeParserState)
+        public WebsocketHandshakeParserDelegate(
+            IObserver<(HandshakeState handshakeState, 
+                WebsocketClientLiteException ex)> observerHandshakeParserState)
         {
             _observerHandshakeParserState = observerHandshakeParserState;
         }
@@ -40,7 +43,7 @@ namespace WebsocketClientLite.PCL.Parser
                 _observerHandshakeParserState.OnError(new WebsocketClientLiteException("Unable to complete handshake"));
                 return;
             }
-            _observerHandshakeParserState.OnCompleted();
+            //_observerHandshakeParserState.OnCompleted();
         }
     }
 }

@@ -11,9 +11,9 @@ using System.Security.Cryptography.X509Certificates;
 using System.Security.Authentication;
 using IWebsocketClientLite.PCL;
 using WebsocketClientLite.PCL.CustomException;
-using WebsocketClientLite.PCL.Parser;
 using WebsocketClientLite.PCL.Model;
 using WebsocketClientLite.PCL.Extension;
+using System.Reactive.Disposables;
 
 namespace WebsocketClientLite.PCL.Service
 {
@@ -43,7 +43,7 @@ namespace WebsocketClientLite.PCL.Service
             _clientPingDisposable = null;
         }
 
-        internal async Task<IObservable<string>>
+        internal async Task<IObservable<IDatagram>>
                 ConnectWebsocket(
                     Uri uri,
                     X509CertificateCollection x509CertificateCollection,
@@ -79,7 +79,7 @@ namespace WebsocketClientLite.PCL.Service
                     _connectionStatusAction);
 
             var (handshakeState, handshakeException) = 
-                await handshakeHandler.Connect(uri, sender, ct, origin, headers, subprotocols);
+                await handshakeHandler.Handshake(uri, sender, ct, eventLoopScheduler, origin, headers, subprotocols);
 
             if(handshakeException is not null)
             {
@@ -87,7 +87,7 @@ namespace WebsocketClientLite.PCL.Service
             }
             else if (handshakeState == HandshakeState.HandshakeCompletedSuccessfully)
             {
-                _connectionStatusAction(ConnectionStatus.HandshakeCompletedSuccessfully, null);
+                _connectionStatusAction(ConnectionStatus.HandshakeCompletedSuccessfully, null);              
             }
             else
             {
@@ -108,15 +108,38 @@ namespace WebsocketClientLite.PCL.Service
                     () => { });
             }
 
+            _connectionStatusAction(ConnectionStatus.WebsocketConnected, null);
+
+            //return Observable.Create<IDatagram>(async obs =>
+            //{
+
+            //    var datagram = await _websocketParserHandler.DatagramObservable();
+
+            //    obs.OnNext(datagram);
+
+            //    //if (datagram.Opcode == OpcodeKind.)
+
+            //    return Disposable.Empty;
+
+            //})
+            //.Repeat()
+            //.FinallyAsync(async () =>
+            //{
+            //    await DisconnectWebsocket(sender);
+            //});
+
             return _websocketParserHandler
-                .CreateWebsocketListenerObservable(_tcpConnectionService.ConnectionStream)                
-                .Select(tuple => tuple.message)
-                .ObserveOn(eventLoopScheduler)
+                .DatagramObservable()
+
+                //.Do(_ => _connectionStatusAction(ConnectionStatus.WebsocketConnected, null))
+                //.ObserveOn(eventLoopScheduler)
+                //.Select(datagram => datagram.Message)
+                .Repeat()            
                 .FinallyAsync(async () =>
                 {
                     await DisconnectWebsocket(sender);
                 });
-                
+
 
             IObservable<Unit> ClientPing() =>
                 Observable.Interval(clientPingTimeSpan)

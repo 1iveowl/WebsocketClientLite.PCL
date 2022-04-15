@@ -64,9 +64,7 @@ namespace WebsocketClientLite.PCL.Parser
                         }
                     }
 
-                    _connectionStatusAction(ConnectionStatus.WebsocketConnected, null);
                     Debug.WriteLine("HandShake completed");
-
                     return HandshakeStateKind.IsListening;
                 }
                 else

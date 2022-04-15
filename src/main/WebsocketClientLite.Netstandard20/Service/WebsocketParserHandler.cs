@@ -4,17 +4,21 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
+using IWebsocketClientLite.PCL;
 using WebsocketClientLite.PCL.Model;
 using WebsocketClientLite.PCL.Parser;
 using System.Linq;
 using System.Threading;
+using System.Reactive.Disposables;
+using static WebsocketClientLite.PCL.Helper.DatagramParsing;
+using WebsocketClientLite.PCL.Helper;
 
 namespace WebsocketClientLite.PCL.Service
 {
     internal class WebsocketParserHandler : IDisposable
     {
         private readonly TcpConnectionService _tcpConnectionService;
-        private readonly TextDataParser _textDataParser;
+        private readonly WebsocketDatagramParserHandler _websocketDatagramParserHandler;
 
         private bool ExcludeZeroApplicationDataInPong { get; }
         internal IEnumerable<string> SubprotocolAcceptedNames { get; private set; }
@@ -25,50 +29,107 @@ namespace WebsocketClientLite.PCL.Service
             ControlFrameHandler controlFrameHandler)
         {
             _tcpConnectionService = tcpConnectionService;
-            _textDataParser = new TextDataParser(controlFrameHandler);
+            _websocketDatagramParserHandler = new WebsocketDatagramParserHandler(controlFrameHandler);
             ExcludeZeroApplicationDataInPong = excludeZeroApplicationDataInPong;
         }
- 
-        internal IObservable<(HandshakeStateKind dataReceiveState, string message)> CreateWebsocketListenerObservable(
-            Stream stream)
-        {
-            using var parserDelegate = new HttpParserDelegate();
-            using var parserHandler = new HttpCombinedParser(parserDelegate);
 
-            return _tcpConnectionService.ByteStreamObservable()
-                .Select(@byte => Observable.FromAsync(ct => ParseText(@byte, stream,ct)))                            
-                .Concat()
-                .DistinctUntilChanged(tuple => tuple.dataReceiveState)
-                .Where(tuple => tuple.dataReceiveState == HandshakeStateKind.MessageReceived);
-        }
-
-        private async Task<(HandshakeStateKind dataReceiveState, string message)> ParseText(
-            byte[] bytes, 
-            Stream stream,
-            CancellationToken ct)
-        {
-            await _textDataParser.ParseText(
-                stream,
-                bytes[0],
-                ct,
-                ExcludeZeroApplicationDataInPong);
-
-            if (_textDataParser.IsCloseReceived)
+        internal IObservable<Datagram> DatagramObservable() => 
+            Observable.Create<Datagram>(async obs =>
             {
-                return (HandshakeStateKind.Exiting, null);
-            }
+                var cts = new CancellationTokenSource();
 
-            if (_textDataParser.HasNewMessage)
-            {
-                return (HandshakeStateKind.MessageReceived, _textDataParser.NewMessage);
-            }
+                var datagram = await CreateDatagram(_tcpConnectionService, cts.Token)
+                    .PayloadBitLenght()
+                    .PayloadLenght()
+                    .GetPayload();
 
-            return (HandshakeStateKind.IsParsing, null);
-        }
+                if (datagram is not null)
+                {
+                    while (!datagram.FIN)
+                    {
+                        // Merge fragments into one datagram.
+                        datagram = await GetNextDataGram(datagram);
+                    }
+
+                    obs.OnNext(datagram);
+                }
+                             
+                obs.OnCompleted();
+
+                return Disposable.Create(() => cts.Cancel());
+
+                async Task<Datagram> GetNextDataGram(Datagram datagram)
+                {
+                    var nextDatagram = await GetDataGram();
+
+                    if (nextDatagram is not null)
+                    {
+                        await nextDatagram.DataStream.CopyToAsync(datagram.DataStream, cts.Token);
+
+                        datagram = datagram with
+                        {
+                            FIN = nextDatagram.FIN,
+                        };
+                    }
+
+                    return datagram;
+                }
+
+                async Task<Datagram> GetDataGram()
+                {
+                    var newDatagram = await CreateDatagram(_tcpConnectionService, cts.Token)
+                        .PayloadBitLenght()
+                        .PayloadLenght()
+                        .GetPayload();
+
+                    if (newDatagram.Opcode
+                        is OpcodeKind.Text
+                        or OpcodeKind.Binary
+                        or OpcodeKind.Continuation
+                        || newDatagram.Fragment is FragmentKind.Last)
+                    {
+                        return newDatagram;
+                    }
+                    else
+                    {
+                        obs.OnNext(newDatagram);
+                    }
+
+                    return null;
+                }
+            });
+        
+        // TODO Create observable that holdes ParserStateKind//using var parserDelegate = new HttpParserDelegate();//using var parserHandler = new HttpCombinedParser(parserDelegate);//var datagram = new WebsocketDatagram//{ //    Kind = WebsocketDatagramKind.Unknown, //    WebsocketParserState = WebsocketParserStateKind.Start//};//return Observable.FromAsync(ct => _tcpConnectionService.ReadOneByteArrayFromStream(ct))//    .Select(bytes => bytes[0])//    //_tcpConnectionService.ByteStreamObservable()//    //.Take(1)//    .Select(@byte => _websocketDatagramParserHandler.CreateDatagram(@byte));//.Where(d => d.WebsocketParserState == WebsocketParserStateKind.FirstByte)//.CombineLatest(Observable.FromAsync(ct => _tcpConnectionService.ReadOneByteArrayFromStream(ct)))//.Select(tuple => tuple.First);//.CombineLatest(_tcpConnectionService.ByteStreamObservable().Take(1))//.Select(tuple => _websocketDatagramParserHandler.GetPayloadLength(tuple.First, tuple.Second));//.Merge()//.Select(@byte => Observable.FromAsync(ct => ParseWebsocketDatagram(@byte, stream, datagram, ct)))//.Concat()//.Do(d => datagram = d)//.DistinctUntilChanged()//.Where(dataGram => dataGram.WebsocketParserState == WebsocketParserStateKind.HasReadPayload);//.Select(datagram => datagram with { WebsocketParserState = WebsocketParserStateKind.HasReadPayload})//.Select//.Where(tuple => tuple.dataReceiveState == HandshakeStateKind.MessageReceived)//.Do(_ => datagram = new WebsocketDatagram//{//    Kind = WebsocketDatagramKind.Unknown,//    WebsocketParserState = WebsocketParserStateKind.Start//});//return t;
+
+        //private async Task<WebsocketDatagram> ParseWebsocketDatagram(
+        //    byte @byte, 
+        //    Stream stream,
+        //    WebsocketDatagram datagram,
+        //    CancellationToken ct)
+        //{
+        //    return await _websocketDatagramParserHandler.Parse(
+        //        stream,
+        //        @byte,
+        //        datagram,
+        //        ct,
+        //        ExcludeZeroApplicationDataInPong);
+
+        //    //if (_websocketDatagramParserHandler.IsCloseReceived)
+        //    //{
+        //    //    return (HandshakeStateKind.Exiting, null);
+        //    //}
+
+        //    //if (_websocketDatagramParserHandler.HasNewMessage)
+        //    //{
+        //    //    return (HandshakeStateKind.MessageReceived, _websocketDatagramParserHandler.NewMessage);
+        //    //}
+
+        //    //return (HandshakeStateKind.IsParsing, null);
+        //}
 
         public void Dispose()
         {
-            _textDataParser?.Dispose();
+            //_websocketDatagramParserHandler?.Dispose();
         }
     }
 }

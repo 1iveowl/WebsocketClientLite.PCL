@@ -22,7 +22,7 @@ namespace WebsocketClientLite.PCL.Service
             _writeFunc = writeFunc;
         }
 
-        internal async Task<FrameTypeKind> GetControlFrame(
+        internal async Task<OpcodeKind> GetControlFrame(
             Stream stream,
             byte @byte,
             CancellationToken ct,
@@ -36,18 +36,18 @@ namespace WebsocketClientLite.PCL.Service
                     ct,
                     excludeZeroApplicationDataInPong);
 
-                return FrameTypeKind.Ping;
+                return OpcodeKind.Ping;
             }
 
             switch (@byte)
             {
                 case 136:
-                    return FrameTypeKind.Close;
+                    return OpcodeKind.Close;
                 case 137:
                     InitPingStart();
-                    return FrameTypeKind.Ping;
+                    return OpcodeKind.Ping;
             }
-            return FrameTypeKind.None;
+            return OpcodeKind.None;
         }
 
         internal async Task SendPing(

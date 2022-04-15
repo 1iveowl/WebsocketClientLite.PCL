@@ -66,23 +66,23 @@ namespace WebsocketClientLite.PCL
             
         }
 
-        public IObservable<string> WebsocketConnectObservable(
+        public IObservable<IDatagram> WebsocketConnectObservable(
             Uri uri,
             bool hasClientPing = false,
             TimeSpan clientPingTimeSpan = default,
             TimeSpan timeout = default) =>
                 WebsocketConnectWithStatusObservable(uri, hasClientPing, clientPingTimeSpan, timeout)
-                    .Where(tuple => tuple.state == ConnectionStatus.MessageReceived)
-                    .Select(tuple => tuple.message);
+                    .Where(tuple => tuple.state == ConnectionStatus.DatagramReceived)
+                    .Select(tuple => tuple.datagram);
 
-        public IObservable<(string message, ConnectionStatus state)>
+        public IObservable<(IDatagram datagram, ConnectionStatus state)>
             WebsocketConnectWithStatusObservable (
                 Uri uri,
                 bool hasClientPing = false,
                 TimeSpan clientPingTimeSpan = default,
                 TimeSpan timeout = default)
         {
-            return Observable.Create<(string message, ConnectionStatus state)>(obsTuple =>
+            return Observable.Create<(IDatagram datagram, ConnectionStatus state)>(obsTuple =>
             {
                 return Observable.Create<ConnectionStatus>(obsStatus =>
                 {
@@ -101,7 +101,7 @@ namespace WebsocketClientLite.PCL
                                     .FromAsync(ct => ConnectWebsocket(websocketService, ct)).Concat())
                                 .Concat()
                                 .Subscribe(
-                                    msg => { obsTuple.OnNext((msg, ConnectionStatus.MessageReceived)); },
+                                    datagram => { obsTuple.OnNext((datagram, ConnectionStatus.DatagramReceived)); },
                                     ex => { obsTuple.OnError(ex); },
                                     () => { obsTuple.OnCompleted(); });
                         })
@@ -125,7 +125,7 @@ namespace WebsocketClientLite.PCL
 
             //return observableListener;
 
-            async Task<IObservable<string>> ConnectWebsocket(WebsocketService ws, CancellationToken ct) =>
+            async Task<IObservable<IDatagram>> ConnectWebsocket(WebsocketService ws, CancellationToken ct) =>
                 await ws.WebsocketConnectHandler.ConnectWebsocket(
                     uri,
                     X509CertCollection,

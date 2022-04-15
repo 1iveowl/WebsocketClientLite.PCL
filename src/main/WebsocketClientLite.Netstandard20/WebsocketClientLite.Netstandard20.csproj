@@ -8,10 +8,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Helper\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="HttpMachine.PCL" Version="4.0.2" />
     <PackageReference Include="System.Reactive" Version="5.0.0" />
   </ItemGroup>

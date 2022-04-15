@@ -8,6 +8,8 @@ using IWebsocketClientLite.PCL;
 using WebsocketClientLite.PCL.CustomException;
 using WebsocketClientLite.PCL.Model;
 using WebsocketClientLite.PCL.Parser;
+using System.Reactive.Concurrency;
+using System.Reactive.Disposables;
 
 namespace WebsocketClientLite.PCL.Service
 {
@@ -27,42 +29,77 @@ namespace WebsocketClientLite.PCL.Service
             _connectionStatusAction = connectionStatusAction;
         }
 
-        internal IObservable<(HandshakeState handshakeState, WebsocketClientLiteException ex)> Connect(
+        internal IObservable<(HandshakeState handshakeState, WebsocketClientLiteException ex)> Handshake(
             Uri uri,
             WebsocketSenderHandler sender,
             CancellationToken ct,
+            EventLoopScheduler eventLoopScheduler,
             string origin = null,
             IDictionary<string, string> headers = null,
-            IEnumerable<string> subprotocols = null) =>
-                Observable.Create<(HandshakeState handshakeState, WebsocketClientLiteException ex)>(async obs =>
+            IEnumerable<string> subprotocols = null)
+        {
+            return Observable.Create<(HandshakeState handshakeState, WebsocketClientLiteException ex)>(async obs =>
+            {
+                using var parserDelegate = new WebsocketHandshakeParserDelegate(obs);
+                using var parserHandler = new HttpCombinedParser(parserDelegate);
+
+                var handshakeParser = new HandshakeParser(
+                    parserHandler,
+                    parserDelegate,
+                    _connectionStatusAction);
+
+                await SendHandshake(uri, sender, ct, origin, headers);
+
+                //obs.OnNext((HandshakeState.HandshakeFailed, null));
+
+                //var result = Task.Run(() => SendHandshake(uri, sender, ct, origin, headers)).Result;
+
+                //obs.OnNext(result);
+
+                var cts = new CancellationTokenSource();
+
+                do
                 {
-                    using var parserDelegate = new WebsocketHandshakeParserDelegate(obs);
-                    using var parserHandler = new HttpCombinedParser(parserDelegate);
+                    var byteArray = await _tcpConnectionService.ReadByteArrayFromStream(1, cts.Token);
 
-                    var handshakeParser = new HandshakeParser(
-                        parserHandler,
-                        parserDelegate,
-                        _connectionStatusAction);
+                    var result = handshakeParser.Parse(byteArray, subprotocols);
 
-                    obs.OnNext(await SendHandshake(uri, sender, ct, origin, headers));
+                    if (result == HandshakeStateKind.IsListening)
+                    {
+                        cts.Cancel();
+                    }
 
-                    return _tcpConnectionService.ByteStreamObservable()
-                        .Select(b => handshakeParser.Parse(b, subprotocols))
-                        .TakeWhile(d => d == HandshakeStateKind.IsListeningForHandShake)
-                        .Subscribe(
-                        _ => { },
-                        ex => { obs.OnNext((HandshakeState.HandshakeFailed, new WebsocketClientLiteException("Unknown error", ex))); },
-                        () => { });
-                })
-                .Timeout(TimeSpan.FromSeconds(30))
-                .Catch<
-                    (HandshakeState handshakeState, WebsocketClientLiteException ex),
-                    TimeoutException>(
-                        tx => Observable.Return(
-                            (HandshakeState.HandshakeTimedOut, 
-                            new WebsocketClientLiteException("Handshake times out.", tx))
-                        )
-                    );
+                } while (!cts.IsCancellationRequested);
+
+                obs.OnCompleted();
+
+                return Disposable.Empty;
+
+                //var disposable = _tcpConnectionService.BytesObservable()
+                //    //.Repeat()
+                //    .Select(b => handshakeParser.Parse(b, subprotocols))
+                //    .Repeat()
+                //    //.TakeUntil(d => d == HandshakeStateKind.IsListening)
+                //    .Where(d => d == HandshakeStateKind.IsListening)
+                //    //.TakeWhile(d => d == HandshakeStateKind.IsListeningForHandShake)
+                //    //.ObserveOn(eventLoopScheduler)
+                //    .Subscribe(
+                //    _ => { obs.OnCompleted(); },
+                //    ex => { obs.OnNext((HandshakeState.HandshakeFailed, new WebsocketClientLiteException("Unknown error", ex))); },
+                //    () => { });
+
+                //return disposable;
+            })
+            .Timeout(TimeSpan.FromSeconds(30))
+            .Catch<
+                (HandshakeState handshakeState, WebsocketClientLiteException ex),
+                TimeoutException>(
+                    tx => Observable.Return(
+                        (HandshakeState.HandshakeTimedOut,
+                        new WebsocketClientLiteException("Handshake times out.", tx))
+                    )
+                );
+        }
 
         private async Task<(HandshakeState handshakeState, WebsocketClientLiteException ex)> 
             SendHandshake(
