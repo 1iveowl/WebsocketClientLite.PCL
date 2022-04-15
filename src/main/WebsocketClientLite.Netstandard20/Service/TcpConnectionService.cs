@@ -60,8 +60,8 @@ namespace WebsocketClientLite.PCL.Service
 
         internal IObservable<byte[]> BytesObservable() =>
             //ByteReadObservable();
-            Observable.FromAsync(ct => ReadByteArrayFromStream(1, ct));
-            //Observable.Defer(() => Observable.FromAsync(ct => ReadOneByteArrayFromStream(ct)));
+            //Observable.FromAsync(ct => ReadByteArrayFromStream(1, ct));
+            Observable.Defer(() => Observable.FromAsync(ct => ReadByteArrayFromStream(1, ct)));
             //.Repeat();
             //.TakeWhile(bytes => bytes is not null);
 

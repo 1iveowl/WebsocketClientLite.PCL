@@ -154,7 +154,7 @@ class Program
             await Task.Delay(TimeSpan.FromMilliseconds(500));
             await sender.SendTextAsync("Stop.", OpcodeKind.Text, FragmentKind.Last);           
 
-            await Task.Delay(TimeSpan.FromSeconds(20));
+            await Task.Delay(TimeSpan.FromSeconds(21));
         }
 
         async Task SendTest2()

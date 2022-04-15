@@ -1,17 +1,15 @@
-﻿using HttpMachine;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 using IWebsocketClientLite.PCL;
 using WebsocketClientLite.PCL.Model;
 using WebsocketClientLite.PCL.Parser;
-using System.Linq;
 using System.Threading;
 using System.Reactive.Disposables;
-using static WebsocketClientLite.PCL.Helper.DatagramParsing;
 using WebsocketClientLite.PCL.Helper;
+using static WebsocketClientLite.PCL.Helper.DatagramParsing;
+
 
 namespace WebsocketClientLite.PCL.Service
 {

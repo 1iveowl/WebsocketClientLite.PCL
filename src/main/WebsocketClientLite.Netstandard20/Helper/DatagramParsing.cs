@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -19,7 +20,8 @@ namespace WebsocketClientLite.PCL.Helper
         {
             var datagram = new Datagram(tcpConnection, ct);
 
-            var byteArray = (await datagram.GetNextBytes(1));
+            var byteArray = await datagram.GetNextBytes(1);
+            Debug.WriteLine($"First byte: {byteArray[0]}");
             var bits = new BitArray(byteArray);
 
             return datagram with
@@ -39,17 +41,20 @@ namespace WebsocketClientLite.PCL.Helper
 
             byte GetOpcode()
             {
-                var opcodeBits = new BitArray(8);
+                var opcodeBits = new BitArray(4);
 
                 // When encoded on the wire, the most significant bit is the leftmost in the ABNF
                 // https://datatracker.ietf.org/doc/html/rfc6455#section-5.2
-                opcodeBits[0] = bits[7];
-                opcodeBits[1] = bits[6];
-                opcodeBits[2] = bits[5];
-                opcodeBits[3] = bits[4];
+                opcodeBits[0] = bits[0];
+                opcodeBits[1] = bits[1];
+                opcodeBits[2] = bits[2];
+                opcodeBits[3] = bits[3];
 
                 var opcode = new byte[1];
                 opcodeBits.CopyTo(opcode, 0);
+                //bits.CopyTo(opcode, 0);
+
+                Debug.WriteLine($"Opcode: {(OpcodeKind)opcode[0]}");
 
                 return opcode[0];
             }

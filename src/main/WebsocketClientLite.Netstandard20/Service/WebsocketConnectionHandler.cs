@@ -128,8 +128,8 @@ namespace WebsocketClientLite.PCL.Service
             //    await DisconnectWebsocket(sender);
             //});
 
-            return _websocketParserHandler
-                .DatagramObservable()
+            return Observable.Defer(() => _websocketParserHandler
+                .DatagramObservable())
 
                 //.Do(_ => _connectionStatusAction(ConnectionStatus.WebsocketConnected, null))
                 //.ObserveOn(eventLoopScheduler)

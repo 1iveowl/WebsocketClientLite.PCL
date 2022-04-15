@@ -56,37 +56,37 @@ namespace WebsocketClientLite.PCL.Service
 
                 //obs.OnNext(result);
 
-                var cts = new CancellationTokenSource();
+                //var cts = new CancellationTokenSource();
 
-                do
-                {
-                    var byteArray = await _tcpConnectionService.ReadByteArrayFromStream(1, cts.Token);
+                //do
+                //{
+                //    var byteArray = await _tcpConnectionService.ReadByteArrayFromStream(1, cts.Token);
 
-                    var result = handshakeParser.Parse(byteArray, subprotocols);
+                //    var result = handshakeParser.Parse(byteArray, subprotocols);
 
-                    if (result == HandshakeStateKind.IsListening)
-                    {
-                        cts.Cancel();
-                    }
+                //    if (result == HandshakeStateKind.IsListening)
+                //    {
+                //        cts.Cancel();
+                //    }
 
-                } while (!cts.IsCancellationRequested);
+                //} while (!cts.IsCancellationRequested);
 
-                obs.OnCompleted();
+                //obs.OnCompleted();
 
-                return Disposable.Empty;
+                //return Disposable.Empty;
 
-                //var disposable = _tcpConnectionService.BytesObservable()
-                //    //.Repeat()
-                //    .Select(b => handshakeParser.Parse(b, subprotocols))
-                //    .Repeat()
-                //    //.TakeUntil(d => d == HandshakeStateKind.IsListening)
-                //    .Where(d => d == HandshakeStateKind.IsListening)
-                //    //.TakeWhile(d => d == HandshakeStateKind.IsListeningForHandShake)
-                //    //.ObserveOn(eventLoopScheduler)
-                //    .Subscribe(
-                //    _ => { obs.OnCompleted(); },
-                //    ex => { obs.OnNext((HandshakeState.HandshakeFailed, new WebsocketClientLiteException("Unknown error", ex))); },
-                //    () => { });
+                return _tcpConnectionService.BytesObservable()
+                    //.Repeat()
+                    .Select(b => handshakeParser.Parse(b, subprotocols))
+                    .Repeat()
+                    //.TakeUntil(d => d == HandshakeStateKind.IsListening)
+                    .Where(d => d == HandshakeStateKind.IsListening)
+                    //.TakeWhile(d => d == HandshakeStateKind.IsListeningForHandShake)
+                    //.ObserveOn(eventLoopScheduler)
+                    .Subscribe(
+                    _ => { obs.OnCompleted(); },
+                    ex => { obs.OnNext((HandshakeState.HandshakeFailed, new WebsocketClientLiteException("Unknown error", ex))); },
+                    () => { });
 
                 //return disposable;
             })
