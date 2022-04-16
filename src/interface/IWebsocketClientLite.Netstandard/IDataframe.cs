@@ -2,7 +2,7 @@
 
 namespace IWebsocketClientLite.PCL
 {
-    public interface IDatagram
+    public interface IDataframe
     {
         string Message { get; }
 

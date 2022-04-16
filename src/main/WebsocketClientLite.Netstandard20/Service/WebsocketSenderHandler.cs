@@ -18,17 +18,18 @@ namespace WebsocketClientLite.PCL.Service
         private readonly TcpConnectionService _tcpConnectionService;
         private readonly Func<Stream, byte[], CancellationToken, Task> _writeFunc;
         private readonly Action<ConnectionStatus, Exception> _connectionStatusAction;
-
-        private bool _isSendingMultipleFrames;
+        private readonly bool _isExcludingZeroApplicationDataInPong;
 
         internal WebsocketSenderHandler(
             TcpConnectionService tcpConnectionService,
             Action<ConnectionStatus, Exception> connectionStatusAction,
-            Func<Stream, byte[], CancellationToken, Task> writeFunc)
+            Func<Stream, byte[], CancellationToken, Task> writeFunc,            
+            bool isExcludingZeroApplicationDataInPong)
         {
             _tcpConnectionService = tcpConnectionService;
             _connectionStatusAction = connectionStatusAction;
             _writeFunc = writeFunc;
+            _isExcludingZeroApplicationDataInPong = isExcludingZeroApplicationDataInPong;
         }
 
         internal async Task SendConnectHandShake(
@@ -75,33 +76,26 @@ namespace WebsocketClientLite.PCL.Service
                 return;
             }
 
-            try
+            await ComposeFrameAndSendAsync(
+                    messageList[0],
+                    OpcodeKind.Text,
+                    FragmentKind.First,
+                    ct);
+
+            for (var i = 1; i < messageList.Length - 1; i++)
             {
                 await ComposeFrameAndSendAsync(
-                        messageList[0],
-                        OpcodeKind.Text,
-                        FragmentKind.First,
-                        ct);
-
-                for (var i = 1; i < messageList.Length - 1; i++)
-                {
-                    await ComposeFrameAndSendAsync(
-                        messageList[i], 
-                        OpcodeKind.Continuation,
-                        FragmentKind.None,
-                        ct);
-                }
-
-                await ComposeFrameAndSendAsync(
-                    messageList.Last(),
-                    OpcodeKind.Text,
-                    FragmentKind.Last, 
+                    messageList[i], 
+                    OpcodeKind.Continuation,
+                    FragmentKind.None,
                     ct);
             }
-            finally
-            {
-                _isSendingMultipleFrames = false;
-            }   
+
+            await ComposeFrameAndSendAsync(
+                messageList.Last(),
+                OpcodeKind.Text,
+                FragmentKind.Last, 
+                ct);
         }
 
         
@@ -179,14 +173,22 @@ namespace WebsocketClientLite.PCL.Service
             throw new NotImplementedException();
         }
 
-        public Task SendPong(string message, CancellationToken ct = default)
+        internal async Task SendPong(
+            Dataframe dataframe,
+            CancellationToken ct)
         {
-            throw new NotImplementedException();
+            await ComposeFrameAndSendAsync(
+                dataframe.Binary,
+                OpcodeKind.Pong,
+                FragmentKind.None,
+                ct);
+            //var pong = isExcludingZeroApplicationDataInPong
+            //            ? new byte[1] { 138 }
+            //            : new byte[2] { 138, 0 };
         }
 
         internal async Task SendCloseHandshakeAsync(
-            StatusCodes statusCode, 
-            CancellationToken ct = default)
+            StatusCodes statusCode)
         {
             var closeFrameBodyCode = BitConverter.GetBytes((ushort)statusCode);
             var reason = Encoding.UTF8.GetBytes(statusCode.ToString());
@@ -195,7 +197,7 @@ namespace WebsocketClientLite.PCL.Service
                 closeFrameBodyCode.Concat(reason).ToArray(),
                 OpcodeKind.Close,
                 FragmentKind.None,
-                ct);
+                default);
         }
 
         private async Task ComposeFrameAndSendAsync(
@@ -215,13 +217,24 @@ namespace WebsocketClientLite.PCL.Service
             FragmentKind fragment,
             CancellationToken ct)
         {
-            var maskKey = CreateMaskKey();
 
-            var frame = new byte[1] { DetermineFINBit(opcode, fragment) }
-                .Concat(CreatePayloadBytes(content.Length, isMasking: true))
-                .Concat(maskKey)
-                .Concat(Encode(content, maskKey))
-                .ToArray();
+            var frame = new byte[1] { DetermineFINBit(opcode, fragment) };
+
+            if (content is not null)
+            {
+                var maskKey = CreateMaskKey();
+                frame = frame.Concat(CreatePayloadBytes(content.Length, isMasking: true))
+                    .Concat(maskKey)
+                    .Concat(Encode(content, maskKey))
+                    .ToArray();
+            }
+            else
+            {
+                if(!_isExcludingZeroApplicationDataInPong)
+                {
+                    frame = frame.Concat(new byte[1] { 0 }).ToArray();
+                }
+            }
 
             await SendFrameAsync(
                 frame, 
@@ -238,7 +251,7 @@ namespace WebsocketClientLite.PCL.Service
 
                 return fragment switch
                 {
-                    FragmentKind.None => (byte)(opcode + (byte)FragmentKind.Last),
+                    FragmentKind.None => (byte)((byte)opcode + (byte)FragmentKind.Last),
                     FragmentKind.First => (byte)opcode,
                     FragmentKind.Last => (byte)FragmentKind.Last,
                     _ => throw new NotImplementedException()

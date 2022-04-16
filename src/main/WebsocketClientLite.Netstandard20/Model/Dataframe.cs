@@ -8,7 +8,7 @@ using static WebsocketClientLite.PCL.Helper.WebsocketMasking;
 
 namespace WebsocketClientLite.PCL.Model
 {
-    internal record Datagram : IDatagram
+    internal record Dataframe : IDataframe
     {
         private readonly TcpConnectionService _tcpConnection;
         private readonly CancellationToken _ct;
@@ -33,7 +33,7 @@ namespace WebsocketClientLite.PCL.Model
 
         public ulong Length { get; init; }
 
-        public Datagram(TcpConnectionService tcpConnection, CancellationToken ct)
+        public Dataframe(TcpConnectionService tcpConnection, CancellationToken ct)
         {
             _tcpConnection = tcpConnection;
             _ct = ct;
@@ -48,12 +48,20 @@ namespace WebsocketClientLite.PCL.Model
         {
             if (_data is null)
             {
-                _data = DataStream.ToArray();
-                
-                if (MASK)
+                if (DataStream is not null)
                 {
-                    _data = Decode(_data, MaskingBytes);
+                    _data = DataStream.ToArray();
+
+                    if (MASK)
+                    {
+                        _data = Decode(_data, MaskingBytes);
+                    }
                 }
+                else
+                {
+                    _data = null;
+                }
+
             }
 
             return _data;
@@ -64,9 +72,19 @@ namespace WebsocketClientLite.PCL.Model
             if (_message is null)
             {
                 var data = GetBinary();
-                _message = Opcode is OpcodeKind.Text
-                    ? Encoding.UTF8.GetString(data, 0, data.Length)
-                    : default;
+
+                if (data is not null)
+                {
+
+                    _message = Opcode is OpcodeKind.Text
+                        ? Encoding.UTF8.GetString(data, 0, data.Length)
+                        : default;
+                }
+                else
+                {
+                    _message = null;
+                }
+
             }            
 
             return _message;            

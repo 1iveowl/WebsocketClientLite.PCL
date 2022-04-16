@@ -58,9 +58,10 @@ namespace WebsocketClientLite.PCL.Factory
                                 tcpConnectionHandler,
                                 ConnectionStatusAction,
                                 //WriteToStream
-                                (stream, bytes, cts) => RunOnScheduler(WriteToStream(stream, bytes, cts), eventLoopScheduler)
-                        )
-                    )                        
+                                (stream, bytes, cts) => RunOnScheduler(WriteToStream(stream, bytes, cts), eventLoopScheduler),
+                                messageWebSocketRx.ExcludeZeroApplicationDataInPong
+                            )
+                        )                        
                 );            
 
             await Task.CompletedTask;

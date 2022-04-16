@@ -10,15 +10,14 @@ using IWebsocketClientLite.PCL;
 using WebsocketClientLite.PCL.CustomException;
 using WebsocketClientLite.PCL.Model;
 using WebsocketClientLite.PCL.Service;
-using static WebsocketClientLite.PCL.Helper.WebsocketMasking;
 
 namespace WebsocketClientLite.PCL.Helper
 {
     internal static class DatagramParsing
     {
-        internal static async Task<Datagram> CreateDatagram(TcpConnectionService tcpConnection, CancellationToken ct)
+        internal static async Task<Dataframe> CreateDatagram(TcpConnectionService tcpConnection, CancellationToken ct)
         {
-            var datagram = new Datagram(tcpConnection, ct);
+            var datagram = new Dataframe(tcpConnection, ct);
 
             var byteArray = await datagram.GetNextBytes(1);
             Debug.WriteLine($"First byte: {byteArray[0]}");
@@ -26,10 +25,10 @@ namespace WebsocketClientLite.PCL.Helper
 
             return datagram with
             {
-                FIN = bits[0],
-                RSV1 = bits[1],
-                RSV2 = bits[2],
-                RSV3 = bits[3],
+                FIN = bits[7],
+                RSV1 = bits[6],
+                RSV2 = bits[5],
+                RSV3 = bits[4],
                 Opcode = (OpcodeKind)GetOpcode(),
                 Fragment = byteArray[0] switch
                 {
@@ -41,18 +40,12 @@ namespace WebsocketClientLite.PCL.Helper
 
             byte GetOpcode()
             {
-                var opcodeBits = new BitArray(4);
-
                 // When encoded on the wire, the most significant bit is the leftmost in the ABNF
                 // https://datatracker.ietf.org/doc/html/rfc6455#section-5.2
-                opcodeBits[0] = bits[0];
-                opcodeBits[1] = bits[1];
-                opcodeBits[2] = bits[2];
-                opcodeBits[3] = bits[3];
+                var opcodeBits = new BitArray(new[] { bits[0], bits[1], bits[2], bits[3]});
 
                 var opcode = new byte[1];
                 opcodeBits.CopyTo(opcode, 0);
-                //bits.CopyTo(opcode, 0);
 
                 Debug.WriteLine($"Opcode: {(OpcodeKind)opcode[0]}");
 
@@ -60,7 +53,7 @@ namespace WebsocketClientLite.PCL.Helper
             }
         }
 
-        internal static async Task<Datagram> PayloadBitLenght(this Task<Datagram> datagramTask)
+        internal static async Task<Dataframe> PayloadBitLenght(this Task<Dataframe> datagramTask)
         {
             var datagram = await datagramTask;
 
@@ -101,7 +94,7 @@ namespace WebsocketClientLite.PCL.Helper
             }
         }
 
-        internal static async Task<Datagram> PayloadLenght(this Task<Datagram> datagramTask)
+        internal static async Task<Dataframe> PayloadLenght(this Task<Dataframe> datagramTask)
         {
             var datagram = await datagramTask;
 
@@ -125,29 +118,35 @@ namespace WebsocketClientLite.PCL.Helper
             }
         }
 
-        internal static async Task<Datagram> GetPayload(this Task<Datagram> datagramTask)
+        internal static async Task<Dataframe> GetPayload(this Task<Dataframe> datagramTask)
         {
             var datagram = await datagramTask;
-            var memoryStream = new MemoryStream();
 
-            await memoryStream.WriteAsync(await datagram.GetNextBytes(datagram.Length));     
-
-            if (datagram.MASK)
+            if (datagram.Length > 0)
             {
+                var memoryStream = new MemoryStream();
 
-                return datagram with
+                await memoryStream.WriteAsync(await datagram.GetNextBytes(datagram.Length));
+
+                if (datagram.MASK)
                 {
-                    MaskingBytes = (await datagram.GetNextBytes(4)).Reverse().ToArray(),
-                    DataStream = memoryStream,
-                };
-            }
-            else
-            {
-                return datagram with
+
+                    return datagram with
+                    {
+                        MaskingBytes = (await datagram.GetNextBytes(4)).Reverse().ToArray(),
+                        DataStream = memoryStream,
+                    };
+                }
+                else
                 {
-                    DataStream = memoryStream
-                };
+                    return datagram with
+                    {
+                        DataStream = memoryStream
+                    };
+                }
             }
+
+            return datagram;
         }
     }
 }

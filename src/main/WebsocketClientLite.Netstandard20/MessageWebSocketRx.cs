@@ -66,7 +66,7 @@ namespace WebsocketClientLite.PCL
             
         }
 
-        public IObservable<IDatagram> WebsocketConnectObservable(
+        public IObservable<IDataframe> WebsocketConnectObservable(
             Uri uri,
             bool hasClientPing = false,
             TimeSpan clientPingTimeSpan = default,
@@ -75,14 +75,14 @@ namespace WebsocketClientLite.PCL
                     .Where(tuple => tuple.state == ConnectionStatus.DatagramReceived)
                     .Select(tuple => tuple.datagram);
 
-        public IObservable<(IDatagram datagram, ConnectionStatus state)>
+        public IObservable<(IDataframe datagram, ConnectionStatus state)>
             WebsocketConnectWithStatusObservable (
                 Uri uri,
                 bool hasClientPing = false,
                 TimeSpan clientPingTimeSpan = default,
                 TimeSpan timeout = default)
         {
-            return Observable.Create<(IDatagram datagram, ConnectionStatus state)>(obsTuple =>
+            return Observable.Create<(IDataframe datagram, ConnectionStatus state)>(obsTuple =>
             {
                 return Observable.Create<ConnectionStatus>(obsStatus =>
                 {
@@ -125,7 +125,7 @@ namespace WebsocketClientLite.PCL
 
             //return observableListener;
 
-            async Task<IObservable<IDatagram>> ConnectWebsocket(WebsocketService ws, CancellationToken ct) =>
+            async Task<IObservable<IDataframe>> ConnectWebsocket(WebsocketService ws, CancellationToken ct) =>
                 await ws.WebsocketConnectHandler.ConnectWebsocket(
                     uri,
                     X509CertCollection,

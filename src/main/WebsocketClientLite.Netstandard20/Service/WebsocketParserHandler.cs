@@ -31,8 +31,8 @@ namespace WebsocketClientLite.PCL.Service
             ExcludeZeroApplicationDataInPong = excludeZeroApplicationDataInPong;
         }
 
-        internal IObservable<Datagram> DatagramObservable() => 
-            Observable.Create<Datagram>(async obs =>
+        internal IObservable<Dataframe> DatagramObservable() => 
+            Observable.Create<Dataframe>(async obs =>
             {
                 var cts = new CancellationTokenSource();
 
@@ -56,7 +56,7 @@ namespace WebsocketClientLite.PCL.Service
 
                 return Disposable.Create(() => cts.Cancel());
 
-                async Task<Datagram> GetNextDataGram(Datagram datagram)
+                async Task<Dataframe> GetNextDataGram(Dataframe datagram)
                 {
                     var nextDatagram = await GetDataGram();
 
@@ -73,7 +73,7 @@ namespace WebsocketClientLite.PCL.Service
                     return datagram;
                 }
 
-                async Task<Datagram> GetDataGram()
+                async Task<Dataframe> GetDataGram()
                 {
                     var newDatagram = await CreateDatagram(_tcpConnectionService, cts.Token)
                         .PayloadBitLenght()

@@ -60,12 +60,12 @@ class Program
             IgnoreServerCertificateErrors = true,
             Headers = new Dictionary<string, string> { { "Pragma", "no-cache" }, { "Cache-Control", "no-cache" } },
             TlsProtocolType = SslProtocols.Tls12,
-            ExcludeZeroApplicationDataInPong = true,
+            ExcludeZeroApplicationDataInPong = false,
         };
 
         Console.WriteLine("Start");
 
-        IObservable<(IDatagram datagram, ConnectionStatus state)> websocketConnectionObservable = 
+        IObservable<(IDataframe datagram, ConnectionStatus state)> websocketConnectionObservable = 
             websocketClient.WebsocketConnectWithStatusObservable(
                new Uri(WebsocketTestServerUrl), 
                hasClientPing: false,

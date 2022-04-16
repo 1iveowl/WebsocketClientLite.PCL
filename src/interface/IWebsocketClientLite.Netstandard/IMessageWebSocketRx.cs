@@ -38,13 +38,13 @@ namespace IWebsocketClientLite.PCL
 
         ISender GetSender();
 
-        IObservable<IDatagram> WebsocketConnectObservable(
+        IObservable<IDataframe> WebsocketConnectObservable(
             Uri uri,
             bool hasClientPing = false,
             TimeSpan clientPingTimeSpan = default,
             TimeSpan timeout = default);
 
-        IObservable<(IDatagram datagram, ConnectionStatus state)> WebsocketConnectWithStatusObservable(
+        IObservable<(IDataframe datagram, ConnectionStatus state)> WebsocketConnectWithStatusObservable(
             Uri uri, 
             bool hasClientPing = false,
             TimeSpan clientPingTimeSpan = default, 

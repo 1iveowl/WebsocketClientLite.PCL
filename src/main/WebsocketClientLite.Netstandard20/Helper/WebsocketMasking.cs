@@ -8,15 +8,15 @@ namespace WebsocketClientLite.PCL.Helper
     {
         internal static byte[] Encode(byte[] data, byte[] key)
         {
-            return EncodeDecodeSymmetric(data, key);
+            return SymmetricCoding(data, key);
         }
 
         internal static byte[] Decode(byte[] data, byte[] key)
         {
-            return EncodeDecodeSymmetric(data, key);
+            return SymmetricCoding(data, key);
         }
 
-        private static byte[] EncodeDecodeSymmetric(IReadOnlyList<byte> data, IReadOnlyList<byte> key)
+        private static byte[] SymmetricCoding(IReadOnlyList<byte> data, IReadOnlyList<byte> key)
         {
             var result = new byte[data.Count];
 
