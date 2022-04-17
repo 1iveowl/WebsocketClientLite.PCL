@@ -14,6 +14,9 @@ using WebsocketClientLite.PCL.Service;
 
 namespace WebsocketClientLite.PCL
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class MessageWebsocketRx : IMessageWebSocketRx
     {
         private readonly EventLoopScheduler _eventLoopScheduler;
@@ -22,6 +25,9 @@ namespace WebsocketClientLite.PCL
 
         private ISender _sender;
 
+        /// <summary>
+        /// Boolean value indicating if Websocket client is connected.
+        /// </summary>
         public bool IsConnected { get; private set; }
 
         //public bool SubprotocolAccepted { get; set; }
@@ -43,7 +49,11 @@ namespace WebsocketClientLite.PCL
         public ISender GetSender() => IsConnected 
             ? _sender 
             : throw new InvalidOperationException("No sender available, Websocket not connected. You need to subscribe to WebsocketConnectObservable first.");
-                
+        
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="tcpClient"></param>
         public MessageWebsocketRx(TcpClient tcpClient) 
         {
             _eventLoopScheduler = new EventLoopScheduler();
@@ -52,18 +62,29 @@ namespace WebsocketClientLite.PCL
             Subprotocols = null;
         }
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
         public MessageWebsocketRx() : this(null)
         {
             
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="uri"></param>
+        /// <param name="hasClientPing"></param>
+        /// <param name="clientPingTimeSpan"></param>
+        /// <param name="timeout"></param>
+        /// <returns></returns>
         public IObservable<IDataframe> WebsocketConnectObservable(
             Uri uri,
             bool hasClientPing = false,
             TimeSpan clientPingTimeSpan = default,
             TimeSpan timeout = default) =>
                 WebsocketConnectWithStatusObservable(uri, hasClientPing, clientPingTimeSpan, timeout)
-                    .Where(tuple => tuple.state == ConnectionStatus.DataframeReceived)
+                    .Where(tuple => tuple.state is ConnectionStatus.DataframeReceived)
                     .Select(tuple => tuple.dataframe);
 
         public IObservable<(IDataframe dataframe, ConnectionStatus state)>
@@ -73,6 +94,11 @@ namespace WebsocketClientLite.PCL
                 TimeSpan clientPingTimeSpan = default,
                 TimeSpan timeout = default)
         {
+            if (timeout == default)
+            {
+                timeout = TimeSpan.FromSeconds(30);
+            }
+
             return Observable.Create<(IDataframe dataframe, ConnectionStatus state)>(obsTuple =>
             {
                 return Observable.Create<ConnectionStatus>(obsStatus =>
@@ -86,7 +112,7 @@ namespace WebsocketClientLite.PCL
                              _eventLoopScheduler,
                              obsStatus,
                              this),
-                        observableFactoryAsync: (websocketServices, ct) => 
+                        observableFactoryAsync: (websocketServices, ct) =>
                             Task.FromResult(Observable.Return(websocketServices)))
                                 .Select(websocketService => Observable
                                     .FromAsync(ct => ConnectWebsocket(websocketService, ct)).Concat())
@@ -95,11 +121,12 @@ namespace WebsocketClientLite.PCL
                                     dataframe => { obsTuple.OnNext((dataframe, ConnectionStatus.DataframeReceived)); },
                                     ex => { obsTuple.OnError(ex); },
                                     () => { obsTuple.OnCompleted(); });
-                        })
-                    .Subscribe(
-                        state =>{ obsTuple.OnNext((null, state));},
-                        ex => { obsTuple.OnError(ex); },
-                        () => { obsTuple.OnCompleted(); });
+                })
+                .Finally(() => IsConnected = false)
+                .Subscribe(
+                    state =>{ obsTuple.OnNext((null, state));},
+                    ex => { obsTuple.OnError(ex); },
+                    () => { obsTuple.OnCompleted(); });
             });
 
             async Task<IObservable<IDataframe>> ConnectWebsocket(WebsocketService ws, CancellationToken ct) =>

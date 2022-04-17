@@ -55,7 +55,7 @@ class Program
         TcpClient tcpClient,
         CancellationTokenSource innerCancellationTokenSource)
     {
-        var websocketClient = new MessageWebsocketRx(tcpClient)
+        var client = new MessageWebsocketRx(tcpClient)
         {
             IgnoreServerCertificateErrors = true,
             Headers = new Dictionary<string, string> { { "Pragma", "no-cache" }, { "Cache-Control", "no-cache" } },
@@ -65,15 +65,24 @@ class Program
         Console.WriteLine("Start");
 
         IObservable<(IDataframe dataframe, ConnectionStatus state)> websocketConnectionObservable = 
-            websocketClient.WebsocketConnectWithStatusObservable(
+            client.WebsocketConnectWithStatusObservable(
                new Uri(WebsocketTestServerUrl), 
-               hasClientPing: true,
+               hasClientPing: false,
                clientPingTimeSpan: TimeSpan.FromSeconds(10));
 
         var disposableConnectionStatus = websocketConnectionObservable
             .Do(tuple =>
             {
-                Console.WriteLine(tuple.state.ToString());
+                Console.ForegroundColor = (int)tuple.state switch
+                {
+                    >= 1000 and <= 1999 => ConsoleColor.Magenta,
+                    >= 2000 and <= 2999 => ConsoleColor.Green,
+                    >= 3000 and <= 3999 => ConsoleColor.Cyan,
+                    >= 4000 and <= 4999 => ConsoleColor.DarkYellow,
+                    _                   => ConsoleColor.Gray,
+                };
+
+                Console.WriteLine(tuple.state.ToString() );
 
                 if (tuple.state == ConnectionStatus.Disconnected
                 || tuple.state == ConnectionStatus.Aborted
@@ -106,87 +115,66 @@ class Program
                 innerCancellationTokenSource.Cancel();
             });
 
-        //var disposableWebsocketMessage = websocketConnectionObservable.Subscribe(msg =>
-        //    {
-        //        Console.WriteLine($"Echo: {msg}");
-        //    },
-        //    ex =>
-        //    {
-        //        Console.WriteLine(ex.Message);
-        //        innerCancellationTokenSource.Cancel();
-        //    },
-        //    () =>
-        //    {
-        //        Console.WriteLine($"Message listener subscription Completed");
-        //        innerCancellationTokenSource.Cancel();
-        //    });
-
         await Task.Delay(TimeSpan.FromSeconds(200));
 
         async Task SendTest1()
         {
-            var sender = websocketClient.GetSender();
+            var sender = client.GetSender();
 
             await Task.Delay(TimeSpan.FromSeconds(4));
 
-            await sender.SendTextAsync("Test Single Frame 1");
+            await sender.SendText("Test Single Frame 1");
 
             await Task.Delay(TimeSpan.FromSeconds(5));
 
-            await sender.SendTextAsync("Test Single Frame 2");
+            await sender.SendText("Test Single Frame 2");
 
-            await sender.SendTextAsync("Test Single Frame again");
+            await sender.SendText("Test Single Frame again");
 
-            await sender.SendTextAsync(TestString(1026, 1026));
+            await sender.SendText(TestString(1026, 1026));
 
             //await Task.Delay(TimeSpan.FromSeconds(2));
 
-            await sender.SendTextAsync(new[] { "Test ", "multiple ", "frames ", "1 ", "2 ", "3 ", "4 ", "5 ", "6 ", "7 ", "8 ", "9 " });
+            await sender.SendText(new[] { "Test ", "multiple ", "frames ", "1 ", "2 ", "3 ", "4 ", "5 ", "6 ", "7 ", "8 ", "9 " });
 
-            await sender.SendTextAsync("Start ", OpcodeKind.Text, FragmentKind.First);
+            await sender.SendText("Start ", OpcodeKind.Text, FragmentKind.First);
             await Task.Delay(TimeSpan.FromMilliseconds(500));
-            await sender.SendTextAsync("Continue... #1 ", OpcodeKind.Continuation);
+            await sender.SendText("Continue... #1 ", OpcodeKind.Continuation);
             await Task.Delay(TimeSpan.FromMilliseconds(500));
-            await sender.SendTextAsync("Continue... #2 ", OpcodeKind.Continuation);
+            await sender.SendText("Continue... #2 ", OpcodeKind.Continuation);
             await Task.Delay(TimeSpan.FromMilliseconds(550));
-            await sender.SendTextAsync("Continue... #3 ", OpcodeKind.Continuation);
+            await sender.SendText("Continue... #3 ", OpcodeKind.Continuation);
             await Task.Delay(TimeSpan.FromMilliseconds(500));
-            await sender.SendTextAsync("Stop.", OpcodeKind.Text, FragmentKind.Last);           
+            await sender.SendText("Stop.", OpcodeKind.Text, FragmentKind.Last);           
 
             await Task.Delay(TimeSpan.FromSeconds(20));
         }
 
         async Task SendTest2()
         {
-            var sender = websocketClient.GetSender();
+            var sender = client.GetSender();
 
             Console.WriteLine("Sending: Test Single Frame");
-            await sender.SendTextAsync("Test Single Frame");
+            await sender.SendText("Test Single Frame");
 
-            await sender.SendTextAsync("Test Single Frame again");
+            await sender.SendText("Test Single Frame again");
 
-            await sender.SendTextAsync(TestString(1024, 1024));
+            await sender.SendText(TestString(1024, 1024));
 
-            await sender.SendTextAsync(new[] { "Test ", "multiple ", "frames" });
+            await sender.SendText(new[] { "Test ", "multiple ", "frames" });
 
-            await sender.SendTextAsync("Start ", OpcodeKind.Text, FragmentKind.First);
+            await sender.SendText("Start ", OpcodeKind.Text, FragmentKind.First);
             await Task.Delay(TimeSpan.FromMilliseconds(500));
-            await sender.SendTextAsync("Continue... #1 ", OpcodeKind.Continuation);
+            await sender.SendText("Continue... #1 ", OpcodeKind.Continuation);
             await Task.Delay(TimeSpan.FromMilliseconds(500));
-            await sender.SendTextAsync("Continue... #2 ", OpcodeKind.Continuation);
+            await sender.SendText("Continue... #2 ", OpcodeKind.Continuation);
             await Task.Delay(TimeSpan.FromMilliseconds(550));
-            await sender.SendTextAsync("Continue... #3 ", OpcodeKind.Continuation);
+            await sender.SendText("Continue... #3 ", OpcodeKind.Continuation);
             await Task.Delay(TimeSpan.FromMilliseconds(500));
-            await sender.SendTextAsync("Stop.", OpcodeKind.Text, FragmentKind.Last);
+            await sender.SendText("Stop.", OpcodeKind.Text, FragmentKind.Last);
 
-            await Task.Delay(TimeSpan.FromDays(1));
-        }
-        //catch (Exception e)
-        //{
-        //    Console.WriteLine(e);
-        //    innerCancellationTokenSource.Cancel();
-        //}
-        
+            await Task.Delay(TimeSpan.FromSeconds(20));
+        }        
     }
 
     private static string TestString(int minlength, int maxlength)

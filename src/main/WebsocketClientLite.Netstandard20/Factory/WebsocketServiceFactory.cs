@@ -61,12 +61,12 @@ namespace WebsocketClientLite.PCL.Factory
        
             void ConnectionStatusAction(ConnectionStatus status, Exception ex)
             {
-                if (status == ConnectionStatus.Disconnected)
+                if (status is ConnectionStatus.Disconnected)
                 {
                     observerConnectionStatus.OnCompleted();
                 }
 
-                if (status == ConnectionStatus.Aborted)
+                if (status is ConnectionStatus.Aborted)
                 {
                     observerConnectionStatus.OnError(
                         ex ?? new WebsocketClientLiteException("Unknown error."));
@@ -84,7 +84,15 @@ namespace WebsocketClientLite.PCL.Factory
 
             async Task<int> ReadOneByteFromStream(Stream stream, byte[] byteArray, CancellationToken ct)
             {
-                return await stream.ReadAsync(byteArray, 0, byteArray.Length, ct).ConfigureAwait(false);
+                try
+                {
+                    return await stream.ReadAsync(byteArray, 0, byteArray.Length, ct).ConfigureAwait(false);
+                }
+                catch (OperationCanceledException)
+                {
+                    return -1;
+                }
+                
             }
 
             async Task ConnectTcpClient(TcpClient tcpClient, Uri uri) 

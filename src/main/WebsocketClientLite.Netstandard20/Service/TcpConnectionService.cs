@@ -59,10 +59,11 @@ namespace WebsocketClientLite.PCL.Service
         }
 
         internal IObservable<byte[]> BytesObservable() =>
-            Observable.Defer(() => Observable.FromAsync(ct => ReadByteArrayFromStream(1, ct)));
+            Observable.Defer(() => Observable.FromAsync(ct => ReadByteArrayFromStream(1, ct)))
+            .Where(bytes => bytes is not null);
 
         internal async Task<byte[]> ReadBytesFromStream(ulong size, CancellationToken ct) =>
-            (await ReadByteArrayFromStream(size, ct));
+            await ReadByteArrayFromStream(size, ct);
 
         internal async Task<byte[]> ReadByteArrayFromStream(ulong size, CancellationToken ct)
         {          
@@ -71,11 +72,11 @@ namespace WebsocketClientLite.PCL.Service
                 throw new WebsocketClientLiteException("Stream not ready or not connected.");
             }
 
-            var byteArrayOfOne = new byte[size];
+            var byteArray = new byte[size];
 
             try
             {
-                if (_stream == null)
+                if (_stream is null)
                 {
                     throw new WebsocketClientLiteException("Read stream cannot be null.");
                 }
@@ -85,18 +86,23 @@ namespace WebsocketClientLite.PCL.Service
                     throw new WebsocketClientLiteException("Websocket connection have been closed.");
                 }
 
-                var readLength = await _readOneByteFunc(_stream, byteArrayOfOne, ct);
+                var readLength = await _readOneByteFunc(_stream, byteArray, ct);
 
                 if (readLength == 0)
                 {
                     throw new WebsocketClientLiteException("Websocket connection aborted unexpectedly. Check connection and socket security version/TLS version).");
+                }
+
+                if (readLength == -1)
+                {
+                    return null;
                 }
             }
             catch (ObjectDisposedException)
             {
                 Debug.WriteLine("Ignoring Object Disposed Exception - This is an expected exception");
             }
-            return byteArrayOfOne;
+            return byteArray;
         }
 
         private async Task CreateTcpClient(
@@ -108,16 +114,19 @@ namespace WebsocketClientLite.PCL.Service
             if (_tcpClient is null)
             {
                 _tcpClient = new TcpClient(
-                    uri.HostNameType == UriHostNameType.IPv6
+                    uri.HostNameType is UriHostNameType.IPv6
                         ? AddressFamily.InterNetworkV6
                         : AddressFamily.InterNetwork);
             }
 
             try
             {
-                await _connectTcpClient(_tcpClient, uri)
-                    .ToObservable()
-                    .Timeout(timeout != default ? timeout : TimeSpan.FromSeconds(5));
+                if (!_tcpClient.Connected)
+                {
+                    await _connectTcpClient(_tcpClient, uri)
+                        .ToObservable()
+                        .Timeout(timeout != default ? timeout : TimeSpan.FromSeconds(15));
+                }
             }
             catch (TimeoutException ex)
             {

@@ -10,6 +10,7 @@ using WebsocketClientLite.PCL.CustomException;
 using WebsocketClientLite.PCL.Helper;
 using WebsocketClientLite.PCL.Model;
 using static WebsocketClientLite.PCL.Helper.WebsocketMasking;
+using WebsocketClientLite.PCL.Extension;
 
 namespace WebsocketClientLite.PCL.Service
 {
@@ -53,53 +54,90 @@ namespace WebsocketClientLite.PCL.Service
             }
         }
 
-        public async Task SendTextAsync(string message, CancellationToken ct = default) 
+        public async Task SendText(string message, CancellationToken ct = default) 
            => await ComposeFrameAndSendAsync(
                 message,
                 OpcodeKind.Text,
                 FragmentKind.None,
                 ct);
 
-        public async Task SendTextAsync(
-            string[] messageList, 
+        public async Task SendText(
+            IEnumerable<string> messageList, 
             CancellationToken ct = default)
         {
             if (!messageList?.Any() ?? true) return;
 
-            if (messageList.Length == 1)
+            if (messageList.Count() == 1)
             {
-                await ComposeFrameAndSendAsync(
-                        messageList[0],
-                        OpcodeKind.Text,
-                        FragmentKind.None,
-                        ct);
+                await SendText(messageList.FirstOrDefault(), ct);
                 return;
             }
 
-            await ComposeFrameAndSendAsync(
-                    messageList[0],
+            var asyncList = messageList.Select((item, index) => (item, index)).ToAsyncEnumerable();
+
+            await foreach (var (item, index) in asyncList)
+            {
+                if (index == 0)
+                {
+                    await ComposeFrameAndSendAsync(
+                    item,
                     OpcodeKind.Text,
                     FragmentKind.First,
                     ct);
-
-            for (var i = 1; i < messageList.Length - 1; i++)
-            {
-                await ComposeFrameAndSendAsync(
-                    messageList[i], 
+                }
+                else if (index == messageList.Count() - 1)
+                {
+                    await ComposeFrameAndSendAsync(
+                    item,
+                    OpcodeKind.Text,
+                    FragmentKind.Last,
+                    ct);
+                }
+                else
+                {
+                    await ComposeFrameAndSendAsync(
+                    item,
                     OpcodeKind.Continuation,
                     FragmentKind.None,
                     ct);
+                }
             }
+            //if (!messageList?.Any() ?? true) return;
 
-            await ComposeFrameAndSendAsync(
-                messageList.Last(),
-                OpcodeKind.Text,
-                FragmentKind.Last, 
-                ct);
+            //if (messageList.Length == 1)
+            //{
+            //    await ComposeFrameAndSendAsync(
+            //            messageList[0],
+            //            OpcodeKind.Text,
+            //            FragmentKind.None,
+            //            ct);
+            //    return;
+            //}
+
+            //await ComposeFrameAndSendAsync(
+            //        messageList[0],
+            //        OpcodeKind.Text,
+            //        FragmentKind.First,
+            //        ct);
+
+            //for (var i = 1; i < messageList.Length - 1; i++)
+            //{
+            //    await ComposeFrameAndSendAsync(
+            //        messageList[i], 
+            //        OpcodeKind.Continuation,
+            //        FragmentKind.None,
+            //        ct);
+            //}
+
+            //await ComposeFrameAndSendAsync(
+            //    messageList.Last(),
+            //    OpcodeKind.Text,
+            //    FragmentKind.Last, 
+            //    ct);
         }
 
 
-        public async Task SendTextAsync(
+        public async Task SendText(
             string message,
             OpcodeKind opcode,
             FragmentKind fragment,
@@ -110,6 +148,65 @@ namespace WebsocketClientLite.PCL.Service
                         fragment,
                         ct);
 
+        public async Task SendBinary(
+            byte[] data,
+            CancellationToken ct) => 
+                await ComposeFrameAndSendAsync(
+                    data,
+                    OpcodeKind.Binary,
+                    FragmentKind.None,
+                    ct);
+
+        public async Task SendBinary(IEnumerable<byte[]> dataList, CancellationToken ct)
+        {
+            if (!dataList?.Any() ?? true) return;
+
+            if (dataList.Count() == 1)
+            {
+                await SendBinary(dataList.FirstOrDefault(), ct);
+                return;
+            }
+
+            var asyncList = dataList.Select((item, index) => (item, index)).ToAsyncEnumerable();
+
+            await foreach (var (item, index) in asyncList)
+            {
+                if (index == 0)
+                {
+                    await ComposeFrameAndSendAsync(
+                    item,
+                    OpcodeKind.Binary,
+                    FragmentKind.First,
+                    ct);
+                }
+                else if (index == dataList.Count() - 1)
+                {
+                    await ComposeFrameAndSendAsync(
+                    item,
+                    OpcodeKind.Binary,
+                    FragmentKind.Last,
+                    ct);
+                }
+                else
+                {
+                    await ComposeFrameAndSendAsync(
+                    item,
+                    OpcodeKind.Continuation,
+                    FragmentKind.None,
+                    ct);
+                }
+            }           
+        }
+
+        async Task ISender.SendBinary(
+            byte[] data, 
+            OpcodeKind opcode, 
+            FragmentKind fragment, CancellationToken ct) =>
+                await ComposeFrameAndSendAsync(
+                        data,
+                        opcode,
+                        fragment,
+                        ct);
 
         public async Task SendPing(
             string message, 
@@ -184,7 +281,7 @@ namespace WebsocketClientLite.PCL.Service
 
             static byte DetermineFINBit(OpcodeKind opcode, FragmentKind fragment)
             {
-                if (opcode == OpcodeKind.Continuation)
+                if (opcode is OpcodeKind.Continuation)
                 {
                     return 0;
                 }
@@ -217,8 +314,8 @@ namespace WebsocketClientLite.PCL.Service
                     OpcodeKind.Text => ConnectionStatus.Text,
                     OpcodeKind.Binary => ConnectionStatus.Binary,
                     OpcodeKind.Close => ConnectionStatus.Close,
-                    OpcodeKind.Ping => ConnectionStatus.SendPing,
-                    OpcodeKind.Pong => ConnectionStatus.SendPong,
+                    OpcodeKind.Ping => ConnectionStatus.PingSend,
+                    OpcodeKind.Pong => ConnectionStatus.PongSend,
                     _ => throw new NotImplementedException(),
                 }, 
                 null);
@@ -227,7 +324,7 @@ namespace WebsocketClientLite.PCL.Service
             _connectionStatusAction(
                 fragment switch
                 {
-                    FragmentKind.None => opcode == OpcodeKind.Continuation 
+                    FragmentKind.None => opcode is OpcodeKind.Continuation 
                         ? ConnectionStatus.MultiFrameSendingContinue 
                         : ConnectionStatus.SingleFrameSending,
                     FragmentKind.First => ConnectionStatus.MultiFrameSendingFirst,
@@ -246,7 +343,7 @@ namespace WebsocketClientLite.PCL.Service
             {
                 await _writeFunc(_tcpConnectionService.ConnectionStream, frame, ct);
 
-                if (opcode == OpcodeKind.Close)
+                if (opcode is OpcodeKind.Close)
                 {
                     _connectionStatusAction(ConnectionStatus.Disconnected, null);
                 }

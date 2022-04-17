@@ -73,6 +73,11 @@ namespace WebsocketClientLite.PCL.Service
                         .PayloadLenght()
                         .GetPayload();
 
+                    if (newDataframe is null)
+                    {
+                        return null;
+                    }
+
                     if (newDataframe.Opcode
                         is OpcodeKind.Text
                         or OpcodeKind.Binary

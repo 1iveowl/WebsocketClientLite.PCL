@@ -57,6 +57,11 @@ namespace WebsocketClientLite.PCL.Service
                 clientPingTimeSpan = TimeSpan.FromSeconds(30);
             }
 
+            if (tlsProtocolType is SslProtocols.None)
+            {
+                tlsProtocolType = SslProtocols.Tls12;
+            }
+
             await _tcpConnectionService.ConnectTcpStream(
                 uri,
                 x509CertificateCollection,
@@ -73,13 +78,13 @@ namespace WebsocketClientLite.PCL.Service
                     _connectionStatusAction);
 
             var (handshakeState, handshakeException) = 
-                await handshakeHandler.Handshake(uri, sender, ct, origin, headers, subprotocols);
+                await handshakeHandler.Handshake(uri, sender, timeout, ct, origin, headers, subprotocols);
 
             if(handshakeException is not null)
             {
                 throw handshakeException;
             }
-            else if (handshakeState == HandshakeStateKind.HandshakeCompletedSuccessfully)
+            else if (handshakeState is HandshakeStateKind.HandshakeCompletedSuccessfully)
             {
                 _connectionStatusAction(ConnectionStatus.HandshakeCompletedSuccessfully, null);              
             }

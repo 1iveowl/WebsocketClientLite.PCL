@@ -13,6 +13,11 @@ The library allows developers to establish secure wss websocket connections to w
 
 This project utilizes [Reactive Extensions](http://reactivex.io/). Although this has an added learning curve it is an added learning curve worth while persuing, as it IMHO makes creating a library like this much more elegant compared to using call-back or events etc. 
 
+## New in version 7.0
+This library have been around for a number of years and were mainly initiated on a desire to learn. Over the years this learning grew and looking back on the older and older code became more and more painful, so I decided to redo it. Version 7 is basically a rewrite from the ground up.
+
+Version 7+ is now written with C# 10 and it now requires .NET Standard 2.0.
+
 ## New in version 6.4
 - Successfully tested with .NET 6.0.
 - Previously the library on accepted the `ws` and `wss` scheme. Now also `http` and `https` is supported. To further extend supported scheme override the `IsSecureConnectionScheme` method of the `MessageWebSocketRx` class.
@@ -35,165 +40,25 @@ From hereon only .NET Standard 2.0 and later are supported.
 ## Usage
 The library is easy to use, as illustated with the examples below.
 
-
 ### Example WebSocket Client:
+
+To use the Websocket client create an instance of the class `MessageWebsocketRx`:
+
 ```csharp
-class Program
-{
-
-    const string AllowedChars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
-
-
-    static async Task Main(string[] args)
-    {
-
-        var outerCancellationSource = new CancellationTokenSource();
-
-        await StartWebSocketAsyncWithRetry(outerCancellationSource);
-
-        System.Console.WriteLine("Waiting...");
-        System.Console.ReadKey();
-        outerCancellationSource.Cancel();
-    }
-
-    private static async Task StartWebSocketAsyncWithRetry(CancellationTokenSource outerCancellationTokenSource)
-    {
-        while (!outerCancellationTokenSource.IsCancellationRequested)
-        {
-            var innerCancellationSource = new CancellationTokenSource();
-
-            await StartWebSocketAsync(innerCancellationSource);
-
-            while (!innerCancellationSource.IsCancellationRequested)
-            {
-                await Task.Delay(TimeSpan.FromSeconds(10), innerCancellationSource.Token);
-            }
-
-            // Wait 5 seconds before trying again
-            await Task.Delay(TimeSpan.FromSeconds(5), outerCancellationTokenSource.Token);
-        }
-    }
-
-    private static async Task StartWebSocketAsync(CancellationTokenSource innerCancellationTokenSource)
-    {
-        using (var websocketClient = new MessageWebSocketRx
+        var websocketClient = new MessageWebsocketRx()
         {
             IgnoreServerCertificateErrors = true,
             Headers = new Dictionary<string, string> { { "Pragma", "no-cache" }, { "Cache-Control", "no-cache" } },
             TlsProtocolType = SslProtocols.Tls12
-             
-        })
-        {
-            System.Console.WriteLine("Start");
-
-            var disposableWebsocketStatus = websocketClient.ConnectionStatusObservable.Subscribe(
-                s =>
-                {
-                    System.Console.WriteLine(s.ToString());
-                    if (s == ConnectionStatus.Disconnected
-                    || s == ConnectionStatus.Aborted
-                    || s == ConnectionStatus.ConnectionFailed)
-                    {
-                        innerCancellationTokenSource.Cancel();
-                    }
-                },
-                ex =>
-                {
-                    Console.WriteLine($"Connection status error: {ex}.");
-                    innerCancellationTokenSource.Cancel();
-                },
-                () =>
-                {
-                    Console.WriteLine($"Connection status completed.");
-                    innerCancellationTokenSource.Cancel();
-                });
-            
-            var disposableMessageReceiver = websocketClient.MessageReceiverObservable.Subscribe(
-               msg =>
-               {
-                   Console.WriteLine($"Reply from test server: {msg}");
-               },
-               ex =>
-               {
-                   Console.WriteLine(ex.Message);
-                   innerCancellationTokenSource.Cancel();
-               },
-               () =>
-               {
-                   System.Console.WriteLine($"Message listener subscription Completed");
-                   innerCancellationTokenSource.Cancel();
-               });
-
-            
-            await websocketClient.ConnectAsync(
-                new Uri("wss://echo.websocket.org"));
-            try
-            {
-                System.Console.WriteLine("Sending: Test Single Frame");
-                await websocketClient.SendTextAsync("Test Single Frame");
-
-                await websocketClient.SendTextAsync("Test Single Frame again");
-
-                await websocketClient.SendTextAsync(TestString(65538, 65550));
-
-                var strArray = new[] { "Test ", "multiple ", "frames" };
-
-                await websocketClient.SendTextAsync(strArray);
-
-                await websocketClient.SendTextMultiFrameAsync("Start ", FrameType.FirstOfMultipleFrames);
-                await Task.Delay(TimeSpan.FromMilliseconds(200));
-                await websocketClient.SendTextMultiFrameAsync("Continue... #1 ", FrameType.Continuation);
-                await Task.Delay(TimeSpan.FromMilliseconds(300));
-                await websocketClient.SendTextMultiFrameAsync("Continue... #2 ", FrameType.Continuation);
-                await Task.Delay(TimeSpan.FromMilliseconds(150));
-                await websocketClient.SendTextMultiFrameAsync("Continue... #3 ", FrameType.Continuation);
-                await Task.Delay(TimeSpan.FromMilliseconds(400));
-                await websocketClient.SendTextMultiFrameAsync("Stop.", FrameType.LastInMultipleFrames);
-
-                await websocketClient.DisconnectAsync();
-
-                disposableMessageReceiver.Dispose();
-                disposableWebsocketStatus.Dispose();
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                innerCancellationTokenSource.Cancel();
-            }
-        }
-    }
-
-    private static string TestString(int minlength, int maxlength)
-    {
-
-        var rng = new Random();
-
-        return RandomStrings(AllowedChars, minlength, maxlength, 25, rng);
-    }
-
-    private static string RandomStrings(
-        string allowedChars,
-        int minLength,
-        int maxLength,
-        int count,
-        Random rng)
-    {
-        var chars = new char[maxLength];
-        var setLength = allowedChars.Length;
-
-        var length = rng.Next(minLength, maxLength + 1);
-
-        for (var i = 0; i < length; ++i)
-        {
-            chars[i] = allowedChars[rng.Next(setLength)];
-        }
-
-        return new string(chars, 0, length);
-    }
+        };
 ```
 
+For a more elaborate example please see the console example in the source code.
+
 ### Alternative Constructor (Advanced)
-It is also possible to pass you own managed TcpClient to the WebsocketClientLite. The TcpClient should not be connected. Connection will be maanged by the library. However, this enables you to defined Socket Options etc. to the TcpClient. 
+It is also possible to pass you own managed TcpClient to the WebsocketClientLite. If the TcpClient is not connected the library will connect it. 
+
+To use an existing TcpClient us the alternative constructor:
 
 Use:
 
@@ -207,7 +72,7 @@ When testing against [websocket.org](http://websocket.org/echo) the byte is expe
 To manage this *byte-issue* the following property can be set to true, in which case the byte with the zero value will NOT be added to the pong. For instance like this:
 ```csharp
 var websocketClient = new MessageWebSocketRx()
-websocketClient.ExcludeZeroApplicationDataInPong = true;
+client.ExcludeZeroApplicationDataInPong = true;
 ```
 
 To futher complicate matters the [slack.rtm api](https://api.slack.com/rtm) also [seems to requires a ping at the Slack application layer too](http://stackoverflow.com/questions/38171620/slack-rtm-api-disconnection-following-message-in-scala). A simplified implementation of this could look like this:
@@ -225,7 +90,7 @@ For details read the **Ping and Pong** section of the [slack.rtm api documentati
 The library have been tested with [socket.io](https://socket.io/docs/v4/). A typical connection will look like this:
 
 ```csharp
-websocketClient.ConnectAsync(new Uri($"http://{url}:{port}/socket.io/?EIO=4&transport=websocket");
+client.ConnectAsync(new Uri($"http://{url}:{port}/socket.io/?EIO=4&transport=websocket");
 ```
 
 This will connect on the websocket layer. To further connect on socket.io level see documentation. Typically a text message with the content `40` need to be send. For more see here: [Websocket client not connecting to the socket.io server](https://github.com/socketio/socket.io/discussions/4299).

@@ -20,6 +20,12 @@ namespace WebsocketClientLite.PCL.Helper
 
             var byteArray = await dataframe.GetNextBytes(1);
             Debug.WriteLine($"First byte: {byteArray[0]}");
+
+            if (byteArray is null)
+            {
+                return null;
+            }
+
             var bits = new BitArray(byteArray);
 
             return dataframe with
@@ -55,6 +61,11 @@ namespace WebsocketClientLite.PCL.Helper
         internal static async Task<Dataframe> PayloadBitLenght(this Task<Dataframe> dataframeTask)
         {
             var dataframe = await dataframeTask;
+
+            if (dataframe is null)
+            {
+                return null;
+            }
 
             var bytes = (await dataframe.GetNextBytes(1));
 
@@ -97,6 +108,11 @@ namespace WebsocketClientLite.PCL.Helper
         {
             var dataframe = await dataframeTask;
 
+            if (dataframe is null)
+            {
+                return null;
+            }
+
             switch (dataframe.PayloadBitLength)
             {
                 case PayloadBitLengthKind.Bits8:
@@ -120,6 +136,11 @@ namespace WebsocketClientLite.PCL.Helper
         internal static async Task<Dataframe> GetPayload(this Task<Dataframe> dataframeTask)
         {
             var dataframe = await dataframeTask;
+
+            if (dataframe is null)
+            {
+                return null;
+            }
 
             if (dataframe.Length > 0)
             {

@@ -30,6 +30,7 @@ namespace WebsocketClientLite.PCL.Service
         internal IObservable<(HandshakeStateKind handshakeState, WebsocketClientLiteException ex)> Handshake(
             Uri uri,
             WebsocketSenderHandler sender,
+            TimeSpan timeout,
             CancellationToken ct,
             string origin = null,
             IDictionary<string, string> headers = null,
@@ -47,16 +48,16 @@ namespace WebsocketClientLite.PCL.Service
 
                 await SendHandshake(uri, sender, ct, origin, headers);
 
-                return _tcpConnectionService.BytesObservable()
+                return _tcpConnectionService.BytesObservable()                                  
                     .Select(b => handshakeParser.Parse(b, subprotocols))
                     .Repeat()
-                    .Where(d => d == HandshakeStateKind.HandshakeCompletedSuccessfully)
+                    .Where(d => d is HandshakeStateKind.HandshakeCompletedSuccessfully)
                     .Subscribe(
                     _ => { obs.OnCompleted(); },
                     ex => { obs.OnNext((HandshakeStateKind.HandshakeFailed, new WebsocketClientLiteException("Unknown error", ex))); },
                     () => { });
             })
-            .Timeout(TimeSpan.FromSeconds(30))
+            .Timeout(timeout)
             .Catch<
                 (HandshakeStateKind handshakeState, WebsocketClientLiteException ex),
                 TimeoutException>(

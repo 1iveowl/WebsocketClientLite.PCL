@@ -35,7 +35,7 @@ namespace WebsocketClientLite.PCL.Helper
 
             sb.Append($"Sec-WebSocket-Key: {GenerateRandomWebSocketKey()}\r\n");
 
-            if (subprotocols != null)
+            if (subprotocols is not null)
             {
                 var subprotocol = $"Sec-WebSocket-Protocol: " +
                     $"{subprotocols.Aggregate((current, protocol) => $"{current}, {protocol}")}";
