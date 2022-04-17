@@ -4,16 +4,16 @@ namespace WebsocketClientLite.PCL.Service
 {
     internal class WebsocketService : IDisposable
     {
-        internal WebsocketConnectionHandler WebsocketConnectHandler { get; private set; }
+        internal WebsocketConnectionHandler WebsocketConnectionHandler { get; private set; }
 
         public WebsocketService(WebsocketConnectionHandler websocketConnectHandler)
         {
-            WebsocketConnectHandler = websocketConnectHandler;
+            WebsocketConnectionHandler = websocketConnectHandler;
         }
 
         public void Dispose()
         {
-            WebsocketConnectHandler.Dispose();
+            WebsocketConnectionHandler.Dispose();
         }
     }
 }

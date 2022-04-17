@@ -3,7 +3,6 @@ using System.Collections;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using IWebsocketClientLite.PCL;
@@ -63,7 +62,7 @@ namespace WebsocketClientLite.PCL.Helper
 
             var @byte = bytes[0];
 
-            if (@byte <= 125)
+            if (@byte <= (byte)PayloadBitLengthKind.Bits8)
             {
                 return dataframe with 
                 {
@@ -72,7 +71,7 @@ namespace WebsocketClientLite.PCL.Helper
                     PayloadBitLength = PayloadBitLengthKind.Bits8 
                 };
             }
-            if (@byte == 126)
+            if (@byte == (byte)PayloadBitLengthKind.Bits16)
             {
                 return dataframe with 
                 {
@@ -80,7 +79,7 @@ namespace WebsocketClientLite.PCL.Helper
                     PayloadBitLength = PayloadBitLengthKind.Bits16 
                 };
             }
-            if (@byte >= 127)
+            if (@byte >= (byte)PayloadBitLengthKind.Bits64)
             {
                 return dataframe with 
                 {

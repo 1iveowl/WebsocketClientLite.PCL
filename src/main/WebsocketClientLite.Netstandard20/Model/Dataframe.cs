@@ -1,8 +1,8 @@
-﻿using IWebsocketClientLite.PCL;
-using System.IO;
+﻿using System.IO;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using IWebsocketClientLite.PCL;
 using WebsocketClientLite.PCL.Service;
 using static WebsocketClientLite.PCL.Helper.WebsocketMasking;
 

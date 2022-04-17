@@ -65,7 +65,7 @@ namespace WebsocketClientLite.PCL.Parser
                     }
 
                     Debug.WriteLine("HandShake completed");
-                    return HandshakeStateKind.IsListening;
+                    return HandshakeStateKind.HandshakeCompletedSuccessfully;
                 }
                 else
                 {
@@ -76,7 +76,7 @@ namespace WebsocketClientLite.PCL.Parser
                                         $"Error reason: {_parserDelegate.HttpRequestResponse.ResponseReason}"));
                 }
             }
-            return HandshakeStateKind.IsListeningForHandShake;
+            return HandshakeStateKind.AwaitingHandshake;
         }
     }
 }

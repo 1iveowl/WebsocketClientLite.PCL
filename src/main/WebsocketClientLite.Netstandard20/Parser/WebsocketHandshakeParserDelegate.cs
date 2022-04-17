@@ -8,10 +8,10 @@ namespace WebsocketClientLite.PCL.Parser
 {
     internal class WebsocketHandshakeParserDelegate : HttpParserDelegate
     {
-        private readonly IObserver<(HandshakeState handshakeState, WebsocketClientLiteException ex)> _observerHandshakeParserState;
+        private readonly IObserver<(HandshakeStateKind handshakeState, WebsocketClientLiteException ex)> _observerHandshakeParserState;
 
         public WebsocketHandshakeParserDelegate(
-            IObserver<(HandshakeState handshakeState, 
+            IObserver<(HandshakeStateKind handshakeState, 
                 WebsocketClientLiteException ex)> observerHandshakeParserState)
         {
             _observerHandshakeParserState = observerHandshakeParserState;
@@ -34,16 +34,15 @@ namespace WebsocketClientLite.PCL.Parser
             if (HttpRequestResponse.IsEndOfMessage)
             {
                 _observerHandshakeParserState
-                    .OnNext((HandshakeState.HandshakeCompletedSuccessfully, null));
+                    .OnNext((HandshakeStateKind.HandshakeCompletedSuccessfully, null));
             }
             else
             {
                 _observerHandshakeParserState
-                    .OnNext((HandshakeState.HandshakeFailed, null));
+                    .OnNext((HandshakeStateKind.HandshakeFailed, null));
                 _observerHandshakeParserState.OnError(new WebsocketClientLiteException("Unable to complete handshake"));
                 return;
             }
-            //_observerHandshakeParserState.OnCompleted();
         }
     }
 }

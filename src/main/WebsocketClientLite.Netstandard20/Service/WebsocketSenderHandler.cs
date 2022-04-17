@@ -217,7 +217,7 @@ namespace WebsocketClientLite.PCL.Service
                     OpcodeKind.Text => ConnectionStatus.Text,
                     OpcodeKind.Binary => ConnectionStatus.Binary,
                     OpcodeKind.Close => ConnectionStatus.Close,
-                    OpcodeKind.Ping => ConnectionStatus.PingReceived,
+                    OpcodeKind.Ping => ConnectionStatus.SendPing,
                     OpcodeKind.Pong => ConnectionStatus.SendPong,
                     _ => throw new NotImplementedException(),
                 }, 

@@ -3,7 +3,6 @@ using System.IO;
 using System.Reactive;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Reactive.Concurrency;
 using System.Collections.Generic;
 using System.Reactive.Linq;
 using System.Reactive.Threading.Tasks;
@@ -45,7 +44,6 @@ namespace WebsocketClientLite.PCL.Service
                     X509CertificateCollection x509CertificateCollection,
                     SslProtocols tlsProtocolType,
                     Action<ISender> setSenderAction,
-                    EventLoopScheduler eventLoopScheduler,
                     CancellationToken ct,
                     bool hasClientPing = false,
                     TimeSpan clientPingTimeSpan = default,
@@ -75,13 +73,13 @@ namespace WebsocketClientLite.PCL.Service
                     _connectionStatusAction);
 
             var (handshakeState, handshakeException) = 
-                await handshakeHandler.Handshake(uri, sender, ct, eventLoopScheduler, origin, headers, subprotocols);
+                await handshakeHandler.Handshake(uri, sender, ct, origin, headers, subprotocols);
 
             if(handshakeException is not null)
             {
                 throw handshakeException;
             }
-            else if (handshakeState == HandshakeState.HandshakeCompletedSuccessfully)
+            else if (handshakeState == HandshakeStateKind.HandshakeCompletedSuccessfully)
             {
                 _connectionStatusAction(ConnectionStatus.HandshakeCompletedSuccessfully, null);              
             }
@@ -134,33 +132,47 @@ namespace WebsocketClientLite.PCL.Service
 
             IObservable<Unit> SendClientPing() =>
                 Observable.Interval(clientPingTimeSpan)
-                    .Do(_ => _connectionStatusAction(ConnectionStatus.SendPing, null))
-                            .Select(_ => Observable.FromAsync(ct => sender.SendPing(default)))
-                            .Concat();
+                .Select(_ => Observable.FromAsync(ct => sender.SendPing(default)))
+                .Concat();
 
             async Task<Dataframe> IncomingControlFrameHandler(
                 Dataframe dataframe, 
                 IObserver<Dataframe> obs, 
                 CancellationToken ct)
             {
-                if (dataframe.Opcode is OpcodeKind.Ping)
+                switch (dataframe.Opcode)
                 {
-                    _connectionStatusAction(ConnectionStatus.PingReceived, null);
-                    await sender.SendPong(dataframe, ct);
+                    case OpcodeKind.Continuation:
+                    case OpcodeKind.Text:
+                    case OpcodeKind.Binary:
+                        return dataframe;
+                    case OpcodeKind.Ping:
+                        _connectionStatusAction(ConnectionStatus.PingReceived, null);
+                        await sender.SendPong(dataframe, ct);
+                        break;
+                    case OpcodeKind.Pong:
+                        _connectionStatusAction(ConnectionStatus.PongReceived, null);
+                        break;
+                    case OpcodeKind.Close:
+                        _connectionStatusAction(ConnectionStatus.Close, null);
+                        obs.OnCompleted();
+                        break;
+                    case OpcodeKind.Reserved1:
+                    case OpcodeKind.Reserved2:
+                    case OpcodeKind.Reserved3:
+                    case OpcodeKind.Reserved4:
+                    case OpcodeKind.Reserved5:
+                    case OpcodeKind.Reserved1a:
+                    case OpcodeKind.Reserved2b:
+                    case OpcodeKind.Reserved3c:
+                    case OpcodeKind.Reserved4d:
+                    case OpcodeKind.Reserved5e:
+                        throw new NotImplementedException($"Opcode not implemented: {dataframe.Opcode}");
+                    default:
+                        throw new ArgumentOutOfRangeException($"{dataframe.Opcode}");
                 }
 
-                if (dataframe.Opcode is OpcodeKind.Pong)
-                {
-                    _connectionStatusAction(ConnectionStatus.PongReceived, null);
-                }
-
-                if (dataframe.Opcode is OpcodeKind.Close)
-                {
-                    _connectionStatusAction(ConnectionStatus.Close, null);
-                    obs.OnCompleted();
-                }
-                
-                return dataframe;
+                return null;
             }
         }
 

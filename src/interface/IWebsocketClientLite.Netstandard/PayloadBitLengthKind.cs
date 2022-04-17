@@ -2,9 +2,8 @@
 {
     public enum PayloadBitLengthKind
     {
-        Unspecified,
-        Bits8,
-        Bits16,
-        Bits64
+        Bits8  = 125,
+        Bits16 = 126,
+        Bits64 = 127
     }
 }

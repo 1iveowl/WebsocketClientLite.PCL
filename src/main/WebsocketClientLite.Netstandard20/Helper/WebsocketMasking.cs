@@ -1,4 +1,5 @@
 ﻿using System;
+using IWebsocketClientLite.PCL;
 using System.Collections.Generic;
 using WebsocketClientLite.PCL.CustomException;
 
@@ -6,6 +7,8 @@ namespace WebsocketClientLite.PCL.Helper
 {
     internal static class WebsocketMasking
     {
+        private const byte FINbit = 128;
+
         internal static byte[] Encode(byte[] data, byte[] key)
         {
             return SymmetricCoding(data, key);
@@ -39,20 +42,20 @@ namespace WebsocketClientLite.PCL.Helper
         {
             byte firstPayloadByte = 0;
 
-            if (length < 126)
+            if (length <= (byte)PayloadBitLengthKind.Bits8)
             {
                 if (isMasking)
                 {
-                    firstPayloadByte = (byte)(length + 128);
+                    firstPayloadByte = (byte)(length + FINbit);
                 }
                 return new byte[1] { firstPayloadByte};
             }
 
-            if (length >= 126 && length <= Math.Pow(2, 16))
+            if (length >= (byte)PayloadBitLengthKind.Bits16 && length <= Math.Pow(2, 16))
             {
                 if (isMasking)
                 {
-                    firstPayloadByte = 126 + 128;
+                    firstPayloadByte = (byte)PayloadBitLengthKind.Bits16 + FINbit;
                 }
 
                 var payloadLength = BitConverter.GetBytes((short)length);
@@ -72,7 +75,7 @@ namespace WebsocketClientLite.PCL.Helper
             {
                 if (isMasking)
                 {
-                    firstPayloadByte = 127 + 128;
+                    firstPayloadByte = (byte)PayloadBitLengthKind.Bits64 + FINbit;
                 }
 
                 var payloadLength = BitConverter.GetBytes((long)length);

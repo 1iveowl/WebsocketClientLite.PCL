@@ -2,11 +2,11 @@
 {
     internal enum HandshakeStateKind
     {
-        Start,
-        IsListeningForHandShake,
-        IsListening,
-        IsParsing,
-        MessageReceived,
-        Exiting
+        HandshakeSend,
+        AwaitingHandshake,
+        HandshakeSendFailed,        
+        HandshakeFailed,
+        HandshakeTimedOut,
+        HandshakeCompletedSuccessfully,
     }
 }

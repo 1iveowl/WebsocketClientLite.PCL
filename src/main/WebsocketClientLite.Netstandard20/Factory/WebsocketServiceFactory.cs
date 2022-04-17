@@ -28,12 +28,6 @@ namespace WebsocketClientLite.PCL.Factory
             IObserver<ConnectionStatus> observerConnectionStatus,
             MessageWebsocketRx messageWebSocketRx)
         {
-            //var readScheduler = new EventLoopScheduler();
-
-            //var controlFramHandler = new ControlFrameHandler(
-            //    //WriteToStream
-            //    writeFunc: (stream, bytes, cts) => RunOnScheduler(WriteToStream(stream, bytes, cts), eventLoopScheduler)
-            //    );
 
             var tcpConnectionHandler = new TcpConnectionService(
                 isSecureConnectionSchemeFunc: isSecureConnectionSchemeFunc,

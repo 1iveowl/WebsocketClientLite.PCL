@@ -10,7 +10,7 @@ namespace IWebsocketClientLite.PCL
     {
         bool IsConnected { get; }
 
-        bool SubprotocolAccepted { get; }
+        //bool SubprotocolAccepted { get; }
 
         //IEnumerable<string> SubprotocolAcceptedNames { get; }
 

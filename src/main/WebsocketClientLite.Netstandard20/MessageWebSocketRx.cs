@@ -16,7 +16,6 @@ namespace WebsocketClientLite.PCL
 {
     public class MessageWebsocketRx : IMessageWebSocketRx
     {
-        // private readonly BehaviorSubject<ConnectionStatus> _connectionStatusSubject;
         private readonly EventLoopScheduler _eventLoopScheduler;
 
         internal TcpClient TcpClient { get; private set; }
@@ -25,7 +24,7 @@ namespace WebsocketClientLite.PCL
 
         public bool IsConnected { get; private set; }
 
-        public bool SubprotocolAccepted { get; set; }
+        //public bool SubprotocolAccepted { get; set; }
 
         public string Origin { get; set; }
 
@@ -44,8 +43,6 @@ namespace WebsocketClientLite.PCL
         public ISender GetSender() => IsConnected 
             ? _sender 
             : throw new InvalidOperationException("No sender available, Websocket not connected. You need to subscribe to WebsocketConnectObservable first.");
-
-        //public IObservable<ConnectionStatus> ConnectionStatusObservable { get; private set; } 
                 
         public MessageWebsocketRx(TcpClient tcpClient) 
         {
@@ -53,12 +50,6 @@ namespace WebsocketClientLite.PCL
 
             TcpClient = tcpClient;
             Subprotocols = null;
-
-            //_connectionStatusSubject = new BehaviorSubject<ConnectionStatus>(ConnectionStatus.Initialized);
-
-            //ConnectionStatusObservable = _connectionStatusSubject
-            //    .AsObservable()
-            //    .ObserveOn(_eventLoopScheduler);
         }
 
         public MessageWebsocketRx() : this(null)
@@ -112,12 +103,11 @@ namespace WebsocketClientLite.PCL
             });
 
             async Task<IObservable<IDataframe>> ConnectWebsocket(WebsocketService ws, CancellationToken ct) =>
-                await ws.WebsocketConnectHandler.ConnectWebsocket(
+                await ws.WebsocketConnectionHandler.ConnectWebsocket(
                     uri,
                     X509CertCollection,
                     TlsProtocolType,
                     InitializeSender,
-                    _eventLoopScheduler,
                     ct,
                     hasClientPing,
                     clientPingTimeSpan,                                    
@@ -169,7 +159,7 @@ namespace WebsocketClientLite.PCL
 
         public void Dispose()
         {
-            //_connectionStatusSubject.Dispose();
+
         }
     }
 }

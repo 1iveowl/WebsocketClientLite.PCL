@@ -59,8 +59,7 @@ class Program
         {
             IgnoreServerCertificateErrors = true,
             Headers = new Dictionary<string, string> { { "Pragma", "no-cache" }, { "Cache-Control", "no-cache" } },
-            TlsProtocolType = SslProtocols.Tls12,
-            ExcludeZeroApplicationDataInPong = false,
+            TlsProtocolType = SslProtocols.Tls12
         };
 
         Console.WriteLine("Start");
@@ -68,7 +67,7 @@ class Program
         IObservable<(IDataframe dataframe, ConnectionStatus state)> websocketConnectionObservable = 
             websocketClient.WebsocketConnectWithStatusObservable(
                new Uri(WebsocketTestServerUrl), 
-               hasClientPing: false,
+               hasClientPing: true,
                clientPingTimeSpan: TimeSpan.FromSeconds(10));
 
         var disposableConnectionStatus = websocketConnectionObservable
