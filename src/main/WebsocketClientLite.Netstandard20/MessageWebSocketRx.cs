@@ -99,7 +99,7 @@ namespace WebsocketClientLite.PCL
         /// </summary>
         /// <param name="uri">Websocket Server Endpoint (URI)</param>
         /// <param name="hasClientPing">Set to true to have the client send ping messages to server.</param>
-        /// <param name="clientPingTimeSpan">Specific client ping interval. Default is 30 seconds will be used.</param>
+        /// <param name="clientPingTimeSpan">Specific client ping interval. Default is 30 seconds.</param>
         /// <param name="timeout">Specific time out for client trying to connect. Default is 30 seconds.</param>
         /// <returns></returns>
         public IObservable<IDataframe> WebsocketConnectObservable(

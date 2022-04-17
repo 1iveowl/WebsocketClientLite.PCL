@@ -20,7 +20,6 @@ class Program
 
     static async Task Main()
     {
-
         var outerCancellationSource = new CancellationTokenSource();
 
         await StartWebSocketAsyncWithRetry(outerCancellationSource);

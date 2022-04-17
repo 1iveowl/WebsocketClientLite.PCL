@@ -38,9 +38,7 @@ Simplifications and no longer relies on SocketLite but utilizes the cross platfo
 From hereon only .NET Standard 2.0 and later are supported.
 
 ## Usage
-The library is easy to use, as illustated with the examples below.
-
-### Example WebSocket Client:
+For example please see the [console example app](https://github.com/1iveowl/WebsocketClientLite.PCL/blob/master/src/test/NETCore.Console.Test/Program.cs).
 
 To use the Websocket client create an instance of the class `MessageWebsocketRx`:
 
@@ -53,9 +51,9 @@ To use the Websocket client create an instance of the class `MessageWebsocketRx`
         };
 ```
 
-For a more elaborate example please see the [console example](https://github.com/1iveowl/WebsocketClientLite.PCL/blob/master/src/test/NETCore.Console.Test/Program.cs) in the source code.
 
-### Alternative Constructor (Advanced)
+
+### Alternative Constructor
 It is also possible to pass you own managed TcpClient to the WebsocketClientLite. If the TcpClient is not connected the library will connect it. 
 
 To use an existing TcpClient us the alternative constructor use: 
