@@ -168,8 +168,7 @@ namespace WebsocketClientLite.PCL.Service
                 }
             }
 
-            bool IsLastPosition(int i) => i == list.Count() - 1;
-
+            bool IsLastPosition(int i)  => i == list.Count() - 1;
             bool IsFirstPosition(int i) => i == 0;
         }
 

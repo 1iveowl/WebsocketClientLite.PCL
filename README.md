@@ -14,9 +14,9 @@ The library allows developers to establish secure wss websocket connections to w
 This project utilizes [Reactive Extensions](http://reactivex.io/). Although this has an added learning curve it is an added learning curve worth while persuing, as it IMHO makes creating a library like this much more elegant compared to using call-back or events etc. 
 
 ## New in version 7.0
-This library have been around for a number of years and were mainly initiated on a desire to learn. Over the years this learning grew and looking back on the older and older code became more and more painful, so I decided to redo it. Version 7 is basically a rewrite from the ground up.
+This library have been around for a number of years and were mainly initiated on a desire to learn more. Over the years this learning grew and looking back on the older and older code became more and more painful, so I decided to redo it. Version 7 is basically a rewrite from the ground up.
 
-Version 7+ is now written with C# 10 and it now requires .NET Standard 2.0.
+Version 7 is based on .NET Standard 2.0.
 
 ## New in version 6.4
 - Successfully tested with .NET 6.0.
@@ -58,11 +58,7 @@ For a more elaborate example please see the console example in the source code.
 ### Alternative Constructor (Advanced)
 It is also possible to pass you own managed TcpClient to the WebsocketClientLite. If the TcpClient is not connected the library will connect it. 
 
-To use an existing TcpClient us the alternative constructor:
-
-Use:
-
-`MessageWebSocketRx(tcpClient)`
+To use an existing TcpClient us the alternative constructor use: ```csharp MessageWebSocketRx(TcpClient tcpClient)```.
 
 #### Working With Slack (And maybe also other Websocket server implementations)
 The [RFC 6455 section defining how ping/pong works](https://tools.ietf.org/html/rfc6455#section-5.5.2) seems to be ambigious on the question of whether or not a pong should include the byte defining the length of "Application Data" in the special case when the length is just zero. 
