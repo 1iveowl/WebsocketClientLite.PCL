@@ -13,17 +13,17 @@ using WebsocketClientLite.PCL.Service;
 
 namespace WebsocketClientLite.PCL.Helper
 {
-    internal static class DatagramParsing
+    internal static class DataframeParsing
     {
-        internal static async Task<Dataframe> CreateDatagram(TcpConnectionService tcpConnection, CancellationToken ct)
+        internal static async Task<Dataframe> CreateDataframe(TcpConnectionService tcpConnection, CancellationToken ct)
         {
-            var datagram = new Dataframe(tcpConnection, ct);
+            var dataframe = new Dataframe(tcpConnection, ct);
 
-            var byteArray = await datagram.GetNextBytes(1);
+            var byteArray = await dataframe.GetNextBytes(1);
             Debug.WriteLine($"First byte: {byteArray[0]}");
             var bits = new BitArray(byteArray);
 
-            return datagram with
+            return dataframe with
             {
                 FIN = bits[7],
                 RSV1 = bits[6],
@@ -53,11 +53,11 @@ namespace WebsocketClientLite.PCL.Helper
             }
         }
 
-        internal static async Task<Dataframe> PayloadBitLenght(this Task<Dataframe> datagramTask)
+        internal static async Task<Dataframe> PayloadBitLenght(this Task<Dataframe> dataframeTask)
         {
-            var datagram = await datagramTask;
+            var dataframe = await dataframeTask;
 
-            var bytes = (await datagram.GetNextBytes(1));
+            var bytes = (await dataframe.GetNextBytes(1));
 
             var bits = new BitArray(bytes);
 
@@ -65,7 +65,7 @@ namespace WebsocketClientLite.PCL.Helper
 
             if (@byte <= 125)
             {
-                return datagram with 
+                return dataframe with 
                 {
                     MASK = bits[7],
                     Length = @byte, 
@@ -74,7 +74,7 @@ namespace WebsocketClientLite.PCL.Helper
             }
             if (@byte == 126)
             {
-                return datagram with 
+                return dataframe with 
                 {
                     MASK = bits[7],
                     PayloadBitLength = PayloadBitLengthKind.Bits16 
@@ -82,7 +82,7 @@ namespace WebsocketClientLite.PCL.Helper
             }
             if (@byte >= 127)
             {
-                return datagram with 
+                return dataframe with 
                 {
                     MASK = bits[7],
                     PayloadBitLength = PayloadBitLengthKind.Bits64 
@@ -94,59 +94,59 @@ namespace WebsocketClientLite.PCL.Helper
             }
         }
 
-        internal static async Task<Dataframe> PayloadLenght(this Task<Dataframe> datagramTask)
+        internal static async Task<Dataframe> PayloadLenght(this Task<Dataframe> dataframeTask)
         {
-            var datagram = await datagramTask;
+            var dataframe = await dataframeTask;
 
-            switch (datagram.PayloadBitLength)
+            switch (dataframe.PayloadBitLength)
             {
                 case PayloadBitLengthKind.Bits8:
-                    return datagram;
+                    return dataframe;
                 case PayloadBitLengthKind.Bits16:
                     {
-                        var bytes = (await datagram.GetNextBytes(2)).Reverse().ToArray();
-                        return datagram with { Length = BitConverter.ToUInt16(bytes, 0) };
+                        var bytes = (await dataframe.GetNextBytes(2)).Reverse().ToArray();
+                        return dataframe with { Length = BitConverter.ToUInt16(bytes, 0) };
                     }
 
                 case PayloadBitLengthKind.Bits64:
                     {
-                        var bytes = (await datagram.GetNextBytes(8)).Reverse().ToArray();
-                        return datagram with { Length = BitConverter.ToUInt64(bytes, 0) };
+                        var bytes = (await dataframe.GetNextBytes(8)).Reverse().ToArray();
+                        return dataframe with { Length = BitConverter.ToUInt64(bytes, 0) };
                     }
                 default:
                     throw new WebsocketClientLiteException("Unspecfied payload lenght.");
             }
         }
 
-        internal static async Task<Dataframe> GetPayload(this Task<Dataframe> datagramTask)
+        internal static async Task<Dataframe> GetPayload(this Task<Dataframe> dataframeTask)
         {
-            var datagram = await datagramTask;
+            var dataframe = await dataframeTask;
 
-            if (datagram.Length > 0)
+            if (dataframe.Length > 0)
             {
                 var memoryStream = new MemoryStream();
 
-                await memoryStream.WriteAsync(await datagram.GetNextBytes(datagram.Length));
+                await memoryStream.WriteAsync(await dataframe.GetNextBytes(dataframe.Length));
 
-                if (datagram.MASK)
+                if (dataframe.MASK)
                 {
 
-                    return datagram with
+                    return dataframe with
                     {
-                        MaskingBytes = (await datagram.GetNextBytes(4)).Reverse().ToArray(),
+                        MaskingBytes = (await dataframe.GetNextBytes(4)).Reverse().ToArray(),
                         DataStream = memoryStream,
                     };
                 }
                 else
                 {
-                    return datagram with
+                    return dataframe with
                     {
                         DataStream = memoryStream
                     };
                 }
             }
 
-            return datagram;
+            return dataframe;
         }
     }
 }

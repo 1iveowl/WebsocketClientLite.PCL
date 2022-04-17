@@ -14,7 +14,7 @@
         Disconnected,
         ForcefullyDisconnected,
         Close,
-        DatagramReceived,
+        DataframeReceived,
         Aborted,
         Text,
         Binary,
@@ -29,7 +29,9 @@
         MultiFrameSendingLast,
         FrameDeliveryAcknowledged,
         ConnectionFailed,
-        Ping,
-        Pong,
+        SendPing,
+        PingReceived,
+        SendPong,
+        PongReceived
     }
 }

@@ -30,10 +30,10 @@ namespace WebsocketClientLite.PCL.Factory
         {
             //var readScheduler = new EventLoopScheduler();
 
-            var controlFramHandler = new ControlFrameHandler(
-                //WriteToStream
-                writeFunc: (stream, bytes, cts) => RunOnScheduler(WriteToStream(stream, bytes, cts), eventLoopScheduler)
-                );
+            //var controlFramHandler = new ControlFrameHandler(
+            //    //WriteToStream
+            //    writeFunc: (stream, bytes, cts) => RunOnScheduler(WriteToStream(stream, bytes, cts), eventLoopScheduler)
+            //    );
 
             var tcpConnectionHandler = new TcpConnectionService(
                 isSecureConnectionSchemeFunc: isSecureConnectionSchemeFunc,
@@ -48,10 +48,7 @@ namespace WebsocketClientLite.PCL.Factory
                 new WebsocketConnectionHandler(
                         tcpConnectionHandler,
                         new WebsocketParserHandler(
-                            tcpConnectionHandler,
-                            messageWebSocketRx.ExcludeZeroApplicationDataInPong,
-                            controlFramHandler),
-                        controlFramHandler,
+                            tcpConnectionHandler),
                         ConnectionStatusAction,
                         (stream, connectionStatusAction) => 
                             new WebsocketSenderHandler(

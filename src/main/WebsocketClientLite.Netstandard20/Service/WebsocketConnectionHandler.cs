@@ -20,27 +20,21 @@ namespace WebsocketClientLite.PCL.Service
     {
         private readonly TcpConnectionService _tcpConnectionService;
         private readonly WebsocketParserHandler _websocketParserHandler;
-        private readonly ControlFrameHandler _controlFrameHandler;
         private readonly Action<ConnectionStatus, Exception> _connectionStatusAction;
         private readonly Func<Stream, Action<ConnectionStatus, Exception>, WebsocketSenderHandler> _createWebsocketSenderFunc;
-        //private readonly bool _isExcludingZeroApplicationDataInPong;
 
         private IDisposable _clientPingDisposable;
 
         internal WebsocketConnectionHandler(
             TcpConnectionService tcpConnectionService,
             WebsocketParserHandler websocketParserHandler,
-            ControlFrameHandler controlFrameHandler,
             Action<ConnectionStatus, Exception> connectionStatusAction,
             Func<Stream, Action<ConnectionStatus, Exception>, WebsocketSenderHandler> createWebsocketSenderFunc)
-            //bool isExcludingZeroApplicationDataInPong)
         {
             _tcpConnectionService = tcpConnectionService;            
             _websocketParserHandler = websocketParserHandler;
-            _controlFrameHandler = controlFrameHandler;
             _connectionStatusAction = connectionStatusAction;
             _createWebsocketSenderFunc = createWebsocketSenderFunc;
-            //_isExcludingZeroApplicationDataInPong = isExcludingZeroApplicationDataInPong;
 
             _clientPingDisposable = null;
         }
@@ -100,7 +94,7 @@ namespace WebsocketClientLite.PCL.Service
 
             if (hasClientPing)
             {
-                _clientPingDisposable = ClientPing()
+                _clientPingDisposable = SendClientPing()
                     .Subscribe(
                     _ => { },
                     ex => 
@@ -116,11 +110,11 @@ namespace WebsocketClientLite.PCL.Service
             {
 
                 var disposable = Observable.Defer(
-                    () => _websocketParserHandler.DatagramObservable()
-                    .Select(datagram => Observable.FromAsync(ct => ControlFrameHandler(datagram, obs, ct)))
+                    () => _websocketParserHandler.DataframeObservable()
+                    .Select(dataframe => Observable.FromAsync(ct => IncomingControlFrameHandler(dataframe, obs, ct)))
                     .Concat()
                     .Repeat()
-                    .Where(datagram => datagram is not null)
+                    .Where(dataframe => dataframe is not null)
                     .Do(dataframe => obs.OnNext(dataframe))
                 )
                 .FinallyAsync(async () =>
@@ -138,29 +132,35 @@ namespace WebsocketClientLite.PCL.Service
                 await DisconnectWebsocket(sender);
             });
 
-
-            IObservable<Unit> ClientPing() =>
+            IObservable<Unit> SendClientPing() =>
                 Observable.Interval(clientPingTimeSpan)
-                            .Select(_ => Observable.FromAsync(ct => 
-                                _controlFrameHandler.SendPing(_tcpConnectionService.ConnectionStream, ct)))
+                    .Do(_ => _connectionStatusAction(ConnectionStatus.SendPing, null))
+                            .Select(_ => Observable.FromAsync(ct => sender.SendPing(default)))
                             .Concat();
 
-            async Task<Dataframe> ControlFrameHandler(
-                Dataframe datagram, 
+            async Task<Dataframe> IncomingControlFrameHandler(
+                Dataframe dataframe, 
                 IObserver<Dataframe> obs, 
                 CancellationToken ct)
             {
-                if (datagram.Opcode is OpcodeKind.Ping)
+                if (dataframe.Opcode is OpcodeKind.Ping)
                 {
-                    await sender.SendPong(datagram, ct);
+                    _connectionStatusAction(ConnectionStatus.PingReceived, null);
+                    await sender.SendPong(dataframe, ct);
                 }
 
-                if (datagram.Opcode is OpcodeKind.Close)
+                if (dataframe.Opcode is OpcodeKind.Pong)
                 {
+                    _connectionStatusAction(ConnectionStatus.PongReceived, null);
+                }
+
+                if (dataframe.Opcode is OpcodeKind.Close)
+                {
+                    _connectionStatusAction(ConnectionStatus.Close, null);
                     obs.OnCompleted();
                 }
                 
-                return await Task.FromResult(datagram);
+                return dataframe;
             }
         }
 

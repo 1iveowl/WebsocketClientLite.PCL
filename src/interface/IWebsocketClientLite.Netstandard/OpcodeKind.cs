@@ -17,7 +17,6 @@
         Reserved2b =    0x0C,
         Reserved3c =    0x0D,
         Reserved4d =    0x0E,
-        Reserved5e =    0x0F,       
-        None =          0xFF //TODO Delete!
+        Reserved5e =    0x0F
     }
 }

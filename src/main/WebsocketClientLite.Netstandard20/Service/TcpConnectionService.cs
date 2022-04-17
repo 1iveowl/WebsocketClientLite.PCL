@@ -59,32 +59,10 @@ namespace WebsocketClientLite.PCL.Service
         }
 
         internal IObservable<byte[]> BytesObservable() =>
-            //ByteReadObservable();
-            //Observable.FromAsync(ct => ReadByteArrayFromStream(1, ct));
             Observable.Defer(() => Observable.FromAsync(ct => ReadByteArrayFromStream(1, ct)));
-            //.Repeat();
-            //.TakeWhile(bytes => bytes is not null);
-
-        internal IObservable<byte> ByteStreamObservable() =>
-            //BytesObservable()
-            //Observable.FromAsync(ct => ReadOneByteArrayFromStream(ct))
-            Observable.Defer(() => Observable.FromAsync(ct => ReadByteArrayFromStream(1, ct)))
-            .Where(bytes => bytes is not null)
-            .Select(bytes => bytes[0]);
-
-        internal async Task<byte> ReadOneByteFromStream(CancellationToken ct) =>
-            (await ReadByteArrayFromStream(1, ct))[0];
 
         internal async Task<byte[]> ReadBytesFromStream(ulong size, CancellationToken ct) =>
             (await ReadByteArrayFromStream(size, ct));
-
-        private IObservable<byte[]> ByteReadObservable() =>
-            Observable.Defer(() => Observable.FromAsync(ct => ReadByteArrayFromStream(1, ct)))
-            .Repeat();
-            //.Replay(1)
-            //.Publish()
-            //.RefCount();
-            //.TakeWhile(bytes => bytes is not null);
 
         internal async Task<byte[]> ReadByteArrayFromStream(ulong size, CancellationToken ct)
         {          

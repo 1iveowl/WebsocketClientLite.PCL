@@ -72,17 +72,17 @@ namespace WebsocketClientLite.PCL
             TimeSpan clientPingTimeSpan = default,
             TimeSpan timeout = default) =>
                 WebsocketConnectWithStatusObservable(uri, hasClientPing, clientPingTimeSpan, timeout)
-                    .Where(tuple => tuple.state == ConnectionStatus.DatagramReceived)
-                    .Select(tuple => tuple.datagram);
+                    .Where(tuple => tuple.state == ConnectionStatus.DataframeReceived)
+                    .Select(tuple => tuple.dataframe);
 
-        public IObservable<(IDataframe datagram, ConnectionStatus state)>
+        public IObservable<(IDataframe dataframe, ConnectionStatus state)>
             WebsocketConnectWithStatusObservable (
                 Uri uri,
                 bool hasClientPing = false,
                 TimeSpan clientPingTimeSpan = default,
                 TimeSpan timeout = default)
         {
-            return Observable.Create<(IDataframe datagram, ConnectionStatus state)>(obsTuple =>
+            return Observable.Create<(IDataframe dataframe, ConnectionStatus state)>(obsTuple =>
             {
                 return Observable.Create<ConnectionStatus>(obsStatus =>
                 {
@@ -101,7 +101,7 @@ namespace WebsocketClientLite.PCL
                                     .FromAsync(ct => ConnectWebsocket(websocketService, ct)).Concat())
                                 .Concat()
                                 .Subscribe(
-                                    datagram => { obsTuple.OnNext((datagram, ConnectionStatus.DatagramReceived)); },
+                                    dataframe => { obsTuple.OnNext((dataframe, ConnectionStatus.DataframeReceived)); },
                                     ex => { obsTuple.OnError(ex); },
                                     () => { obsTuple.OnCompleted(); });
                         })
@@ -110,20 +110,6 @@ namespace WebsocketClientLite.PCL
                         ex => { obsTuple.OnError(ex); },
                         () => { obsTuple.OnCompleted(); });
             });
-
-            //var observableListener = Observable.Using(
-            //    resourceFactoryAsync: cts => WebsocketServiceFactory.Create(
-            //         () => IsSecureConnectionScheme(uri),
-            //         ValidateServerCertificate,
-            //         _eventLoopScheduler,
-            //         _connectionStatusSubject.AsObserver(),
-            //         this),
-            //    observableFactoryAsync: (websocketServices, ct) =>
-            //        Task.FromResult(Observable.Return(websocketServices)))
-            //    .Select(websocketService => Observable.FromAsync(ct => ConnectWebsocket(websocketService, ct)).Concat())
-            //    .Concat();
-
-            //return observableListener;
 
             async Task<IObservable<IDataframe>> ConnectWebsocket(WebsocketService ws, CancellationToken ct) =>
                 await ws.WebsocketConnectHandler.ConnectWebsocket(

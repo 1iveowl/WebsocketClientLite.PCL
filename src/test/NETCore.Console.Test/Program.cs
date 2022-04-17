@@ -25,8 +25,8 @@ class Program
 
         await StartWebSocketAsyncWithRetry(outerCancellationSource);
 
-        System.Console.WriteLine("Waiting...");
-        System.Console.ReadKey();
+        Console.WriteLine("Waiting...");
+        Console.ReadKey();
         outerCancellationSource.Cancel();
     }
 
@@ -65,7 +65,7 @@ class Program
 
         Console.WriteLine("Start");
 
-        IObservable<(IDataframe datagram, ConnectionStatus state)> websocketConnectionObservable = 
+        IObservable<(IDataframe dataframe, ConnectionStatus state)> websocketConnectionObservable = 
             websocketClient.WebsocketConnectWithStatusObservable(
                new Uri(WebsocketTestServerUrl), 
                hasClientPing: false,
@@ -83,10 +83,10 @@ class Program
                     innerCancellationTokenSource.Cancel();
                 }
 
-                if (tuple.state == ConnectionStatus.DatagramReceived 
-                    && tuple.datagram.Message is not null)
+                if (tuple.state == ConnectionStatus.DataframeReceived 
+                    && tuple.dataframe is not null)
                 {
-                    Console.WriteLine($"Echo: {tuple.datagram.Message}");
+                    Console.WriteLine($"Echo: {tuple.dataframe.Message}");
                 }
             })
             .Where(tuple => tuple.state == ConnectionStatus.WebsocketConnected)
@@ -154,7 +154,7 @@ class Program
             await Task.Delay(TimeSpan.FromMilliseconds(500));
             await sender.SendTextAsync("Stop.", OpcodeKind.Text, FragmentKind.Last);           
 
-            await Task.Delay(TimeSpan.FromSeconds(21));
+            await Task.Delay(TimeSpan.FromSeconds(20));
         }
 
         async Task SendTest2()

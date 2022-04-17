@@ -98,94 +98,36 @@ namespace WebsocketClientLite.PCL.Service
                 ct);
         }
 
-        
+
         public async Task SendTextAsync(
             string message,
             OpcodeKind opcode,
             FragmentKind fragment,
-            CancellationToken ct = default)
-        {
-            await ComposeFrameAndSendAsync(
+            CancellationToken ct = default) => 
+                await ComposeFrameAndSendAsync(
                         message,
                         opcode,
                         fragment,
                         ct);
 
-            //if (_isSendingMultipleFrames)
-            //{
-            //    if (frameType == OpcodeKind.FirstOfMultipleFrames || frameType == OpcodeKind.Text)
-            //    {
-            //        await ComposeFrameAndSendAsync(Encoding.UTF8.GetBytes("_sequence aborted error_"), OpcodeKind.LastInMultipleFrames, ct);
-            //        _isSendingMultipleFrames = false;
 
-            //        throw new WebsocketClientLiteException("Multiple frames is progress. Frame must be a Continuation Frame or Last Frams in sequence. Multiple frame sequence aborted and finalized");
-            //    }
-            //}
-
-            //if (!_isSendingMultipleFrames && frameType != OpcodeKind.FirstOfMultipleFrames)
-            //{
-            //    if (frameType == OpcodeKind.Continuation || frameType == OpcodeKind.LastInMultipleFrames)
-            //    {
-            //        throw new WebsocketClientLiteException("Multiple frames sequence is not in initiated. Frame cannot be of a Continuation Frame or a Last Frame type");
-            //    }
-            //}
-
-            //switch (frameType)
-            //{
-            //    case OpcodeKind.Text:
-            //        await ComposeFrameAndSendAsync(
-            //            message, 
-            //            OpcodeKind.Text, 
-            //            ct);
-            //        break;
-            //    case OpcodeKind.FirstOfMultipleFrames:
-            //        _isSendingMultipleFrames = true;
-            //        await ComposeFrameAndSendAsync(
-            //            message, 
-            //            OpcodeKind.FirstOfMultipleFrames, 
-            //            ct);
-            //        break;
-            //    case OpcodeKind.LastInMultipleFrames:
-            //        await ComposeFrameAndSendAsync(
-            //            message, 
-            //            OpcodeKind.LastInMultipleFrames, 
-            //            ct);
-            //        _isSendingMultipleFrames = false;
-            //        break;
-            //    case OpcodeKind.Continuation:
-            //        await ComposeFrameAndSendAsync(
-            //            message, 
-            //            OpcodeKind.Continuation, 
-            //            ct);
-            //        break;
-            //    default:
-            //        throw new ArgumentOutOfRangeException(nameof(frameType), frameType, null);
-            //}
-        }
-
-        public Task SendPingWithText(string message, CancellationToken ct = default)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task SendPing(string message, CancellationToken ct = default)
-        {
-            throw new NotImplementedException();
-        }
+        public async Task SendPing(
+            string message, 
+            CancellationToken ct = default) => 
+                await ComposeFrameAndSendAsync(
+                    message,
+                    OpcodeKind.Ping,
+                    FragmentKind.None,
+                    ct);
 
         internal async Task SendPong(
             Dataframe dataframe,
-            CancellationToken ct)
-        {
-            await ComposeFrameAndSendAsync(
-                dataframe.Binary,
-                OpcodeKind.Pong,
-                FragmentKind.None,
-                ct);
-            //var pong = isExcludingZeroApplicationDataInPong
-            //            ? new byte[1] { 138 }
-            //            : new byte[2] { 138, 0 };
-        }
+            CancellationToken ct) => 
+                await ComposeFrameAndSendAsync(
+                    dataframe.Binary,
+                    OpcodeKind.Pong,
+                    FragmentKind.None,
+                    ct);
 
         internal async Task SendCloseHandshakeAsync(
             StatusCodes statusCode)
@@ -206,7 +148,7 @@ namespace WebsocketClientLite.PCL.Service
             FragmentKind fragment,
             CancellationToken ct) => 
                 await ComposeFrameAndSendAsync(
-                    Encoding.UTF8.GetBytes(message),
+                    message is not null ? Encoding.UTF8.GetBytes(message) : default,
                     opcode,
                     fragment,
                     ct);
@@ -217,7 +159,6 @@ namespace WebsocketClientLite.PCL.Service
             FragmentKind fragment,
             CancellationToken ct)
         {
-
             var frame = new byte[1] { DetermineFINBit(opcode, fragment) };
 
             if (content is not null)
@@ -228,12 +169,11 @@ namespace WebsocketClientLite.PCL.Service
                     .Concat(Encode(content, maskKey))
                     .ToArray();
             }
-            else
+            else if (!_isExcludingZeroApplicationDataInPong)
             {
-                if(!_isExcludingZeroApplicationDataInPong)
-                {
-                    frame = frame.Concat(new byte[1] { 0 }).ToArray();
-                }
+                frame = frame
+                    .Concat(new byte[1] { 0 })
+                    .ToArray();                
             }
 
             await SendFrameAsync(
@@ -277,8 +217,8 @@ namespace WebsocketClientLite.PCL.Service
                     OpcodeKind.Text => ConnectionStatus.Text,
                     OpcodeKind.Binary => ConnectionStatus.Binary,
                     OpcodeKind.Close => ConnectionStatus.Close,
-                    OpcodeKind.Ping => ConnectionStatus.Ping,
-                    OpcodeKind.Pong => ConnectionStatus.Pong,
+                    OpcodeKind.Ping => ConnectionStatus.PingReceived,
+                    OpcodeKind.Pong => ConnectionStatus.SendPong,
                     _ => throw new NotImplementedException(),
                 }, 
                 null);
@@ -294,32 +234,7 @@ namespace WebsocketClientLite.PCL.Service
                     FragmentKind.Last => ConnectionStatus.MultiFrameSendingLast,
                     _ => throw new NotImplementedException(),
                 },
-                null);
-
-            //switch (opcode)
-            //{
-            //    case OpcodeKind.Text:
-            //        _connectionStatusAction(ConnectionStatus.Text, null);
-            //        break;
-            //    //case OpcodeKind.FirstOfMultipleFrames:
-            //    //    _connectionStatusAction(ConnectionStatus.MultiFrameSendingBegin, null);
-            //    //    //_isSendingMultipleFrames = true;
-            //    //    break;
-            //    //case OpcodeKind.LastInMultipleFrames:
-            //    //    _connectionStatusAction(ConnectionStatus.MultiFrameSendingLast, null);
-            //    //    //_isSendingMultipleFrames = false;
-            //    //    break;
-            //    case OpcodeKind.Continuation:
-            //        _connectionStatusAction(ConnectionStatus.Continuation, null);
-            //       break;
-            //    case OpcodeKind.Close:
-            //        _connectionStatusAction(ConnectionStatus.Close, null);
-            //        break;
-            //    default:
-            //        throw new ArgumentOutOfRangeException(nameof(opcode), opcode, null);
-            //}
-
-            
+                null);            
 
             if (ct == default)
             {

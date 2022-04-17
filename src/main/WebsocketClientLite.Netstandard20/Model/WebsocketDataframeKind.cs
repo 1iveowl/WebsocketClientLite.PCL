@@ -1,6 +1,6 @@
 ﻿namespace WebsocketClientLite.PCL.Model
 {
-    internal enum WebsocketDatagramKind
+    internal enum WebsocketDataframeKind
     {
         Unknown,
         Text,

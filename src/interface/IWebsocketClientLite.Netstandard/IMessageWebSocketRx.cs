@@ -44,7 +44,7 @@ namespace IWebsocketClientLite.PCL
             TimeSpan clientPingTimeSpan = default,
             TimeSpan timeout = default);
 
-        IObservable<(IDataframe datagram, ConnectionStatus state)> WebsocketConnectWithStatusObservable(
+        IObservable<(IDataframe dataframe, ConnectionStatus state)> WebsocketConnectWithStatusObservable(
             Uri uri, 
             bool hasClientPing = false,
             TimeSpan clientPingTimeSpan = default, 
