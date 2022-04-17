@@ -22,7 +22,7 @@ Observe incoming message using Reactive Extensions (Rx)</description>
     
     <dependencies>
 
-      <group targetFramework="netstandard2.0">
+      <group targetFramework="netstandard2.1">
         <dependency id="System.Reactive" version="5.0.0"/>
         <dependency id="HttpMachine.PCL" version="4.0.2"/>	  
 	  </group>
@@ -32,7 +32,7 @@ Observe incoming message using Reactive Extensions (Rx)</description>
   </metadata>
     <files>
       <file src="1iveowl-logo.png" target="images\" />
-      <file src="..\main\WebsocketClientLite.Netstandard20\bin\Release\netstandard2.0\WebsocketClientLite.*" target="lib\netstandard2.0" />
-      <file src="..\main\WebsocketClientLite.Netstandard20\bin\Release\netstandard2.0\IWebsocketClientLite.*" target="lib\netstandard2.0" />
+      <file src="..\main\WebsocketClientLite.Netstandard20\bin\Release\netstandard2.1\WebsocketClientLite.*" target="lib\netstandard2.1" />
+      <file src="..\main\WebsocketClientLite.Netstandard20\bin\Release\netstandard2.1\IWebsocketClientLite.*" target="lib\netstandard2.1" />
     </files>
 </package>

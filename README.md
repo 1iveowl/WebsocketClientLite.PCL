@@ -1,7 +1,7 @@
 # Websocket Client Lite (Rx)
 [![NuGet Badge](https://buildstats.info/nuget/WebsocketClientLite.PCL)](https://www.nuget.org/packages/WebsocketClientLite.PCL)
 
-[![.NET Standard](http://img.shields.io/badge/.NET_Standard-v2.0-red.svg)](https://docs.microsoft.com/da-dk/dotnet/articles/standard/library) 
+[![.NET Standard](http://img.shields.io/badge/.NET_Standard-v2.1-red.svg)](https://docs.microsoft.com/da-dk/dotnet/articles/standard/library) 
 
 *Please star this project if you find it useful. Thank you.*
 
@@ -16,7 +16,7 @@ This project utilizes [Reactive Extensions](http://reactivex.io/). Although this
 ## New in version 7.0
 This library have been around for a number of years and were mainly initiated on a desire to learn more. Over the years this learning grew and looking back on the older and older code became more and more painful, so I decided to redo it. Version 7 is basically a rewrite from the ground up.
 
-Version 7 is based on .NET Standard 2.0.
+Version 7 is based on .NET Standard 2.1.
 
 ## New in version 6.4
 - Successfully tested with .NET 6.0.
