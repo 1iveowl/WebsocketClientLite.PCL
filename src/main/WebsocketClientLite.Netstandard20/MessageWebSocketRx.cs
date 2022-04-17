@@ -1,272 +1,219 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
 using System.Net.Security;
 using System.Net.Sockets;
-using System.Reactive;
+using System.Reactive.Concurrency;
 using System.Reactive.Linq;
-using System.Reactive.Subjects;
-using System.Reactive.Threading.Tasks;
 using System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
+using System.Threading;
 using System.Threading.Tasks;
 using IWebsocketClientLite.PCL;
-using WebsocketClientLite.PCL.CustomException;
-using WebsocketClientLite.PCL.Extension;
+using WebsocketClientLite.PCL.Factory;
 using WebsocketClientLite.PCL.Service;
 
 namespace WebsocketClientLite.PCL
 {
-    public class MessageWebSocketRx : IMessageWebSocketRx
+    /// <summary>
+    /// Websocket Client Lite
+    /// </summary>
+    public class MessageWebsocketRx : IMessageWebSocketRx
     {
-        private readonly IObserver<ConnectionStatus> _observerConnectionStatus;
-        private readonly IObserver<string> _observerMessage;
+        private readonly EventLoopScheduler _eventLoopScheduler;
 
-        private readonly WebSocketConnectHandler _webSocketConnectService;
-        private readonly WebsocketParserHandler _websocketParserHandler;
-        private readonly WebsocketSenderHandler _websocketSenderHandler;
+        internal TcpClient TcpClient { get; private set; }
 
-        private TcpClient _tcpClient;
-        private Stream _tcpStream;
-        
-        private IDisposable _disposableWebsocketListener;
+        private ISender _sender;
 
-        public bool SubprotocolAccepted { get; set; }
+        /// <summary>
+        /// Is Websocket client connected.
+        /// </summary>
+        public bool IsConnected { get; private set; }
 
-        public string SubprotocolAcceptedName => _websocketParserHandler.SubprotocolAcceptedName;
-
+        /// <summary>
+        /// Origin
+        /// </summary>
         public string Origin { get; set; }
 
+        /// <summary>
+        /// Http Headers
+        /// </summary>
         public IDictionary<string, string> Headers { get; set; }
 
+        /// <summary>
+        /// Websocket known subprotocols
+        /// </summary>
         public IEnumerable<string> Subprotocols { get; set; }
 
+
+        /// <summary>
+        /// TLS protocol
+        /// </summary>
         public SslProtocols TlsProtocolType { get; set; }
 
+        /// <summary>
+        /// X.509 certificate collection.
+        /// </summary>
         public X509CertificateCollection X509CertCollection { get; set; }
 
+        /// <summary>
+        /// Typically used with Slack. See documentation. 
+        /// </summary>
         public bool ExcludeZeroApplicationDataInPong { get; set; }
 
+        /// <summary>
+        /// Use with care. Ignores TLS/SSL certificate checks and errors. See documentation.
+        /// </summary>
         public bool IgnoreServerCertificateErrors { get; set; }
 
-        public IObservable<ConnectionStatus> ConnectionStatusObservable { get; }
-
-        public IObservable<string> MessageReceiverObservable { get; }
-
-        private readonly bool _isTcpClientProvided;
-
-        public MessageWebSocketRx(TcpClient tcpClient)  : this()
-        {
-            _tcpClient = tcpClient;
-            _isTcpClientProvided = true;
-        }
+        /// <summary>
+        /// Get websocket client sender
+        /// </summary>
+        /// <returns></returns>
+        public ISender GetSender() => IsConnected 
+            ? _sender 
+            : throw new InvalidOperationException("No sender available, Websocket not connected. You need to subscribe to WebsocketConnectObservable first.");
         
-        public MessageWebSocketRx()
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="tcpClient"></param>
+        public MessageWebsocketRx(TcpClient tcpClient) 
         {
-            
-            var subjectMessageReceiver = new Subject<string>();
+            _eventLoopScheduler = new EventLoopScheduler();
 
-            MessageReceiverObservable = subjectMessageReceiver.AsObservable();
-            _observerMessage = subjectMessageReceiver.AsObserver();
-
-            var subjectConnectionStatus = new BehaviorSubject<ConnectionStatus>(ConnectionStatus.Initialized);
-
-            ConnectionStatusObservable = subjectConnectionStatus.AsObservable();
-            _observerConnectionStatus = subjectConnectionStatus.AsObserver();
-
-            _webSocketConnectService = new WebSocketConnectHandler(_observerConnectionStatus, _observerMessage);
-            
-            _websocketParserHandler = new WebsocketParserHandler(
-                _observerConnectionStatus, 
-                SubprotocolAccepted, 
-                ExcludeZeroApplicationDataInPong);
-
-            _websocketSenderHandler = new WebsocketSenderHandler( _observerConnectionStatus);
+            TcpClient = tcpClient;
+            Subprotocols = null;
         }
 
-       
-        public async Task ConnectAsync(
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        public MessageWebsocketRx() : this(null)
+        {
+            
+        }
+
+        /// <summary>
+        /// Websocket Connection Observable
+        /// </summary>
+        /// <param name="uri">Websocket Server Endpoint (URI)</param>
+        /// <param name="hasClientPing">Set to true to have the client send ping messages to server.</param>
+        /// <param name="clientPingTimeSpan">Specific client ping interval. Default is 30 seconds will be used.</param>
+        /// <param name="timeout">Specific time out for client trying to connect. Default is 30 seconds.</param>
+        /// <returns></returns>
+        public IObservable<IDataframe> WebsocketConnectObservable(
             Uri uri,
-            TimeSpan timeout = default)
+            bool hasClientPing = false,
+            TimeSpan clientPingTimeSpan = default,
+            TimeSpan timeout = default) =>
+                WebsocketConnectWithStatusObservable(uri, hasClientPing, clientPingTimeSpan, timeout)
+                    .Where(tuple => tuple.state is ConnectionStatus.DataframeReceived)
+                    .Select(tuple => tuple.dataframe);
+
+        /// <summary>
+        /// Websocket Connection Observable with status.
+        /// </summary>
+        /// <param name="uri">Websocket Server Endpoint (URI)</param>
+        /// <param name="hasClientPing">Set to true to have the client send ping messages to server.</param>
+        /// <param name="clientPingTimeSpan">Specific client ping interval. Default is 30 seconds will be used.</param>
+        /// <param name="timeout">Specific time out for client trying to connect. Default is 30 seconds.</param>
+        /// <returns></returns>
+        public IObservable<(IDataframe dataframe, ConnectionStatus state)>
+            WebsocketConnectWithStatusObservable (
+                Uri uri,
+                bool hasClientPing = false,
+                TimeSpan clientPingTimeSpan = default,
+                TimeSpan timeout = default)
         {
-            _observerConnectionStatus.OnNext(ConnectionStatus.ConnectingToTcpSocket);
-            
-            await ConnectTcpClient(uri, timeout);
+            if (timeout == default)
+            {
+                timeout = TimeSpan.FromSeconds(30);
+            }
 
-            _tcpStream = await DetermineStreamTypeAsync(uri, _tcpClient, X509CertCollection, TlsProtocolType);
-
-            var websocketListenerObservable = _websocketParserHandler.CreateWebsocketListenerObservable(_tcpStream);
-
-            _disposableWebsocketListener = websocketListenerObservable
-                // https://stackoverflow.com/a/45217578/4140832
-                .FinallyAsync(async () =>
+            return Observable.Create<(IDataframe dataframe, ConnectionStatus state)>(obsTuple =>
+            {
+                return Observable.Create<ConnectionStatus>(obsStatus =>
                 {
-                    await _webSocketConnectService.DisconnectWebsocketServer();
+                    obsStatus.OnNext(ConnectionStatus.Initialized);
+
+                    return Observable.Using(
+                        resourceFactoryAsync: cts => WebsocketServiceFactory.Create(
+                             () => IsSecureConnectionScheme(uri),
+                             ValidateServerCertificate,
+                             _eventLoopScheduler,
+                             obsStatus,
+                             this),
+                        observableFactoryAsync: (websocketServices, ct) =>
+                            Task.FromResult(Observable.Return(websocketServices)))
+                                .Select(websocketService => Observable
+                                    .FromAsync(ct => ConnectWebsocket(websocketService, ct)).Concat())
+                                .Concat()
+                                .Subscribe(
+                                    dataframe => { obsTuple.OnNext((dataframe, ConnectionStatus.DataframeReceived)); },
+                                    ex => { obsTuple.OnError(ex); },
+                                    () => { obsTuple.OnCompleted(); });
                 })
+                .Finally(() => IsConnected = false)
                 .Subscribe(
-                    str => _observerMessage.OnNext(str),
-                    ex =>
-                    {
-                        _observerMessage.OnError(ex);
-                    },
-                    () =>
-                    {
-                        _observerMessage.OnCompleted();
-                    });
+                    state =>{ obsTuple.OnNext((null, state));},
+                    ex => { obsTuple.OnError(ex); },
+                    () => { obsTuple.OnCompleted(); });
+            });
 
-            await _webSocketConnectService.ConnectToWebSocketServer(
-                _websocketParserHandler,
-                _websocketSenderHandler,
-                uri,
-                _tcpStream,
-                Origin,
-                Headers,
-                Subprotocols);
-        }
+            async Task<IObservable<IDataframe>> ConnectWebsocket(WebsocketService ws, CancellationToken ct) =>
+                await ws.WebsocketConnectionHandler.ConnectWebsocket(
+                    uri,
+                    X509CertCollection,
+                    TlsProtocolType,
+                    InitializeSender,
+                    ct,
+                    hasClientPing,
+                    clientPingTimeSpan,                                    
+                    timeout,
+                    Origin,
+                    Headers,
+                    Subprotocols);
 
-        public async Task DisconnectAsync()
-        {
-            await _webSocketConnectService.DisconnectWebsocketServer();
-
-            _tcpClient?.Dispose();
-            _disposableWebsocketListener?.Dispose();
-        }
-
-        public async Task SendTextAsync(string message)
-        {
-            _observerConnectionStatus.OnNext(ConnectionStatus.Sending);
-
-            await _websocketSenderHandler.SendTextAsync(_webSocketConnectService.TcpStream, message);
-
-            _observerConnectionStatus.OnNext(ConnectionStatus.DeliveryAcknowledged);
-            }
-
-        public async Task SendTextMultiFrameAsync(string message, FrameType frameType)
-        {
-            switch (frameType)
-                {
-                    case FrameType.FirstOfMultipleFrames:
-                        _observerConnectionStatus.OnNext(ConnectionStatus.MultiFrameSendingBegin);
-                        break;
-                    case FrameType.Continuation:
-                        _observerConnectionStatus.OnNext(ConnectionStatus.MultiFrameSendingContinue);
-                        break;
-                    case FrameType.LastInMultipleFrames:
-                        _observerConnectionStatus.OnNext(ConnectionStatus.MultiFrameSendingLast);
-                        break;
-                    case FrameType.CloseControlFrame:
-                        break;
-                    case FrameType.Single:
-                        break;
-                    default:
-                        throw new ArgumentOutOfRangeException(nameof(frameType), frameType, null);
-                }
-                
-            await _websocketSenderHandler.SendTextMultiFrameAsync(_webSocketConnectService.TcpStream, message, frameType);
-
-            _observerConnectionStatus.OnNext(ConnectionStatus.FrameDeliveryAcknowledged);
-        }
-
-        public async Task SendTextAsync(string[] messageList)
-        {
-            _observerConnectionStatus.OnNext(ConnectionStatus.Sending);
-
-            await _websocketSenderHandler.SendTextAsync(_webSocketConnectService.TcpStream, messageList);
-
-            _observerConnectionStatus.OnNext(ConnectionStatus.DeliveryAcknowledged);
-        }
-
-        private async Task<Stream> DetermineStreamTypeAsync(
-            Uri uri, 
-            TcpClient tcpClient, 
-            X509CertificateCollection x509CertificateCollection, 
-            SslProtocols tlsProtocolType)
-        {
-
-            if (IsSecureConnectionScheme(uri))
+            void InitializeSender(ISender sender)
             {
-                var secureStream = new SslStream(tcpClient.GetStream(), true, ValidateServerCertificate);
-
-                try
-                {
-                    await secureStream.AuthenticateAsClientAsync(uri.Host, x509CertificateCollection, tlsProtocolType, false);
-
-                    return secureStream;
-                }
-                catch (Exception ex)
-                {
-                    throw new WebsocketClientLiteException("Unable to determine stream type", ex);
-                }
-            }
-
-            return tcpClient.GetStream();
-        }
-
-        public virtual bool IsSecureConnectionScheme(Uri uri) => uri.Scheme switch
-        {
-            "ws" => false,
-            "http" => false,
-            "wss" => true,
-            "https" => true,
-            _ => throw new ArgumentException("Unknown Uri type.")
-        };
-
-        private async Task ConnectTcpClient(Uri uri, TimeSpan timeout = default)
-        {
-            if (!_isTcpClientProvided)
-            {
-                _tcpClient?.Dispose();
-                _tcpClient = new TcpClient(
-                    uri.HostNameType == UriHostNameType.IPv6 
-                        ? AddressFamily.InterNetworkV6 
-                        : AddressFamily.InterNetwork);
-            }
-            else
-            {
-                if (_tcpClient is null)
-                {
-                    throw new WebsocketClientLiteException($"When using the 'MessageWebSocketRx(TcpClient tcpClient)' constructor a valid TcpClient must be provided.");
-                }
-            }
-
-            try
-            {
-                await _tcpClient.ConnectAsync(uri.Host, uri.Port).ToObservable().Timeout(timeout != default ? timeout : TimeSpan.FromSeconds(5));
-            }
-            catch (TimeoutException ex)
-            {
-                throw new WebsocketClientLiteTcpConnectException($"TCP Socket connection timed-out to {uri.Host}:{uri.Port}.", ex);
-            }
-            catch (ObjectDisposedException)
-            {
-                // OK to ignore
-            }
-            catch (Exception ex)
-            {
-                throw new WebsocketClientLiteTcpConnectException($"Unable to establish TCP Socket connection to: {uri.Host}:{uri.Port}.", ex);
-            }
-
-            if (_tcpClient.Connected)
-            {
-                _observerConnectionStatus.OnNext(ConnectionStatus.TcpSocketConnected);
-                Debug.WriteLine("Connected");
-            }
-            else
-            {
-                throw new WebsocketClientLiteTcpConnectException($"Unable to connect to Tcp socket for: {uri.Host}:{uri.Port}.");
+                _sender = sender;
+                IsConnected = true;
             }
         }
 
+        /// <summary>
+        /// Is using a secure connection scheme. Override for anything but default behavior.
+        /// </summary>
+        /// <param name="uri">Secure connection scheme method. Override for anything but default behavior.</param>
+        /// <returns></returns>
+        public virtual bool IsSecureConnectionScheme(Uri uri) => 
+            uri.Scheme switch
+            {
+                "ws" => false,
+                "http" => false,
+                "wss" => true,
+                "https" => true,
+                _ => throw new ArgumentException("Unknown Uri type.")
+            };
+
+        /// <summary>
+        /// Server certificate validation. Override for anything but default behavior.
+        /// </summary>
+        /// <param name="senderObject">Sender object</param>
+        /// <param name="certificate">X.509 Certificate</param>
+        /// <param name="chain">X.509 Chain</param>
+        /// <param name="TlsPolicyErrors"> TLS/SSL policy Errors</param>
+        /// <returns></returns>
         public virtual bool ValidateServerCertificate(
-            object sender,
+            object senderObject,
             X509Certificate certificate,
             X509Chain chain,
-            SslPolicyErrors sslPolicyErrors)
+            SslPolicyErrors TlsPolicyErrors)
         {
             if (IgnoreServerCertificateErrors) return true;
 
-            switch (sslPolicyErrors)
+            switch (TlsPolicyErrors)
             {
                 case SslPolicyErrors.RemoteCertificateNameMismatch:
                     throw new Exception($"SSL/TLS error: {SslPolicyErrors.RemoteCertificateChainErrors}");
@@ -277,21 +224,14 @@ namespace WebsocketClientLite.PCL
                 case SslPolicyErrors.None:
                     break;
                 default:
-                    throw new ArgumentOutOfRangeException(nameof(sslPolicyErrors), sslPolicyErrors, null);
+                    throw new ArgumentOutOfRangeException(nameof(TlsPolicyErrors), TlsPolicyErrors, null);
             }
             return true;
         }
 
         public void Dispose()
         {
-            _tcpStream?.Dispose();
-            _websocketParserHandler?.Dispose();
-            _disposableWebsocketListener?.Dispose();
 
-            if (!_isTcpClientProvided)
-            {
-                _tcpClient?.Dispose();
-            }
         }
     }
 }

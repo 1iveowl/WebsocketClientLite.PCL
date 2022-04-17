@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net.Sockets;
+using System.Reactive.Linq;
 using System.Security.Authentication;
 using System.Threading;
 using System.Threading.Tasks;
@@ -9,38 +10,40 @@ using WebsocketClientLite.PCL;
 
 class Program
 {
-
     const string AllowedChars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
-    const string WebsocketTestServerUrl = "ws.ifelse.io";
 
-    //const string WebsocketTestServerUrl = "/socket.io/?EIO=4&transport=websocket";
+    const string WebsocketTestServerUrl = "wss://ws.postman-echo.com/raw";
+    //const string WebsocketTestServerUrl = "wss://ws.ifelse.io";
+    //const string WebsocketTestServerUrl = "http://ubuntusrv2.my.home:3000/socket.io/?EIO=4&transport=websocket";
     //const string WebsocketTestServerUrl = "172.19.128.84:3000";
     //const string WebsocketTestServerUrl = "localhost:3000";
 
-
-    static async Task Main(string[] args)
+    static async Task Main()
     {
 
         var outerCancellationSource = new CancellationTokenSource();
 
         await StartWebSocketAsyncWithRetry(outerCancellationSource);
 
-        System.Console.WriteLine("Waiting...");
-        System.Console.ReadKey();
+        Console.WriteLine("Waiting...");
+        Console.ReadKey();
         outerCancellationSource.Cancel();
     }
 
     private static async Task StartWebSocketAsyncWithRetry(CancellationTokenSource outerCancellationTokenSource)
     {
+        var tcpClient = new TcpClient { LingerState = new LingerOption(true, 0) };
+
+
         while (!outerCancellationTokenSource.IsCancellationRequested)
         {
             var innerCancellationSource = new CancellationTokenSource();
 
-            await StartWebSocketAsync(innerCancellationSource);
+            await StartWebSocketAsync(tcpClient, innerCancellationSource);
 
             while (!innerCancellationSource.IsCancellationRequested)
             {
-                await Task.Delay(TimeSpan.FromSeconds(10), innerCancellationSource.Token);
+                await Task.Delay(TimeSpan.FromSeconds(30), innerCancellationSource.Token);
             }
 
             // Wait 5 seconds before trying again
@@ -48,30 +51,59 @@ class Program
         }
     }
 
-    private static async Task StartWebSocketAsync(CancellationTokenSource innerCancellationTokenSource)
+    private static async Task StartWebSocketAsync(
+        TcpClient tcpClient,
+        CancellationTokenSource innerCancellationTokenSource)
     {
-        using var tcpClient = new TcpClient { LingerState = new LingerOption(true, 0) };
-        using var websocketClient = new MessageWebSocketRx(tcpClient)
+        var client = new MessageWebsocketRx(tcpClient)
         {
             IgnoreServerCertificateErrors = true,
             Headers = new Dictionary<string, string> { { "Pragma", "no-cache" }, { "Cache-Control", "no-cache" } },
             TlsProtocolType = SslProtocols.Tls12
         };
 
-        //websocketClient.ExcludeZeroApplicationDataInPong = false;
         Console.WriteLine("Start");
 
-        var disposableWebsocketStatus = websocketClient.ConnectionStatusObservable.Subscribe(
-            s =>
+        IObservable<(IDataframe dataframe, ConnectionStatus state)> websocketConnectionObservable = 
+            client.WebsocketConnectWithStatusObservable(
+               new Uri(WebsocketTestServerUrl), 
+               hasClientPing: false,
+               clientPingTimeSpan: TimeSpan.FromSeconds(10));
+
+        var disposableConnectionStatus = websocketConnectionObservable
+            .Do(tuple =>
             {
-                System.Console.WriteLine(s.ToString());
-                if (s == ConnectionStatus.Disconnected
-                || s == ConnectionStatus.Aborted
-                || s == ConnectionStatus.ConnectionFailed)
+                Console.ForegroundColor = (int)tuple.state switch
+                {
+                    >= 1000 and <= 1999 => ConsoleColor.Magenta,
+                    >= 2000 and <= 2999 => ConsoleColor.Green,
+                    >= 3000 and <= 3999 => ConsoleColor.Cyan,
+                    >= 4000 and <= 4999 => ConsoleColor.DarkYellow,
+                    _                   => ConsoleColor.Gray,
+                };              
+
+                Console.WriteLine(tuple.state.ToString() );
+
+                if (tuple.state == ConnectionStatus.Disconnected
+                || tuple.state == ConnectionStatus.Aborted
+                || tuple.state == ConnectionStatus.ConnectionFailed)
                 {
                     innerCancellationTokenSource.Cancel();
                 }
-            },
+
+                if (tuple.state == ConnectionStatus.DataframeReceived 
+                    && tuple.dataframe is not null)
+                {
+                    Console.WriteLine($"Echo: {tuple.dataframe.Message}");
+                }
+            })
+            .Where(tuple => tuple.state == ConnectionStatus.WebsocketConnected)
+            .Select(_ => Observable.FromAsync(_ => SendTest1()))
+            .Concat()
+            .Select(_ => Observable.FromAsync(_ => SendTest2()))
+            .Concat()
+            .Subscribe(
+            _ => { },
             ex =>
             {
                 Console.WriteLine($"Connection status error: {ex}.");
@@ -82,62 +114,67 @@ class Program
                 Console.WriteLine($"Connection status completed.");
                 innerCancellationTokenSource.Cancel();
             });
-            
-        var disposableMessageReceiver = websocketClient.MessageReceiverObservable.Subscribe(
-            msg =>
-            {
-                Console.WriteLine($"Reply from test server: {msg}");
-            },
-            ex =>
-            {
-                Console.WriteLine(ex.Message);
-                innerCancellationTokenSource.Cancel();
-            },
-            () =>
-            {
-                Console.WriteLine($"Message listener subscription Completed");
-                innerCancellationTokenSource.Cancel();
-            });
 
-        //await websocketClient.ConnectAsync(new Uri($"http://ubuntusrv2.my.home:3000/socket.io/?EIO=4&transport=websocket")/*, isSocketIOv4:true*/);
-        await websocketClient.ConnectAsync(new Uri($"wss://{WebsocketTestServerUrl}"));
+        await Task.Delay(TimeSpan.FromSeconds(200));
 
-        try
+        async Task SendTest1()
         {
-            System.Console.WriteLine("Sending: Test Single Frame");
-            await websocketClient.SendTextAsync("Test Single Frame");
+            var sender = client.GetSender();
 
-            await websocketClient.SendTextAsync("Test Single Frame again");
+            await Task.Delay(TimeSpan.FromSeconds(4));
 
-            await websocketClient.SendTextAsync(TestString(65538, 65550));
+            await sender.SendText("Test Single Frame 1");
 
-            var strArray = new[] { "Test ", "multiple ", "frames" };
+            await Task.Delay(TimeSpan.FromSeconds(5));
 
-            await websocketClient.SendTextAsync(strArray);
+            await sender.SendText("Test Single Frame 2");
 
-            await websocketClient.SendTextMultiFrameAsync("Start ", FrameType.FirstOfMultipleFrames);
-            await Task.Delay(TimeSpan.FromMilliseconds(200));
-            await websocketClient.SendTextMultiFrameAsync("Continue... #1 ", FrameType.Continuation);
-            await Task.Delay(TimeSpan.FromMilliseconds(300));
-            await websocketClient.SendTextMultiFrameAsync("Continue... #2 ", FrameType.Continuation);
-            await Task.Delay(TimeSpan.FromMilliseconds(150));
-            await websocketClient.SendTextMultiFrameAsync("Continue... #3 ", FrameType.Continuation);
-            await Task.Delay(TimeSpan.FromMilliseconds(400));
-            await websocketClient.SendTextMultiFrameAsync("Stop.", FrameType.LastInMultipleFrames);
+            await sender.SendText("Test Single Frame again");
 
-            await websocketClient.DisconnectAsync();
+            await sender.SendText(TestString(1026, 1026));
 
-            disposableMessageReceiver.Dispose();
-            disposableWebsocketStatus.Dispose();
+            //await Task.Delay(TimeSpan.FromSeconds(2));
 
-            await Task.Delay(TimeSpan.FromDays(1));
+            await sender.SendText(new[] { "Test ", "multiple ", "frames ", "1 ", "2 ", "3 ", "4 ", "5 ", "6 ", "7 ", "8 ", "9 " });
+
+            await sender.SendText("Start ", OpcodeKind.Text, FragmentKind.First);
+            await Task.Delay(TimeSpan.FromMilliseconds(500));
+            await sender.SendText("Continue... #1 ", OpcodeKind.Continuation);
+            await Task.Delay(TimeSpan.FromMilliseconds(500));
+            await sender.SendText("Continue... #2 ", OpcodeKind.Continuation);
+            await Task.Delay(TimeSpan.FromMilliseconds(550));
+            await sender.SendText("Continue... #3 ", OpcodeKind.Continuation);
+            await Task.Delay(TimeSpan.FromMilliseconds(500));
+            await sender.SendText("Stop.", OpcodeKind.Text, FragmentKind.Last);           
+
+            await Task.Delay(TimeSpan.FromSeconds(20));
         }
-        catch (Exception e)
+
+        async Task SendTest2()
         {
-            Console.WriteLine(e);
-            innerCancellationTokenSource.Cancel();
-        }
-        
+            var sender = client.GetSender();
+
+            Console.WriteLine("Sending: Test Single Frame");
+            await sender.SendText("Test Single Frame");
+
+            await sender.SendText("Test Single Frame again");
+
+            await sender.SendText(TestString(1024, 1024));
+
+            await sender.SendText(new[] { "Test ", "multiple ", "frames" });
+
+            await sender.SendText("Start ", OpcodeKind.Text, FragmentKind.First);
+            await Task.Delay(TimeSpan.FromMilliseconds(500));
+            await sender.SendText("Continue... #1 ", OpcodeKind.Continuation);
+            await Task.Delay(TimeSpan.FromMilliseconds(500));
+            await sender.SendText("Continue... #2 ", OpcodeKind.Continuation);
+            await Task.Delay(TimeSpan.FromMilliseconds(550));
+            await sender.SendText("Continue... #3 ", OpcodeKind.Continuation);
+            await Task.Delay(TimeSpan.FromMilliseconds(500));
+            await sender.SendText("Stop.", OpcodeKind.Text, FragmentKind.Last);
+
+            await Task.Delay(TimeSpan.FromSeconds(20));
+        }        
     }
 
     private static string TestString(int minlength, int maxlength)
@@ -145,14 +182,13 @@ class Program
 
         var rng = new Random();
 
-        return RandomStrings(AllowedChars, minlength, maxlength, 25, rng);
+        return RandomStrings(AllowedChars, minlength, maxlength, rng);
     }
 
     private static string RandomStrings(
         string allowedChars,
         int minLength,
         int maxLength,
-        int count,
         Random rng)
     {
         var chars = new char[maxLength];

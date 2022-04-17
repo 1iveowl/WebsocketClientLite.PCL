@@ -17,15 +17,15 @@ Observe incoming message using Reactive Extensions (Rx)</description>
     <releaseNotes>
 [General] Extended connection scheme support.
     </releaseNotes>
-    <copyright>Copyright 2021</copyright>
+    <copyright>Copyright 2022</copyright>
     <tags>netstandard net5 netcore ios android xamarin uwp websocket rx ssl tls</tags>
     
     <dependencies>
 
       <group targetFramework="netstandard2.0">
         <dependency id="System.Reactive" version="5.0.0"/>
-        <dependency id="HttpMachine.PCL" version="3.1.0"/>
-      </group>
+        <dependency id="HttpMachine.PCL" version="4.0.2"/>	  
+	  </group>
       
     </dependencies>
     
