@@ -1,7 +1,7 @@
 ﻿using System;
-using IWebsocketClientLite.PCL;
 using System.Collections.Generic;
 using WebsocketClientLite.PCL.CustomException;
+using WebsocketClientLite.PCL.Model;
 
 namespace WebsocketClientLite.PCL.Helper
 {

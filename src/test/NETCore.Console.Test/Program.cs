@@ -80,7 +80,7 @@ class Program
                     >= 3000 and <= 3999 => ConsoleColor.Cyan,
                     >= 4000 and <= 4999 => ConsoleColor.DarkYellow,
                     _                   => ConsoleColor.Gray,
-                };
+                };              
 
                 Console.WriteLine(tuple.state.ToString() );
 

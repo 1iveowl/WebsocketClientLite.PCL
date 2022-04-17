@@ -29,9 +29,9 @@ namespace WebsocketClientLite.PCL.Model
 
         public byte[] Binary => GetBinary();
 
-        public PayloadBitLengthKind PayloadBitLength { get; init; }
+        internal PayloadBitLengthKind PayloadBitLength { get; init; }
 
-        public ulong Length { get; init; }
+        internal ulong Length { get; init; }
 
         public Dataframe(TcpConnectionService tcpConnection, CancellationToken ct)
         {

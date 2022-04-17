@@ -7,7 +7,7 @@ using System.Security.Cryptography.X509Certificates;
 namespace IWebsocketClientLite.PCL
 {
     /// <summary>
-    /// 1iveowl Light Weight Websocket Client
+    /// Websocket Client Lite
     /// </summary>
     public interface IMessageWebSocketRx : IDisposable
     {
@@ -22,17 +22,17 @@ namespace IWebsocketClientLite.PCL
         string Origin { get; }
 
         /// <summary>
-        /// Headers
+        /// Http Headers
         /// </summary>
         IDictionary<string, string> Headers { get; }
 
         /// <summary>
-        /// Subprotocols
+        /// Websocket known subprotocols
         /// </summary>
         IEnumerable<string> Subprotocols { get; }
 
         /// <summary>
-        /// Tls protocol used
+        /// TLS protocol
         /// </summary>
         SslProtocols TlsProtocolType { get; }
         
@@ -52,23 +52,23 @@ namespace IWebsocketClientLite.PCL
         X509CertificateCollection X509CertCollection { get; }
 
         /// <summary>
-        /// Validating Server Certificate.
+        /// Server certificate validation method.
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="certificate"></param>
-        /// <param name="chain"></param>
-        /// <param name="sslPolicyErrors"></param>
+        /// <param name="senderObject">Sender object</param>
+        /// <param name="certificate">X.509 Certificate</param>
+        /// <param name="chain">X.509 Chain</param>
+        /// <param name="TlsPolicyErrors"> TLS/SSL policy Errors</param>
         /// <returns></returns>
         bool ValidateServerCertificate(
-            object sender,
+            object senderObject,
             X509Certificate certificate,
             X509Chain chain,
-            SslPolicyErrors sslPolicyErrors);
+            SslPolicyErrors TlsPolicyErrors);
 
         /// <summary>
-        /// Is using a secure connection scheme.
+        /// Is using a secure connection scheme method.
         /// </summary>
-        /// <param name="uri"></param>
+        /// <param name="uri">Secure connection scheme method.</param>
         /// <returns></returns>
         bool IsSecureConnectionScheme(Uri uri);
 
