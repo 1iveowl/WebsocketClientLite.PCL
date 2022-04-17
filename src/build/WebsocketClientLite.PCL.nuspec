@@ -3,7 +3,7 @@
   <metadata>
     <id>WebsocketClientLite.PCL</id>
     <version>0</version>
-    <title>Websocket Client Lite (.NET Standard 2.0)</title>
+    <title>Websocket Client Lite (.NET Standard 2.1)</title>
     <authors>1iveowl Developement</authors>
     <owners>Jasper H. Bojsen</owners>
     <license type="expression">MIT</license>
