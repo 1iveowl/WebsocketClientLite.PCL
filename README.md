@@ -53,12 +53,15 @@ To use the Websocket client create an instance of the class `MessageWebsocketRx`
         };
 ```
 
-For a more elaborate example please see the console example in the source code.
+For a more elaborate example please see the [console example](https://github.com/1iveowl/WebsocketClientLite.PCL/blob/master/src/test/NETCore.Console.Test/Program.cs) in the source code.
 
 ### Alternative Constructor (Advanced)
 It is also possible to pass you own managed TcpClient to the WebsocketClientLite. If the TcpClient is not connected the library will connect it. 
 
-To use an existing TcpClient us the alternative constructor use: ```csharp MessageWebSocketRx(TcpClient tcpClient)```.
+To use an existing TcpClient us the alternative constructor use: 
+```csharp
+MessageWebSocketRx(TcpClient tcpClient)
+```
 
 #### Working With Slack (And maybe also other Websocket server implementations)
 The [RFC 6455 section defining how ping/pong works](https://tools.ietf.org/html/rfc6455#section-5.5.2) seems to be ambigious on the question of whether or not a pong should include the byte defining the length of "Application Data" in the special case when the length is just zero. 
@@ -77,7 +80,7 @@ To futher complicate matters the [slack.rtm api](https://api.slack.com/rtm) also
 while (true)
 {
     await Task.Delay(TimeSpan.FromSeconds(30));
-    await _webSocket.SendTextAsync("{\"id\": 1234, // ID, see \"sending messages\" above\"type\": \"ping\",...}");
+    await _webSocket.SendText("{\"id\": 1234, // ID, see \"sending messages\" above\"type\": \"ping\",...}");
 }
 ```
 For details read the **Ping and Pong** section of the [slack.rtm api documentation](https://api.slack.com/rtm) 
@@ -91,16 +94,6 @@ client.ConnectAsync(new Uri($"http://{url}:{port}/socket.io/?EIO=4&transport=web
 
 This will connect on the websocket layer. To further connect on socket.io level see documentation. Typically a text message with the content `40` need to be send. For more see here: [Websocket client not connecting to the socket.io server](https://github.com/socketio/socket.io/discussions/4299).
 
-#### Monitoring Status
-Monitoring connection status is easy: 
-```csharp
-var websocketLoggerSubscriber = websocketClient.ConnectionStatusObservable.Subscribe(
-    status =>
-    {
-        // Insert code here for logging or handling connection status
-        System.Console.WriteLine(status.ToString());
-    });
-```
 
 #### References:
 The following documentation was utilized when writting this library:
