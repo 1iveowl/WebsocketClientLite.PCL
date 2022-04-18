@@ -22,7 +22,7 @@ Version 7 supports .NET Standard 2.0 or .NET Standard 2.1.
 ## New in version 6.4
 Successfully tested with .NET 6.0.
 
-Previously the library on accepted the `ws` and `wss` scheme. Now also `http` and `https` is supported. To further extend supported scheme override the `IsSecureConnectionScheme` method of the `MessageWebSocketRx` class.
+Previously the library only accepted the `ws` and `wss` scheme. Now also `http` and `https` is supported. To further extend supported scheme override the `IsSecureConnectionScheme` method of the `MessageWebSocketRx` class.
 
 Default method:
 
