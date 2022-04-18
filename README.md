@@ -111,11 +111,7 @@ client.ExcludeZeroApplicationDataInPong = true;
 To futher complicate matters the [slack.rtm api](https://api.slack.com/rtm) also [seems to requires a ping at the Slack application layer too](http://stackoverflow.com/questions/38171620/slack-rtm-api-disconnection-following-message-in-scala). A simplified implementation of this could look like this:
 
 ```csharp
-while (true)
-{
-    await Task.Delay(TimeSpan.FromSeconds(30));
-    await _webSocket.SendText("{\"id\": 1234, // ID, see \"sending messages\" above\"type\": \"ping\",...}");
-}
+await _webSocket.SendText("{\"id\": 1234, // ID, see \"sending messages\" above\"type\": \"ping\",...}");
 ```
 For details read the **Ping and Pong** section of the [slack.rtm api documentation](https://api.slack.com/rtm) 
 
