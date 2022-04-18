@@ -20,8 +20,21 @@ This library has been around for a number of years and was mainly initiated on a
 Version 7 supports .NET Standard 2.0 or .NET Standard 2.1.
 
 ## New in version 6.4
-- Successfully tested with .NET 6.0.
-- Previously the library on accepted the `ws` and `wss` scheme. Now also `http` and `https` is supported. To further extend supported scheme override the `IsSecureConnectionScheme` method of the `MessageWebSocketRx` class.
+Successfully tested with .NET 6.0.
+
+Previously the library on accepted the `ws` and `wss` scheme. Now also `http` and `https` is supported. To further extend supported scheme override the `IsSecureConnectionScheme` method of the `MessageWebSocketRx` class.
+
+Default method:
+
+```csharp
+public virtual bool IsSecureConnectionScheme(Uri uri) => 
+    uri.Scheme switch
+    {
+        "ws" or "http" => false,
+        "https" or "wss"=> true,
+        _ => throw new ArgumentException("Unknown Uri type.")
+    };
+```
 
 ## New in version 6.3
 - Fixed bug related to connecting to IPv6 endpoints. 
@@ -44,15 +57,37 @@ For example please see the [console example app](https://github.com/1iveowl/Webs
 To use the Websocket client create an instance of the class `MessageWebsocketRx`:
 
 ```csharp
-        var websocketClient = new MessageWebsocketRx()
-        {
-            IgnoreServerCertificateErrors = true,
-            Headers = new Dictionary<string, string> { { "Pragma", "no-cache" }, { "Cache-Control", "no-cache" } },
-            TlsProtocolType = SslProtocols.Tls12
-        };
+var websocketClient = new MessageWebsocketRx()
+{
+    IgnoreServerCertificateErrors = true,
+    Headers = new Dictionary<string, string> { { "Pragma", "no-cache" }, { "Cache-Control", "no-cache" } },
+    TlsProtocolType = SslProtocols.Tls12
+};
 ```
 
+To control TLS/SSL Server certificate behavior, either use the `IgnoreServerCertificateErrors` parameter or override the `ValidateServerCertificate` method. The default implementation looks like this:
+```csharp
+public virtual bool ValidateServerCertificate(
+    object senderObject,
+    X509Certificate certificate,
+    X509Chain chain,
+    SslPolicyErrors tlsPolicyErrors)
+{
+    if (IgnoreServerCertificateErrors) return true;
 
+    return tlsPolicyErrors switch
+    {
+        SslPolicyErrors.None => true,
+        SslPolicyErrors.RemoteCertificateChainErrors => 
+            throw new Exception($"SSL/TLS error: {SslPolicyErrors.RemoteCertificateChainErrors}"),
+        SslPolicyErrors.RemoteCertificateNameMismatch => 
+            throw new Exception($"SSL/TLS error: {SslPolicyErrors.RemoteCertificateNameMismatch}"),
+        SslPolicyErrors.RemoteCertificateNotAvailable => 
+            throw new Exception($"SSL/TLS error: {SslPolicyErrors.RemoteCertificateNotAvailable}"),
+        _ => throw new ArgumentOutOfRangeException(nameof(tlsPolicyErrors), tlsPolicyErrors, null),
+    };
+}
+```
 
 ### Alternative Constructor
 It is also possible to pass you own managed TcpClient to the WebsocketClientLite. If the TcpClient is not connected the library will connect it. 

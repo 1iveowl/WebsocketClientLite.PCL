@@ -190,10 +190,8 @@ namespace WebsocketClientLite.PCL
         public virtual bool IsSecureConnectionScheme(Uri uri) => 
             uri.Scheme switch
             {
-                "ws" => false,
-                "http" => false,
-                "wss" => true,
-                "https" => true,
+                "ws" or "http" => false,
+                "https" or "wss"=> true,
                 _ => throw new ArgumentException("Unknown Uri type.")
             };
 
@@ -203,30 +201,27 @@ namespace WebsocketClientLite.PCL
         /// <param name="senderObject">Sender object</param>
         /// <param name="certificate">X.509 Certificate</param>
         /// <param name="chain">X.509 Chain</param>
-        /// <param name="TlsPolicyErrors"> TLS/SSL policy Errors</param>
+        /// <param name="tlsPolicyErrors"> TLS/SSL policy Errors</param>
         /// <returns></returns>
         public virtual bool ValidateServerCertificate(
             object senderObject,
             X509Certificate certificate,
             X509Chain chain,
-            SslPolicyErrors TlsPolicyErrors)
+            SslPolicyErrors tlsPolicyErrors)
         {
             if (IgnoreServerCertificateErrors) return true;
 
-            switch (TlsPolicyErrors)
+            return tlsPolicyErrors switch
             {
-                case SslPolicyErrors.RemoteCertificateNameMismatch:
-                    throw new Exception($"SSL/TLS error: {SslPolicyErrors.RemoteCertificateChainErrors}");
-                case SslPolicyErrors.RemoteCertificateNotAvailable:
-                    throw new Exception($"SSL/TLS error: {SslPolicyErrors.RemoteCertificateNotAvailable}");
-                case SslPolicyErrors.RemoteCertificateChainErrors:
-                    throw new Exception($"SSL/TLS error: {SslPolicyErrors.RemoteCertificateChainErrors}");
-                case SslPolicyErrors.None:
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(TlsPolicyErrors), TlsPolicyErrors, null);
-            }
-            return true;
+                SslPolicyErrors.None => true,
+                SslPolicyErrors.RemoteCertificateChainErrors => 
+                    throw new Exception($"SSL/TLS error: {SslPolicyErrors.RemoteCertificateChainErrors}"),
+                SslPolicyErrors.RemoteCertificateNameMismatch => 
+                    throw new Exception($"SSL/TLS error: {SslPolicyErrors.RemoteCertificateNameMismatch}"),
+                SslPolicyErrors.RemoteCertificateNotAvailable => 
+                    throw new Exception($"SSL/TLS error: {SslPolicyErrors.RemoteCertificateNotAvailable}"),
+                _ => throw new ArgumentOutOfRangeException(nameof(tlsPolicyErrors), tlsPolicyErrors, null),
+            };
         }
 
         public void Dispose()
