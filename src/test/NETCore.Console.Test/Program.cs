@@ -63,7 +63,7 @@ class Program
 
         Console.WriteLine("Start");
 
-        IObservable<(IDataframe dataframe, ConnectionStatus state)> websocketConnectionObservable = 
+        var websocketConnectionObservable = 
             client.WebsocketConnectWithStatusObservable(
                new Uri(WebsocketTestServerUrl), 
                hasClientPing: false,

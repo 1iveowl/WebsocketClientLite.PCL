@@ -119,7 +119,9 @@ For details read the **Ping and Pong** section of the [slack.rtm api documentati
 The library have been tested with [socket.io](https://socket.io/docs/v4/). A typical connection will look like this:
 
 ```csharp
-client.ConnectAsync(new Uri($"http://{url}:{port}/socket.io/?EIO=4&transport=websocket");
+var websocketConnectionObservable = 
+    client.WebsocketConnectWithStatusObservable(
+        new Uri($"http://{url}:{port}/socket.io/?EIO=4&transport=websocket"));
 ```
 
 This will connect on the websocket layer. To further connect on socket.io level see documentation. Typically a text message with the content `40` need to be send. For more see here: [Websocket client not connecting to the socket.io server](https://github.com/socketio/socket.io/discussions/4299).
