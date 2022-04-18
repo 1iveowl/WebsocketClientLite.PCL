@@ -114,7 +114,7 @@ public virtual bool ValidateServerCertificate(
 }
 ```
 
-#### Working With Slack (And maybe also other Websocket server implementations)
+### Working With Slack (And maybe also other Websocket server implementations)
 The [RFC 6455 section defining how ping/pong works](https://tools.ietf.org/html/rfc6455#section-5.5.2) seems to be ambiguous on the question whether or not a pong should include the byte defining the length of "Application Data" in the special case when the length is just zero. 
 
 When testing against [websocket.org](http://websocket.org/echo) the byte is expected and should have the value: 0 (zero). However, when used with the [slack.rtm](https://api.slack.com/rtm) api the byte should **not** be there and if it is, the slack websocket server will disconnect.
@@ -132,7 +132,7 @@ await _webSocket.SendText("{\"id\": 1234, // ID, see \"sending messages\" above\
 ```
 For details read the **Ping and Pong** section of the [slack.rtm api documentation](https://api.slack.com/rtm) 
 
-#### Working with socket.io v4+
+### Working with socket.io v4+
 The library have been tested with [socket.io](https://socket.io/docs/v4/). A typical connection will look like this:
 
 ```csharp
@@ -144,7 +144,7 @@ var websocketConnectionObservable =
 This will connect on the websocket layer. To further connect on socket.io level see documentation. Typically a text message with the content `40` need to be send. For more see here: [Websocket client not connecting to the socket.io server](https://github.com/socketio/socket.io/discussions/4299).
 
 
-#### References:
+### References:
 The following documentation was utilized when writting this library:
 
  - [RFC 6544](https://tools.ietf.org/html/rfc6455)
