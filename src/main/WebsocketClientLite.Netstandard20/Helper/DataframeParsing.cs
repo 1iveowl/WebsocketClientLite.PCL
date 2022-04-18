@@ -146,7 +146,12 @@ namespace WebsocketClientLite.PCL.Helper
             {
                 var memoryStream = new MemoryStream();
 
-                await memoryStream.WriteAsync(await dataframe.GetNextBytes(dataframe.Length));
+                var nextBytes = await dataframe.GetNextBytes(dataframe.Length);
+#if NETSTANDARD2_1
+                await memoryStream.WriteAsync(nextBytes);
+#else
+                await memoryStream.WriteAsync(nextBytes, 0, nextBytes.Length);
+#endif
 
                 if (dataframe.MASK)
                 {

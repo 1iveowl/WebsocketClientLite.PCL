@@ -55,7 +55,12 @@ namespace WebsocketClientLite.PCL.Service
 
                     if (nextDataframe is not null)
                     {
-                        await nextDataframe.DataStream.CopyToAsync(dataframe.DataStream, cts.Token);
+                        await nextDataframe.DataStream.CopyToAsync(dataframe.DataStream,
+#if !NETSTANDARD2_1
+                            81920,
+#endif
+                            cts.Token);
+
 
                         dataframe = dataframe with
                         {
