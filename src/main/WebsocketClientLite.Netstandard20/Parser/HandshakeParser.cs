@@ -5,7 +5,6 @@ using System.Diagnostics;
 using System.Collections.Generic;
 using IWebsocketClientLite.PCL;
 using WebsocketClientLite.PCL.CustomException;
-using WebsocketClientLite.PCL.Model;
 
 namespace WebsocketClientLite.PCL.Parser
 {
@@ -13,13 +12,13 @@ namespace WebsocketClientLite.PCL.Parser
     {
         private readonly Action<ConnectionStatus, Exception> _connectionStatusAction;
         private readonly HttpCombinedParser _parserHandler;
-        private readonly WebsocketHandshakeParserDelegate _parserDelegate;
+        private readonly HandshakeParserDelegate _parserDelegate;
 
         internal IEnumerable<string> SubprotocolAcceptedNames { get; private set; }
 
         public HandshakeParser(
             HttpCombinedParser parserHandler,
-            WebsocketHandshakeParserDelegate parserDelegate,
+            HandshakeParserDelegate parserDelegate,
             Action<ConnectionStatus, Exception> connectionStatusAction)
         {
             _parserDelegate = parserDelegate;
@@ -27,7 +26,7 @@ namespace WebsocketClientLite.PCL.Parser
             _connectionStatusAction = connectionStatusAction;
         }
 
-        internal HandshakeStateKind Parse(
+        internal bool Parse(
             byte[] @byte,
             IEnumerable<string> subProtocols)
         {
@@ -64,8 +63,8 @@ namespace WebsocketClientLite.PCL.Parser
                         }
                     }
 
-                    Debug.WriteLine("HandShake completed");
-                    return HandshakeStateKind.HandshakeCompletedSuccessfully;
+                    Debug.WriteLine("HandShake completed");            
+                    return true;
                 }
                 else
                 {
@@ -76,7 +75,8 @@ namespace WebsocketClientLite.PCL.Parser
                                         $"Error reason: {_parserDelegate.HttpRequestResponse.ResponseReason}"));
                 }
             }
-            return HandshakeStateKind.AwaitingHandshake;
+
+            return false;
         }
     }
 }

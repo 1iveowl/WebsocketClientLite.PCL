@@ -38,7 +38,7 @@ namespace WebsocketClientLite.PCL.Service
         {
             return Observable.Create<(HandshakeStateKind handshakeState, WebsocketClientLiteException ex)>(async obs =>
             {
-                using var parserDelegate = new WebsocketHandshakeParserDelegate(obs);
+                using var parserDelegate = new HandshakeParserDelegate(obs);
                 using var parserHandler = new HttpCombinedParser(parserDelegate);
 
                 var handshakeParser = new HandshakeParser(
@@ -47,15 +47,9 @@ namespace WebsocketClientLite.PCL.Service
                     _connectionStatusAction);
 
                 await SendHandshake(uri, sender, ct, origin, headers);
+                await WaitForHandshake(handshakeParser);
 
-                return _tcpConnectionService.BytesObservable()                                  
-                    .Select(b => handshakeParser.Parse(b, subprotocols))
-                    .Repeat()
-                    .Where(d => d is HandshakeStateKind.HandshakeCompletedSuccessfully)
-                    .Subscribe(
-                    _ => { obs.OnCompleted(); },
-                    ex => { obs.OnNext((HandshakeStateKind.HandshakeFailed, new WebsocketClientLiteException("Unknown error", ex))); },
-                    () => { });
+                obs.OnCompleted();
             })
             .Timeout(timeout)
             .Catch<
@@ -66,6 +60,18 @@ namespace WebsocketClientLite.PCL.Service
                         new WebsocketClientLiteException("Handshake times out.", tx))
                     )
                 );
+
+            async Task WaitForHandshake(HandshakeParser handshakeParser)
+            {
+                bool isHandshakeDone;
+
+                do
+                {
+                    isHandshakeDone = await _tcpConnectionService
+                        .BytesObservable()
+                        .Select(b => handshakeParser.Parse(b, subprotocols));
+                } while (!isHandshakeDone);
+            }
         }
 
         private async Task<(HandshakeStateKind handshakeState, WebsocketClientLiteException ex)> 

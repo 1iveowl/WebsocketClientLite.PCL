@@ -10,11 +10,15 @@ using WebsocketClientLite.PCL;
 
 class Program
 {
+    private static Func<string, string> SocketIOMessageFormatting;
+
+    const bool IsSocketIOTest = false;
     const string AllowedChars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 
     const string WebsocketTestServerUrl = "wss://ws.postman-echo.com/raw";
     //const string WebsocketTestServerUrl = "wss://ws.ifelse.io";
     //const string WebsocketTestServerUrl = "http://ubuntusrv2.my.home:3000/socket.io/?EIO=4&transport=websocket";
+    //const string WebsocketTestServerUrl = "http://ubuntusrv2.my.home:3030/socket.io/?EIO=4&transport=websocket";
     //const string WebsocketTestServerUrl = "172.19.128.84:3000";
     //const string WebsocketTestServerUrl = "localhost:3000";
 
@@ -31,8 +35,16 @@ class Program
 
     private static async Task StartWebSocketAsyncWithRetry(CancellationTokenSource outerCancellationTokenSource)
     {
-        var tcpClient = new TcpClient { LingerState = new LingerOption(true, 0) };
+        if (IsSocketIOTest)
+        {
+            SocketIOMessageFormatting = (msg) => $"42[\"message\", \"{msg}\"]";            
+        }
+        else
+        {
+            SocketIOMessageFormatting = (msg) => msg;
+        }
 
+        var tcpClient = new TcpClient { LingerState = new LingerOption(true, 0) };
 
         while (!outerCancellationTokenSource.IsCancellationRequested)
         {
@@ -58,7 +70,8 @@ class Program
         {
             IgnoreServerCertificateErrors = true,
             Headers = new Dictionary<string, string> { { "Pragma", "no-cache" }, { "Cache-Control", "no-cache" } },
-            TlsProtocolType = SslProtocols.Tls12
+            TlsProtocolType = SslProtocols.Tls12,
+            //ExcludeZeroApplicationDataInPong = true,
         };
 
         Console.WriteLine("Start");
@@ -120,31 +133,49 @@ class Program
         {
             var sender = client.GetSender();
 
+            if(IsSocketIOTest)
+            {
+                await sender.SendText("40");
+            }
+
             await Task.Delay(TimeSpan.FromSeconds(4));
 
-            await sender.SendText("Test Single Frame 1");
+            await sender.SendText(SocketIOMessageFormatting("Test Single Frame 1"));
 
             await Task.Delay(TimeSpan.FromSeconds(5));
 
-            await sender.SendText("Test Single Frame 2");
+            await sender.SendText(SocketIOMessageFormatting("Test Single Frame 2"));
 
-            await sender.SendText("Test Single Frame again");
+            await sender.SendText(SocketIOMessageFormatting("Test Single Frame again"));
 
-            await sender.SendText(TestString(1026, 1026));
+            await Task.Delay(TimeSpan.FromSeconds(5));
 
-            //await Task.Delay(TimeSpan.FromSeconds(2));
+            await sender.SendText(SocketIOMessageFormatting(TestString(1026, 1026)));
 
-            await sender.SendText(new[] { "Test ", "multiple ", "frames ", "1 ", "2 ", "3 ", "4 ", "5 ", "6 ", "7 ", "8 ", "9 " });
+            await sender.SendText(new[] 
+            {
+                SocketIOMessageFormatting("Test "),
+                SocketIOMessageFormatting("multiple "),
+                SocketIOMessageFormatting("frames "),
+                SocketIOMessageFormatting("1 "),
+                SocketIOMessageFormatting("2 "),
+                SocketIOMessageFormatting("3 "),
+                SocketIOMessageFormatting("4 "),
+                SocketIOMessageFormatting("5 "),
+                SocketIOMessageFormatting("6 "),
+                SocketIOMessageFormatting("7 "),
+                SocketIOMessageFormatting("8 "),
+                SocketIOMessageFormatting("9.")});
 
-            await sender.SendText("Start ", OpcodeKind.Text, FragmentKind.First);
+            await sender.SendText(SocketIOMessageFormatting("Start "), OpcodeKind.Text, FragmentKind.First);
             await Task.Delay(TimeSpan.FromMilliseconds(500));
-            await sender.SendText("Continue... #1 ", OpcodeKind.Continuation);
+            await sender.SendText(SocketIOMessageFormatting("Continue... #1 "), OpcodeKind.Continuation);
             await Task.Delay(TimeSpan.FromMilliseconds(500));
-            await sender.SendText("Continue... #2 ", OpcodeKind.Continuation);
+            await sender.SendText(SocketIOMessageFormatting("Continue... #2 "), OpcodeKind.Continuation);
             await Task.Delay(TimeSpan.FromMilliseconds(550));
-            await sender.SendText("Continue... #3 ", OpcodeKind.Continuation);
+            await sender.SendText(SocketIOMessageFormatting("Continue... #3 "), OpcodeKind.Continuation);
             await Task.Delay(TimeSpan.FromMilliseconds(500));
-            await sender.SendText("Stop.", OpcodeKind.Text, FragmentKind.Last);           
+            await sender.SendText(SocketIOMessageFormatting("Stop."), OpcodeKind.Text, FragmentKind.Last);           
 
             await Task.Delay(TimeSpan.FromSeconds(20));
         }
@@ -153,28 +184,50 @@ class Program
         {
             var sender = client.GetSender();
 
-            Console.WriteLine("Sending: Test Single Frame");
-            await sender.SendText("Test Single Frame");
+            await sender.SendText(SocketIOMessageFormatting("Test Single Frame 1"));
 
-            await sender.SendText("Test Single Frame again");
+            await Task.Delay(TimeSpan.FromSeconds(5));
 
-            await sender.SendText(TestString(1024, 1024));
+            await sender.SendText(SocketIOMessageFormatting("Test Single Frame 2"));
 
-            await sender.SendText(new[] { "Test ", "multiple ", "frames" });
+            await sender.SendText(SocketIOMessageFormatting("Test Single Frame again"));
 
-            await sender.SendText("Start ", OpcodeKind.Text, FragmentKind.First);
+            await Task.Delay(TimeSpan.FromSeconds(5));
+
+            await sender.SendText(SocketIOMessageFormatting(TestString(1026, 1026)));
+
+            await sender.SendText(new[]
+            {
+                SocketIOMessageFormatting("Test "),
+                SocketIOMessageFormatting("multiple "),
+                SocketIOMessageFormatting("frames "),
+                SocketIOMessageFormatting("1 "),
+                SocketIOMessageFormatting("2 "),
+                SocketIOMessageFormatting("3 "),
+                SocketIOMessageFormatting("4 "),
+                SocketIOMessageFormatting("5 "),
+                SocketIOMessageFormatting("6 "),
+                SocketIOMessageFormatting("7 "),
+                SocketIOMessageFormatting("8 "),
+                SocketIOMessageFormatting("9.")});
+
+            await sender.SendText(SocketIOMessageFormatting("Start "), OpcodeKind.Text, FragmentKind.First);
             await Task.Delay(TimeSpan.FromMilliseconds(500));
-            await sender.SendText("Continue... #1 ", OpcodeKind.Continuation);
+            await sender.SendText(SocketIOMessageFormatting("Continue... #1 "), OpcodeKind.Continuation);
             await Task.Delay(TimeSpan.FromMilliseconds(500));
-            await sender.SendText("Continue... #2 ", OpcodeKind.Continuation);
+            await sender.SendText(SocketIOMessageFormatting("Continue... #2 "), OpcodeKind.Continuation);
             await Task.Delay(TimeSpan.FromMilliseconds(550));
-            await sender.SendText("Continue... #3 ", OpcodeKind.Continuation);
+            await sender.SendText(SocketIOMessageFormatting("Continue... #3 "), OpcodeKind.Continuation);
             await Task.Delay(TimeSpan.FromMilliseconds(500));
-            await sender.SendText("Stop.", OpcodeKind.Text, FragmentKind.Last);
+            await sender.SendText(SocketIOMessageFormatting("Stop."), OpcodeKind.Text, FragmentKind.Last);
 
             await Task.Delay(TimeSpan.FromSeconds(20));
-        }        
+        }
+
+
     }
+
+
 
     private static string TestString(int minlength, int maxlength)
     {

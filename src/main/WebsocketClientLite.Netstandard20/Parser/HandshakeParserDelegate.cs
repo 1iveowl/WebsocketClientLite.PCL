@@ -6,11 +6,11 @@ using WebsocketClientLite.PCL.Model;
 
 namespace WebsocketClientLite.PCL.Parser
 {
-    internal class WebsocketHandshakeParserDelegate : HttpParserDelegate
+    internal class HandshakeParserDelegate : HttpParserDelegate
     {
         private readonly IObserver<(HandshakeStateKind handshakeState, WebsocketClientLiteException ex)> _observerHandshakeParserState;
 
-        public WebsocketHandshakeParserDelegate(
+        public HandshakeParserDelegate(
             IObserver<(HandshakeStateKind handshakeState, 
             WebsocketClientLiteException ex)> observerHandshakeParserState)
         {
