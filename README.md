@@ -65,9 +65,7 @@ var websocketClient = new MessageWebsocketRx()
     TlsProtocolType = SslProtocols.Tls12
 };
 ```
-... or use alternative constructor to pass your own managed TcpClient. If the TcpClient is not connected the library will connect it. 
-
-To use an existing TcpClient us the alternative constructor use: 
+... or use alternative constructor to pass your own managed TcpClient. If the TcpClient is not connected the library will connect it:
 ```csharp
 MessageWebSocketRx(TcpClient tcpClient)
 ```
