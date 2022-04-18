@@ -75,7 +75,7 @@ namespace WebsocketClientLite.PCL
             : throw new InvalidOperationException("No sender available, Websocket not connected. You need to subscribe to WebsocketConnectObservable first.");
         
         /// <summary>
-        /// Constructor.
+        /// Constructor using existing TCP Client object. If the TCP Client is not already it will be connected using the URI supplied when initiating the observable. 
         /// </summary>
         /// <param name="tcpClient"></param>
         public MessageWebsocketRx(TcpClient tcpClient) 

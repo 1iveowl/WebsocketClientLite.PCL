@@ -54,6 +54,7 @@ From hereon only .NET Standard 2.0 and later are supported.
 ## Usage
 For example please see the [console example app](https://github.com/1iveowl/WebsocketClientLite.PCL/blob/master/src/test/NETCore.Console.Test/Program.cs).
 
+### To instanciate websocket lite class
 To use the Websocket client create an instance of the class `MessageWebsocketRx`:
 
 ```csharp
@@ -64,7 +65,33 @@ var websocketClient = new MessageWebsocketRx()
     TlsProtocolType = SslProtocols.Tls12
 };
 ```
+... or use alternative constructor to pass your own managed TcpClient. If the TcpClient is not connected the library will connect it. 
 
+To use an existing TcpClient us the alternative constructor use: 
+```csharp
+MessageWebSocketRx(TcpClient tcpClient)
+```
+
+### To connect client to websocket server
+To connect and observe websocket connection use:
+```csharp
+var websocketConnectionObservable = 
+    client.WebsocketConnectObservable(
+        new Uri(WebsocketTestServerUrl), 
+        hasClientPing: false,
+        clientPingTimeSpan: TimeSpan.FromSeconds(10));
+
+```
+... or use this to also observe connection status :
+```csharp
+var websocketConnectionWithStatusObservable = 
+    client.WebsocketConnectWithStatusObservable(
+        new Uri(WebsocketTestServerUrl), 
+        hasClientPing: false,
+        clientPingTimeSpan: TimeSpan.FromSeconds(10));
+
+```
+### To control TLS/SSL certificate validation behavior
 To control TLS/SSL Server certificate behavior, either use the `IgnoreServerCertificateErrors` parameter or override the `ValidateServerCertificate` method. The default implementation looks like this:
 ```csharp
 public virtual bool ValidateServerCertificate(
@@ -87,14 +114,6 @@ public virtual bool ValidateServerCertificate(
         _ => throw new ArgumentOutOfRangeException(nameof(tlsPolicyErrors), tlsPolicyErrors, null),
     };
 }
-```
-
-### Alternative Constructor
-It is also possible to pass you own managed TcpClient to the WebsocketClientLite. If the TcpClient is not connected the library will connect it. 
-
-To use an existing TcpClient us the alternative constructor use: 
-```csharp
-MessageWebSocketRx(TcpClient tcpClient)
 ```
 
 #### Working With Slack (And maybe also other Websocket server implementations)
