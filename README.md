@@ -5,16 +5,16 @@
 
 *Please star this project if you find it useful. Thank you.*
 
-## A Light Weight Cross Platform Websocket Client 
+## A Lightweight Cross Platform Websocket Client 
 
 This library is a ground-up implementation of the Websocket specification [(RFC 6544)](https://tools.ietf.org/html/rfc6455). The implementation does not rely on the build-in Websocket libraries in .NET and UWP etc. 
 
 The library allows developers to establish secure wss websocket connections to websocket servers that have self-signing certificates, expired certificates etc. This capability should be used with care, but is useful for testing environments, closed local networks, IoT set-ups etc. To utilize the relaxed security settings set this ConnectAsync parameter: `ignoreServerCertificateErrors: true`.
 
-This project utilizes [Reactive Extensions](http://reactivex.io/). Although this has an added learning curve it is an added learning curve worth while persuing, as it IMHO makes creating a library like this much more elegant compared to using call-back or events etc. 
+This project utilizes [Reactive Extensions](http://reactivex.io/). Although this has an added learning curve, it is an added learning curve worthwhile pursuing, as it IMHO makes creating a library like this much more elegant compared to using call-back or events etc. 
 
 ## New in version 7.0
-This library have been around for a number of years and were mainly initiated on a desire to learn more. Over the years this learning grew and looking back on the older and older code became more and more painful, so I decided to redo it. Version 7 is basically a rewrite from the ground up.
+This library has been around for a number of years and was mainly initiated on a desire to learn more. Over the years this learning grew and looking back on the older and older code became more and more painful, so I decided to redo it. Version 7 is basically a rewrite from the ground up.
 
 Version 7 is based on .NET Standard 2.1.
 
@@ -23,7 +23,7 @@ Version 7 is based on .NET Standard 2.1.
 - Previously the library on accepted the `ws` and `wss` scheme. Now also `http` and `https` is supported. To further extend supported scheme override the `IsSecureConnectionScheme` method of the `MessageWebSocketRx` class.
 
 ## New in version 6.3
-- Fixed bug related to connecting to IPv6 enpoints. 
+- Fixed bug related to connecting to IPv6 endpoints. 
 - Updated System.Reactive to v5.0.0.
 - Successfully tested with .NET 5.0.
 - Updated Readme.
@@ -32,7 +32,7 @@ Version 7 is based on .NET Standard 2.1.
 Updates, stability and fundamental improvements to the library. See examples below for changes in usage. 
 
 ## New in version 6.0.
-Simplifications and no longer relies on SocketLite but utilizes the cross platform capabilities of .NET Standard 2.0 and .NET Core 2.1+.
+Simplifications and no longer relies on SocketLite but utilizes the cross-platform capabilities of .NET Standard 2.0 and .NET Core 2.1+.
 
 ## New in version 5.0.
 From hereon only .NET Standard 2.0 and later are supported.
@@ -62,9 +62,9 @@ MessageWebSocketRx(TcpClient tcpClient)
 ```
 
 #### Working With Slack (And maybe also other Websocket server implementations)
-The [RFC 6455 section defining how ping/pong works](https://tools.ietf.org/html/rfc6455#section-5.5.2) seems to be ambigious on the question of whether or not a pong should include the byte defining the length of "Application Data" in the special case when the length is just zero. 
+The [RFC 6455 section defining how ping/pong works](https://tools.ietf.org/html/rfc6455#section-5.5.2) seems to be ambiguous on the question whether or not a pong should include the byte defining the length of "Application Data" in the special case when the length is just zero. 
 
-When testing against [websocket.org](http://websocket.org/echo) the byte is expected and should have the value: 0 (zero). However when used with the [slack.rtm](https://api.slack.com/rtm) api the byte should **not** be there and if it is, the slack websocket server will disconnect.
+When testing against [websocket.org](http://websocket.org/echo) the byte is expected and should have the value: 0 (zero). However, when used with the [slack.rtm](https://api.slack.com/rtm) api the byte should **not** be there and if it is, the slack websocket server will disconnect.
 
 To manage this *byte-issue* the following property can be set to true, in which case the byte with the zero value will NOT be added to the pong. For instance like this:
 ```csharp
