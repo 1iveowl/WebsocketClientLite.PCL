@@ -2,8 +2,8 @@
 {
     internal enum PayloadBitLengthKind
     {
-        Bits8 = 125,
-        Bits16 = 126,
-        Bits64 = 127
+        Bits8 =     0x7D,
+        Bits16 =    0x7E,
+        Bits64 =    0x7F
     }
 }

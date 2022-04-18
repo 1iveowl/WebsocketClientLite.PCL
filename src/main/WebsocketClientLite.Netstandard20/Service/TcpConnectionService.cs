@@ -53,9 +53,9 @@ namespace WebsocketClientLite.PCL.Service
             SslProtocols tlsProtocolType,
             TimeSpan timeout = default)
         {
-            await CreateTcpClient(uri, timeout);
+            await ConnectTcpClient(uri, timeout);
 
-            _stream = await CreateStream(uri, _tcpClient, x509CertificateCollection, tlsProtocolType);
+            _stream = await GetTcpStream(uri, _tcpClient, x509CertificateCollection, tlsProtocolType);
         }
 
         internal IObservable<byte[]> BytesObservable() =>
@@ -105,7 +105,7 @@ namespace WebsocketClientLite.PCL.Service
             return byteArray;
         }
 
-        private async Task CreateTcpClient(
+        private async Task ConnectTcpClient(
             Uri uri,
             TimeSpan timeout = default)
         {
@@ -152,7 +152,7 @@ namespace WebsocketClientLite.PCL.Service
             }
         }
 
-        private async Task<Stream> CreateStream(
+        private async Task<Stream> GetTcpStream(
             Uri uri,
             TcpClient tcpClient,
             X509CertificateCollection x509CertificateCollection,

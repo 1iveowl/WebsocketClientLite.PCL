@@ -12,7 +12,7 @@ namespace WebsocketClientLite.PCL.Parser
 
         public WebsocketHandshakeParserDelegate(
             IObserver<(HandshakeStateKind handshakeState, 
-                WebsocketClientLiteException ex)> observerHandshakeParserState)
+            WebsocketClientLiteException ex)> observerHandshakeParserState)
         {
             _observerHandshakeParserState = observerHandshakeParserState;
         }

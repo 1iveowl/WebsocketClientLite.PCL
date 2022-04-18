@@ -7,7 +7,7 @@ namespace WebsocketClientLite.PCL.Helper
 {
     internal static class WebsocketMasking
     {
-        private const byte FINbit = 128;
+        private const byte FINbit = 0x80;
 
         internal static byte[] Encode(byte[] data, byte[] key)
         {
@@ -58,7 +58,7 @@ namespace WebsocketClientLite.PCL.Helper
                     firstPayloadByte = (byte)PayloadBitLengthKind.Bits16 + FINbit;
                 }
 
-                var payloadLength = BitConverter.GetBytes((short)length);
+                var payloadLength = BitConverter.GetBytes((ushort)length);
 
                 var byteArray = new byte[3]
                 {
@@ -78,7 +78,7 @@ namespace WebsocketClientLite.PCL.Helper
                     firstPayloadByte = (byte)PayloadBitLengthKind.Bits64 + FINbit;
                 }
 
-                var payloadLength = BitConverter.GetBytes((long)length);
+                var payloadLength = BitConverter.GetBytes((ulong)length);
 
                 var byteArray = new byte[9]
                 {

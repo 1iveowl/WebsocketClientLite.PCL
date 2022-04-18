@@ -15,7 +15,7 @@ using WebsocketClientLite.PCL.Service;
 namespace WebsocketClientLite.PCL
 {
     /// <summary>
-    /// Websocket Client Lite
+    /// Websocket Client Lite.
     /// </summary>
     public class MessageWebsocketRx : IMessageWebSocketRx
     {
@@ -31,23 +31,23 @@ namespace WebsocketClientLite.PCL
         public bool IsConnected { get; private set; }
 
         /// <summary>
-        /// Origin
+        /// Origin.
         /// </summary>
         public string Origin { get; set; }
 
         /// <summary>
-        /// Http Headers
+        /// Http Headers.
         /// </summary>
         public IDictionary<string, string> Headers { get; set; }
 
         /// <summary>
-        /// Websocket known subprotocols
+        /// Websocket known subprotocols.
         /// </summary>
         public IEnumerable<string> Subprotocols { get; set; }
 
 
         /// <summary>
-        /// TLS protocol
+        /// TLS protocol.
         /// </summary>
         public SslProtocols TlsProtocolType { get; set; }
 
@@ -67,7 +67,7 @@ namespace WebsocketClientLite.PCL
         public bool IgnoreServerCertificateErrors { get; set; }
 
         /// <summary>
-        /// Get websocket client sender
+        /// Get websocket client sender.
         /// </summary>
         /// <returns></returns>
         public ISender GetSender() => IsConnected 
@@ -75,7 +75,7 @@ namespace WebsocketClientLite.PCL
             : throw new InvalidOperationException("No sender available, Websocket not connected. You need to subscribe to WebsocketConnectObservable first.");
         
         /// <summary>
-        /// Constructor
+        /// Constructor.
         /// </summary>
         /// <param name="tcpClient"></param>
         public MessageWebsocketRx(TcpClient tcpClient) 
@@ -87,7 +87,7 @@ namespace WebsocketClientLite.PCL
         }
 
         /// <summary>
-        /// Constructor
+        /// Constructor.
         /// </summary>
         public MessageWebsocketRx() : this(null)
         {
@@ -95,9 +95,9 @@ namespace WebsocketClientLite.PCL
         }
 
         /// <summary>
-        /// Websocket Connection Observable
+        /// Websocket Connection Observable.
         /// </summary>
-        /// <param name="uri">Websocket Server Endpoint (URI)</param>
+        /// <param name="uri">Websocket Server Endpoint (URI).</param>
         /// <param name="hasClientPing">Set to true to have the client send ping messages to server.</param>
         /// <param name="clientPingTimeSpan">Specific client ping interval. Default is 30 seconds.</param>
         /// <param name="timeout">Specific time out for client trying to connect. Default is 30 seconds.</param>
@@ -114,7 +114,7 @@ namespace WebsocketClientLite.PCL
         /// <summary>
         /// Websocket Connection Observable with status.
         /// </summary>
-        /// <param name="uri">Websocket Server Endpoint (URI)</param>
+        /// <param name="uri">Websocket Server Endpoint (URI).</param>
         /// <param name="hasClientPing">Set to true to have the client send ping messages to server.</param>
         /// <param name="clientPingTimeSpan">Specific client ping interval. Default is 30 seconds will be used.</param>
         /// <param name="timeout">Specific time out for client trying to connect. Default is 30 seconds.</param>

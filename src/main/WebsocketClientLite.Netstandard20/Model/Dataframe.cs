@@ -61,7 +61,6 @@ namespace WebsocketClientLite.PCL.Model
                 {
                     _data = null;
                 }
-
             }
 
             return _data;
@@ -84,7 +83,6 @@ namespace WebsocketClientLite.PCL.Model
                 {
                     _message = null;
                 }
-
             }            
 
             return _message;            

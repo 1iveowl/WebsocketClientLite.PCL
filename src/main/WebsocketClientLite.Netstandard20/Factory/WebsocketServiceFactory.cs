@@ -16,10 +16,7 @@ namespace WebsocketClientLite.PCL.Factory
 {
     internal class WebsocketServiceFactory
     {
-        private WebsocketServiceFactory() 
-        {
-
-        }
+        private WebsocketServiceFactory() { }
 
         internal static async Task<WebsocketService> Create(
             Func<bool> isSecureConnectionSchemeFunc,
@@ -100,7 +97,7 @@ namespace WebsocketClientLite.PCL.Factory
                     .ConnectAsync(uri.Host, uri.Port)
                     .ConfigureAwait(false);
 
-            // Running sends and writes on the Event Loop Scheduler serializes them.
+            // Running sends and/or writes on the Event Loop Scheduler serializes them.
             async Task<T> RunOnScheduler<T>(Task<T> task, IScheduler scheduler) 
                 => await task.ToObservable().ObserveOn(scheduler);
         }

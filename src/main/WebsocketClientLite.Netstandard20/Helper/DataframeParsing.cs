@@ -18,15 +18,15 @@ namespace WebsocketClientLite.PCL.Helper
         {
             var dataframe = new Dataframe(tcpConnection, ct);
 
-            var byteArray = await dataframe.GetNextBytes(1);
-            Debug.WriteLine($"First byte: {byteArray[0]}");
+            var oneByteArray = await dataframe.GetNextBytes(1);
+            Debug.WriteLine($"First byte: {oneByteArray[0]}");
 
-            if (byteArray is null)
+            if (oneByteArray is null)
             {
                 return null;
             }
 
-            var bits = new BitArray(byteArray);
+            var bits = new BitArray(oneByteArray);
 
             return dataframe with
             {
@@ -34,8 +34,8 @@ namespace WebsocketClientLite.PCL.Helper
                 RSV1 = bits[6],
                 RSV2 = bits[5],
                 RSV3 = bits[4],
-                Opcode = (OpcodeKind)GetOpcode(),
-                Fragment = byteArray[0] switch
+                Opcode = GetOpcode(),
+                Fragment = oneByteArray[0] switch
                 {
                     (byte)FragmentKind.First => FragmentKind.First,
                     (byte)FragmentKind.Last => FragmentKind.Last,
@@ -43,7 +43,7 @@ namespace WebsocketClientLite.PCL.Helper
                 }
             };
 
-            byte GetOpcode()
+            OpcodeKind GetOpcode()
             {
                 // When encoded on the wire, the most significant bit is the leftmost in the ABNF
                 // https://datatracker.ietf.org/doc/html/rfc6455#section-5.2
@@ -54,7 +54,7 @@ namespace WebsocketClientLite.PCL.Helper
 
                 Debug.WriteLine($"Opcode: {(OpcodeKind)opcode[0]}");
 
-                return opcode[0];
+                return (OpcodeKind)opcode[0];
             }
         }
 
@@ -67,11 +67,9 @@ namespace WebsocketClientLite.PCL.Helper
                 return null;
             }
 
-            var bytes = (await dataframe.GetNextBytes(1));
-
-            var bits = new BitArray(bytes);
-
-            var @byte = bytes[0];
+            var oneByteArray = await dataframe.GetNextBytes(1);
+            var bits = new BitArray(oneByteArray);
+            var @byte = oneByteArray[0];
 
             if (@byte <= (byte)PayloadBitLengthKind.Bits8)
             {
@@ -100,7 +98,7 @@ namespace WebsocketClientLite.PCL.Helper
             }
             else
             {
-                throw new NotImplementedException();
+                throw new WebsocketClientLiteException("Payload bit length is unspecified.");
             }
         }
 

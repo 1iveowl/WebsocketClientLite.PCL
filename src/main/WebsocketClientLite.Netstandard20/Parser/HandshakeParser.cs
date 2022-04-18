@@ -1,9 +1,9 @@
 ﻿using HttpMachine;
-using IWebsocketClientLite.PCL;
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
+using System.Diagnostics;
+using System.Collections.Generic;
+using IWebsocketClientLite.PCL;
 using WebsocketClientLite.PCL.CustomException;
 using WebsocketClientLite.PCL.Model;
 

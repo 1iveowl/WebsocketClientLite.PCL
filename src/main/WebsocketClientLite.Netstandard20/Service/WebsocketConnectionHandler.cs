@@ -35,7 +35,7 @@ namespace WebsocketClientLite.PCL.Service
             _connectionStatusAction = connectionStatusAction;
             _createWebsocketSenderFunc = createWebsocketSenderFunc;
 
-            _clientPingDisposable = null;
+            _clientPingDisposable = default;
         }
 
         internal async Task<IObservable<IDataframe>>
