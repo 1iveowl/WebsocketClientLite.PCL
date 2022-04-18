@@ -71,7 +71,7 @@ MessageWebSocketRx(TcpClient tcpClient)
 ```
 
 ### To connect client to websocket server
-To connect and observe websocket connection use:
+To connect and observe websocket connection use `websocketConnectionObservable`:
 ```csharp
 var websocketConnectionObservable = 
     client.WebsocketConnectObservable(
@@ -80,7 +80,7 @@ var websocketConnectionObservable =
         clientPingTimeSpan: TimeSpan.FromSeconds(10));
 
 ```
-... or use this to also observe connection status :
+... or use `websocketConnectionWithStatusObservable` to also observe connection status :
 ```csharp
 var websocketConnectionWithStatusObservable = 
     client.WebsocketConnectWithStatusObservable(
