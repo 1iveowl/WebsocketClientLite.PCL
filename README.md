@@ -12,7 +12,7 @@ This library is a ground-up implementation of the Websocket specification [(RFC 
 
 The library allows developers additional flexibility, including the ability to establish secure wss websocket connections to websocket servers that have self-signing certificates, expired certificates etc. This capability should be used with care for obvious reasons, however it is useful for testing environments, closed local networks, local IoT set-ups etc. To utilize these relaxed security settings set this ConnectAsync parameter: `ignoreServerCertificateErrors: true` or override the `ValidateServerCertificate` method.
 
-Furthermore, this library utilizes [ReactiveX](http://reactivex.io/) (aka Rx or Reactive Extensions). Although taking this dependancy this has an added learning curve, it is an added learning curve worthwhile invsting in, as it IMHO makes creating a library like this much more elegant compared to using tranditional call-back or events based patterns etc. 
+Furthermore, this library utilizes [ReactiveX](http://reactivex.io/) (aka Rx or Reactive Extensions). Although taking this dependancy introduces an added learning curve, it is a learning curve worthwhile invsting in, as it IMHO makes using and creating a library like this much more elegant compared to using tranditional call-back or events based patterns etc. 
 
 ## New in version 7.0
 This library has been around for more than 6 years. It was mainly initiated on a desire to learn and play around with the technologies used. Unsurprisingly, over the years learning and insights did grow, and thus maintaining and looking back on the older code-base, became more and more painful, so I decided to redo it. Version 7 is basically a rewrite of 90+ % of the original code.
