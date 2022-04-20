@@ -9,7 +9,7 @@ namespace WebsocketClientLite.PCL.Parser
     internal class HandshakeParserDelegate : HttpParserDelegate
     {
         private readonly IObserver<(HandshakeStateKind handshakeState, WebsocketClientLiteException ex)> _observerHandshakeParserState;
-
+       
         public HandshakeParserDelegate(
             IObserver<(HandshakeStateKind handshakeState, 
             WebsocketClientLiteException ex)> observerHandshakeParserState)
