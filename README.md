@@ -8,18 +8,34 @@
 
 ## A Lightweight Cross Platform Websocket Client 
 
-This library is a ground-up implementation of the Websocket specification [(RFC 6544)](https://tools.ietf.org/html/rfc6455) - i.e., this implementation does not rely on the build-in Websocket libraries in .NET.
+This library is a ground-up implementation of the WebSocket specification [(RFC 6544)](https://tools.ietf.org/html/rfc6455) - i.e., this implementation does not rely on the build-in WebSocket libraries in .NET.
 
-The library allows developers additional flexibility, including the ability to establish secure wss websocket connections to websocket servers that have self-signing certificates, expired certificates etc. This capability should be used with care for obvious reasons, however it is useful for testing environments, closed local networks, local IoT set-ups etc. To utilize these relaxed security settings set this ConnectAsync parameter: `ignoreServerCertificateErrors: true` or override the `ValidateServerCertificate` method.
+The library allows developers additional flexibility, including the ability to establish secure wss websocket connections to websocket servers that have self-signing certificates, expired certificates etc. This capability should be used with care for obvious reasons, however it is useful for testing environments, closed local networks, local IoT set-ups etc.
 
-Furthermore, this library utilizes [ReactiveX](http://reactivex.io/) (aka Rx or Reactive Extensions). Although taking this dependancy introduces an added learning curve, it is a learning curve worthwhile invsting in, as it IMHO makes using and creating a library like this much more elegant compared to using tranditional call-back or events based patterns etc. 
+Furthermore, this library utilize [ReactiveX](http://reactivex.io/) (aka Rx or Reactive Extensions). Although taking this dependency introduces an added learning curve, it is a learning curve worthwhile investing in, as it IMHO makes using and creating a library like this much more elegant compared to using traditional call-back or events based patterns etc.
 
 ## New in version 7.0
-This library has been around for more than 6 years. It was mainly initiated on a desire to learn and play around with the technologies used. Unsurprisingly, over the years learning and insights did grow, and thus maintaining and looking back on the older code-base, became more and more painful, so I decided to redo it. Version 7 is basically a rewrite of 90+ % of the original code.
+By writing time, this library has been around for more than 6 years. It was mainly initiated on a desire to learn and play around with the technologies used. Unsurprisingly, over the years learning and insights did grow, and thus maintaining and looking back on the older code-base, became more and more painful, so I decided to redo it. Version 7 is basically a rewrite of 90+ % of the original code.
 
-Version 7 supports comes in a .NET Standard 2.0 and in a .NET Standard 2.1 flavor.
+The version 7 NuGet package includes both .NET Standard 2.0 and in a .NET Standard 2.1, with .NET Standard having fewer pack dependencies.
+
+### Client Ping
+
+Version 7 introduces client ping, enabling the WebSocket client to send a ping message with a constant interval. The `clientPingMessage` is optional and the default is to not send any message as part of the ping. 
+
+```csharp
+var websocketConnectionObservable = 
+    client.WebsocketConnectWithStatusObservable(
+        uri: WebsocketServerUri, 
+        hasClientPing: true, // default is false. 
+        clientPingInterval: TimeSpan.FromSeconds(20), // default is 30 seconds.
+        clientPingMessage: "my ping message"); // default no message when set to null.
+```
+
+It is only possible to define the client ping message as a `string`. If more advanced scenarios are needed the `ISender` now has a `SendPing`method for sending client pings.
 
 ## New in version 6.4
+
 Successfully tested with .NET 6.0.
 
 Previously the library only accepted the `ws` and `wss` scheme. Now also `http` and `https` is supported. To further extend supported schemes override the `IsSecureConnectionScheme` method of the `MessageWebSocketRx` class.
@@ -55,7 +71,7 @@ From hereon and forward only .NET Standard 2.0 and later are supported.
 For more deltailed sample of using this library please see the [console example app](https://github.com/1iveowl/WebsocketClientLite.PCL/blob/master/src/test/NETCore.Console.Test/Program.cs).
 
 ### To instanciate websocket lite class
-To use the Websocket client create an instance of the class `MessageWebsocketRx`:
+To use the WebSocket client create an instance of the class `MessageWebsocketRx`:
 
 ```csharp
 var websocketClient = new MessageWebsocketRx()
@@ -65,14 +81,14 @@ var websocketClient = new MessageWebsocketRx()
     TlsProtocolType = SslProtocols.Tls12
 };
 ```
-... or use alternative constructor to pass your own managed TcpClient. 
+... or use alternative constructor to pass your own TcpClient, that you manage. 
 ```csharp
 MessageWebSocketRx(TcpClient tcpClient)
 ```
 
 > Note: If the TcpClient is not connected the library will connect it. Also, the TcpClient will not be disposed automatically when passed in using the constructor, as it will in the case when no TcpClient is supplied.
 
-### To connect client to websocket server
+### To connect client to WebSocket server
 
 To connect and observe websocket connection use `WebsocketConnectionObservable`:
 ```csharp
@@ -116,10 +132,10 @@ public virtual bool ValidateServerCertificate(
 }
 ```
 
-### Working With Slack (And maybe also other Websocket server implementations)
+### Working With Slack (And maybe also other WebSocket server implementations)
 The [RFC 6455 section defining how ping/pong works](https://tools.ietf.org/html/rfc6455#section-5.5.2) seems to be ambiguous on the question whether or not a pong should include the byte defining the length of dataframe in the special case when the length is just zero. 
 
-When testing against for instance the Postman Websocket test server [Postman Webocket Server](wss://ws.postman-echo.com/raw) the dataframe byte is expected and should have the value 0 (zero), when there's no data in the dataframe. However, when used with the [slack.rtm](https://api.slack.com/rtm) api the byte should **not** be there at all in the case of no data in the dataframe, and if it is, the slack websocket server will disconnect.
+When testing against for instance the Postman WebSocket test server [Postman WebSocket Server](wss://ws.postman-echo.com/raw) the dataframe byte is expected and should have the value 0 (zero), when there's no data in the dataframe. However, when used with the [slack.rtm](https://api.slack.com/rtm) api the byte should **not** be there at all in the case of no data in the dataframe, and if it is, the slack websocket server will disconnect.
 
 To manage this *byte-issue* the following property can be set to true, in which case the byte with the zero value will NOT be added to the pong. For instance like this:
 ```csharp

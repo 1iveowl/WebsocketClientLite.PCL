@@ -45,12 +45,13 @@ namespace WebsocketClientLite.PCL.Service
                     SslProtocols tlsProtocolType,
                     Action<ISender> setSenderAction,
                     CancellationToken ct,
-                    bool hasClientPing = false,
-                    TimeSpan clientPingTimeSpan = default,
-                    TimeSpan timeout = default,
-                    string origin = null,
-                    IDictionary<string, string> headers = null,
-                    IEnumerable<string> subprotocols = null)
+                    bool hasClientPing,
+                    TimeSpan clientPingTimeSpan,
+                    string clientPingMessage,
+                    TimeSpan timeout,
+                    string origin,
+                    IDictionary<string, string> headers,
+                    IEnumerable<string> subprotocols)
         {
             if (hasClientPing && clientPingTimeSpan == default)
             {
@@ -97,7 +98,7 @@ namespace WebsocketClientLite.PCL.Service
 
             if (hasClientPing)
             {
-                _clientPingDisposable = SendClientPing()
+                _clientPingDisposable = SendClientPing(clientPingMessage)
                     .Subscribe(
                     _ => { },
                     ex => 
@@ -135,9 +136,9 @@ namespace WebsocketClientLite.PCL.Service
                 await DisconnectWebsocket(sender);
             });
 
-            IObservable<Unit> SendClientPing() =>
+            IObservable<Unit> SendClientPing(string message) =>
                 Observable.Interval(clientPingTimeSpan)
-                .Select(_ => Observable.FromAsync(ct => sender.SendPing(default)))
+                .Select(_ => Observable.FromAsync(ct => sender.SendPing(message)))
                 .Concat();
 
             async Task<Dataframe> IncomingControlFrameHandler(

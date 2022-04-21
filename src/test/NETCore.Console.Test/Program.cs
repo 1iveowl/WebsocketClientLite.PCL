@@ -78,9 +78,10 @@ class Program
 
         var websocketConnectionObservable = 
             client.WebsocketConnectWithStatusObservable(
-               new Uri(WebsocketTestServerUrl), 
-               hasClientPing: false,
-               clientPingTimeSpan: TimeSpan.FromSeconds(10));
+               uri: new Uri(WebsocketTestServerUrl), 
+               hasClientPing: true,
+               clientPingInterval: TimeSpan.FromSeconds(10),
+               clientPingMessage: "ping message");
 
         var disposableConnectionStatus = websocketConnectionObservable
             .Do(tuple =>

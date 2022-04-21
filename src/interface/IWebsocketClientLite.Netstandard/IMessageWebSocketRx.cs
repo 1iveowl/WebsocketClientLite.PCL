@@ -83,27 +83,31 @@ namespace IWebsocketClientLite.PCL
         /// </summary>
         /// <param name="uri">Websocket Server Endpoint (URI)</param>
         /// <param name="hasClientPing">Set to true to have the client send ping messages to server.</param>
-        /// <param name="clientPingTimeSpan">Specific client ping interval. Default is 30 seconds will be used.</param>
-        /// <param name="timeout">Specific time out for client trying to connect. Default is 30 seconds.</param>
+        /// <param name="clientPingInterval">Specific client ping interval. Default is 30 seconds.</param>
+        /// <param name="clientPingMessage">Specific client message. Default none. Will stay constant and can only be a <see langword="string"/>. For more advanced scenarios use <see cref="IWebsocketClientLite.PCL.ISender.SendPing"/></param>
+        /// <param name="handshaketimeout">Specific time-out for client trying to connect (aka handshake). Default is 30 seconds.</param>
         /// <returns></returns>
         IObservable<IDataframe> WebsocketConnectObservable(
             Uri uri,
             bool hasClientPing = false,
-            TimeSpan clientPingTimeSpan = default,
-            TimeSpan timeout = default);
+            TimeSpan clientPingInterval = default,
+            string clientPingMessage = default,
+            TimeSpan handshaketimeout = default);
 
         /// <summary>
         /// Websocket Connection Observable with status.
         /// </summary>
         /// <param name="uri">Websocket Server Endpoint (URI)</param>
         /// <param name="hasClientPing">Set to true to have the client send ping messages to server.</param>
-        /// <param name="clientPingTimeSpan">Specific client ping interval. Default is 30 seconds will be used.</param>
-        /// <param name="timeout">Specific time out for client trying to connect. Default is 30 seconds.</param>
+        /// <param name="clientPingInterval">Specific client ping interval. Default is 30 seconds.</param>
+        /// <param name="clientPingMessage">Specific client message. Default none. Will stay constant and can only be a <see langword="string"/>. For more advanced scenarios use <see cref="IWebsocketClientLite.PCL.ISender.SendPing"/></param>
+        /// <param name="handshaketimeout">Specific time-out for client trying to connect (aka handshake). Default is 30 seconds.</param>
         /// <returns></returns>
         IObservable<(IDataframe dataframe, ConnectionStatus state)> WebsocketConnectWithStatusObservable(
             Uri uri, 
             bool hasClientPing = false,
-            TimeSpan clientPingTimeSpan = default, 
-            TimeSpan timeout = default);
+            TimeSpan clientPingInterval = default,
+            string clientPingMessage = default,
+            TimeSpan handshaketimeout = default);
     }
 }
