@@ -15,13 +15,13 @@ The library allows developers additional flexibility, including the ability to e
 Furthermore, this library utilize [ReactiveX](http://reactivex.io/) (aka Rx or Reactive Extensions). Although taking this dependency introduces an added learning curve, it is a learning curve worthwhile investing in, as it IMHO makes using and creating a library like this much more elegant compared to using traditional call-back or events based patterns etc.
 
 ## New in version 7.0
-By writing time, this library has been around for more than 6 years. It was mainly initiated on a desire to learn and play around with the technologies used. Unsurprisingly, over the years learning and insights did grow, and thus maintaining and looking back on the older code-base, became more and more painful, so I decided to redo it. Version 7 is basically a rewrite of 90+ % of the original code.
+At writing time, this library has been around for more than 6 years. The work represented here was mainly initiated on a desire to learn and play around with the technologies involved. Unsurprisingly, over the years learning and insights grew. Eventually, maintaining and looking back at the older code-base became more and more painful, hence I decided to redo most of it. Version 7 is more or less a rewrite of 90+ % of the original code.
 
-The version 7 NuGet package includes both .NET Standard 2.0 and in a .NET Standard 2.1, with .NET Standard having fewer pack dependencies.
+The version 7 NuGet package includes both a .NET Standard 2.0 package and a .NET Standard 2.1, with .NET Standard 2.1 having a few less pack dependencies.
 
-### Client Ping
+### Now With Client Ping
 
-Version 7 introduces client ping, enabling the WebSocket client to send a ping message with a constant interval. The `clientPingMessage` is optional and the default is to not send any message as part of the ping. 
+Version 7 introduces client ping, enabling the WebSocket client to send a ping message with a constant interval. The `clientPingMessage` paramenter is optional and the default value is null and the behavior with this null value is to not send any message, as part of the ping.  
 
 ```csharp
 var websocketConnectionObservable = 
@@ -32,7 +32,7 @@ var websocketConnectionObservable =
         clientPingMessage: "my ping message"); // default no message when set to null.
 ```
 
-It is only possible to define the client ping message as a `string`. If more advanced scenarios are needed the `ISender` now has a `SendPing`method for sending client pings.
+It is only possible to define the client ping message as a `string`. If more advanced scenarios are needed the `ISender` has a `SendPing` method that can be used for full control when sending client pings.
 
 ## New in version 6.4
 
