@@ -6,7 +6,7 @@
 
 *Please star this project if you find it useful. Thank you.*
 
-## A Lightweight Cross Platform Websocket Client 
+## A Lightweight Cross Platform WebSocket Client 
 
 This library is a ground-up implementation of the WebSocket specification [(RFC 6544)](https://tools.ietf.org/html/rfc6455) - i.e., this implementation does not rely on the build-in WebSocket libraries in .NET.
 
