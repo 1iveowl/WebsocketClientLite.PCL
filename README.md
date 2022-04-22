@@ -190,5 +190,5 @@ The following documentation was utilized when writing this library:
 
 ### Thank you !
 
-Thank you to all the developers who've been using this library through the years, many of which that have reported issues or bug, or made contributions and pull requests to make the library better and/or more capable. It is this interaction with all of you that makes sharing and learning fun.
+Thank you to all the developers who've been using this library through the years, many of which that have reported issues or bugs, or made contributions and pull requests to make the library better and/or more capable. It is this interaction with all of you that makes sharing and learning fun.
 
