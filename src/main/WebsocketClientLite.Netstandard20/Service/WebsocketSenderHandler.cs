@@ -117,6 +117,15 @@ namespace WebsocketClientLite.PCL.Service
                     FragmentKind.None,
                     ct);
 
+        public async Task SendPing(
+            byte[] data,
+            CancellationToken ct = default) =>
+                await ComposeFrameAndSendAsync(
+                    data,
+                    OpcodeKind.Ping,
+                    FragmentKind.None,
+                    ct);
+
         internal async Task SendPong(
             Dataframe dataframe,
             CancellationToken ct) => 

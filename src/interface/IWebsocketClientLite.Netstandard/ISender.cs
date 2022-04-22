@@ -64,9 +64,17 @@ namespace IWebsocketClientLite.PCL
         /// <summary>
         /// Send a ping with text.
         /// </summary>
-        /// <param name="message">Message to add to ping. The default is null.</param>
+        /// <param name="message">Message send with ping. The default is null.</param>
         /// <param name="ct">Cancellation Token.</param>
         /// <returns></returns>
         Task SendPing(string message, CancellationToken ct = default);
+
+        /// <summary>
+        /// Send a ping with text.
+        /// </summary>
+        /// <param name="data">Data send with ping. The default is null.</param>
+        /// <param name="ct">Cancellation Token.</param>
+        /// <returns></returns>
+        Task SendPing(byte[] data, CancellationToken ct = default);
     }
 }
