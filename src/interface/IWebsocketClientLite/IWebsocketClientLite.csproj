@@ -7,7 +7,7 @@
     <AssemblyVersion>7.2.0.0</AssemblyVersion>
     <FileVersion>7.2.0.0</FileVersion>
 	<LangVersion>10.0</LangVersion>
-	  <PackageIcon>images\1iveowl-logo.png</PackageIcon>
+	  <PackageIcon>\images\1iveowl-logo.png</PackageIcon>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <Version>7.2.0</Version>
     <Authors>Jasper Hedegaard Bojsen</Authors>
@@ -21,7 +21,7 @@
 
   <ItemGroup>
     <None Include="..\..\build\1iveowl-logo.png" Link="1iveowl-logo.png">
-      <PackagePath>images\</PackagePath>
+      <PackagePath>\images\</PackagePath>
       <Pack>True</Pack>
     </None>
   </ItemGroup>
