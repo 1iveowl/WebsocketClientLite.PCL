@@ -50,7 +50,7 @@ jobs:
         run: dotnet nuget add source --username 1iveowl --password ${{ secrets.GITHUB_TOKEN }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/1iveowl/index.json"
 
       - name: Publish to GitHub packages 
-        run: dotnet nuget push bin/Release/WebsocketClientLite/bin/Release/*.nupkg --api-key ${{ secrets.GITHUB_TOKEN }}  --source "github"
+        run: dotnet nuget push WebsocketClientLite/bin/Release/*.nupkg --api-key ${{ secrets.GITHUB_TOKEN }}  --source "github"
         working-directory: src/main/
 
       - name: Create Release
