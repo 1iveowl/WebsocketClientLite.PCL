@@ -13,7 +13,7 @@
     <Version>7.2.0</Version>
     <Authors>Jasper Hedegaard Bojsen</Authors>
     <Copyright>1iveowl Development 2022</Copyright>
-    <PackageProjectUrl>https://github.com/1iveowl/WebsocketClientLite.PCL</PackageProjectUrl>
+    <PackageProjectUrl>https://github.com/1iveowl/IWebsocketClientLite.PCL</PackageProjectUrl>
     <RepositoryUrl>https://github.com/1iveowl/WebsocketClientLite.PCL</RepositoryUrl>
     <AssemblyVersion>7.2.0</AssemblyVersion>
     <FileVersion>7.2.0</FileVersion>

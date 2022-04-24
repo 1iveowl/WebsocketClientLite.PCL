@@ -36,9 +36,12 @@ Easily and effectively observe incoming message using Reactive Extensions (Rx)</
   <ItemGroup>
     <PackageReference Include="HttpMachine.PCL" Version="4.0.3" />
     <PackageReference Include="System.Reactive" Version="5.0.0" />
-	<PackageReference Include="IWebsocketClientLite" Version="7.2.0" />
+    <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="6.0.0" Condition=" '$(TargetFramework)' == 'netstandard2.0' "/>
+    <PackageReference Include="System.Memory" Version="4.5.4" Condition=" '$(TargetFramework)' == 'netstandard2.0' "/>  
+  </ItemGroup>
 
-	<!--<Content Include="bin\Release\netstandard2.0\I*.dll">
+  
+  <Content Include="bin\Release\netstandard2.0\I*.dll">
 		<PackagePath>lib\netstandard2.0\</PackagePath>
 		<Pack>true</Pack>
 	</Content>
@@ -46,25 +49,10 @@ Easily and effectively observe incoming message using Reactive Extensions (Rx)</
 	<Content Include="bin\Release\netstandard2.1\I*.dll">
 		<PackagePath>lib\netstandard2.1\</PackagePath>
 		<Pack>true</Pack>
-	</Content>-->
-	  
-  </ItemGroup>
-  
-  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
-    <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="6.0.0" />
-    <PackageReference Include="System.Memory" Version="4.5.4" />
-  </ItemGroup>
+	</Content>
 
-	<!--<ItemGroup>
-		<Content Include="bin\$(Configuration)\$(TargetFramework)\*.dll">
-			<PackagePath>lib\$(TargetFramework)\</PackagePath>
-			<Pack>true</Pack>
-		</Content>
-	</ItemGroup>-->
-
-  <ItemGroup Condition=" '$(Configuration)' == 'Debug' ">
+  <ItemGroup>
     <ProjectReference Include="..\..\interface\IWebsocketClientLite\IWebsocketClientLite.csproj" />
   </ItemGroup>
-
 
 </Project>
