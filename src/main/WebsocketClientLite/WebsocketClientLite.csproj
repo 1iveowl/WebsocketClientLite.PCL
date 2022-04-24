@@ -5,7 +5,7 @@
     <AssemblyName>WebsocketClientLite</AssemblyName>
     <RootNamespace>WebsocketClientLite</RootNamespace>
     <LangVersion>10.0</LangVersion>
-    <PackageIcon>1iveowl-logo.png</PackageIcon>
+    <PackageIcon>images\1iveowl-logo.png</PackageIcon>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <Version>7.2.0</Version>
     <Authors>Jasper Hedegaard Bojsen</Authors>
@@ -18,7 +18,8 @@
     <Description>A simple and light WebSocket client.
 Can be set to ignore SSL/TLS server certificate issues (use with care!).
 Easily and effectively observe incoming message using Reactive Extensions (Rx)</Description>
-    <PackageReleaseNotes>Removed PCL in assembly name</PackageReleaseNotes>
+    <PackageReleaseNotes>Removed PCL in assembly name.
+Split interface package from implementation package.</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>
@@ -28,7 +29,7 @@ Easily and effectively observe incoming message using Reactive Extensions (Rx)</
     </None>
     <None Include="..\..\build\1iveowl-logo.png">
       <Pack>True</Pack>
-      <PackagePath>\</PackagePath>
+      <PackagePath>images\</PackagePath>
     </None>
   </ItemGroup>
 
