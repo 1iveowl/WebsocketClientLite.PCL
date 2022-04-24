@@ -2,13 +2,16 @@
 name: CI
 
 on:
-  create:
-    branches:
-      - release/**
+  # create:
+  #   branches:
+  #     - release/**
   push:
-    branches: [master]
+    branches: 
+      - 'master'
   pull_request:
-    branches: [master]
+    branches: 
+      - 'master'
+      - 'develop'
     
 jobs:
   build:
