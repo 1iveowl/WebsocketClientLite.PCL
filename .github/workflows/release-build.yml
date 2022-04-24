@@ -47,11 +47,11 @@ jobs:
         working-directory: src/main/
 
       - name: Pack WebsocketClientLite
-        run: dotnet pack WebsocketClientLite.csproj -c Release --no-build
+        run: dotnet pack WebsocketClientLite.csproj -c Release --no-build /p:Version=${{ steps.gitversion.outputs.MajorMinorPatch }}
         working-directory: src/main/WebsocketClientLite/
 
       - name: Pack IWebsocketClientLite (Interface)
-        run: dotnet pack IWebsocketClientLite.csproj -c Release --no-build
+        run: dotnet pack IWebsocketClientLite.csproj -c Release --no-build /p:Version=${{ steps.gitversion.outputs.MajorMinorPatch }}
         working-directory: src/interface/IWebsocketClientLite/
 
       - name: Prep packages
