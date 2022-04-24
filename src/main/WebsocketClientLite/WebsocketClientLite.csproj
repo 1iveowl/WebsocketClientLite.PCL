@@ -7,7 +7,6 @@
     <LangVersion>10.0</LangVersion>
     <PackageIcon>1iveowl-logo.png</PackageIcon>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <Version>7.2.0</Version>
     <Authors>Jasper Hedegaard Bojsen</Authors>
     <Copyright>1iveowl Development 2022</Copyright>
@@ -36,8 +35,8 @@ Easily and effectively observe incoming message using Reactive Extensions (Rx)</
   <ItemGroup>
     <PackageReference Include="HttpMachine.PCL" Version="4.0.3" />
     <PackageReference Include="System.Reactive" Version="5.0.0" />
-    <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="6.0.0" Condition=" '$(TargetFramework)' == 'netstandard2.0' "/>
-    <PackageReference Include="System.Memory" Version="4.5.4" Condition=" '$(TargetFramework)' == 'netstandard2.0' "/>  
+    <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="6.0.0" Condition=" '$(TargetFramework)' == 'netstandard2.0' " />
+    <PackageReference Include="System.Memory" Version="4.5.4" Condition=" '$(TargetFramework)' == 'netstandard2.0' " />  
   </ItemGroup>
 
   <ItemGroup>

@@ -9,7 +9,6 @@
 	<LangVersion>10.0</LangVersion>
 	<PackageIcon>1iveowl-logo.png</PackageIcon>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <Version>7.2.0</Version>
     <Authors>Jasper Hedegaard Bojsen</Authors>
     <Copyright>1iveowl Development 2022</Copyright>
