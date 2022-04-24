@@ -1,5 +1,5 @@
 
-name: CI
+name: Publish Package
 
 on:
   # create:
