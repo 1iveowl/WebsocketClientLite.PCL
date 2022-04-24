@@ -52,7 +52,7 @@ jobs:
 
       - name: Pack IWebsocketClientLite (Interface)
         run: dotnet pack IWebsocketClientLite.csproj -c Release --no-build
-        working-directory: src/main/WebsocketClientLite/
+        working-directory: src/interface/IWebsocketClientLite/
 
       - name: Prep packages
         run: dotnet nuget add source --username 1iveowl --password ${{ secrets.GITHUB_TOKEN }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/1iveowl/index.json"
