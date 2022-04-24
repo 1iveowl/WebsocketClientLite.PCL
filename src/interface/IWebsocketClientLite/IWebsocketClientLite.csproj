@@ -7,9 +7,8 @@
     <AssemblyVersion>7.2.0.0</AssemblyVersion>
     <FileVersion>7.2.0.0</FileVersion>
 	<LangVersion>10.0</LangVersion>
-	<PackageIcon>1iveowl-logo.png</PackageIcon>
+	  <PackageIcon>images\1iveowl-logo.png</PackageIcon>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <Version>7.2.0</Version>
     <Authors>Jasper Hedegaard Bojsen</Authors>
     <Copyright>1iveowl Development 2022</Copyright>
@@ -21,8 +20,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="..\..\build\1iveowl-logo.png" Link="1iveowl-logo.png">
-      <PackagePath>\</PackagePath>
+    <None Include="..\..\build\1iveowl-logo.png" Link="images\1iveowl-logo.png">
+      <PackagePath>\images</PackagePath>
       <Pack>True</Pack>
     </None>
   </ItemGroup>
