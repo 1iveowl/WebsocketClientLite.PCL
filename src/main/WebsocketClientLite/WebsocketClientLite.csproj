@@ -40,16 +40,17 @@ Easily and effectively observe incoming message using Reactive Extensions (Rx)</
     <PackageReference Include="System.Memory" Version="4.5.4" Condition=" '$(TargetFramework)' == 'netstandard2.0' "/>  
   </ItemGroup>
 
-  
-  <Content Include="bin\Release\netstandard2.0\I*.dll">
-		<PackagePath>lib\netstandard2.0\</PackagePath>
-		<Pack>true</Pack>
-	</Content>
+  <ItemGroup>
+    <Content Include="bin\Release\netstandard2.0\I*.dll">
+      <PackagePath>lib\netstandard2.0\</PackagePath>
+      <Pack>true</Pack>
+    </Content>
 
-	<Content Include="bin\Release\netstandard2.1\I*.dll">
-		<PackagePath>lib\netstandard2.1\</PackagePath>
-		<Pack>true</Pack>
-	</Content>
+    <Content Include="bin\Release\netstandard2.1\I*.dll">
+      <PackagePath>lib\netstandard2.1\</PackagePath>
+      <Pack>true</Pack>
+    </Content>
+  </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\interface\IWebsocketClientLite\IWebsocketClientLite.csproj" />
