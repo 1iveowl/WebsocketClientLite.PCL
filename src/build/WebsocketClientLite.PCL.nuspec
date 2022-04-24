@@ -41,11 +41,11 @@ Easily and effectively observe incoming message using Reactive Extensions (Rx)</
 		
         <file src="1iveowl-logo.png" target="images\" />
 		
-        <file src="..\main\WebsocketClientLite.Netstandard20\bin\Release\netstandard2.1\WebsocketClientLite.*" target="lib\netstandard2.1" />
-        <file src="..\main\WebsocketClientLite.Netstandard20\bin\Release\netstandard2.0\IWebsocketClientLite.*" target="lib\netstandard2.1" />
+        <file src="..\main\WebsocketClientLite\bin\Release\netstandard2.1\WebsocketClientLite.*" target="lib\netstandard2.1" />
+        <file src="..\main\WebsocketClientLite\bin\Release\netstandard2.0\IWebsocketClientLite.*" target="lib\netstandard2.1" />
 
-		<file src="..\main\WebsocketClientLite.Netstandard20\bin\Release\netstandard2.0\WebsocketClientLite.*" target="lib\netstandard2.0" />
-		<file src="..\main\WebsocketClientLite.Netstandard20\bin\Release\netstandard2.0\IWebsocketClientLite.*" target="lib\netstandard2.0" />
+		<file src="..\main\WebsocketClientLite\bin\Release\netstandard2.0\WebsocketClientLite.*" target="lib\netstandard2.0" />
+		<file src="..\main\WebsocketClientLite\bin\Release\netstandard2.0\IWebsocketClientLite.*" target="lib\netstandard2.0" />
 		
     </files>
 </package>
