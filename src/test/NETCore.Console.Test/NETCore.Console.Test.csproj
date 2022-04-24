@@ -9,7 +9,7 @@
     <PackageReference Include="System.Reactive" Version="5.0.0" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\interface\IWebsocketClientLite.Netstandard\IWebsocketClientLite.Netstandard.csproj" />
-    <ProjectReference Include="..\..\main\WebsocketClientLite.Netstandard20\WebsocketClientLite.Netstandard20.csproj" />
+    <ProjectReference Include="..\..\interface\IWebsocketClientLite\IWebsocketClientLite.csproj" />
+    <ProjectReference Include="..\..\main\WebsocketClientLite\WebsocketClientLite.csproj" />
   </ItemGroup>
 </Project>

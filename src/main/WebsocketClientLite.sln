@@ -21,11 +21,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Nuget", "Nuget", "{E9C88A2B
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Interface", "Interface", "{0388463D-374D-4FE2-90CE-B7CB2C653EAC}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IWebsocketClientLite.Netstandard", "..\interface\IWebsocketClientLite.Netstandard\IWebsocketClientLite.Netstandard.csproj", "{7DFE740F-B8B0-4C09-BD3F-C0C54048149E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IWebsocketClientLite", "..\interface\IWebsocketClientLite\IWebsocketClientLite.csproj", "{7DFE740F-B8B0-4C09-BD3F-C0C54048149E}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NETCore.Console.Test", "..\test\NETCore.Console.Test\NETCore.Console.Test.csproj", "{2C1EEEFA-A547-41E7-9DA5-2D585B946341}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebsocketClientLite.Netstandard20", "WebsocketClientLite.Netstandard20\WebsocketClientLite.Netstandard20.csproj", "{3C949F9B-A627-421D-A373-FD0C40314A28}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebsocketClientLite", "WebsocketClientLite\WebsocketClientLite.csproj", "{3C949F9B-A627-421D-A373-FD0C40314A28}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "main", "main", "{2DA53FA9-1ACC-42D1-9C3A-00B23DDE48A2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -94,6 +96,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{7DFE740F-B8B0-4C09-BD3F-C0C54048149E} = {0388463D-374D-4FE2-90CE-B7CB2C653EAC}
 		{2C1EEEFA-A547-41E7-9DA5-2D585B946341} = {C6A551EF-FE86-4A13-B9C0-EA8B7FA798C4}
+		{3C949F9B-A627-421D-A373-FD0C40314A28} = {2DA53FA9-1ACC-42D1-9C3A-00B23DDE48A2}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {42E29DC6-2B7B-4046-88F2-858355EEE7BE}

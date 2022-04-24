@@ -1,0 +1,59 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>netstandard2.0;netstandard2.1</TargetFrameworks>
+    <AssemblyName>WebsocketClientLite</AssemblyName>
+    <RootNamespace>WebsocketClientLite</RootNamespace>
+    <LangVersion>10.0</LangVersion>
+    <PackageIcon>images\1iveowl-logo.png</PackageIcon>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <Version>7.2.0</Version>
+    <Authors>Jasper Hedegaard Bojsen</Authors>
+    <Copyright>1iveowl Development 2022</Copyright>
+    <PackageProjectUrl>https://github.com/1iveowl/WebsocketClientLite.PCL</PackageProjectUrl>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <RepositoryUrl>https://github.com/1iveowl/WebsocketClientLite.PCL</RepositoryUrl>
+    <AssemblyVersion>7.2.0</AssemblyVersion>
+    <FileVersion>7.2.0</FileVersion>
+    <Description>A simple and light WebSocket client.
+Can be set to ignore SSL/TLS server certificate issues (use with care!).
+Easily and effectively observe incoming message using Reactive Extensions (Rx)</Description>
+    <PackageReleaseNotes>Removed PCL in assembly name.
+Split interface package from implementation package.</PackageReleaseNotes>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\..\..\README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+    <None Include="..\..\build\1iveowl-logo.png" Link="images\1iveowl-logo.png">
+      <Pack>True</Pack>
+      <PackagePath>\images</PackagePath>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="HttpMachine.PCL" Version="4.0.3" />
+    <PackageReference Include="System.Reactive" Version="5.0.0" />
+    <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="6.0.0" Condition=" '$(TargetFramework)' == 'netstandard2.0' " />
+    <PackageReference Include="System.Memory" Version="4.5.4" Condition=" '$(TargetFramework)' == 'netstandard2.0' " />  
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="bin\Release\netstandard2.0\I*.dll">
+      <PackagePath>lib\netstandard2.0\</PackagePath>
+      <Pack>true</Pack>
+    </Content>
+
+    <Content Include="bin\Release\netstandard2.1\I*.dll">
+      <PackagePath>lib\netstandard2.1\</PackagePath>
+      <Pack>true</Pack>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\interface\IWebsocketClientLite\IWebsocketClientLite.csproj" />
+  </ItemGroup>
+
+</Project>
