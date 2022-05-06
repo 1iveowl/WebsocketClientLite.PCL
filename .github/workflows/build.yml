@@ -1,0 +1,88 @@
+name: Publish Package
+
+on:
+  #push:
+  #  branches: 
+  #    - 'master'
+  pull_request:
+    branches: 
+      - 'release'
+    
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v2
+        with:
+          dotnet-version: '6.x.x'
+
+      - name: Install gitversion
+        uses: gittools/actions/gitversion/setup@v0.9.13
+        with:
+          versionSpec: '5.x'
+
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Determin version
+        id: gitversion
+        uses: gittools/actions/gitversion/execute@v0.9.13
+        with:
+          useConfigFile: true
+
+      - name: Restore
+        run: dotnet restore
+        working-directory: src/main/
+
+      - name: Build .NET
+        run: dotnet build WebsocketClientLite.sln --configuration release /p:Version=${{ steps.gitversion.outputs.MajorMinorPatch }} /p:AssemblyVersion=${{ steps.gitversion.outputs.AssemblySemVer }} /p:InformationalVersion=${{ steps.gitversion.outputs.InformationalVersion }} --no-restore
+        working-directory: src/main/
+
+      - name: Pack WebsocketClientLite
+        run: dotnet pack WebsocketClientLite.csproj -c Release --no-build /p:Version=${{ steps.gitversion.outputs.MajorMinorPatch }}
+        working-directory: src/main/WebsocketClientLite/
+
+      - name: Pack IWebsocketClientLite (Interface)
+        run: dotnet pack IWebsocketClientLite.csproj -c Release --no-build /p:Version=${{ steps.gitversion.outputs.MajorMinorPatch }}
+        working-directory: src/interface/IWebsocketClientLite/
+
+      - name: Prep GitHub Packages
+        run: dotnet nuget add source --username 1iveowl --password ${{ secrets.GITHUB_TOKEN }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/1iveowl/index.json"
+
+      - name: Publish WebsocketClientLite to GitHub packages 
+        run: dotnet nuget push *.nupkg --api-key ${{ secrets.GITHUB_TOKEN }} --source "github"
+        working-directory: src/main/WebsocketClientLite/bin/Release/
+
+      - name: Publish IWebsocketClientLite (interface) to GitHub packages 
+        run: dotnet nuget push *.nupkg --api-key ${{ secrets.GITHUB_TOKEN }} --source "github"
+        working-directory: src/interface/IWebsocketClientLite/bin/Release/
+
+      - name: Pack WebsocketClientLite for NuGet.org
+        run: dotnet pack WebsocketClientLite.csproj -c Release --no-build /p:PackageID="WebsocketClientLite.PCL" /p:Version=${{ steps.gitversion.outputs.MajorMinorPatch }}
+        working-directory: src/main/WebsocketClientLite/
+
+      - name: Publish WebsocketClientLite to Nuget.Org 
+        run: dotnet nuget push WebsocketClientLite.PCL.*.nupkg --api-key ${{ secrets.NUGET_TOKEN }} --source https://api.nuget.org/v3/index.json
+        working-directory: src/main/WebsocketClientLite/bin/Release/
+
+      - name: Publish IWebsocketClientLite (interface) to Nuget.Org 
+        run: dotnet nuget push *.nupkg --api-key ${{ secrets.NUGET_TOKEN }} --source https://api.nuget.org/v3/index.json
+        working-directory: src/interface/IWebsocketClientLite/bin/Release/
+
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
+        with:
+          tag_name: ${{ steps.gitversion.outputs.AssemblySemVer }}
+          release_name: Release ${{ steps.gitversion.outputs.AssemblySemVer }}
+          body: |
+            Changes in this Release
+            - Split interface package from implementation package
+            - DevOps improvements
+          draft: true
+          prerelease: true
