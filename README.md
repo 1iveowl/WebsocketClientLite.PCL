@@ -3,7 +3,7 @@
 
 [![.NET Standard](http://img.shields.io/badge/.NET_Standard-v2.0-red.svg)](https://docs.microsoft.com/da-dk/dotnet/articles/standard/library) [![.NET Standard](http://img.shields.io/badge/.NET_Standard-v2.1-red.svg)](https://docs.microsoft.com/da-dk/dotnet/articles/standard/library) [![System.Reactive](http://img.shields.io/badge/Rx-v5.0.0-ff69b4.svg)](http://reactivex.io/)
 
-![CI/CD](https://github.com/1iveowl/WebsocketClientLite.PCL/actions/workflows/release-build.yml/badge.svg)
+![CI/CD](https://github.com/1iveowl/WebsocketClientLite.PCL/actions/workflows/build.yml/badge.svg)
 
 *Please star this project if you find it useful. Thank you.*
 
