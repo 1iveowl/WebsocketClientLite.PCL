@@ -79,7 +79,7 @@ From hereon and forward only .NET Standard 2.0+ is supported.
 ## Usage
 For a more detailed sample of using this library please see the [console example app](https://github.com/1iveowl/WebsocketClientLite.PCL/blob/master/src/test/NETCore.Console.Test/Program.cs).
 
-### To instanciate WebSocket lite class
+### To instantiate WebSocket lite class
 To use the WebSocket client create an instance of the class `MessageWebsocketRx`:
 
 ```csharp
@@ -155,7 +155,7 @@ var websocketClient = new MessageWebSocketRx
 }
 ```
 
-To further complicate matters the [slack.rtm api](https://api.slack.com/rtm) [seems to requires a ping at the Slack application layer too](http://stackoverflow.com/questions/38171620/slack-rtm-api-disconnection-following-message-in-scala). 
+To further complicate matters the [slack.rtm api](https://api.slack.com/rtm) [seems to require a ping at the Slack application layer too](http://stackoverflow.com/questions/38171620/slack-rtm-api-disconnection-following-message-in-scala). 
 
 A simplified implementation of this could look like this, which obviously would need to be repeated in some interval to keep the slack connection going:
 
@@ -165,7 +165,7 @@ await _webSocket.SendText("{\"id\": 1234, // ID, see \"sending messages\" above\
 For details read the **Ping and Pong** section of the [slack.rtm API documentation](https://api.slack.com/rtm) 
 
 ### Working with socket.io 
-This library have also been tested with [socket.io](https://socket.io/docs/v4/). 
+This library has also been tested with [socket.io](https://socket.io/docs/v4/). 
 
 A typical connection will look like this:
 
@@ -177,7 +177,7 @@ var websocketConnectionObservable =
 
 This will connect on the WebSocket layer with socket.io server. 
 
-To further connect on socket.io level see documentation. For instance, typically a text message with the content `40` need to be send right after the connection have been established. Also, some socket.io server implementations seem to be very sensitive to the encoding of the messages that are being send, and will disconnect immediately if receiving a data-frame with a text message that does not comply with the expected socket.io encoding protocol.
+To further connect on socket.io level see documentation. For instance, typically a text message with the content `40` needs to be sent right after the connection have been established. Also, some socket.io server implementations seem to be very sensitive to the encoding of the messages that are being send, and will disconnect immediately if receiving a data-frame with a text message that does not comply with the expected socket.io encoding protocol.
 
 For more see here: [WebSocket client not connecting to the socket.io server](https://github.com/socketio/socket.io/discussions/4299).
 
