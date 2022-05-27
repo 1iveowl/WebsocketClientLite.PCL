@@ -7,6 +7,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test", "Test", "{C6A551EF-F
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Github", "Github", "{9D70CE96-E6FE-4E36-AD43-818D371A27ED}"
 	ProjectSection(SolutionItems) = preProject
+		..\..\.gitattributes = ..\..\.gitattributes
+		..\..\.gitignore = ..\..\.gitignore
+		..\..\.github\workflows\build.yml = ..\..\.github\workflows\build.yml
+		..\..\GitVersion.yml = ..\..\GitVersion.yml
 		..\..\License.md = ..\..\License.md
 		..\..\README.md = ..\..\README.md
 	EndProjectSection
@@ -28,6 +32,8 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebsocketClientLite", "WebsocketClientLite\WebsocketClientLite.csproj", "{3C949F9B-A627-421D-A373-FD0C40314A28}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "main", "main", "{2DA53FA9-1ACC-42D1-9C3A-00B23DDE48A2}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebsocketClientLiteTest", "WebsocketClientLiteTest\WebsocketClientLiteTest.csproj", "{982F2FF7-81A0-4C99-BB85-8B8640CF4A50}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -89,6 +95,22 @@ Global
 		{3C949F9B-A627-421D-A373-FD0C40314A28}.Release|x64.Build.0 = Release|Any CPU
 		{3C949F9B-A627-421D-A373-FD0C40314A28}.Release|x86.ActiveCfg = Release|Any CPU
 		{3C949F9B-A627-421D-A373-FD0C40314A28}.Release|x86.Build.0 = Release|Any CPU
+		{982F2FF7-81A0-4C99-BB85-8B8640CF4A50}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{982F2FF7-81A0-4C99-BB85-8B8640CF4A50}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{982F2FF7-81A0-4C99-BB85-8B8640CF4A50}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{982F2FF7-81A0-4C99-BB85-8B8640CF4A50}.Debug|ARM.Build.0 = Debug|Any CPU
+		{982F2FF7-81A0-4C99-BB85-8B8640CF4A50}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{982F2FF7-81A0-4C99-BB85-8B8640CF4A50}.Debug|x64.Build.0 = Debug|Any CPU
+		{982F2FF7-81A0-4C99-BB85-8B8640CF4A50}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{982F2FF7-81A0-4C99-BB85-8B8640CF4A50}.Debug|x86.Build.0 = Debug|Any CPU
+		{982F2FF7-81A0-4C99-BB85-8B8640CF4A50}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{982F2FF7-81A0-4C99-BB85-8B8640CF4A50}.Release|Any CPU.Build.0 = Release|Any CPU
+		{982F2FF7-81A0-4C99-BB85-8B8640CF4A50}.Release|ARM.ActiveCfg = Release|Any CPU
+		{982F2FF7-81A0-4C99-BB85-8B8640CF4A50}.Release|ARM.Build.0 = Release|Any CPU
+		{982F2FF7-81A0-4C99-BB85-8B8640CF4A50}.Release|x64.ActiveCfg = Release|Any CPU
+		{982F2FF7-81A0-4C99-BB85-8B8640CF4A50}.Release|x64.Build.0 = Release|Any CPU
+		{982F2FF7-81A0-4C99-BB85-8B8640CF4A50}.Release|x86.ActiveCfg = Release|Any CPU
+		{982F2FF7-81A0-4C99-BB85-8B8640CF4A50}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -97,6 +119,7 @@ Global
 		{7DFE740F-B8B0-4C09-BD3F-C0C54048149E} = {0388463D-374D-4FE2-90CE-B7CB2C653EAC}
 		{2C1EEEFA-A547-41E7-9DA5-2D585B946341} = {C6A551EF-FE86-4A13-B9C0-EA8B7FA798C4}
 		{3C949F9B-A627-421D-A373-FD0C40314A28} = {2DA53FA9-1ACC-42D1-9C3A-00B23DDE48A2}
+		{982F2FF7-81A0-4C99-BB85-8B8640CF4A50} = {C6A551EF-FE86-4A13-B9C0-EA8B7FA798C4}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {42E29DC6-2B7B-4046-88F2-858355EEE7BE}

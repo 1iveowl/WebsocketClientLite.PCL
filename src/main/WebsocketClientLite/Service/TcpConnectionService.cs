@@ -36,14 +36,12 @@ namespace WebsocketClientLite.PCL.Service
             Action<ConnectionStatus, Exception> connectionStatusAction,
             TcpClient tcpClient = null)
         {
-            _keepTcpClientAlive = tcpClient is not null;
-            
+            _keepTcpClientAlive = tcpClient is not null;            
             _isSecureConnectionSchemeFunc = isSecureConnectionSchemeFunc;
             _validateServerCertificateFunc = validateServerCertificateFunc;
             _connectTcpClient = connectTcpClientFunc;
             _connectionStatusAction = connectionStatusAction;
             _readOneByteFunc = readOneByteFunc;
-
             _tcpClient = tcpClient;
         }
 

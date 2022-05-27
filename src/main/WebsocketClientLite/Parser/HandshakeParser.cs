@@ -27,10 +27,10 @@ namespace WebsocketClientLite.PCL.Parser
         }
 
         internal bool Parse(
-            byte[] @byte,
+            byte[] byteArray,
             IEnumerable<string> subProtocols)
         {
-            _parserHandler.Execute(@byte);
+            _parserHandler.Execute(byteArray);
 
             if (_parserDelegate.HttpRequestResponse is not null
                 && _parserDelegate.HttpRequestResponse.IsEndOfMessage)
