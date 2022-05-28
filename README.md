@@ -26,13 +26,15 @@ The version 7 NuGet package includes both a .NET Standard 2.0 package and a .NET
 
 ### Version 7.3
 
-Version 7.3 introduces a new feature. When passing an existing TCP Socket Client it is not possible to pass the life-cycle ownership of the socket, which means that when the observable WebSocket connection is disposed, so will the socket connection and the TCP Socket client be disposed and the connection closed. 
+Version 7.3 introduces a new feature for managing TCP socket, in the case were the TCP socket passed in the constructor. When passing an existing TCP Socket Client, it is now possible to reqrest the transfer the life-cycle ownership of the socket connection. 
+
+When transfering the life-cycle ownership of the socket connection, the TCP Socket client be closed and disposed, when the observable WebSocket is disposed.
+
+To transfer ownership of the life-cycle of the TCP Socket Client do this:
 
 ```csh
 new MessageWebsocketRx(tcpClient, hasTransferTcpSocketLifeCycleOwnership: true)
 ```
-
-
 
 ### Now With Client Ping
 
