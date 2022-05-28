@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0;netstandard2.1</TargetFrameworks>
+	<Nullable>enable</Nullable>
     <AssemblyName>WebsocketClientLite</AssemblyName>
     <RootNamespace>WebsocketClientLite</RootNamespace>
     <LangVersion>10.0</LangVersion>
@@ -19,7 +20,7 @@
 Can be set to ignore SSL/TLS server certificate issues (use with care!).
 Easily and effectively observe incoming message using Reactive Extensions (Rx)</Description>
     <PackageReleaseNotes>Removed PCL in assembly name.
-Split interface package from implementation package.</PackageReleaseNotes>
+New feature: hasTransferTcpSocketLifeCycleOwnership.</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>
@@ -37,7 +38,7 @@ Split interface package from implementation package.</PackageReleaseNotes>
     <PackageReference Include="HttpMachine.PCL" Version="4.0.3" />
     <PackageReference Include="System.Reactive" Version="5.0.0" />
     <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="6.0.0" Condition=" '$(TargetFramework)' == 'netstandard2.0' " />
-    <PackageReference Include="System.Memory" Version="4.5.4" Condition=" '$(TargetFramework)' == 'netstandard2.0' " />  
+    <PackageReference Include="System.Memory" Version="4.5.5" Condition=" '$(TargetFramework)' == 'netstandard2.0' " />  
   </ItemGroup>
 
   <ItemGroup>

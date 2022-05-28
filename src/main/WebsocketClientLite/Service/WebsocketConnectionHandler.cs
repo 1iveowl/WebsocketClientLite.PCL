@@ -19,16 +19,16 @@ namespace WebsocketClientLite.PCL.Service
     {
         private readonly TcpConnectionService _tcpConnectionService;
         private readonly WebsocketParserHandler _websocketParserHandler;
-        private readonly Action<ConnectionStatus, Exception> _connectionStatusAction;
-        private readonly Func<Stream, Action<ConnectionStatus, Exception>, WebsocketSenderHandler> _createWebsocketSenderFunc;
+        private readonly Action<ConnectionStatus, Exception?> _connectionStatusAction;
+        private readonly Func<Stream, Action<ConnectionStatus, Exception?>, WebsocketSenderHandler> _createWebsocketSenderFunc;
 
-        private IDisposable _clientPingDisposable;
+        private IDisposable? _clientPingDisposable;
 
         internal WebsocketConnectionHandler(
             TcpConnectionService tcpConnectionService,
             WebsocketParserHandler websocketParserHandler,
-            Action<ConnectionStatus, Exception> connectionStatusAction,
-            Func<Stream, Action<ConnectionStatus, Exception>, WebsocketSenderHandler> createWebsocketSenderFunc)
+            Action<ConnectionStatus, Exception?> connectionStatusAction,
+            Func<Stream, Action<ConnectionStatus, Exception?>, WebsocketSenderHandler> createWebsocketSenderFunc)
         {
             _tcpConnectionService = tcpConnectionService;            
             _websocketParserHandler = websocketParserHandler;
@@ -38,20 +38,20 @@ namespace WebsocketClientLite.PCL.Service
             _clientPingDisposable = default;
         }
 
-        internal async Task<IObservable<IDataframe>>
+        internal async Task<IObservable<IDataframe?>>
                 ConnectWebsocket(
                     Uri uri,
-                    X509CertificateCollection x509CertificateCollection,
+                    X509CertificateCollection? x509CertificateCollection,
                     SslProtocols tlsProtocolType,
                     Action<ISender> setSenderAction,
                     CancellationToken ct,
                     bool hasClientPing,
                     TimeSpan clientPingTimeSpan,
-                    string clientPingMessage,
+                    string? clientPingMessage,
                     TimeSpan timeout,
-                    string origin,
-                    IDictionary<string, string> headers,
-                    IEnumerable<string> subprotocols)
+                    string? origin,
+                    IDictionary<string, string>? headers,
+                    IEnumerable<string>? subprotocols)
         {
             if (hasClientPing && clientPingTimeSpan == default)
             {
@@ -110,7 +110,7 @@ namespace WebsocketClientLite.PCL.Service
 
             _connectionStatusAction(ConnectionStatus.WebsocketConnected, null);
 
-            return Observable.Create<IDataframe>(obs =>
+            return Observable.Create<IDataframe?>(obs =>
             {
 
                 var disposable = Observable.Defer(
@@ -136,17 +136,17 @@ namespace WebsocketClientLite.PCL.Service
                 await DisconnectWebsocket(sender);
             });
 
-            IObservable<Unit> SendClientPing(string message) =>
+            IObservable<Unit> SendClientPing(string? message) =>
                 Observable.Interval(clientPingTimeSpan)
                 .Select(_ => Observable.FromAsync(ct => sender.SendPing(message)))
                 .Concat();
 
-            async Task<Dataframe> IncomingControlFrameHandler(
-                Dataframe dataframe, 
-                IObserver<Dataframe> obs, 
+            async Task<Dataframe?> IncomingControlFrameHandler(
+                Dataframe? dataframe, 
+                IObserver<Dataframe?> obs, 
                 CancellationToken ct)
             {
-                switch (dataframe.Opcode)
+                switch (dataframe?.Opcode)
                 {
                     case OpcodeKind.Continuation:
                     case OpcodeKind.Text:
@@ -175,7 +175,7 @@ namespace WebsocketClientLite.PCL.Service
                     case OpcodeKind.Reserved5e:
                         throw new NotImplementedException($"Opcode not implemented: {dataframe.Opcode}");
                     default:
-                        throw new ArgumentOutOfRangeException($"{dataframe.Opcode}");
+                        throw new ArgumentOutOfRangeException($"{dataframe?.Opcode}");
                 }
 
                 return null;
@@ -205,11 +205,11 @@ namespace WebsocketClientLite.PCL.Service
         {
             if(_clientPingDisposable is not null)
             {
-                _clientPingDisposable.Dispose();
+                _clientPingDisposable?.Dispose();
             }
 
-            _websocketParserHandler.Dispose();
-            _tcpConnectionService.Dispose();
+            _websocketParserHandler?.Dispose();
+            _tcpConnectionService?.Dispose();
         }
     }
 }

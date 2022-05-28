@@ -24,6 +24,16 @@ Version 7 is more or less a rewrite of 90+ % of the original code.
 
 The version 7 NuGet package includes both a .NET Standard 2.0 package and a .NET Standard 2.1, with e .NET Standard 2.1 package having a few less dependencies.
 
+### Version 7.3
+
+Version 7.3 introduces a new feature. When passing an existing TCP Socket Client it is not possible to pass the life-cycle ownership of the socket, which means that when the observable WebSocket connection is disposed, so will the socket connection and the TCP Socket client be disposed and the connection closed. 
+
+```csh
+new MessageWebsocketRx(tcpClient, hasTransferTcpSocketLifeCycleOwnership: true)
+```
+
+
+
 ### Now With Client Ping
 
 Version 7 introduces a *client ping* feature, which enabling the WebSocket client to send a ping message with a constant interval. 

@@ -9,9 +9,9 @@ namespace WebsocketClientLite.PCL.Helper
     {
         internal static byte[] Compose(
             Uri uri,
-            string origin = null, 
-            IDictionary<string, string> headers = null,
-            IEnumerable<string> subprotocols = null)
+            string? origin = null, 
+            IDictionary<string, string>? headers = null,
+            IEnumerable<string>? subprotocols = null)
         {
             var sb = new StringBuilder();
 

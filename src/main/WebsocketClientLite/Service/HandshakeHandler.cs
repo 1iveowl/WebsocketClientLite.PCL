@@ -15,28 +15,28 @@ namespace WebsocketClientLite.PCL.Service
     {
         private readonly TcpConnectionService _tcpConnectionService;
         private readonly WebsocketParserHandler _websocketParserHandler;
-        private readonly Action<ConnectionStatus, Exception> _connectionStatusAction;
+        private readonly Action<ConnectionStatus, Exception?> _connectionStatusAction;
 
         public HandshakeHandler(
             TcpConnectionService tcpConnectionService,
             WebsocketParserHandler websocketParserHandler,
-            Action<ConnectionStatus, Exception> connectionStatusAction)
+            Action<ConnectionStatus, Exception?> connectionStatusAction)
         {
             _tcpConnectionService = tcpConnectionService;
             _websocketParserHandler = websocketParserHandler;
             _connectionStatusAction = connectionStatusAction;
         }
 
-        internal IObservable<(HandshakeStateKind handshakeState, WebsocketClientLiteException ex)> Handshake(
+        internal IObservable<(HandshakeStateKind handshakeState, WebsocketClientLiteException? ex)> Handshake(
             Uri uri,
             WebsocketSenderHandler sender,
             TimeSpan timeout,
             CancellationToken ct,
-            string origin = null,
-            IDictionary<string, string> headers = null,
-            IEnumerable<string> subprotocols = null)
+            string? origin = null,
+            IDictionary<string, string>? headers = null,
+            IEnumerable<string>? subprotocols = null)
         {
-            return Observable.Create<(HandshakeStateKind handshakeState, WebsocketClientLiteException ex)>(async obs =>
+            return Observable.Create<(HandshakeStateKind handshakeState, WebsocketClientLiteException? ex)>(async obs =>
             {
                 using var parserDelegate = new HandshakeParserDelegate(obs);
                 using var parserHandler = new HttpCombinedParser(parserDelegate);
@@ -53,11 +53,11 @@ namespace WebsocketClientLite.PCL.Service
             })
             .Timeout(timeout)
             .Catch<
-                (HandshakeStateKind handshakeState, WebsocketClientLiteException ex),
+                (HandshakeStateKind handshakeState, WebsocketClientLiteException? ex),
                 TimeoutException>(
                     tx => Observable.Return(
                         (HandshakeStateKind.HandshakeTimedOut,
-                        new WebsocketClientLiteException("Handshake times out.", tx))
+                        new WebsocketClientLiteException("Handshake times out.", tx) ?? null)
                     )
                 );
 
@@ -74,13 +74,13 @@ namespace WebsocketClientLite.PCL.Service
             }
         }
 
-        private async Task<(HandshakeStateKind handshakeState, WebsocketClientLiteException ex)> 
+        private async Task<(HandshakeStateKind handshakeState, WebsocketClientLiteException? ex)> 
             SendHandshake(
                 Uri uri,
                 WebsocketSenderHandler websocketSenderHandler,
                 CancellationToken ct,
-                string origin = null,
-                IDictionary<string, string> headers = null)
+                string? origin = null,
+                IDictionary<string, string>? headers = null)
         {
             try
             {

@@ -14,7 +14,7 @@ namespace WebsocketClientLite.PCL.Parser
         private readonly HttpCombinedParser _parserHandler;
         private readonly HandshakeParserDelegate _parserDelegate;
 
-        internal IEnumerable<string> SubprotocolAcceptedNames { get; private set; }
+        internal IEnumerable<string>? SubprotocolAcceptedNames { get; private set; }
 
         public HandshakeParser(
             HttpCombinedParser parserHandler,
@@ -27,9 +27,14 @@ namespace WebsocketClientLite.PCL.Parser
         }
 
         internal bool Parse(
-            byte[] byteArray,
-            IEnumerable<string> subProtocols)
+            byte[]? byteArray,
+            IEnumerable<string>? subProtocols)
         {
+            if (byteArray is null)
+            {
+                return false;
+            }
+
             _parserHandler.Execute(byteArray);
 
             if (_parserDelegate.HttpRequestResponse is not null

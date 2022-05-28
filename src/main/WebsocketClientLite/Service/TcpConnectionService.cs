@@ -21,22 +21,24 @@ namespace WebsocketClientLite.PCL.Service
         private readonly Func<object, X509Certificate, X509Chain, SslPolicyErrors, bool> _validateServerCertificateFunc;
         private readonly Func<TcpClient, Uri, Task> _connectTcpClient;
         private readonly Func<Stream, byte[], CancellationToken, Task<int>> _readOneByteFunc;
-        private readonly Action<ConnectionStatus, Exception> _connectionStatusAction;
+        private readonly Action<ConnectionStatus, Exception?> _connectionStatusAction;
 
-        private TcpClient _tcpClient;
-        private Stream _stream;
+        private TcpClient? _tcpClient;
+        private Stream? _stream;
 
-        internal Stream ConnectionStream => _stream;
+        internal Stream ConnectionStream => _stream ?? throw new NullReferenceException("Stream cannot be null");
 
-        public TcpConnectionService(           
+        public TcpConnectionService(
             Func<bool> isSecureConnectionSchemeFunc,
             Func<object, X509Certificate, X509Chain, SslPolicyErrors, bool> validateServerCertificateFunc,
             Func<TcpClient, Uri, Task> connectTcpClientFunc,
             Func<Stream, byte[], CancellationToken, Task<int>> readOneByteFunc,
-            Action<ConnectionStatus, Exception> connectionStatusAction,
-            TcpClient tcpClient = null)
+            Action<ConnectionStatus, Exception?> connectionStatusAction,
+            bool hasTransferTcpSocketLifeCycleOwnership,
+            TcpClient? tcpClient = null)
         {
-            _keepTcpClientAlive = tcpClient is not null;            
+            _keepTcpClientAlive = !hasTransferTcpSocketLifeCycleOwnership;         
+            
             _isSecureConnectionSchemeFunc = isSecureConnectionSchemeFunc;
             _validateServerCertificateFunc = validateServerCertificateFunc;
             _connectTcpClient = connectTcpClientFunc;
@@ -47,7 +49,7 @@ namespace WebsocketClientLite.PCL.Service
 
         internal virtual async Task ConnectTcpStream(
             Uri uri,
-            X509CertificateCollection x509CertificateCollection,
+            X509CertificateCollection? x509CertificateCollection,
             SslProtocols tlsProtocolType,
             TimeSpan timeout = default)
         {
@@ -56,14 +58,14 @@ namespace WebsocketClientLite.PCL.Service
             _stream = await GetTcpStream(uri, _tcpClient, x509CertificateCollection, tlsProtocolType);
         }
 
-        internal IObservable<byte[]> BytesObservable() =>
+        internal IObservable<byte[]?> BytesObservable() =>
             Observable.Defer(() => Observable.FromAsync(ct => ReadByteArrayFromStream(1, ct)))
             .Where(bytes => bytes is not null);
 
-        internal async Task<byte[]> ReadBytesFromStream(ulong size, CancellationToken ct) =>
+        internal async Task<byte[]?> ReadBytesFromStream(ulong size, CancellationToken ct) =>
             await ReadByteArrayFromStream(size, ct);
 
-        internal async Task<byte[]> ReadByteArrayFromStream(ulong size, CancellationToken ct)
+        internal async Task<byte[]?> ReadByteArrayFromStream(ulong size, CancellationToken ct)
         {          
             if (_stream is null || !_stream.CanRead)
             {
@@ -152,10 +154,15 @@ namespace WebsocketClientLite.PCL.Service
 
         private async Task<Stream> GetTcpStream(
             Uri uri,
-            TcpClient tcpClient,
-            X509CertificateCollection x509CertificateCollection,
+            TcpClient? tcpClient,
+            X509CertificateCollection? x509CertificateCollection,
             SslProtocols tlsProtocolType)
         {
+            if (tcpClient is null)
+            {
+                throw new NullReferenceException("Tcp Client cannot be null when trying to get socket stream.");
+            }
+
             _connectionStatusAction(ConnectionStatus.ConnectingToSocketStream, null);
 
             if (_isSecureConnectionSchemeFunc())

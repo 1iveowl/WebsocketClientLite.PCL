@@ -16,7 +16,7 @@ namespace WebsocketClientLite.PCL.Service
     {
         private readonly TcpConnectionService _tcpConnectionService;
 
-        internal IEnumerable<string> SubprotocolAcceptedNames { get; private set; }
+        internal IEnumerable<string>? SubprotocolAcceptedNames { get; private set; }
 
         internal WebsocketParserHandler(
             TcpConnectionService tcpConnectionService)
@@ -24,8 +24,8 @@ namespace WebsocketClientLite.PCL.Service
             _tcpConnectionService = tcpConnectionService;
         }
 
-        internal IObservable<Dataframe> DataframeObservable() => 
-            Observable.Create<Dataframe>(async obs =>
+        internal IObservable<Dataframe?> DataframeObservable() => 
+            Observable.Create<Dataframe?>(async obs =>
             {
                 var cts = new CancellationTokenSource();
 
@@ -40,6 +40,11 @@ namespace WebsocketClientLite.PCL.Service
                     {
                         // Merge fragments into one dataframe.
                         dataframe = await GetNextDataframe(dataframe);
+
+                        if (dataframe is null)
+                        {
+                            break;
+                        }                        
                     }
 
                     obs.OnNext(dataframe);
@@ -49,11 +54,13 @@ namespace WebsocketClientLite.PCL.Service
 
                 return Disposable.Create(() => cts.Cancel());
 
-                async Task<Dataframe> GetNextDataframe(Dataframe dataframe)
+                async Task<Dataframe?> GetNextDataframe(Dataframe? dataframe)
                 {
                     var nextDataframe = await GetDataframe();
 
-                    if (nextDataframe is not null)
+                    if (nextDataframe is not null 
+                        && nextDataframe.DataStream is not null
+                        && dataframe is not null)
                     {
                         await nextDataframe.DataStream.CopyToAsync(dataframe.DataStream,
 #if !NETSTANDARD2_1
@@ -71,7 +78,7 @@ namespace WebsocketClientLite.PCL.Service
                     return dataframe;
                 }
 
-                async Task<Dataframe> GetDataframe()
+                async Task<Dataframe?> GetDataframe()
                 {
                     var newDataframe = await CreateDataframe(_tcpConnectionService, cts.Token)
                         .PayloadBitLenght()

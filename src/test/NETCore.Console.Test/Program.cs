@@ -46,6 +46,8 @@ class Program
 
         var tcpClient = new TcpClient { LingerState = new LingerOption(true, 0) };
 
+        //var tcpClient = new TcpClient();
+
         while (!outerCancellationTokenSource.IsCancellationRequested)
         {
             var innerCancellationSource = new CancellationTokenSource();
@@ -66,7 +68,8 @@ class Program
         TcpClient tcpClient,
         CancellationTokenSource innerCancellationTokenSource)
     {
-        var client = new MessageWebsocketRx(tcpClient)
+        //var client = new MessageWebsocketRx(tcpClient)
+        var client = new MessageWebsocketRx(tcpClient, hasTransferTcpSocketLifeCycleOwnership: false)
         {
             IgnoreServerCertificateErrors = true,
             Headers = new Dictionary<string, string> { { "Pragma", "no-cache" }, { "Cache-Control", "no-cache" } },
