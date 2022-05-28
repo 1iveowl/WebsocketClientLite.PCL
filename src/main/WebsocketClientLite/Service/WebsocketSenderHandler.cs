@@ -18,12 +18,12 @@ namespace WebsocketClientLite.PCL.Service
     {
         private readonly TcpConnectionService _tcpConnectionService;
         private readonly Func<Stream, byte[], CancellationToken, Task> _writeFunc;
-        private readonly Action<ConnectionStatus, Exception> _connectionStatusAction;
+        private readonly Action<ConnectionStatus, Exception?> _connectionStatusAction;
         private readonly bool _isExcludingZeroApplicationDataInPong;
 
         internal WebsocketSenderHandler(
             TcpConnectionService tcpConnectionService,
-            Action<ConnectionStatus, Exception> connectionStatusAction,
+            Action<ConnectionStatus, Exception?> connectionStatusAction,
             Func<Stream, byte[], CancellationToken, Task> writeFunc,            
             bool isExcludingZeroApplicationDataInPong)
         {
@@ -36,9 +36,9 @@ namespace WebsocketClientLite.PCL.Service
         internal async Task SendConnectHandShake(
             Uri uri,
             CancellationToken ct,
-            string origin = null,            
-            IDictionary<string, string> headers = null,
-            IEnumerable<string> subprotocol = null)
+            string? origin = null,            
+            IDictionary<string, string>? headers = null,
+            IEnumerable<string>? subprotocol = null)
         {
             var handShakeBytes = ClientHandShake.Compose(uri, origin, headers, subprotocol);
 
@@ -109,7 +109,7 @@ namespace WebsocketClientLite.PCL.Service
                         ct);
 
         public async Task SendPing(
-            string message, 
+            string? message, 
             CancellationToken ct = default) => 
                 await ComposeFrameAndSendAsync(
                     message,
@@ -182,7 +182,7 @@ namespace WebsocketClientLite.PCL.Service
         }
 
         private async Task ComposeFrameAndSendAsync(
-            string message,
+            string? message,
             OpcodeKind opcode,
             FragmentKind fragment,
             CancellationToken ct) => 
@@ -193,7 +193,7 @@ namespace WebsocketClientLite.PCL.Service
                     ct);
 
         private async Task ComposeFrameAndSendAsync(
-            byte[] content, 
+            byte[]? content, 
             OpcodeKind opcode,
             FragmentKind fragment,
             CancellationToken ct)

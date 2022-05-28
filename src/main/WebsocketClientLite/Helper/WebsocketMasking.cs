@@ -9,12 +9,12 @@ namespace WebsocketClientLite.PCL.Helper
     {
         private const byte FINbit = 0x80;
 
-        internal static byte[] Encode(byte[] data, byte[] key)
+        internal static byte[] Encode(IReadOnlyList<byte> data, IReadOnlyList<byte> key)
         {
             return SymmetricCoding(data, key);
         }
 
-        internal static byte[] Decode(byte[] data, byte[] key)
+        internal static byte[] Decode(IReadOnlyList<byte> data, IReadOnlyList<byte> key)
         {
             return SymmetricCoding(data, key);
         }

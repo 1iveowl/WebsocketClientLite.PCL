@@ -3,6 +3,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using IWebsocketClientLite.PCL;
+using WebsocketClientLite.PCL.CustomException;
 using WebsocketClientLite.PCL.Service;
 using static WebsocketClientLite.PCL.Helper.WebsocketMasking;
 
@@ -12,22 +13,22 @@ namespace WebsocketClientLite.PCL.Model
     {
         private readonly TcpConnectionService _tcpConnection;
         private readonly CancellationToken _ct;
-        private byte[] _data;
-        private string _message;
+        private byte[]? _data;
+        private string? _message;
 
         internal bool FIN { get; init; }
         internal bool RSV1 { get; init; }
         internal bool RSV2 { get; init; }
         internal bool RSV3 { get; init; }
         internal bool MASK { get; init; }
-        internal byte[] MaskingBytes { get; init; }
+        internal byte[]? MaskingBytes { get; init; }
         internal FragmentKind Fragment { get; init; }
         internal OpcodeKind Opcode { get; init; }
-        internal MemoryStream DataStream { get; init; }
+        internal MemoryStream? DataStream { get; init; }
 
-        public string Message => GetMessage();
+        public string? Message => GetMessage();
 
-        public byte[] Binary => GetBinary();
+        public byte[]? Binary => GetBinary();
 
         internal PayloadBitLengthKind PayloadBitLength { get; init; }
 
@@ -39,12 +40,9 @@ namespace WebsocketClientLite.PCL.Model
             _ct = ct;
         }
 
-        internal async Task<byte[]> GetNextBytes(ulong size)
-        {
-            return await _tcpConnection.ReadBytesFromStream(size, _ct);
-        }
+        internal async Task<byte[]?> GetNextBytes(ulong size) => await _tcpConnection.ReadBytesFromStream(size, _ct);
 
-        private byte[] GetBinary()
+        private byte[]? GetBinary()
         {
             if (_data is null)
             {
@@ -54,7 +52,14 @@ namespace WebsocketClientLite.PCL.Model
 
                     if (MASK)
                     {
-                        _data = Decode(_data, MaskingBytes);
+                        if (MaskingBytes is null)
+                        {
+                            throw new WebsocketClientLiteException("Unable to decode message. Masking byte cannot be null when masking is required.");
+                        }
+                        else
+                        {
+                            _data = Decode(_data, MaskingBytes);
+                        }                        
                     }
                 }
                 else
@@ -66,7 +71,7 @@ namespace WebsocketClientLite.PCL.Model
             return _data;
         }
 
-        private string GetMessage()
+        private string? GetMessage()
         {
             if (_message is null)
             {

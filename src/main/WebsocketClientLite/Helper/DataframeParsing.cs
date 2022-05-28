@@ -14,12 +14,12 @@ namespace WebsocketClientLite.PCL.Helper
 {
     internal static class DataframeParsing
     {
-        internal static async Task<Dataframe> CreateDataframe(TcpConnectionService tcpConnection, CancellationToken ct)
+        internal static async Task<Dataframe?> CreateDataframe(TcpConnectionService tcpConnection, CancellationToken ct)
         {
             var dataframe = new Dataframe(tcpConnection, ct);
 
             var oneByteArray = await dataframe.GetNextBytes(1);
-            Debug.WriteLine($"First byte: {oneByteArray[0]}");
+            Debug.WriteLine($"First byte: {oneByteArray?[0]}");
 
             if (oneByteArray is null)
             {
@@ -58,7 +58,7 @@ namespace WebsocketClientLite.PCL.Helper
             }
         }
 
-        internal static async Task<Dataframe> PayloadBitLenght(this Task<Dataframe> dataframeTask)
+        internal static async Task<Dataframe?> PayloadBitLenght(this Task<Dataframe?> dataframeTask)
         {
             var dataframe = await dataframeTask;
 
@@ -68,6 +68,12 @@ namespace WebsocketClientLite.PCL.Helper
             }
 
             var oneByteArray = await dataframe.GetNextBytes(1);
+
+            if (oneByteArray is null)
+            {
+                return dataframe;
+            }
+
             var bits = new BitArray(oneByteArray);
             var @byte = oneByteArray[0];
 
@@ -102,7 +108,7 @@ namespace WebsocketClientLite.PCL.Helper
             }
         }
 
-        internal static async Task<Dataframe> PayloadLenght(this Task<Dataframe> dataframeTask)
+        internal static async Task<Dataframe?> PayloadLenght(this Task<Dataframe?> dataframeTask)
         {
             var dataframe = await dataframeTask;
 
@@ -131,7 +137,7 @@ namespace WebsocketClientLite.PCL.Helper
             }
         }
 
-        internal static async Task<Dataframe> GetPayload(this Task<Dataframe> dataframeTask)
+        internal static async Task<Dataframe?> GetPayload(this Task<Dataframe?> dataframeTask)
         {
             var dataframe = await dataframeTask;
 
@@ -145,11 +151,15 @@ namespace WebsocketClientLite.PCL.Helper
                 var memoryStream = new MemoryStream();
 
                 var nextBytes = await dataframe.GetNextBytes(dataframe.Length);
+
+                if (nextBytes is not null)
+                {
 #if NETSTANDARD2_1
                 await memoryStream.WriteAsync(nextBytes);
 #else
-                await memoryStream.WriteAsync(nextBytes, 0, nextBytes.Length);
+                    await memoryStream.WriteAsync(nextBytes, 0, nextBytes.Length);
 #endif
+                }
 
                 if (dataframe.MASK)
                 {

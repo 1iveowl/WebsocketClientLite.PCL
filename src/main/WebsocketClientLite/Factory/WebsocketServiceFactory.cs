@@ -33,6 +33,7 @@ namespace WebsocketClientLite.PCL.Factory
                 ReadOneByteFromStream,
                 //readOneByteFunc: (stream, bytes, cts) => RunOnScheduler(ReadOneByteFromStream(stream, bytes, cts), eventLoopScheduler),
                 connectionStatusAction: ConnectionStatusAction,
+                messageWebSocketRx.HasTransferSocketLifeCycleOwnership,
                 tcpClient: messageWebSocketRx.TcpClient);
 
             var websocketServices = new WebsocketService(
@@ -56,7 +57,7 @@ namespace WebsocketClientLite.PCL.Factory
 
             return websocketServices;
        
-            void ConnectionStatusAction(ConnectionStatus status, Exception ex)
+            void ConnectionStatusAction(ConnectionStatus status, Exception? ex)
             {
                 if (status is ConnectionStatus.Disconnected)
                 {

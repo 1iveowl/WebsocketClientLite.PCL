@@ -21,9 +21,10 @@ namespace WebsocketClientLite.PCL
     {
         private readonly EventLoopScheduler _eventLoopScheduler;
 
-        internal TcpClient TcpClient { get; private set; }
+        internal TcpClient? TcpClient { get; private set; }
+        internal bool HasTransferSocketLifeCycleOwnership { get; private set; }
 
-        private ISender _sender;
+        private ISender? _sender;
 
         /// <summary>
         /// Is Websocket client connected.
@@ -33,17 +34,17 @@ namespace WebsocketClientLite.PCL
         /// <summary>
         /// Origin.
         /// </summary>
-        public string Origin { get; set; }
+        public string? Origin { get; set; }
 
         /// <summary>
         /// Http Headers.
         /// </summary>
-        public IDictionary<string, string> Headers { get; set; }
+        public IDictionary<string, string>? Headers { get; set; }
 
         /// <summary>
         /// Websocket known subprotocols.
         /// </summary>
-        public IEnumerable<string> Subprotocols { get; set; }
+        public IEnumerable<string>? Subprotocols { get; set; }
 
 
         /// <summary>
@@ -54,7 +55,7 @@ namespace WebsocketClientLite.PCL
         /// <summary>
         /// X.509 certificate collection.
         /// </summary>
-        public X509CertificateCollection X509CertCollection { get; set; }
+        public X509CertificateCollection? X509CertCollection { get; set; }
 
         /// <summary>
         /// Typically used with Slack. See documentation. 
@@ -71,25 +72,30 @@ namespace WebsocketClientLite.PCL
         /// </summary>
         /// <returns></returns>
         public ISender GetSender() => IsConnected 
-            ? _sender 
+            ? _sender is not null ? _sender : throw new NullReferenceException("Sender not initialized.")
             : throw new InvalidOperationException("No sender available, Websocket not connected. You need to subscribe to WebsocketConnectObservable first.");
-        
+
         /// <summary>
-        /// Constructor using existing TCP Client object. If the TCP Client is not already it will be connected using the URI supplied when initiating the observable. 
+        /// Constructor used when passing a TCP socket. If the TCP socket is not already connected it will be connected using the URI supplied when subscribing to one of the observable WebSockets: <see cref="WebsocketConnectObservable(Uri, bool, TimeSpan, string, TimeSpan)"/> or <see cref="WebsocketConnectWithStatusObservable(Uri, bool, TimeSpan, string, TimeSpan)"/>. 
         /// </summary>
         /// <param name="tcpClient"></param>
-        public MessageWebsocketRx(TcpClient tcpClient) 
+        /// <param name="hasTransferTcpSocketLifeCycleOwnership">Default <see cref="false"/>. Set to <see cref="true"/> to transfer ownership of the lifecycle of the TCP Socket to the WebSocket Client.</param>
+        public MessageWebsocketRx(
+            TcpClient? tcpClient, 
+            bool hasTransferTcpSocketLifeCycleOwnership = false)
         {
             _eventLoopScheduler = new EventLoopScheduler();
 
+            HasTransferSocketLifeCycleOwnership = hasTransferTcpSocketLifeCycleOwnership;
             TcpClient = tcpClient;
-            Subprotocols = null;
+
+            Subprotocols = default;
         }
 
         /// <summary>
         /// Constructor.
         /// </summary>
-        public MessageWebsocketRx() : this(null)
+        public MessageWebsocketRx() : this(null, true)
         {
             
         }
@@ -100,14 +106,14 @@ namespace WebsocketClientLite.PCL
         /// <param name="uri">Websocket Server Endpoint (URI).</param>
         /// <param name="hasClientPing">Set to true to have the client send ping messages to server.</param>
         /// <param name="clientPingInterval">Specific client ping interval. Default is 30 seconds.</param>
-        /// <param name="clientPingMessage">Specific client message. Default none. Will stay constant and can only be a <see langword="string"/>. For more advanced scenarios use <see cref="IWebsocketClientLite.PCL.ISender.SendPing"/></param>
+        /// <param name="clientPingMessage">Default none. Specific client message. Will stay constant and can only be a <see langword="string"/>. For more advanced scenarios use <see cref="IWebsocketClientLite.PCL.ISender.SendPing"/></param>
         /// <param name="handshaketimeout">Specific time out for client trying to connect (aka handshake). Default is 30 seconds.</param>
         /// <returns></returns>
-        public IObservable<IDataframe> WebsocketConnectObservable(
+        public IObservable<IDataframe?> WebsocketConnectObservable(
             Uri uri,
             bool hasClientPing = false,
             TimeSpan clientPingInterval = default,
-            string clientPingMessage = default,
+            string? clientPingMessage = default,
             TimeSpan handshaketimeout = default) =>
                 WebsocketConnectWithStatusObservable(uri, hasClientPing, clientPingInterval, clientPingMessage, handshaketimeout)
                     .Where(tuple => tuple.state is ConnectionStatus.DataframeReceived)
@@ -122,12 +128,12 @@ namespace WebsocketClientLite.PCL
         /// <param name="clientPingMessage">Specific client message. Default none. Will stay constant and can only be a <see langword="string"/>. For more advanced scenarios use <see cref="IWebsocketClientLite.PCL.ISender.SendPing"/></param>
         /// <param name="handshakeTimeout">Specific time out for client trying to connect (aka handshake). Default is 30 seconds.</param>
         /// <returns></returns>
-        public IObservable<(IDataframe dataframe, ConnectionStatus state)>
+        public IObservable<(IDataframe? dataframe, ConnectionStatus state)>
             WebsocketConnectWithStatusObservable (
                 Uri uri,
                 bool hasClientPing = false,
                 TimeSpan clientPingInterval = default,
-                string clientPingMessage = default,
+                string? clientPingMessage = default,
                 TimeSpan handshakeTimeout = default)
         {
             if (handshakeTimeout == default)
@@ -135,50 +141,45 @@ namespace WebsocketClientLite.PCL
                 handshakeTimeout = TimeSpan.FromSeconds(30);
             }
 
-            return Observable.Create<(IDataframe dataframe, ConnectionStatus state)>(obsTuple =>
-            {
-                return Observable.Create<ConnectionStatus>(obsStatus =>
+            return Observable.Create<(IDataframe? dataframe, ConnectionStatus state)>(obsTuple =>
+                Observable.Create<ConnectionStatus>(async obsStatus =>
                 {
                     obsStatus.OnNext(ConnectionStatus.Initialized);
 
-                    return Observable.Using(
-                        resourceFactoryAsync: cts => WebsocketServiceFactory.Create(
-                             () => IsSecureConnectionScheme(uri),
-                             ValidateServerCertificate,
-                             _eventLoopScheduler,
-                             obsStatus,
-                             this),
-                        observableFactoryAsync: (websocketServices, ct) =>
-                            Task.FromResult(Observable.Return(websocketServices)))
-                                .Select(websocketService => Observable
-                                    .FromAsync(ct => ConnectWebsocket(websocketService, ct)).Concat())
+                    return await Observable.FromAsync(ct => WebsocketServiceFactory.Create(
+                                () => IsSecureConnectionScheme(uri),
+                                ValidateServerCertificate,
+                                _eventLoopScheduler,
+                                obsStatus,
+                                this))
+                            .Select(ws => Observable.FromAsync(ct => ConnectWebsocket(ws, ct))
                                 .Concat()
                                 .Subscribe(
                                     dataframe => { obsTuple.OnNext((dataframe, ConnectionStatus.DataframeReceived)); },
                                     ex => { obsTuple.OnError(ex); },
-                                    () => { obsTuple.OnCompleted(); });
+                                    () => { obsTuple.OnCompleted(); }));
                 })
                 .Finally(() => IsConnected = false)
                 .Subscribe(
                     state =>{ obsTuple.OnNext((null, state));},
                     ex => { obsTuple.OnError(ex); },
-                    () => { obsTuple.OnCompleted(); });
-            });
+                    () => { obsTuple.OnCompleted(); })
+                );
 
-            async Task<IObservable<IDataframe>> ConnectWebsocket(WebsocketService ws, CancellationToken ct) =>
+            async Task<IObservable<IDataframe?>> ConnectWebsocket(WebsocketService ws, CancellationToken ct) =>
                 await ws.WebsocketConnectionHandler.ConnectWebsocket(
-                    uri,
-                    X509CertCollection,
-                    TlsProtocolType,
-                    InitializeSender,
-                    ct,
-                    hasClientPing,
-                    clientPingInterval,
-                    clientPingMessage,
-                    handshakeTimeout,
-                    Origin,
-                    Headers,
-                    Subprotocols);
+                                                    uri,
+                                                    X509CertCollection,
+                                                    TlsProtocolType,
+                                                    InitializeSender,
+                                                    ct,
+                                                    hasClientPing,
+                                                    clientPingInterval,
+                                                    clientPingMessage,
+                                                    handshakeTimeout,
+                                                    Origin,
+                                                    Headers,
+                                                    Subprotocols);
 
             void InitializeSender(ISender sender)
             {
@@ -231,7 +232,7 @@ namespace WebsocketClientLite.PCL
 
         public void Dispose()
         {
-
+            _eventLoopScheduler?.Dispose();
         }
     }
 }

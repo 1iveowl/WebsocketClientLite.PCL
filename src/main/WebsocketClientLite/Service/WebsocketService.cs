@@ -13,7 +13,7 @@ namespace WebsocketClientLite.PCL.Service
 
         public void Dispose()
         {
-            WebsocketConnectionHandler.Dispose();
+            WebsocketConnectionHandler?.Dispose();
         }
     }
 }
