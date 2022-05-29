@@ -2,25 +2,28 @@ name: Publish Package
 
 on:
   #push:
-  #  branches: 
+  #  branches:
   #    - 'master'
   pull_request:
-    branches: 
-      - 'release'
-    
+    branches:
+      - "releases/**"
+    paths:
+      - "GitVersion.yml"
+
 jobs:
-  build:
+  if_merged:
+    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     steps:
       - name: Setup .NET
         uses: actions/setup-dotnet@v2
         with:
-          dotnet-version: '6.x.x'
+          dotnet-version: "6.x.x"
 
       - name: Install gitversion
         uses: gittools/actions/gitversion/setup@v0.9.13
         with:
-          versionSpec: '5.x'
+          versionSpec: "5.x"
 
       - name: Checkout
         uses: actions/checkout@v2
@@ -52,11 +55,11 @@ jobs:
       - name: Prep GitHub Packages
         run: dotnet nuget add source --username 1iveowl --password ${{ secrets.GITHUB_TOKEN }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/1iveowl/index.json"
 
-      - name: Publish WebsocketClientLite to GitHub packages 
+      - name: Publish WebsocketClientLite to GitHub packages
         run: dotnet nuget push *.nupkg --api-key ${{ secrets.GITHUB_TOKEN }} --source "github"
         working-directory: src/main/WebsocketClientLite/bin/Release/
 
-      - name: Publish IWebsocketClientLite (interface) to GitHub packages 
+      - name: Publish IWebsocketClientLite (interface) to GitHub packages
         run: dotnet nuget push *.nupkg --api-key ${{ secrets.GITHUB_TOKEN }} --source "github"
         working-directory: src/interface/IWebsocketClientLite/bin/Release/
 
@@ -64,11 +67,11 @@ jobs:
         run: dotnet pack WebsocketClientLite.csproj -c Release --no-build /p:PackageID="WebsocketClientLite.PCL" /p:Version=${{ steps.gitversion.outputs.MajorMinorPatch }}
         working-directory: src/main/WebsocketClientLite/
 
-      - name: Publish WebsocketClientLite to Nuget.Org 
+      - name: Publish WebsocketClientLite to Nuget.Org
         run: dotnet nuget push WebsocketClientLite.PCL.*.nupkg --api-key ${{ secrets.NUGET_TOKEN }} --source https://api.nuget.org/v3/index.json
         working-directory: src/main/WebsocketClientLite/bin/Release/
 
-      - name: Publish IWebsocketClientLite (interface) to Nuget.Org 
+      - name: Publish IWebsocketClientLite (interface) to Nuget.Org
         run: dotnet nuget push *.nupkg --api-key ${{ secrets.NUGET_TOKEN }} --source https://api.nuget.org/v3/index.json
         working-directory: src/interface/IWebsocketClientLite/bin/Release/
 
