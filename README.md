@@ -24,7 +24,7 @@ Version 7 is more or less a rewrite of 90+ % of the original code.
 
 The version 7 NuGet package includes both a .NET Standard 2.0 package and a .NET Standard 2.1, with e .NET Standard 2.1 package having a few less dependencies.
 
-### Version 7.3
+### Introduced with version 7.3
 
 Version 7.3 introduces a new feature for managing TCP socket. In the case were an existing TCP socket is passed using the constructor, it is now possible to transfer ownership of the life-cycle of this TCP scoket. 
 
@@ -36,11 +36,11 @@ To transfer ownership of the life-cycle of the TCP Socket Client set the `hasTra
 new MessageWebsocketRx(tcpClient, hasTransferTcpSocketLifeCycleOwnership: true)
 ```
 
-### Now With Client Ping
+### Client Ping
 
-Version 7 introduces a *client ping* feature, which enabling the WebSocket client to send a ping message with a constant interval. 
+Version 7.0 introduced the *client ping* feature, which enabling the WebSocket client to send a ping message with a constant interval. 
 
-The `clientPingMessage` parameter is optional and the default value is null. The behavior for the null value is to not include any message, as part of the ping.  
+It is possible to include a message as part of the client ping. The `clientPingMessage` parameter is optional and the default value is null. The behavior for the null value is to not include any message, as part of the ping.  
 
 ```csharp
 var websocketConnectionObservable = 
