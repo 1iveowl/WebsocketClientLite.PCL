@@ -30,7 +30,7 @@ Version 7.3 introduces a new feature for managing TCP socket. In the case were a
 
 When transfering the life-cycle ownership of the socket connection, the TCP Socket client will be closed and disposed when the observable WebSocket is disposed.
 
-To transfer ownership of the life-cycle of the TCP Socket Client set the `hasTranferTcoSocketLifeCycleOwnership` to `true:
+To transfer ownership of the life-cycle of the TCP Socket Client set the `hasTranferTcoSocketLifeCycleOwnership` to `true`:
 
 ```csh
 new MessageWebsocketRx(tcpClient, hasTransferTcpSocketLifeCycleOwnership: true)
