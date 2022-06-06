@@ -61,7 +61,7 @@ Previously the library only accepted the `ws` and `wss` scheme. Now `http` and `
 
 To further extend supported schemes override the `IsSecureConnectionScheme` method of the `MessageWebSocketRx` class.
 
-The virtual method looks like this:
+The default virtual method looks like this:
 
 ```csharp
 public virtual bool IsSecureConnectionScheme(Uri uri) => 
