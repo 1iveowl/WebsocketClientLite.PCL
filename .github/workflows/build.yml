@@ -1,11 +1,11 @@
 name: Publish Package
 
 on:
-  push:
-    branches:
-      - "releases/**"
-    paths:
-    - "GitVersion.yml"
+  #push:
+  #  branches:
+  #    - "releases/**"
+  #  paths:
+  #  - "GitVersion.yml"
   pull_request:
     branches:
       - "releases/**"
