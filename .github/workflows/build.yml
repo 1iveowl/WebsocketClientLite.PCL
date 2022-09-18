@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - "releases/**"
+    paths:
+    - "GitVersion.yml"
   pull_request:
     branches:
       - "releases/**"
