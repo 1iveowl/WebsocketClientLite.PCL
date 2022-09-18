@@ -47,14 +47,14 @@ namespace WebsocketClientLite.PCL.Helper
             sb.Append($"\r\n");
 
             return Encoding.UTF8.GetBytes(sb.ToString());
-        }
 
-        private static string GenerateRandomWebSocketKey()
-        {
-            var webSocketKey = new byte[16];
-            var rnd = new Random();
-            rnd.NextBytes(webSocketKey);
-            return Convert.ToBase64String(webSocketKey);
+            static string GenerateRandomWebSocketKey()
+            {
+                var webSocketKey = new byte[16];
+                var rnd = new Random();
+                rnd.NextBytes(webSocketKey);
+                return Convert.ToBase64String(webSocketKey);
+            }
         }
     }
 }

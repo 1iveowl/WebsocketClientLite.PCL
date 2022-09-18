@@ -14,7 +14,7 @@ namespace WebsocketClientLite.PCL.Helper
 {
     internal static class DataframeParsing
     {
-        internal static async Task<Dataframe?> CreateDataframe(TcpConnectionService tcpConnection, CancellationToken ct)
+        internal static async Task<Dataframe?> CreateDataframe(this TcpConnectionService tcpConnection, CancellationToken ct)
         {
             var dataframe = new Dataframe(tcpConnection, ct);
 

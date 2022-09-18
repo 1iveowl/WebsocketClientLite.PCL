@@ -29,7 +29,7 @@ namespace WebsocketClientLite.PCL.Service
             {
                 var cts = new CancellationTokenSource();
 
-                var dataframe = await CreateDataframe(_tcpConnectionService, cts.Token)
+                var dataframe = await _tcpConnectionService.CreateDataframe(cts.Token)
                     .PayloadBitLenght()
                     .PayloadLenght()
                     .GetPayload();
@@ -80,7 +80,7 @@ namespace WebsocketClientLite.PCL.Service
 
                 async Task<Dataframe?> GetDataframe()
                 {
-                    var newDataframe = await CreateDataframe(_tcpConnectionService, cts.Token)
+                    var newDataframe = await _tcpConnectionService.CreateDataframe(cts.Token)
                         .PayloadBitLenght()
                         .PayloadLenght()
                         .GetPayload();
