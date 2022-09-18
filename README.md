@@ -18,9 +18,7 @@ Furthermore, this library utilize [ReactiveX](http://reactivex.io/) (aka Rx or R
 ## New in version 7.0
 At writing time, this library has been around for more than 6 years. The work represented in this repo was mainly initiated on a desire to learn and play around with the technologies involved. 
 
-Unsurprisingly, over the years learning and insights grew and eventually maintaining and looking back at the aging code-base became more and more painful for the ever more trained eye, hence I decided to redo most of it. 
-
-Version 7 is more or less a rewrite of 90+ % of the original code.
+Over the years new learning and new insights grew and eventually looking back at the aging code-base became more and more painful, and eventually I decided to redo most of it making version 7 a rewrite of the original code base.
 
 The version 7 NuGet package includes both a .NET Standard 2.0 package and a .NET Standard 2.1, with e .NET Standard 2.1 package having a few less dependencies.
 
