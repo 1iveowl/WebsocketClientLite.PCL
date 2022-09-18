@@ -1,9 +1,9 @@
 name: Publish Package
 
 on:
-  #push:
-  #  branches:
-  #    - 'master'
+  push:
+    branches:
+      - "releases/**"
   pull_request:
     branches:
       - "releases/**"
