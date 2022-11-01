@@ -154,6 +154,7 @@ namespace WebsocketClientLite.PCL
                                 this))
                             .Select(ws => Observable.FromAsync(ct => ConnectWebsocket(ws, ct))
                                 .Concat()
+                                .Finally(() => ws.Dispose())
                                 .Subscribe(
                                     dataframe => { obsTuple.OnNext((dataframe, ConnectionStatus.DataframeReceived)); },
                                     ex => { obsTuple.OnError(ex); },
