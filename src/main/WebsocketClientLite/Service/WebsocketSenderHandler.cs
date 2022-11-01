@@ -130,7 +130,7 @@ namespace WebsocketClientLite.PCL.Service
             Dataframe dataframe,
             CancellationToken ct) => 
                 await ComposeFrameAndSendAsync(
-                    dataframe.Binary,
+                    dataframe.Binary ?? new Byte[0],
                     OpcodeKind.Pong,
                     FragmentKind.None,
                     ct);
@@ -200,7 +200,7 @@ namespace WebsocketClientLite.PCL.Service
         {
             var frame = new byte[1] { DetermineFINBit(opcode, fragment) };
 
-            if (content is not null)
+            if (content is not null || (opcode == OpcodeKind.Pong && content is not null))
             {
                 var maskKey = CreateMaskKey();
                 frame = frame.Concat(CreatePayloadBytes(content.Length, isMasking: true))
@@ -212,7 +212,7 @@ namespace WebsocketClientLite.PCL.Service
             {
                 frame = frame
                     .Concat(new byte[1] { 0 })
-                    .ToArray();                
+                    .ToArray();
             }
 
             await SendFrameAsync(
