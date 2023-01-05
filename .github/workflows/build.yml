@@ -11,6 +11,8 @@ on:
       - "releases/**"
     paths:
       - "GitVersion.yml"
+  workflow_dispatch:
+        
 
 jobs:
   if_merged:
