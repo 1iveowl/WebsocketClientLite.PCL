@@ -12,6 +12,8 @@ on:
     paths:
       - "GitVersion.yml"
   workflow_dispatch:
+    paths:
+      - "GitVersion.yml"
         
 
 jobs:
