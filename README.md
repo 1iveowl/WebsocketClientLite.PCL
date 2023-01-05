@@ -18,15 +18,15 @@ Furthermore, this library utilize [ReactiveX](http://reactivex.io/) (aka Rx or R
 ## New in version 7.0
 At writing time, this library has been around for more than 6 years. The work represented in this repo was mainly initiated on a desire to learn and play around with the technologies involved. 
 
-Over the years new learning and new insights grew and eventually looking back at the aging code-base became more and more painful, and eventually I decided to redo most of it making version 7 a rewrite of the original code base.
+Over the years new learning and new insights grew and eventually, looking back at the aging code-base, it became more and more obvious that a more fundamental clean-up was overdue. Hence, I decided to redo most of what was, give birth to version 7 which more or less became a rewrite of the original code base.
 
 The version 7 NuGet package includes both a .NET Standard 2.0 package and a .NET Standard 2.1, with e .NET Standard 2.1 package having a few less dependencies.
 
 ### Introduced with version 7.3
 
-Version 7.3 introduces a new feature for managing TCP socket. In the case were an existing TCP socket is passed using the constructor, it is now possible to transfer ownership of the life-cycle of this TCP scoket. 
+Version 7.3 introduces a new feature for managing TCP socket. Specifically, in the case were an existing TCP socket can now be supplied and passed in using the constructor. 
 
-When transfering the life-cycle ownership of the socket connection, the TCP Socket client will be closed and disposed when the observable WebSocket is disposed.
+It is now also possible to transfer ownership of the life-cycle of this TCP socket to the library. When transferring the life-cycle ownership of the socket connection, the TCP Socket client will be closed and disposed of, when the observable WebSocket is being disposed.
 
 To transfer ownership of the life-cycle of the TCP Socket Client set the `hasTranferTcoSocketLifeCycleOwnership` to `true`:
 
@@ -36,9 +36,9 @@ new MessageWebsocketRx(tcpClient, hasTransferTcpSocketLifeCycleOwnership: true)
 
 ### Client Ping
 
-Version 7.0 introduced the *client ping* feature, which enabling the WebSocket client to send a ping message with a constant interval. 
+Version 7.0 introduced the *client ping* feature, which enabling the WebSocket client to send a ping message with a predefined constant interval. 
 
-It is possible to include a message as part of the client ping. The `clientPingMessage` parameter is optional and the default value is null. The behavior for the null value is to not include any message, as part of the ping.  
+It is also possible to include a message as part of the client ping. The `clientPingMessage` parameter is optional and the default value is `null`. When the value is `null` (default) the behavior is to not include any message as part of the ping.  
 
 ```csharp
 var websocketConnectionObservable = 
@@ -49,11 +49,9 @@ var websocketConnectionObservable =
         clientPingMessage: "my ping message"); // default no message when set to null.
 ```
 
-It is only possible to use a `string` in this method. For more advanced scenarios, the `ISender` has a `SendPing` method that can be used for full control when sending client pings as `string` or as `byte[]`.
+It is only possible to use a `string` as a message. For more advanced scenarios, the `ISender` has a `SendPing` method that can be used for full control when sending client pings as `string` or as `byte[]`.
 
 ## New in version 6.4
-
-Successfully tested with .NET 6.0.
 
 Previously the library only accepted the `ws` and `wss` scheme. Now `http` and `https` is also supported. 
 

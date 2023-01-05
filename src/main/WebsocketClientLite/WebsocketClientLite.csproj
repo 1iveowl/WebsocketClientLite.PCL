@@ -5,7 +5,7 @@
 	<Nullable>enable</Nullable>
     <AssemblyName>WebsocketClientLite</AssemblyName>
     <RootNamespace>WebsocketClientLite</RootNamespace>
-    <LangVersion>10.0</LangVersion>
+    <LangVersion>11.0</LangVersion>
     <PackageIcon>images\1iveowl-logo.png</PackageIcon>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <Version>7.2.0</Version>
@@ -37,7 +37,7 @@ New feature: hasTransferTcpSocketLifeCycleOwnership.</PackageReleaseNotes>
   <ItemGroup>
     <PackageReference Include="HttpMachine.PCL" Version="4.0.3" />
     <PackageReference Include="System.Reactive" Version="5.0.0" />
-    <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="6.0.0" Condition=" '$(TargetFramework)' == 'netstandard2.0' " />
+    <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="7.0.0" Condition=" '$(TargetFramework)' == 'netstandard2.0' " />
     <PackageReference Include="System.Memory" Version="4.5.5" Condition=" '$(TargetFramework)' == 'netstandard2.0' " />  
   </ItemGroup>
 

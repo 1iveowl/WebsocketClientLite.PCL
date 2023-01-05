@@ -25,8 +25,6 @@ namespace WebsocketClientLite.PCL.Factory
             IObserver<ConnectionStatus> observerConnectionStatus,
             MessageWebsocketRx messageWebSocketRx)
         {
-            var sendSem = new SemaphoreSlim(1, 1);
-
             var tcpConnectionHandler = new TcpConnectionService(
                 isSecureConnectionSchemeFunc: isSecureConnectionSchemeFunc,
                 validateServerCertificateFunc: validateServerCertificateFunc,
@@ -47,7 +45,6 @@ namespace WebsocketClientLite.PCL.Factory
                             new WebsocketSenderHandler(
                                 tcpConnectionHandler,
                                 ConnectionStatusAction,
-                                //WriteToStream
                                 (stream, bytes, cts) => RunOnScheduler(WriteToStream(stream, bytes, cts), eventLoopScheduler),
                                 messageWebSocketRx.ExcludeZeroApplicationDataInPong
                             )
@@ -75,16 +72,7 @@ namespace WebsocketClientLite.PCL.Factory
 
             async Task<bool> WriteToStream(Stream stream, byte[] byteArray, CancellationToken ct)
             {
-                try
-                {
-                    await sendSem.WaitAsync(ct);
-                    await stream.WriteAsync(byteArray, 0, byteArray.Length, ct).ConfigureAwait(false);
-                }
-                finally
-                {
-                    sendSem.Release();
-                }
-                
+                await stream.WriteAsync(byteArray, 0, byteArray.Length, ct).ConfigureAwait(false);
                 await stream.FlushAsync().ConfigureAwait(false);
 
                 return true;
@@ -108,7 +96,7 @@ namespace WebsocketClientLite.PCL.Factory
                     .ConnectAsync(uri.Host, uri.Port)
                     .ConfigureAwait(false);
 
-            // Running sends and/or writes on the Event Loop Scheduler serializes them.
+            // Running sends and/or writes on the Event Loop Scheduler serializes them one-by-one.
             async Task<T> RunOnScheduler<T>(Task<T> task, IScheduler scheduler) 
                 => await task.ToObservable().ObserveOn(scheduler);
         }
