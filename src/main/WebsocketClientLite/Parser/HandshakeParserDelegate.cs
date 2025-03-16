@@ -1,49 +1,41 @@
 ﻿using HttpMachine;
 using IHttpMachine;
 using System;
-using WebsocketClientLite.PCL.CustomException;
-using WebsocketClientLite.PCL.Model;
+using WebsocketClientLite.CustomException;
+using WebsocketClientLite.Model;
 
-namespace WebsocketClientLite.PCL.Parser
+namespace WebsocketClientLite.Parser;
+
+internal class HandshakeParserDelegate(
+    IObserver<(
+            HandshakeStateKind handshakeState,
+            WebsocketClientLiteException? ex)> observerHandshakeParserState) : HttpParserDelegate
 {
-    internal class HandshakeParserDelegate : HttpParserDelegate
+    public override void OnMessageBegin(IHttpCombinedParser combinedParser)
     {
-        private readonly IObserver<(HandshakeStateKind handshakeState, WebsocketClientLiteException? ex)> _observerHandshakeParserState;
-       
-        public HandshakeParserDelegate(
-            IObserver<(
-                HandshakeStateKind handshakeState, 
-                WebsocketClientLiteException? ex)> observerHandshakeParserState)
+        base.OnMessageBegin(combinedParser);
+    }
+
+    public override void OnHeadersEnd(IHttpCombinedParser combinedParser)
+    {
+        base.OnHeadersEnd(combinedParser);
+    }
+
+    public override void OnMessageEnd(IHttpCombinedParser combinedParser)
+    {
+        base.OnMessageEnd(combinedParser);
+
+        if (HttpRequestResponse.IsEndOfMessage)
         {
-            _observerHandshakeParserState = observerHandshakeParserState;
+            observerHandshakeParserState
+                .OnNext((HandshakeStateKind.HandshakeCompletedSuccessfully, null));
         }
-
-        public override void OnMessageBegin(IHttpCombinedParser combinedParser)
+        else
         {
-            base.OnMessageBegin(combinedParser);
-        }
-
-        public override void OnHeadersEnd(IHttpCombinedParser combinedParser)
-        {
-            base.OnHeadersEnd(combinedParser);
-        }
-
-        public override void OnMessageEnd(IHttpCombinedParser combinedParser)
-        {
-            base.OnMessageEnd(combinedParser);
-
-            if (HttpRequestResponse.IsEndOfMessage)
-            {
-                _observerHandshakeParserState
-                    .OnNext((HandshakeStateKind.HandshakeCompletedSuccessfully, null));
-            }
-            else
-            {
-                _observerHandshakeParserState
-                    .OnNext((HandshakeStateKind.HandshakeFailed, null));
-                _observerHandshakeParserState.OnError(new WebsocketClientLiteException("Unable to complete handshake"));
-                return;
-            }
+            observerHandshakeParserState
+                .OnNext((HandshakeStateKind.HandshakeFailed, null));
+            observerHandshakeParserState.OnError(new WebsocketClientLiteException("Unable to complete handshake"));
+            return;
         }
     }
 }

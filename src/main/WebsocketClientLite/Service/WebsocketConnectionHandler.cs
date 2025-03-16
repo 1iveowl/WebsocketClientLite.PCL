@@ -8,208 +8,211 @@ using System.Reactive.Linq;
 using System.Reactive.Threading.Tasks;
 using System.Security.Cryptography.X509Certificates;
 using System.Security.Authentication;
-using IWebsocketClientLite.PCL;
-using WebsocketClientLite.PCL.CustomException;
-using WebsocketClientLite.PCL.Model;
-using WebsocketClientLite.PCL.Extension;
+using IWebsocketClientLite;
+using WebsocketClientLite.Extension;
+using WebsocketClientLite.Model;
+using WebsocketClientLite.CustomException;
 
-namespace WebsocketClientLite.PCL.Service
+namespace WebsocketClientLite.Service;
+
+internal class WebsocketConnectionHandler : IDisposable
 {
-    internal class WebsocketConnectionHandler : IDisposable
+    private readonly TcpConnectionService _tcpConnectionService;
+    private readonly WebsocketParserHandler _websocketParserHandler;
+    private readonly Action<ConnectionStatus, Exception?> _connectionStatusAction;
+    private readonly Func<Stream, Action<ConnectionStatus, Exception?>, WebsocketSenderHandler> _createWebsocketSenderFunc;
+
+    private IDisposable? _clientPingDisposable;
+
+    internal WebsocketConnectionHandler(
+        TcpConnectionService tcpConnectionService,
+        WebsocketParserHandler websocketParserHandler,
+        Action<ConnectionStatus, Exception?> connectionStatusAction,
+        Func<Stream, Action<ConnectionStatus, Exception?>, WebsocketSenderHandler> createWebsocketSenderFunc)
     {
-        private readonly TcpConnectionService _tcpConnectionService;
-        private readonly WebsocketParserHandler _websocketParserHandler;
-        private readonly Action<ConnectionStatus, Exception?> _connectionStatusAction;
-        private readonly Func<Stream, Action<ConnectionStatus, Exception?>, WebsocketSenderHandler> _createWebsocketSenderFunc;
+        _tcpConnectionService = tcpConnectionService;            
+        _websocketParserHandler = websocketParserHandler;
+        _connectionStatusAction = connectionStatusAction;
+        _createWebsocketSenderFunc = createWebsocketSenderFunc;
 
-        private IDisposable? _clientPingDisposable;
+        _clientPingDisposable = default;
+    }
 
-        internal WebsocketConnectionHandler(
-            TcpConnectionService tcpConnectionService,
-            WebsocketParserHandler websocketParserHandler,
-            Action<ConnectionStatus, Exception?> connectionStatusAction,
-            Func<Stream, Action<ConnectionStatus, Exception?>, WebsocketSenderHandler> createWebsocketSenderFunc)
+    internal async Task<IObservable<IDataframe?>>
+            ConnectWebsocket(
+                Uri uri,
+                X509CertificateCollection? x509CertificateCollection,
+                SslProtocols tlsProtocolType,
+                Action<ISender> setSenderAction,
+                CancellationToken ct,
+                bool hasClientPing,
+                TimeSpan clientPingTimeSpan,
+                string? clientPingMessage,
+                TimeSpan timeout,
+                string? origin,
+                IDictionary<string, string>? headers,
+                IEnumerable<string>? subprotocols,
+                CancellationToken cancellationToken = default)
+    {
+        if (hasClientPing && clientPingTimeSpan == default)
         {
-            _tcpConnectionService = tcpConnectionService;            
-            _websocketParserHandler = websocketParserHandler;
-            _connectionStatusAction = connectionStatusAction;
-            _createWebsocketSenderFunc = createWebsocketSenderFunc;
-
-            _clientPingDisposable = default;
+            clientPingTimeSpan = TimeSpan.FromSeconds(30);
         }
 
-        internal async Task<IObservable<IDataframe?>>
-                ConnectWebsocket(
-                    Uri uri,
-                    X509CertificateCollection? x509CertificateCollection,
-                    SslProtocols tlsProtocolType,
-                    Action<ISender> setSenderAction,
-                    CancellationToken ct,
-                    bool hasClientPing,
-                    TimeSpan clientPingTimeSpan,
-                    string? clientPingMessage,
-                    TimeSpan timeout,
-                    string? origin,
-                    IDictionary<string, string>? headers,
-                    IEnumerable<string>? subprotocols)
+        if (tlsProtocolType is SslProtocols.None)
         {
-            if (hasClientPing && clientPingTimeSpan == default)
-            {
-                clientPingTimeSpan = TimeSpan.FromSeconds(30);
-            }
+            tlsProtocolType = SslProtocols.Tls12;
+        }
 
-            if (tlsProtocolType is SslProtocols.None)
-            {
-                tlsProtocolType = SslProtocols.Tls12;
-            }
+        await _tcpConnectionService.ConnectTcpStream(
+            uri,
+            x509CertificateCollection,
+            tlsProtocolType,
+            timeout);
 
-            await _tcpConnectionService.ConnectTcpStream(
-                uri,
-                x509CertificateCollection,
-                tlsProtocolType,
-                timeout);
+        var sender = _createWebsocketSenderFunc(
+            _tcpConnectionService.ConnectionStream,
+            _connectionStatusAction);
 
-            var sender = _createWebsocketSenderFunc(
-                _tcpConnectionService.ConnectionStream,
+        var handshakeHandler = new HandshakeHandler(
+                _tcpConnectionService,
+                _websocketParserHandler,
                 _connectionStatusAction);
 
-            var handshakeHandler = new HandshakeHandler(
-                    _tcpConnectionService,
-                    _websocketParserHandler,
-                    _connectionStatusAction);
+        var (handshakeState, handshakeException) = 
+            await handshakeHandler.Handshake(uri, sender, timeout, ct, origin, headers, subprotocols);
 
-            var (handshakeState, handshakeException) = 
-                await handshakeHandler.Handshake(uri, sender, timeout, ct, origin, headers, subprotocols);
+        if(handshakeException is not null)
+        {
+            throw handshakeException;
+        }
+        else if (handshakeState is HandshakeStateKind.HandshakeCompletedSuccessfully)
+        {
+            _connectionStatusAction(ConnectionStatus.HandshakeCompletedSuccessfully, null);              
+        }
+        else
+        {
+            throw new WebsocketClientLiteException($"Handshake failed due to unknown error: {handshakeState}");
+        }
 
-            if(handshakeException is not null)
+        setSenderAction(sender);
+
+        if (hasClientPing)
+        {
+            _clientPingDisposable = SendClientPing(clientPingMessage)
+                .Subscribe(
+                _ => { },
+                ex => 
+                { 
+                    throw new WebsocketClientLiteException("Sending client ping failed.", ex); 
+                },
+                () => { });
+        }
+
+        _connectionStatusAction(ConnectionStatus.WebsocketConnected, null);
+
+        return Observable.Create<IDataframe?>(dataframeObserver =>
+            // Create a more direct observable that handles frames and clean-up
+            _websocketParserHandler.DataframeObservable()
+                .SelectMany(async dataframe =>
+                    // Process control frames and return data frames
+                    await IncomingControlFrameHandler(dataframe, dataframeObserver, cancellationToken))
+                .Where(dataframe => dataframe is not null)
+                .Subscribe(dataframeObserver))
+        .Repeat()
+        .FinallyAsync(async () =>
+        {
+            await DisconnectWebsocket(sender);
+        });
+
+        IObservable<Unit> SendClientPing(string? message) =>
+            Observable.Interval(clientPingTimeSpan)
+            .Select(_ => Observable.FromAsync(ct => sender.SendPing(message)))
+            .Concat();
+
+        async Task<Dataframe?> IncomingControlFrameHandler(
+            Dataframe? dataframe, 
+            IObserver<Dataframe?> obs, 
+            CancellationToken ct)
+        {
+            return dataframe?.Opcode switch
             {
-                throw handshakeException;
+                // Data frames that should be passed through
+                OpcodeKind.Continuation or
+                OpcodeKind.Text or
+                OpcodeKind.Binary => dataframe,
+
+                // Control frames that require special handling
+                OpcodeKind.Ping => await HandlePing(),
+                OpcodeKind.Pong => HandlePong(),
+                OpcodeKind.Close => HandleClose(),
+
+                // Reserved opcodes - throw not implemented
+                OpcodeKind.Reserved1 or
+                OpcodeKind.Reserved2 or
+                OpcodeKind.Reserved3 or
+                OpcodeKind.Reserved4 or
+                OpcodeKind.Reserved5 or
+                OpcodeKind.Reserved1a or
+                OpcodeKind.Reserved2b or
+                OpcodeKind.Reserved3c or
+                OpcodeKind.Reserved4d or
+                OpcodeKind.Reserved5e => throw new NotImplementedException($"Opcode not implemented: {dataframe.Opcode}"),
+
+                // Default case (null or unhandled)
+                _ => throw new ArgumentOutOfRangeException($"{dataframe?.Opcode}")
+            };
+
+            // Local functions to handle specific control frames
+            async Task<Dataframe?> HandlePing()
+            {
+                _connectionStatusAction(ConnectionStatus.PingReceived, null);
+                await sender.SendPong(dataframe!, ct);
+                return null;
             }
-            else if (handshakeState is HandshakeStateKind.HandshakeCompletedSuccessfully)
+
+            Dataframe? HandlePong()
             {
-                _connectionStatusAction(ConnectionStatus.HandshakeCompletedSuccessfully, null);              
-            }
-            else
-            {
-                throw new WebsocketClientLiteException($"Handshake failed due to unknown error: {handshakeState}");
+                _connectionStatusAction(ConnectionStatus.PongReceived, null);
+                return null;
             }
 
-            setSenderAction(sender);
-
-            if (hasClientPing)
+            Dataframe? HandleClose()
             {
-                _clientPingDisposable = SendClientPing(clientPingMessage)
-                    .Subscribe(
-                    _ => { },
-                    ex => 
-                    { 
-                        throw new WebsocketClientLiteException("Sending client ping failed.", ex); 
-                    },
-                    () => { });
-            }
-
-            _connectionStatusAction(ConnectionStatus.WebsocketConnected, null);
-
-            return Observable.Create<IDataframe?>(obs =>
-            {
-
-                var disposable = Observable.Defer(
-                    () => _websocketParserHandler.DataframeObservable()
-                    .Select(dataframe => Observable.FromAsync(ct => IncomingControlFrameHandler(dataframe, obs, ct)))
-                    .Concat()
-                    .Repeat()
-                    .Where(dataframe => dataframe is not null)
-                    .Do(dataframe => obs.OnNext(dataframe))
-                )
-                .FinallyAsync(async () =>
-                {
-                    await DisconnectWebsocket(sender);
-                })
-                .Subscribe();
-
-                return disposable;
-
-            })
-            .Repeat()
-            .FinallyAsync(async () =>
-            {
-                await DisconnectWebsocket(sender);
-            });
-
-            IObservable<Unit> SendClientPing(string? message) =>
-                Observable.Interval(clientPingTimeSpan)
-                .Select(_ => Observable.FromAsync(ct => sender.SendPing(message)))
-                .Concat();
-
-            async Task<Dataframe?> IncomingControlFrameHandler(
-                Dataframe? dataframe, 
-                IObserver<Dataframe?> obs, 
-                CancellationToken ct)
-            {
-                switch (dataframe?.Opcode)
-                {
-                    case OpcodeKind.Continuation:
-                    case OpcodeKind.Text:
-                    case OpcodeKind.Binary:
-                        return dataframe;
-                    case OpcodeKind.Ping:
-                        _connectionStatusAction(ConnectionStatus.PingReceived, null);
-                        await sender.SendPong(dataframe, ct);
-                        break;
-                    case OpcodeKind.Pong:
-                        _connectionStatusAction(ConnectionStatus.PongReceived, null);
-                        break;
-                    case OpcodeKind.Close:
-                        _connectionStatusAction(ConnectionStatus.Close, null);
-                        obs.OnCompleted();
-                        break;
-                    case OpcodeKind.Reserved1:
-                    case OpcodeKind.Reserved2:
-                    case OpcodeKind.Reserved3:
-                    case OpcodeKind.Reserved4:
-                    case OpcodeKind.Reserved5:
-                    case OpcodeKind.Reserved1a:
-                    case OpcodeKind.Reserved2b:
-                    case OpcodeKind.Reserved3c:
-                    case OpcodeKind.Reserved4d:
-                    case OpcodeKind.Reserved5e:
-                        throw new NotImplementedException($"Opcode not implemented: {dataframe.Opcode}");
-                    default:
-                        throw new ArgumentOutOfRangeException($"{dataframe?.Opcode}");
-                }
-
+                _connectionStatusAction(ConnectionStatus.Close, null);
+                obs.OnCompleted();
                 return null;
             }
         }
+    }
 
-        internal async Task DisconnectWebsocket(
-            WebsocketSenderHandler sender)
+    internal async Task DisconnectWebsocket(
+        WebsocketSenderHandler sender)
+    {
+        try
         {
-            try
-            {
-                await sender.SendCloseHandshakeAsync(StatusCodes.GoingAway)
-                    .ToObservable()
-                    .Timeout(TimeSpan.FromSeconds(5));
-            }
-            catch (Exception ex)
-            {
-                throw new WebsocketClientLiteException("Unable to disconnect gracefully", ex);
-            }
-            finally
-            {
-                _connectionStatusAction(ConnectionStatus.Disconnected, null);
-            }
+            await sender.SendCloseHandshakeAsync(StatusCodes.GoingAway)
+                .ToObservable()
+                .Timeout(TimeSpan.FromSeconds(5));
+        }
+        catch (Exception ex)
+        {
+            throw new WebsocketClientLiteException("Unable to disconnect gracefully", ex);
+        }
+        finally
+        {
+            _connectionStatusAction(ConnectionStatus.Disconnected, null);
+        }
+    }
+
+    public void Dispose()
+    {
+        if(_clientPingDisposable is not null)
+        {
+            _clientPingDisposable?.Dispose();
         }
 
-        public void Dispose()
-        {
-            if(_clientPingDisposable is not null)
-            {
-                _clientPingDisposable?.Dispose();
-            }
-
-            _websocketParserHandler?.Dispose();
-            _tcpConnectionService?.Dispose();
-        }
+        _websocketParserHandler?.Dispose();
+        _tcpConnectionService?.Dispose();
     }
 }

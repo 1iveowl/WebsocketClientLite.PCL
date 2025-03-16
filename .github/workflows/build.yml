@@ -12,33 +12,40 @@ on:
     paths:
       - "GitVersion.yml"
   workflow_dispatch:
-    paths:
-      - "GitVersion.yml"
-        
 
 jobs:
-  if_merged:
-    # if: github.event.pull_request.merged == true
+  build_and_publish:
     runs-on: ubuntu-latest
     steps:
       - name: Setup .NET
-        uses: actions/setup-dotnet@v2
+        uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: "7.x.x"
+          dotnet-version: |
+            6.0.x
+            7.0.x
+            8.0.x
+            9.0.x
 
       - name: Install gitversion
-        uses: gittools/actions/gitversion/setup@v0.9.15
+        uses: gittools/actions/gitversion/setup@v0.11.0
         with:
           versionSpec: "5.x"
 
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: Determin version
+      - uses: actions/cache@v4
+        with:
+          path: ~/.nuget/packages
+          key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-nuget-
+
+      - name: Determine version
         id: gitversion
-        uses: gittools/actions/gitversion/execute@v0.9.15
+        uses: gittools/actions/gitversion/execute@v0.11.0
         with:
           useConfigFile: true
 
@@ -59,14 +66,14 @@ jobs:
         working-directory: src/interface/IWebsocketClientLite/
 
       - name: Prep GitHub Packages
-        run: dotnet nuget add source --username 1iveowl --password ${{ secrets.GITHUB_TOKEN }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/1iveowl/index.json"
+        run: dotnet nuget add source --username ${{ github.repository_owner }} --password ${{ secrets.GITHUB_TOKEN }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json"
 
       - name: Publish WebsocketClientLite to GitHub packages
-        run: dotnet nuget push *.nupkg --api-key ${{ secrets.GITHUB_TOKEN }} --source "github"
+        run: dotnet nuget push "*.nupkg" --api-key ${{ secrets.GITHUB_TOKEN }} --source "github" --skip-duplicate
         working-directory: src/main/WebsocketClientLite/bin/Release/
 
       - name: Publish IWebsocketClientLite (interface) to GitHub packages
-        run: dotnet nuget push *.nupkg --api-key ${{ secrets.GITHUB_TOKEN }} --source "github"
+        run: dotnet nuget push "*.nupkg" --api-key ${{ secrets.GITHUB_TOKEN }} --source "github" --skip-duplicate
         working-directory: src/interface/IWebsocketClientLite/bin/Release/
 
       - name: Pack WebsocketClientLite for NuGet.org
@@ -74,23 +81,24 @@ jobs:
         working-directory: src/main/WebsocketClientLite/
 
       - name: Publish WebsocketClientLite to Nuget.Org
-        run: dotnet nuget push WebsocketClientLite.PCL.*.nupkg --api-key ${{ secrets.NUGET_TOKEN }} --source https://api.nuget.org/v3/index.json
+        run: dotnet nuget push WebsocketClientLite.PCL.*.nupkg --api-key ${{ secrets.NUGET_TOKEN }} --source https://api.nuget.org/v3/index.json --skip-duplicate
         working-directory: src/main/WebsocketClientLite/bin/Release/
 
       - name: Publish IWebsocketClientLite (interface) to Nuget.Org
-        run: dotnet nuget push *.nupkg --api-key ${{ secrets.NUGET_TOKEN }} --source https://api.nuget.org/v3/index.json
+        run: dotnet nuget push "*.nupkg" --api-key ${{ secrets.NUGET_TOKEN }} --source https://api.nuget.org/v3/index.json --skip-duplicate
         working-directory: src/interface/IWebsocketClientLite/bin/Release/
 
       - name: Create Release
         id: create_release
-        uses: actions/create-release@v1
+        uses: actions/create-release@v1 # Note: This is deprecated but retained for compatibility
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: ${{ steps.gitversion.outputs.AssemblySemVer }}
           release_name: Release ${{ steps.gitversion.outputs.AssemblySemVer }}
           body: |
             Changes in this Release
+            - Multi-framework targeting (.NET Standard 2.0, .NET Standard 2.1, .NET 6+)
             - Split interface package from implementation package
             - DevOps improvements
           draft: true

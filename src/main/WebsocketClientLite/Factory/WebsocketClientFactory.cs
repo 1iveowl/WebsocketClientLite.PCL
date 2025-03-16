@@ -10,21 +10,20 @@ using System.Threading;
 using System.Threading.Tasks;
 using IWebsocketClientLite;
 using WebsocketClientLite.CustomException;
-using WebsocketClientLite.PCL;
 using WebsocketClientLite.Service;
 
 namespace WebsocketClientLite.Factory;
 
-internal class WebsocketServiceFactory
+internal class WebsocketClientFactory
 {
-    private WebsocketServiceFactory() { }
+    private WebsocketClientFactory() { }
 
     internal static async Task<WebsocketService> Create(
         Func<bool> isSecureConnectionSchemeFunc,
         Func<object, X509Certificate, X509Chain, SslPolicyErrors, bool> validateServerCertificateFunc,
         EventLoopScheduler eventLoopScheduler,
         IObserver<ConnectionStatus> observerConnectionStatus,
-        MessageWebsocketRx messageWebSocketRx)
+        ClientWebSocketRx webSocketClientRx)
     {
         var tcpConnectionHandler = new TcpConnectionService(
             isSecureConnectionSchemeFunc: isSecureConnectionSchemeFunc,
@@ -33,8 +32,8 @@ internal class WebsocketServiceFactory
             ReadOneByteFromStream,
             //readOneByteFunc: (stream, bytes, cts) => RunOnScheduler(ReadOneByteFromStream(stream, bytes, cts), eventLoopScheduler),
             connectionStatusAction: ConnectionStatusAction,
-            messageWebSocketRx.HasTransferSocketLifeCycleOwnership,
-            tcpClient: messageWebSocketRx.TcpClient);
+            webSocketClientRx.HasTransferSocketLifeCycleOwnership,
+            tcpClient: webSocketClientRx.TcpClient);
 
         var websocketServices = new WebsocketService(
             new WebsocketConnectionHandler(
@@ -47,7 +46,7 @@ internal class WebsocketServiceFactory
                             tcpConnectionHandler,
                             ConnectionStatusAction,
                             (stream, bytes, cts) => RunOnScheduler(WriteToStream(stream, bytes, cts), eventLoopScheduler),
-                            messageWebSocketRx.ExcludeZeroApplicationDataInPong
+                            webSocketClientRx.ExcludeZeroApplicationDataInPong
                         )
                     )                        
             );

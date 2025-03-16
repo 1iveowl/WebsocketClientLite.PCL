@@ -1,21 +1,21 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;netstandard2.1</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;netstandard2.1;net6.0;net8.0;net9.0</TargetFrameworks>
 	<Nullable>enable</Nullable>
     <AssemblyName>WebsocketClientLite</AssemblyName>
     <RootNamespace>WebsocketClientLite</RootNamespace>
-    <LangVersion>11.0</LangVersion>
+    <LangVersion>13.0</LangVersion>
     <PackageIcon>images\1iveowl-logo.png</PackageIcon>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <Version>7.2.0</Version>
+    <Version>8.0</Version>
     <Authors>Jasper Hedegaard Bojsen</Authors>
     <Copyright>1iveowl Development 2022</Copyright>
     <PackageProjectUrl>https://github.com/1iveowl/WebsocketClientLite.PCL</PackageProjectUrl>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <RepositoryUrl>https://github.com/1iveowl/WebsocketClientLite.PCL</RepositoryUrl>
-    <AssemblyVersion>7.2.0</AssemblyVersion>
-    <FileVersion>7.2.0</FileVersion>
+    <AssemblyVersion>8.0</AssemblyVersion>
+    <FileVersion>8.0</FileVersion>
     <Description>A simple and light WebSocket client.
 Can be set to ignore SSL/TLS server certificate issues (use with care!).
 Easily and effectively observe incoming message using Reactive Extensions (Rx)</Description>
@@ -36,9 +36,9 @@ New feature: hasTransferTcpSocketLifeCycleOwnership.</PackageReleaseNotes>
 
   <ItemGroup>
     <PackageReference Include="HttpMachine.PCL" Version="4.0.3" />
-    <PackageReference Include="System.Reactive" Version="5.0.0" />
-    <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="7.0.0" Condition=" '$(TargetFramework)' == 'netstandard2.0' " />
-    <PackageReference Include="System.Memory" Version="4.5.5" Condition=" '$(TargetFramework)' == 'netstandard2.0' " />  
+    <PackageReference Include="System.Reactive" Version="6.0.1" />
+    <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="9.0.3" Condition=" '$(TargetFramework)' == 'netstandard2.0' " />
+    <PackageReference Include="System.Memory" Version="4.6.0" Condition=" '$(TargetFramework)' == 'netstandard2.0' " />  
   </ItemGroup>
 
   <ItemGroup>

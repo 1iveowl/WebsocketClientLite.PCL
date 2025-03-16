@@ -5,17 +5,16 @@ using System.Reactive.Linq;
 using System.Security.Authentication;
 using System.Threading;
 using System.Threading.Tasks;
-using IWebsocketClientLite.PCL;
-using WebsocketClientLite.PCL;
+using IWebsocketClientLite;
+using WebsocketClientLite;
 
 class Program
 {
-    private static Func<string, string> SocketIOMessageFormatting;
+    private static Func<string, string> _socketIOMessageFormattingFunc;
 
-    const bool IsSocketIOTest = false;
-    const string AllowedChars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+    const string _allowedChars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 
-    const string WebsocketTestServerUrl = "wss://ws.postman-echo.com/raw";
+    const string _websocketTestServerUrl = "wss://ws.postman-echo.com/raw";
     //const string WebsocketTestServerUrl = "wss://ws.ifelse.io";
     //const string WebsocketTestServerUrl = "http://ubuntusrv2.my.home:3000/socket.io/?EIO=4&transport=websocket";
     //const string WebsocketTestServerUrl = "http://ubuntusrv2.my.home:3030/socket.io/?EIO=4&transport=websocket";
@@ -24,7 +23,7 @@ class Program
 
     static async Task Main()
     {
-        var outerCancellationSource = new CancellationTokenSource();
+        CancellationTokenSource outerCancellationSource = new();
 
         await StartWebSocketAsyncWithRetry(outerCancellationSource);
 
@@ -33,24 +32,25 @@ class Program
         outerCancellationSource.Cancel();
     }
 
-    private static async Task StartWebSocketAsyncWithRetry(CancellationTokenSource outerCancellationTokenSource)
+    private static async Task StartWebSocketAsyncWithRetry(
+        CancellationTokenSource outerCancellationTokenSource,
+        bool isSocketIOTest = false)
     {
-        if (IsSocketIOTest)
+        if (isSocketIOTest)
         {
-            SocketIOMessageFormatting = (msg) => $"42[\"message\", \"{msg}\"]";            
+            _socketIOMessageFormattingFunc = (msg) => $"42[\"message\", \"{msg}\"]";
         }
         else
         {
-            SocketIOMessageFormatting = (msg) => msg;
+            _socketIOMessageFormattingFunc = (msg) => msg;
         }
 
-        var tcpClient = new TcpClient { LingerState = new LingerOption(true, 0) };
+        TcpClient tcpClient = new() { LingerState = new LingerOption(true, 0) };
 
-        //var tcpClient = new TcpClient();
 
         while (!outerCancellationTokenSource.IsCancellationRequested)
         {
-            var innerCancellationSource = new CancellationTokenSource();
+            CancellationTokenSource innerCancellationSource = new();
 
             await StartWebSocketAsync(tcpClient, innerCancellationSource);
 
@@ -69,24 +69,34 @@ class Program
         CancellationTokenSource innerCancellationTokenSource)
     {
         //var client = new MessageWebsocketRx(tcpClient)
-        var client = new MessageWebsocketRx(tcpClient, hasTransferTcpSocketLifeCycleOwnership: false)
+        var client = new ClientWebSocketRx
         {
+            TcpClient = tcpClient,
+            HasTransferSocketLifeCycleOwnership = false,
             IgnoreServerCertificateErrors = true,
             Headers = new Dictionary<string, string> { { "Pragma", "no-cache" }, { "Cache-Control", "no-cache" } },
-            TlsProtocolType = SslProtocols.Tls12,
+            TlsProtocolType = SslProtocols.Tls12, 
             //ExcludeZeroApplicationDataInPong = true,
         };
 
         Console.WriteLine("Start");
 
-        var websocketConnectionObservable = 
+        IDisposable isConnectedDisposable = client.IsConnectedObservable
+            .Do(isConnected =>
+            {
+                Console.WriteLine($"*** Is connected: {isConnected} ***");
+            })
+            .Subscribe();
+
+        IObservable<(IDataframe dataframe, ConnectionStatus state)> websocketConnectionObservable = 
             client.WebsocketConnectWithStatusObservable(
-               uri: new Uri(WebsocketTestServerUrl), 
+               uri: new Uri(_websocketTestServerUrl), 
                hasClientPing: true,
                clientPingInterval: TimeSpan.FromSeconds(10),
-               clientPingMessage: "ping message");
+               clientPingMessage: "ping message",
+               cancellationToken: innerCancellationTokenSource.Token);
 
-        var disposableConnectionStatus = websocketConnectionObservable
+        IDisposable disposableConnectionStatus = websocketConnectionObservable
             .Do(tuple =>
             {
                 Console.ForegroundColor = (int)tuple.state switch
@@ -133,102 +143,112 @@ class Program
 
         await Task.Delay(TimeSpan.FromSeconds(200));
 
-        async Task SendTest1()
+        async Task SendTest1(bool isSocketIOTest = false)
         {
-            var sender = client.GetSender();
+            var sender = client.Sender;
 
-            if(IsSocketIOTest)
+            if (sender is null)
+            {
+                Console.WriteLine("Sender is null.");
+                return;
+            }
+
+            if(isSocketIOTest)
             {
                 await sender.SendText("40");
             }
 
             await Task.Delay(TimeSpan.FromSeconds(4));
 
-            await sender.SendText(SocketIOMessageFormatting("Test Single Frame 1"));
+            await sender.SendText(_socketIOMessageFormattingFunc("Test Single Frame 1"));
 
             await Task.Delay(TimeSpan.FromSeconds(5));
 
-            await sender.SendText(SocketIOMessageFormatting("Test Single Frame 2"));
+            await sender.SendText(_socketIOMessageFormattingFunc("Test Single Frame 2"));
 
-            await sender.SendText(SocketIOMessageFormatting("Test Single Frame again"));
+            await sender.SendText(_socketIOMessageFormattingFunc("Test Single Frame again"));
 
             await Task.Delay(TimeSpan.FromSeconds(5));
 
-            await sender.SendText(SocketIOMessageFormatting(TestString(1026, 1026)));
+            await sender.SendText(_socketIOMessageFormattingFunc(TestString(1026, 1026)));
 
             await sender.SendText(new[] 
             {
-                SocketIOMessageFormatting("Test "),
-                SocketIOMessageFormatting("multiple "),
-                SocketIOMessageFormatting("frames "),
-                SocketIOMessageFormatting("1 "),
-                SocketIOMessageFormatting("2 "),
-                SocketIOMessageFormatting("3 "),
-                SocketIOMessageFormatting("4 "),
-                SocketIOMessageFormatting("5 "),
-                SocketIOMessageFormatting("6 "),
-                SocketIOMessageFormatting("7 "),
-                SocketIOMessageFormatting("8 "),
-                SocketIOMessageFormatting("9.")});
+                _socketIOMessageFormattingFunc("Test "),
+                _socketIOMessageFormattingFunc("multiple "),
+                _socketIOMessageFormattingFunc("frames "),
+                _socketIOMessageFormattingFunc("1 "),
+                _socketIOMessageFormattingFunc("2 "),
+                _socketIOMessageFormattingFunc("3 "),
+                _socketIOMessageFormattingFunc("4 "),
+                _socketIOMessageFormattingFunc("5 "),
+                _socketIOMessageFormattingFunc("6 "),
+                _socketIOMessageFormattingFunc("7 "),
+                _socketIOMessageFormattingFunc("8 "),
+                _socketIOMessageFormattingFunc("9.")});
 
-            await sender.SendText(SocketIOMessageFormatting("Start "), OpcodeKind.Text, FragmentKind.First);
+            await sender.SendText(_socketIOMessageFormattingFunc("Start "), OpcodeKind.Text, FragmentKind.First);
             await Task.Delay(TimeSpan.FromMilliseconds(500));
-            await sender.SendText(SocketIOMessageFormatting("Continue... #1 "), OpcodeKind.Continuation);
+            await sender.SendText(_socketIOMessageFormattingFunc("Continue... #1 "), OpcodeKind.Continuation);
             await Task.Delay(TimeSpan.FromMilliseconds(500));
-            await sender.SendText(SocketIOMessageFormatting("Continue... #2 "), OpcodeKind.Continuation);
+            await sender.SendText(_socketIOMessageFormattingFunc("Continue... #2 "), OpcodeKind.Continuation);
             await Task.Delay(TimeSpan.FromMilliseconds(550));
-            await sender.SendText(SocketIOMessageFormatting("Continue... #3 "), OpcodeKind.Continuation);
+            await sender.SendText(_socketIOMessageFormattingFunc("Continue... #3 "), OpcodeKind.Continuation);
             await Task.Delay(TimeSpan.FromMilliseconds(500));
-            await sender.SendText(SocketIOMessageFormatting("Stop."), OpcodeKind.Text, FragmentKind.Last);           
+            await sender.SendText(_socketIOMessageFormattingFunc("Stop."), OpcodeKind.Text, FragmentKind.Last);           
 
             await Task.Delay(TimeSpan.FromSeconds(20));
         }
 
         async Task SendTest2()
         {
-            var sender = client.GetSender();
+            ISender sender = client.Sender;
 
-            await sender.SendText(SocketIOMessageFormatting("Test Single Frame 1"));
-
-            await Task.Delay(TimeSpan.FromSeconds(5));
-
-            await sender.SendText(SocketIOMessageFormatting("Test Single Frame 2"));
-
-            await sender.SendText(SocketIOMessageFormatting("Test Single Frame again"));
-
-            await Task.Delay(TimeSpan.FromSeconds(5));
-
-            await sender.SendText(SocketIOMessageFormatting(TestString(1026, 1026)));
-
-            await sender.SendText(new[]
+            if (sender is null)
             {
-                SocketIOMessageFormatting("Test "),
-                SocketIOMessageFormatting("multiple "),
-                SocketIOMessageFormatting("frames "),
-                SocketIOMessageFormatting("1 "),
-                SocketIOMessageFormatting("2 "),
-                SocketIOMessageFormatting("3 "),
-                SocketIOMessageFormatting("4 "),
-                SocketIOMessageFormatting("5 "),
-                SocketIOMessageFormatting("6 "),
-                SocketIOMessageFormatting("7 "),
-                SocketIOMessageFormatting("8 "),
-                SocketIOMessageFormatting("9.")});
+                Console.WriteLine("Sender is null.");
+                return;
+            }
 
-            await sender.SendText(SocketIOMessageFormatting("Start "), OpcodeKind.Text, FragmentKind.First);
+            await sender.SendText(_socketIOMessageFormattingFunc("Test Single Frame 1"));
+
+            await Task.Delay(TimeSpan.FromSeconds(5));
+
+            await sender.SendText(_socketIOMessageFormattingFunc("Test Single Frame 2"));
+
+            await sender.SendText(_socketIOMessageFormattingFunc("Test Single Frame again"));
+
+            await Task.Delay(TimeSpan.FromSeconds(5));
+
+            await sender.SendText(_socketIOMessageFormattingFunc(TestString(1026, 1026)));
+
+            await sender.SendText(
+            [
+                _socketIOMessageFormattingFunc("Test "),
+                _socketIOMessageFormattingFunc("multiple "),
+                _socketIOMessageFormattingFunc("frames "),
+                _socketIOMessageFormattingFunc("1 "),
+                _socketIOMessageFormattingFunc("2 "),
+                _socketIOMessageFormattingFunc("3 "),
+                _socketIOMessageFormattingFunc("4 "),
+                _socketIOMessageFormattingFunc("5 "),
+                _socketIOMessageFormattingFunc("6 "),
+                _socketIOMessageFormattingFunc("7 "),
+                _socketIOMessageFormattingFunc("8 "),
+                _socketIOMessageFormattingFunc("9.")]);
+
+            await sender.SendText(_socketIOMessageFormattingFunc("Start "), OpcodeKind.Text, FragmentKind.First);
             await Task.Delay(TimeSpan.FromMilliseconds(500));
-            await sender.SendText(SocketIOMessageFormatting("Continue... #1 "), OpcodeKind.Continuation);
+            await sender.SendText(_socketIOMessageFormattingFunc("Continue... #1 "), OpcodeKind.Continuation);
             await Task.Delay(TimeSpan.FromMilliseconds(500));
-            await sender.SendText(SocketIOMessageFormatting("Continue... #2 "), OpcodeKind.Continuation);
+            await sender.SendText(_socketIOMessageFormattingFunc("Continue... #2 "), OpcodeKind.Continuation);
             await Task.Delay(TimeSpan.FromMilliseconds(550));
-            await sender.SendText(SocketIOMessageFormatting("Continue... #3 "), OpcodeKind.Continuation);
+            await sender.SendText(_socketIOMessageFormattingFunc("Continue... #3 "), OpcodeKind.Continuation);
             await Task.Delay(TimeSpan.FromMilliseconds(500));
-            await sender.SendText(SocketIOMessageFormatting("Stop."), OpcodeKind.Text, FragmentKind.Last);
+            await sender.SendText(_socketIOMessageFormattingFunc("Stop."), OpcodeKind.Text, FragmentKind.Last);
 
             await Task.Delay(TimeSpan.FromSeconds(20));
         }
-
-
     }
 
 
@@ -236,9 +256,9 @@ class Program
     private static string TestString(int minlength, int maxlength)
     {
 
-        var rng = new Random();
+        Random rng = new();
 
-        return RandomStrings(AllowedChars, minlength, maxlength, rng);
+        return RandomStrings(_allowedChars, minlength, maxlength, rng);
     }
 
     private static string RandomStrings(
@@ -247,12 +267,12 @@ class Program
         int maxLength,
         Random rng)
     {
-        var chars = new char[maxLength];
-        var setLength = allowedChars.Length;
+        char[] chars = new char[maxLength];
+        int setLength = allowedChars.Length;
 
-        var length = rng.Next(minLength, maxLength + 1);
+        int length = rng.Next(minLength, maxLength + 1);
 
-        for (var i = 0; i < length; ++i)
+        for (int i = 0; i < length; ++i)
         {
             chars[i] = allowedChars[rng.Next(setLength)];
         }

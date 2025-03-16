@@ -1,44 +1,51 @@
 # WebSocket Client Lite (Rx)
-[![NuGet Badge](https://buildstats.info/nuget/WebsocketClientLite.PCL)](https://www.nuget.org/packages/WebsocketClientLite.PCL)
 
-[![.NET Standard](http://img.shields.io/badge/.NET_Standard-v2.0-red.svg)](https://docs.microsoft.com/da-dk/dotnet/articles/standard/library) [![.NET Standard](http://img.shields.io/badge/.NET_Standard-v2.1-red.svg)](https://docs.microsoft.com/da-dk/dotnet/articles/standard/library) [![System.Reactive](http://img.shields.io/badge/Rx-v5.0.0-ff69b4.svg)](http://reactivex.io/)
-
+[![NuGet Badge](https://img.shields.io/nuget/v/WebsocketClientLite.PCL)](https://www.nuget.org/packages/WebsocketClientLite.PCL)
+[![.NET Standard](http://img.shields.io/badge/.NET_Standard-v2.0-red.svg)](https://docs.microsoft.com/da-dk/dotnet/articles/standard/library)[![.NET Standard](http://img.shields.io/badge/.NET_Standard-v2.1-red.svg)](https://docs.microsoft.com/da-dk/dotnet/articles/standard/library)
+[![.NET 6](http://img.shields.io/badge/.NET-v6.0-blue.svg)](https://dotnet.microsoft.com/download/dotnet/6.0)[![.NET 8](http://img.shields.io/badge/.NET-v8.0-blue.svg)](https://dotnet.microsoft.com/download/dotnet/8.0)[![.NET 9](http://img.shields.io/badge/.NET-v9.0-blue.svg)](https://dotnet.microsoft.com/download/dotnet/9.0)
+[![System.Reactive](http://img.shields.io/badge/Rx-v6.0.1-ff69b4.svg)](http://reactivex.io/)
 ![CI/CD](https://github.com/1iveowl/WebsocketClientLite.PCL/actions/workflows/build.yml/badge.svg)
 
 *Please star this project if you find it useful. Thank you.*
 
-## A Lightweight Cross Platform WebSocket Client 
+## TL;DR
 
-This library is a ground-up implementation of the WebSocket specification [(RFC 6544)](https://tools.ietf.org/html/rfc6455) - i.e., this implementation does not rely on the build-in WebSocket libraries in .NET.
+See the project `NETCore.Console.Test` in the `./src/test` directory for an example of how to use.
 
-The library allows developers additional flexibility, including the ability to establish secure wss websocket connections to websocket servers that have self-signing certificates, expired certificates etc. This capability should be used with care for obvious reasons, however it is useful for testing environments, closed local networks, local IoT set-ups etc.
+## A Lightweight Cross Platform WebSocket Client
 
-Furthermore, this library utilize [ReactiveX](http://reactivex.io/) (aka Rx or Reactive Extensions). Although taking this dependency introduces an added learning curve, it is a learning curve worthwhile investing in, as it IMHO makes using and creating a library like this much more elegant compared to using traditional call-back or events based patterns etc.
+This library is a ground-up implementation of the WebSocket specification [(RFC 6455)](https://tools.ietf.org/html/rfc6455) - it does not rely on any built-in WebSocket libraries in .NET.
 
-## New in version 7.0
-At writing time, this library has been around for more than 6 years. The work represented in this repo was mainly initiated on a desire to learn and play around with the technologies involved. 
+The library provides developers with additional flexibility, including the ability to establish secure WSS websocket connections to servers with self-signing certificates, expired certificates, etc. This capability should be used with care for obvious reasons, but is valuable for testing environments, closed local networks, local IoT set-ups, and more.
 
-Over the years new learning and new insights grew and eventually, looking back at the aging code-base, it became more and more obvious that a more fundamental clean-up was overdue. Hence, I decided to redo most of what was, give birth to version 7 which more or less became a rewrite of the original code base.
+The library utilizes [ReactiveX](http://reactivex.io/) (aka Rx or Reactive Extensions). While this dependency introduces a learning curve, it's worthwhile investing in, as it makes library usage and development more elegant than traditional callback or event-based patterns.
 
-The version 7 NuGet package includes both a .NET Standard 2.0 package and a .NET Standard 2.1, with e .NET Standard 2.1 package having a few less dependencies.
+## New in Version 8.0
 
-### Introduced with version 7.3
+Version 8.0 includes several significant improvements:
 
-Version 7.3 introduces a new feature for managing TCP socket. Specifically, in the case were an existing TCP socket can now be supplied and passed in using the constructor. 
+- Class name change: Renamed from `MessageWebsocketRx` to `ClientWebSocketRx` to better reflect its purpose.
+- Improved TCP socket lifecycle management.
+- Enhanced error handling and connection stability.
+- Updated to use modern C# features.
+- Performance optimizations throughout the codebase.
+- Explicit TCP socket lifecycle ownership control.
 
-It is now also possible to transfer ownership of the life-cycle of this TCP socket to the library. When transferring the life-cycle ownership of the socket connection, the TCP Socket client will be closed and disposed of, when the observable WebSocket is being disposed.
+### TCP Socket Lifecycle Management
 
-To transfer ownership of the life-cycle of the TCP Socket Client set the `hasTranferTcoSocketLifeCycleOwnership` to `true`:
+Version 8.0 provides better control over the TCP socket lifecycle through the `HasTransferSocketLifeCycleOwnership` property:
 
-```csh
-new MessageWebsocketRx(tcpClient, hasTransferTcpSocketLifeCycleOwnership: true)
+```cs
+var client = new ClientWebSocketRx { TcpClient = tcpClient, HasTransferSocketLifeCycleOwnership = true  // When true, the WebSocket client will dispose the TCP client };
 ```
 
-### Client Ping
+When set to `true`, the WebSocket client will take ownership of disposing the TCP client when the WebSocket client is disposed.
 
-Version 7.0 introduced the *client ping* feature, which enabling the WebSocket client to send a ping message with a predefined constant interval. 
+## Features from Previous Releases
 
-It is also possible to include a message as part of the client ping. The `clientPingMessage` parameter is optional and the default value is `null`. When the value is `null` (default) the behavior is to not include any message as part of the ping.  
+### Client Ping (v7.0)
+
+The client ping feature enables the WebSocket client to send ping messages at predefined intervals:
 
 ```csharp
 var websocketConnectionObservable = 
@@ -49,7 +56,11 @@ var websocketConnectionObservable =
         clientPingMessage: "my ping message"); // default no message when set to null.
 ```
 
-It is only possible to use a `string` as a message. For more advanced scenarios, the `ISender` has a `SendPing` method that can be used for full control when sending client pings as `string` or as `byte[]`.
+For advanced scenarios, use the `SendPing` method on the `ISender` interface for full control over ping messages.
+
+### HTTP/HTTPS Scheme Support (v6.4)
+
+The library supports `ws`, `wss`, `http`, and `https` URI schemes. You can extend supported schemes by overriding the `IsSecureConnectionScheme` method:
 
 ## New in version 6.4
 
@@ -69,86 +80,122 @@ public virtual bool IsSecureConnectionScheme(Uri uri) =>
     };
 ```
 
-## New in version 6.3
-- Fixed bug related to connecting to IPv6 endpoints. 
-- Updated System.Reactive to v5.0.0.
-- Successfully tested with .NET 5.0.
-- Updated Readme.
+## Usage Guide
 
-## New in version 6.1.
-Updates, stability and fundamental improvements to the library. See examples below for changes in usage. 
+### Creating a WebSocket Client
 
-## New in version 6.0.
-Simplifications and no longer relies on SocketLite but utilizes the cross-platform capabilities of .NET Standard 2.0+.
-
-## New in version 5.0.
-From hereon and forward only .NET Standard 2.0+ is supported.
-
-## Usage
-For a more detailed sample of using this library please see the [console example app](https://github.com/1iveowl/WebsocketClientLite.PCL/blob/master/src/test/NETCore.Console.Test/Program.cs).
-
-### To instantiate WebSocket lite class
-To use the WebSocket client create an instance of the class `MessageWebsocketRx`:
+Instantiate the `ClientWebSocketRx` class:
 
 ```csharp
-var websocketClient = new MessageWebsocketRx()
-{
-    IgnoreServerCertificateErrors = false,
-    Headers = new Dictionary<string, string> {{ "Pragma", "no-cache" }, { "Cache-Control", "no-cache" }}
-};
+var client = new ClientWebSocketRx { 
+    IgnoreServerCertificateErrors = true, 
+    Headers = new Dictionary<string, string> { { "Pragma", "no-cache" }, { "Cache-Control", "no-cache" } },
+    TlsProtocolType = SslProtocols.Tls12 };
+
 ```
-... or use the alternative constructor to pass your own TcpClient for more control of the configuration and the management of your TCP socket connection. 
+You can also provide your own `TcpClient` for greater control:
+
 ```csharp
-MessageWebSocketRx(TcpClient tcpClient)
+TcpClient tcpClient = new() { LingerState = new LingerOption(true, 0) };
+var client = new ClientWebSocketRx { TcpClient = tcpClient, HasTransferSocketLifeCycleOwnership = false };
 ```
 
-> Note: If the TcpClient is not connected the library will connect it. Also, the TcpClient will not be disposed automatically when passed in using the constructor, as it will in the case when no TcpClient is supplied.
+> Note: 
+>
+> - If the TcpClient is not connected already the library will connect it. 
+> - The TcpClient will not be disposed automatically when passed in using the constructor unless `HasTransferSocketLifeCycleOwnership = true` is set.
 
-### To connect client to WebSocket server
+### Connecting to a WebSocket Server
 
-To connect and observe websocket connection use `WebsocketConnectionObservable`:
+To connect and observe WebSocket communication:
+
 ```csharp
-var websocketConnectionObservable = 
-    client.WebsocketConnectObservable(
-        new Uri(WebsocketTestServerUrl)
-);
+// Standard connection observable 
+IObservable<IDataframe?> websocketObservable = client.WebsocketConnectObservable( 
+    uri: new Uri("wss://ws.postman-echo.com/raw"));
+
+// Enhanced connection observable with status information 
+IObservable<(IDataframe? dataframe, ConnectionStatus state)> websocketConnectionObservable = client.WebsocketConnectWithStatusObservable( 
+    uri: new Uri("wss://ws.postman-echo.com/raw"), 
+    hasClientPing: true, 
+    clientPingInterval: TimeSpan.FromSeconds(10), 
+    clientPingMessage: "ping message" );
 ```
-... or use `WebsocketConnectionWithStatusObservable` to also observe connection status :
-```csharp
-var websocketConnectionWithStatusObservable = 
-    client.WebsocketConnectWithStatusObservable(
-        new Uri(WebsocketTestServerUrl)
-);
-```
-### To control TLS/SSL certificate validation behavior
-To control TLS/SSL Server certificate behavior, either use the `IgnoreServerCertificateErrors` parameter to ignore any issues with the certificate or override the `ValidateServerCertificate` method to your liking. 
+### Handling Connection Status and Messages
 
-The existing virtual method implementation looks like this:
+Monitor the connection status and handle incoming messages:
 
 ```csharp
-public virtual bool ValidateServerCertificate(
-    object senderObject,
-    X509Certificate certificate,
-    X509Chain chain,
-    SslPolicyErrors tlsPolicyErrors)
-{
-    if (IgnoreServerCertificateErrors) return true;
+IDisposable disposableConnection = websocketConnectionObservable .Do(tuple => { 
+    // Handle connection status updates 
+    Console.ForegroundColor = 
+        (int)tuple.state switch 
+    	{ 
+            >= 1000 and <= 1999 => ConsoleColor.Magenta, 
+           // Connection states 
+           >= 2000 and <= 2999 => ConsoleColor.Green,   
+           // Control frame states 
+           >= 3000 and <= 3999 => ConsoleColor.Cyan,    
+           // Data states
+           >= 4000 and <= 4999 => ConsoleColor.DarkYellow, 
+           // Ping/Pong states 
+           _                   => ConsoleColor.Gray, };
+    
+    Console.WriteLine(tuple.state.ToString());
 
-    return tlsPolicyErrors switch
+    if (tuple.state == ConnectionStatus.DataframeReceived && tuple.dataframe is not null)
     {
-        SslPolicyErrors.None => true,
-        SslPolicyErrors.RemoteCertificateChainErrors => 
-            throw new Exception($"SSL/TLS error: {SslPolicyErrors.RemoteCertificateChainErrors}"),
-        SslPolicyErrors.RemoteCertificateNameMismatch => 
-            throw new Exception($"SSL/TLS error: {SslPolicyErrors.RemoteCertificateNameMismatch}"),
-        SslPolicyErrors.RemoteCertificateNotAvailable => 
-            throw new Exception($"SSL/TLS error: {SslPolicyErrors.RemoteCertificateNotAvailable}"),
-        _ => throw new ArgumentOutOfRangeException(nameof(tlsPolicyErrors), tlsPolicyErrors, null),
-    };
+        Console.WriteLine($"Received: {tuple.dataframe.Message}");
+    }
+    
+    if (tuple.state is ConnectionStatus.Disconnected or 
+                    ConnectionStatus.Aborted or 
+                    ConnectionStatus.ConnectionFailed)
+    {
+        // Handle disconnection
+    }
+})
+.Subscribe();
+```
+### Sending Messages
+
+Once connected, use the WebSocket sender interface to transmit messages:
+
+```cs
+// Get the sender 
+var sender = client.Sender;
+// Send a simple text message 
+await sender.SendText("Test Single Frame");
+// Send a multi-part message 
+await sender.SendText([ "Test ", "multiple ", "frames ", "message." ]);
+// Send fragmented messages with control over the fragmentation process 
+await sender.SendText(
+    "Start ", OpcodeKind.Text, FragmentKind.First); await sender.SendText("Continue... ", OpcodeKind.Continuation); await sender.SendText(
+    "End", OpcodeKind.Text, FragmentKind.Last);
+```
+
+
+
+### TLS/SSL Certificate Validation
+
+Control certificate validation behavior:
+
+```csharp
+// Option 1: Ignore all certificate errors (use with caution) 
+var client = new ClientWebSocketRx { IgnoreServerCertificateErrors = true };
+
+// Option 2: Override the validation method for custom logic 
+public override bool ValidateServerCertificate( object senderObject, X509Certificate certificate, X509Chain chain, SslPolicyErrors tlsPolicyErrors) { 
+    // Your custom validation logic here
+	// Fall back to base implementation
+	return base.ValidateServerCertificate(senderObject, certificate, chain, tlsPolicyErrors);
 }
 ```
 
-### Working With Slack (And maybe also other WebSocket server implementations)
+### Working with Specialized WebSocket Implementations
+
+#### Slack RTM API
+
 The [RFC 6455 section defining how ping/pong works](https://tools.ietf.org/html/rfc6455#section-5.5.2) seems to be ambiguous on the question whether or not a pong must include the byte defining the length of data-frame, in the special case when there is no data and the length of the data is zero.
 
 When testing against for instance the Postman WebSocket test server [Postman WebSocket Server](wss://ws.postman-echo.com/raw) the data-frame byte is expected and should have the value 0 (zero), when there's no data in the data-frame. 
@@ -156,31 +203,35 @@ When testing against for instance the Postman WebSocket test server [Postman Web
 However, when used with the [slack.rtm](https://api.slack.com/rtm) API the byte should **not** be there at all in the case of no data in the data-frame, and if it is, the slack WebSocket server will disconnect.
 
 To manage this *length byte-issue* the following property can be set to `true`, in which case the byte with the zero value will NOT be added to the pong. For instance like this:
+
+For Slack and similar services with specific websocket requirements:
+
 ```csharp
-var websocketClient = new MessageWebSocketRx
-{
-    ExcludeZeroApplicationDataInPong = true
-}
+var client = new ClientWebSocketRx { ExcludeZeroApplicationDataInPong = true  // Required for Slack's RTM API };
+
+```
+
+Slack RTM also requires application-level ping messages:
+
+```csharp
+await sender.SendText("{"id": 1234, "type": "ping"}");
+//or
+await _webSocket.SendText("{\"id\": 1234, // ID, see \"sending messages\" above\"type\": \"ping\",...}");
 ```
 
 To further complicate matters the [slack.rtm api](https://api.slack.com/rtm) [seems to require a ping at the Slack application layer too](http://stackoverflow.com/questions/38171620/slack-rtm-api-disconnection-following-message-in-scala). 
 
-A simplified implementation of this could look like this, which obviously would need to be repeated in some interval to keep the slack connection going:
-
-```csharp
-await _webSocket.SendText("{\"id\": 1234, // ID, see \"sending messages\" above\"type\": \"ping\",...}");
-```
 For details read the **Ping and Pong** section of the [slack.rtm API documentation](https://api.slack.com/rtm) 
 
-### Working with socket.io 
+#### Socket.IO
+
+For Socket.IO servers:
+
 This library has also been tested with [socket.io](https://socket.io/docs/v4/). 
 
-A typical connection will look like this:
-
 ```csharp
-var websocketConnectionObservable = 
-    client.WebsocketConnectWithStatusObservable(
-        new Uri($"http://{url}:{port}/socket.io/?EIO=4&transport=websocket"));
+var uri = new Uri($"http://{url}:{port}/socket.io/?EIO=4&transport=websocket"); 
+var websocketObservable = client.WebsocketConnectWithStatusObservable(uri);
 ```
 
 This will connect on the WebSocket layer with socket.io server. 
@@ -189,16 +240,21 @@ To further connect on socket.io level see documentation. For instance, typically
 
 For more see here: [WebSocket client not connecting to the socket.io server](https://github.com/socketio/socket.io/discussions/4299).
 
+## References
 
-### References:
-The following documentation was utilized when writing this library:
+This library was developed using the following reference documentation:
 
- - [RFC 6544](https://tools.ietf.org/html/rfc6455)
- - [Writing WebSocket Servers](https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API/Writing_WebSocket_servers)
- - [Writing WebSocket Server in C#](https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API/Writing_WebSocket_server)
- - [Writing WebSocket client applications](https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API/Writing_WebSocket_client_applications)
+- [RFC 6455 - The WebSocket Protocol](https://tools.ietf.org/html/rfc6455)
+- [MDN - Writing WebSocket Servers](https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API/Writing_WebSocket_servers)
+- [MDN - Writing WebSocket Server in C#](https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API/Writing_WebSocket_server)
+- [MDN - Writing WebSocket client applications](https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API/Writing_WebSocket_client_applications)
 
-### Thank you !
+## Building and Contributing
 
-Thank you to all the developers who've been using this library through the years, many of which that have reported issues or bugs, or made contributions and pull requests to make the library better and/or more capable. It is this interaction with all of you that makes sharing and learning fun.
+This library targets .NET Standard 2.0, .NET Standard 2.1, .NET 6, .NET 8, and .NET 9. The CI/CD pipeline uses GitHub Actions to build, test, and publish packages to NuGet and GitHub Packages.
 
+For contributors and developers, please ensure your changes maintain compatibility with these target frameworks.
+
+## Thank You
+
+Thank you to all the developers who have used this library over the years, reported issues, submitted bug fixes, or made contributions to improve the library. Your feedback and support make open source development rewarding and educational.

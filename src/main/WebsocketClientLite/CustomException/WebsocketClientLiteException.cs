@@ -1,20 +1,19 @@
-﻿namespace WebsocketClientLite.PCL.CustomException
+﻿namespace WebsocketClientLite.CustomException;
+
+public class WebsocketClientLiteException : System.Exception
 {
-    public class WebsocketClientLiteException : System.Exception
+    public WebsocketClientLiteException()
     {
-        public WebsocketClientLiteException()
-        {
-            
-        }
+        
+    }
 
-        public WebsocketClientLiteException(string message) : base(message)
-        {
+    public WebsocketClientLiteException(string message) : base(message)
+    {
 
-        }
+    }
 
-        public WebsocketClientLiteException(string message, System.Exception inner) : base(message, inner)
-        {
+    public WebsocketClientLiteException(string message, System.Exception inner) : base(message, inner)
+    {
 
-        }
     }
 }

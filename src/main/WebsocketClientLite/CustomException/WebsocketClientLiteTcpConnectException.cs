@@ -1,11 +1,10 @@
-﻿namespace WebsocketClientLite.PCL.CustomException
+﻿namespace WebsocketClientLite.CustomException;
+
+public class WebsocketClientLiteTcpConnectException : System.Exception
 {
-    public class WebsocketClientLiteTcpConnectException : System.Exception
-    {
-        public WebsocketClientLiteTcpConnectException() : base() { }
+    public WebsocketClientLiteTcpConnectException() : base() { }
 
-        public WebsocketClientLiteTcpConnectException(string message) : base(message) { }
+    public WebsocketClientLiteTcpConnectException(string message) : base(message) { }
 
-        public WebsocketClientLiteTcpConnectException(string message, System.Exception inner) : base(message, inner) { }
-    }
+    public WebsocketClientLiteTcpConnectException(string message, System.Exception inner) : base(message, inner) { }
 }
