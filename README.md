@@ -188,10 +188,12 @@ Control certificate validation behavior:
 var client = new ClientWebSocketRx { IgnoreServerCertificateErrors = true };
 
 // Option 2: Override the validation method for custom logic 
-public override bool ValidateServerCertificate( object senderObject, X509Certificate certificate, X509Chain chain, SslPolicyErrors tlsPolicyErrors) { 
+public override bool ValidateServerCertificate(
+    object senderObject, X509Certificate certificate, X509Chain chain, SslPolicyErrors tlsPolicyErrors) 
+{ 
     // Your custom validation logic here
 	// Fall back to base implementation
-	return base.ValidateServerCertificate(senderObject, certificate, chain, tlsPolicyErrors);
+    return base.ValidateServerCertificate(senderObject, certificate, chain, tlsPolicyErrors);
 }
 ```
 
