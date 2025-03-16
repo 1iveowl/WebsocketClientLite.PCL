@@ -164,14 +164,17 @@ Once connected, use the WebSocket sender interface to transmit messages:
 ```cs
 // Get the sender 
 var sender = client.Sender;
+
 // Send a simple text message 
 await sender.SendText("Test Single Frame");
+
 // Send a multi-part message 
 await sender.SendText([ "Test ", "multiple ", "frames ", "message." ]);
+
 // Send fragmented messages with control over the fragmentation process 
-await sender.SendText(
-    "Start ", OpcodeKind.Text, FragmentKind.First); await sender.SendText("Continue... ", OpcodeKind.Continuation); await sender.SendText(
-    "End", OpcodeKind.Text, FragmentKind.Last);
+await sender.SendText("Start ", OpcodeKind.Text, FragmentKind.First); 
+await sender.SendText("Continue... ", OpcodeKind.Continuation); 
+await sender.SendText("End", OpcodeKind.Text, FragmentKind.Last);
 ```
 
 
