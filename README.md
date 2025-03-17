@@ -36,7 +36,10 @@ Version 8.0 includes several significant improvements:
 Version 8.0 provides better control over the TCP socket lifecycle through the `HasTransferSocketLifeCycleOwnership` property:
 
 ```cs
-var client = new ClientWebSocketRx { TcpClient = tcpClient, HasTransferSocketLifeCycleOwnership = true  // When true, the WebSocket client will dispose the TCP client };
+var client = new ClientWebSocketRx
+	{
+		TcpClient = tcpClient, HasTransferSocketLifeCycleOwnership = true
+	};  // When true, the WebSocket client will dispose the TCP client 
 ```
 
 When set to `true`, the WebSocket client will take ownership of disposing the TCP client when the WebSocket client is disposed.
