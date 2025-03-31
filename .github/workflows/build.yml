@@ -98,8 +98,6 @@ jobs:
           release_name: Release ${{ steps.gitversion.outputs.AssemblySemVer }}
           body: |
             Changes in this Release
-            - Multi-framework targeting (.NET Standard 2.0, .NET Standard 2.1, .NET 6+)
-            - Split interface package from implementation package
-            - DevOps improvements
+            - Bump to HttpMachine 5.0
           draft: true
           prerelease: true
