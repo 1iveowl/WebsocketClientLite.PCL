@@ -8,7 +8,7 @@ namespace WebsocketClientLite.Helper;
 internal static class WebsocketMasking
 {
 #pragma warning disable IDE1006 // Naming Styles
-    private const byte FINbit = 0x80;
+    private const byte MaskBit = 0x80;
 #pragma warning restore IDE1006 // Naming Styles
 
     internal static byte[] Encode(IReadOnlyList<byte> data, IReadOnlyList<byte> key)
@@ -48,16 +48,16 @@ internal static class WebsocketMasking
         {
             if (isMasking)
             {
-                firstPayloadByte = (byte)(length + FINbit);
+                firstPayloadByte = (byte)(length + MaskBit);
             }
             return [firstPayloadByte];
         }
 
-        if (length >= (byte)PayloadBitLengthKind.Bits16 && length <= Math.Pow(2, 16))
+        if (length >= (byte)PayloadBitLengthKind.Bits16 && length <= ushort.MaxValue)
         {
             if (isMasking)
             {
-                firstPayloadByte = (byte)PayloadBitLengthKind.Bits16 + FINbit;
+                firstPayloadByte = (byte)PayloadBitLengthKind.Bits16 + MaskBit;
             }
 
             var payloadLength = BitConverter.GetBytes((ushort)length);
@@ -73,11 +73,11 @@ internal static class WebsocketMasking
             return byteArray;
         }
 
-        if (length >= Math.Pow(2, 16) && length <= Math.Pow(2, 64))
+        if (length > ushort.MaxValue && length <= int.MaxValue)
         {
             if (isMasking)
             {
-                firstPayloadByte = (byte)PayloadBitLengthKind.Bits64 + FINbit;
+                firstPayloadByte = (byte)PayloadBitLengthKind.Bits64 + MaskBit;
             }
 
             var payloadLength = BitConverter.GetBytes((ulong)length);
