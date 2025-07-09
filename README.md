@@ -259,7 +259,9 @@ This library was developed using the following reference documentation:
 
 ## Building and Contributing
 
-This library targets .NET Standard 2.0, .NET Standard 2.1, .NET 6, .NET 8, and .NET 9. The CI/CD pipeline uses GitHub Actions to build, test, and publish packages to NuGet and GitHub Packages.
+This library targets .NET Standard 2.0, .NET Standard 2.1, .NET 6, .NET 8, and .NET 9. The CI/CD pipeline uses GitHub Actions to build, test, and publish packages.
+
+To build locally you need the matching .NET SDKs installed. Some projects target .NET 9.0 which currently requires the preview .NET 9 SDK. If the SDK is not available only the .NET 8 and lower projects can be built.
 
 For contributors and developers, please ensure your changes maintain compatibility with these target frameworks.
 
