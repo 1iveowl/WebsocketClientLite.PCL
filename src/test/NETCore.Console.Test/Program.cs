@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Net.Sockets;
 using System.Reactive.Linq;
+using System.Reactive.Disposables;
 using System.Security.Authentication;
 using System.Threading;
 using System.Threading.Tasks;
@@ -32,116 +33,88 @@ class Program
         outerCancellationSource.Cancel();
     }
 
-    private static async Task StartWebSocketAsyncWithRetry(
-        CancellationTokenSource outerCancellationTokenSource,
-        bool isSocketIOTest = false)
+private static async Task StartWebSocketAsyncWithRetry(
+    CancellationTokenSource outerCancellationTokenSource,
+    bool isSocketIOTest = false)
+{
+    if (isSocketIOTest)
     {
-        if (isSocketIOTest)
-        {
-            _socketIOMessageFormattingFunc = (msg) => $"42[\"message\", \"{msg}\"]";
-        }
-        else
-        {
-            _socketIOMessageFormattingFunc = (msg) => msg;
-        }
-
-        TcpClient tcpClient = new() { LingerState = new LingerOption(true, 0) };
-
-
-        while (!outerCancellationTokenSource.IsCancellationRequested)
-        {
-            CancellationTokenSource innerCancellationSource = new();
-
-            await StartWebSocketAsync(tcpClient, innerCancellationSource);
-
-            while (!innerCancellationSource.IsCancellationRequested)
-            {
-                await Task.Delay(TimeSpan.FromSeconds(30), innerCancellationSource.Token);
-            }
-
-            // Wait 5 seconds before trying again
-            await Task.Delay(TimeSpan.FromSeconds(5), outerCancellationTokenSource.Token);
-        }
+        _socketIOMessageFormattingFunc = msg => $"42[\"message\", \"{msg}\"]";
+    }
+    else
+    {
+        _socketIOMessageFormattingFunc = msg => msg;
     }
 
-    private static async Task StartWebSocketAsync(
-        TcpClient tcpClient,
-        CancellationTokenSource innerCancellationTokenSource)
+    TcpClient tcpClient = new() { LingerState = new LingerOption(true, 0) };
+
+    var client = new ClientWebSocketRx
     {
-        //var client = new MessageWebsocketRx(tcpClient)
-        var client = new ClientWebSocketRx
+        TcpClient = tcpClient,
+        HasTransferSocketLifeCycleOwnership = false,
+        IgnoreServerCertificateErrors = true,
+        Headers = new Dictionary<string, string> { { "Pragma", "no-cache" }, { "Cache-Control", "no-cache" } },
+        TlsProtocolType = SslProtocols.Tls12,
+    };
+
+    using CompositeDisposable disposables = new();
+
+    IDisposable isConnectedDisposable = client.IsConnectedObservable
+        .Do(isConnected =>
         {
-            TcpClient = tcpClient,
-            HasTransferSocketLifeCycleOwnership = false,
-            IgnoreServerCertificateErrors = true,
-            Headers = new Dictionary<string, string> { { "Pragma", "no-cache" }, { "Cache-Control", "no-cache" } },
-            TlsProtocolType = SslProtocols.Tls12, 
-            //ExcludeZeroApplicationDataInPong = true,
-        };
+            Console.WriteLine($"*** Is connected: {isConnected} ***");
+        })
+        .Subscribe();
+    disposables.Add(isConnectedDisposable);
 
-        Console.WriteLine("Start");
+    Func<IObservable<(IDataframe dataframe, ConnectionStatus state)>> connect = () =>
+        client.WebsocketConnectWithStatusObservable(
+            uri: new Uri(_websocketTestServerUrl),
+            hasClientPing: true,
+            clientPingInterval: TimeSpan.FromSeconds(10),
+            clientPingMessage: "ping message",
+            cancellationToken: outerCancellationTokenSource.Token);
 
-        IDisposable isConnectedDisposable = client.IsConnectedObservable
-            .Do(isConnected =>
+    IDisposable disposableConnectionStatus = Observable.Defer(connect)
+        .Retry()
+        .Repeat()
+        .DelaySubscription(TimeSpan.FromSeconds(5))
+        .Do(tuple =>
+        {
+            Console.ForegroundColor = (int)tuple.state switch
             {
-                Console.WriteLine($"*** Is connected: {isConnected} ***");
-            })
-            .Subscribe();
+                >= 1000 and <= 1999 => ConsoleColor.Magenta,
+                >= 2000 and <= 2999 => ConsoleColor.Green,
+                >= 3000 and <= 3999 => ConsoleColor.Cyan,
+                >= 4000 and <= 4999 => ConsoleColor.DarkYellow,
+                _ => ConsoleColor.Gray,
+            };
 
-        IObservable<(IDataframe dataframe, ConnectionStatus state)> websocketConnectionObservable = 
-            client.WebsocketConnectWithStatusObservable(
-               uri: new Uri(_websocketTestServerUrl), 
-               hasClientPing: true,
-               clientPingInterval: TimeSpan.FromSeconds(10),
-               clientPingMessage: "ping message",
-               cancellationToken: innerCancellationTokenSource.Token);
+            Console.WriteLine(tuple.state.ToString());
 
-        IDisposable disposableConnectionStatus = websocketConnectionObservable
-            .Do(tuple =>
+            if (tuple.state == ConnectionStatus.DataframeReceived && tuple.dataframe is not null)
             {
-                Console.ForegroundColor = (int)tuple.state switch
-                {
-                    >= 1000 and <= 1999 => ConsoleColor.Magenta,
-                    >= 2000 and <= 2999 => ConsoleColor.Green,
-                    >= 3000 and <= 3999 => ConsoleColor.Cyan,
-                    >= 4000 and <= 4999 => ConsoleColor.DarkYellow,
-                    _                   => ConsoleColor.Gray,
-                };              
-
-                Console.WriteLine(tuple.state.ToString() );
-
-                if (tuple.state == ConnectionStatus.Disconnected
-                || tuple.state == ConnectionStatus.Aborted
-                || tuple.state == ConnectionStatus.ConnectionFailed)
-                {
-                    innerCancellationTokenSource.Cancel();
-                }
-
-                if (tuple.state == ConnectionStatus.DataframeReceived 
-                    && tuple.dataframe is not null)
-                {
-                    Console.WriteLine($"Echo: {tuple.dataframe.Message}");
-                }
-            })
-            .Where(tuple => tuple.state == ConnectionStatus.WebsocketConnected)
-            .Select(_ => Observable.FromAsync(_ => SendTest1()))
-            .Concat()
-            .Select(_ => Observable.FromAsync(_ => SendTest2()))
-            .Concat()
-            .Subscribe(
+                Console.WriteLine($"Echo: {tuple.dataframe.Message}");
+            }
+        })
+        .Where(tuple => tuple.state == ConnectionStatus.WebsocketConnected)
+        .SelectMany(_ => Observable.FromAsync(_ => SendTest1()))
+        .SelectMany(_ => Observable.FromAsync(_ => SendTest2()))
+        .Subscribe(
             _ => { },
-            ex =>
-            {
-                Console.WriteLine($"Connection status error: {ex}.");
-                innerCancellationTokenSource.Cancel();
-            },
-            () =>
-            {
-                Console.WriteLine($"Connection status completed.");
-                innerCancellationTokenSource.Cancel();
-            });
+            ex => Console.WriteLine($"Connection status error: {ex}."),
+            () => Console.WriteLine($"Connection status completed."));
 
-        await Task.Delay(TimeSpan.FromSeconds(200));
+    disposables.Add(disposableConnectionStatus);
+
+    try
+    {
+        await Task.Delay(Timeout.Infinite, outerCancellationTokenSource.Token);
+    }
+    finally
+    {
+        disposables.Dispose();
+    }
 
         async Task SendTest1(bool isSocketIOTest = false)
         {
@@ -280,3 +253,4 @@ class Program
         return new string(chars, 0, length);
     }
 }
+
