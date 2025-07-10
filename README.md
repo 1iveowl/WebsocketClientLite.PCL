@@ -22,7 +22,7 @@ This library is a ground-up implementation of the WebSocket specification [(RFC 
 
 The library provides developers with additional flexibility, including the ability to establish secure WSS websocket connections to servers with self-signing certificates, expired certificates, etc. This capability should be used with care for obvious reasons, but is valuable for testing environments, closed local networks, local IoT set-ups, and more.
 
-The library utilizes [ReactiveX](http://reactivex.io/) (aka Rx or Reactive Extensions). While this dependency introduces a learning curve, it's worthwhile investing in, as it makes library usage and development more elegant than traditional callback or event-based patterns.
+The library utilizes [ReactiveX](http://reactivex.io/) (aka Rx or Reactive Extensions). While this dependency introduces a learning curve, it's worthwhile investing in for a library like this.
 
 ## New in Version 8.0
 
