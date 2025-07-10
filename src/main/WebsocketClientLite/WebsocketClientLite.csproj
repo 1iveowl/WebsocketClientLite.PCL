@@ -8,14 +8,14 @@
     <LangVersion>13.0</LangVersion>
     <PackageIcon>images\1iveowl-logo.png</PackageIcon>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <Version>8.1.0</Version>
+    <Version>8.2.0</Version>
     <Authors>Jasper Hedegaard Bojsen</Authors>
     <Copyright>1iveowl Development 2022</Copyright>
     <PackageProjectUrl>https://github.com/1iveowl/WebsocketClientLite.PCL</PackageProjectUrl>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <RepositoryUrl>https://github.com/1iveowl/WebsocketClientLite.PCL</RepositoryUrl>
-    <AssemblyVersion>8.1.0</AssemblyVersion>
-    <FileVersion>8.1.0</FileVersion>
+    <AssemblyVersion>8.2.0</AssemblyVersion>
+    <FileVersion>8.2.0</FileVersion>
     <Description>A simple and light WebSocket client.
 Can be set to ignore SSL/TLS server certificate issues (use with care!).
 Easily and effectively observe incoming message using Reactive Extensions (Rx)</Description>
@@ -36,8 +36,8 @@ Easily and effectively observe incoming message using Reactive Extensions (Rx)</
   <ItemGroup>
     <PackageReference Include="HttpMachine.PCL" Version="5.0.0" />
     <PackageReference Include="System.Reactive" Version="6.0.1" />
-    <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="9.0.3" Condition=" '$(TargetFramework)' == 'netstandard2.0' " />
-    <PackageReference Include="System.Memory" Version="4.6.2" Condition=" '$(TargetFramework)' == 'netstandard2.0' " />  
+    <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="9.0.7" Condition=" '$(TargetFramework)' == 'netstandard2.0' " />
+    <PackageReference Include="System.Memory" Version="4.6.3" Condition=" '$(TargetFramework)' == 'netstandard2.0' " />  
   </ItemGroup>
 
   <ItemGroup>
