@@ -117,53 +117,52 @@ var client = new ClientWebSocketRx { TcpClient = tcpClient, HasTransferSocketLif
 To connect and observe WebSocket communication:
 
 ```csharp
-// Standard connection observable 
-IObservable<IDataframe?> websocketObservable = client.WebsocketConnectObservable( 
-    uri: new Uri("wss://ws.postman-echo.com/raw"));
+using System.Reactive.Disposables;
+using System.Reactive.Linq;
 
-// Enhanced connection observable with status information 
-IObservable<(IDataframe? dataframe, ConnectionStatus state)> websocketConnectionObservable = client.WebsocketConnectWithStatusObservable( 
-    uri: new Uri("wss://ws.postman-echo.com/raw"), 
-    hasClientPing: true, 
-    clientPingInterval: TimeSpan.FromSeconds(10), 
-    clientPingMessage: "ping message" );
+using CompositeDisposable disposables = new();
+
+Func<IObservable<(IDataframe dataframe, ConnectionStatus state)>> connect = () =>
+    client.WebsocketConnectWithStatusObservable(
+        uri: new Uri("wss://ws.postman-echo.com/raw"),
+        hasClientPing: true,
+        clientPingInterval: TimeSpan.FromSeconds(10),
+        clientPingMessage: "ping message",
+        cancellationToken: cts.Token);
+
+IDisposable connectionSubscription = Observable.Defer(connect)
+    .Retry()
+    .Repeat()
+    .DelaySubscription(TimeSpan.FromSeconds(5))
+    .Do(tuple =>
+    {
+        Console.ForegroundColor = (int)tuple.state switch
+        {
+            >= 1000 and <= 1999 => ConsoleColor.Magenta,
+            >= 2000 and <= 2999 => ConsoleColor.Green,
+            >= 3000 and <= 3999 => ConsoleColor.Cyan,
+            >= 4000 and <= 4999 => ConsoleColor.DarkYellow,
+            _ => ConsoleColor.Gray,
+        };
+
+        Console.WriteLine(tuple.state);
+
+        if (tuple.state == ConnectionStatus.DataframeReceived && tuple.dataframe is not null)
+        {
+            Console.WriteLine($"Received: {tuple.dataframe.Message}");
+        }
+    })
+    .Where(t => t.state == ConnectionStatus.WebsocketConnected)
+    .SelectMany(_ => Observable.FromAsync(_ => SendTest1()))
+    .SelectMany(_ => Observable.FromAsync(_ => SendTest2()))
+    .Subscribe();
+
+disposables.Add(connectionSubscription);
 ```
+
 ### Handling Connection Status and Messages
 
-Monitor the connection status and handle incoming messages:
-
-```csharp
-IDisposable disposableConnection = websocketConnectionObservable .Do(tuple => { 
-    // Handle connection status updates 
-    Console.ForegroundColor = 
-        (int)tuple.state switch 
-    	{ 
-            >= 1000 and <= 1999 => ConsoleColor.Magenta, 
-           // Connection states 
-           >= 2000 and <= 2999 => ConsoleColor.Green,   
-           // Control frame states 
-           >= 3000 and <= 3999 => ConsoleColor.Cyan,    
-           // Data states
-           >= 4000 and <= 4999 => ConsoleColor.DarkYellow, 
-           // Ping/Pong states 
-           _                   => ConsoleColor.Gray, };
-    
-    Console.WriteLine(tuple.state.ToString());
-
-    if (tuple.state == ConnectionStatus.DataframeReceived && tuple.dataframe is not null)
-    {
-        Console.WriteLine($"Received: {tuple.dataframe.Message}");
-    }
-    
-    if (tuple.state is ConnectionStatus.Disconnected or 
-                    ConnectionStatus.Aborted or 
-                    ConnectionStatus.ConnectionFailed)
-    {
-        // Handle disconnection
-    }
-})
-.Subscribe();
-```
+The observable pipeline above logs each connection state and prints received messages. It automatically retries and repeats the connection on errors and ensures resources are cleaned up via the `CompositeDisposable`.
 ### Sending Messages
 
 Once connected, use the WebSocket sender interface to transmit messages:
