@@ -302,3 +302,4 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 src/main/WebsocketClientLite/nuget.config
+__blobstorage__
