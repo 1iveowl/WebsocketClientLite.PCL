@@ -7,9 +7,12 @@ namespace WebsocketClientLite.Helper;
 
 internal static class ClientHandShake
 {
+
+#if !NET6_0_OR_GREATER  
     // For .NET Standard 2.0/2.1
     private static readonly object _randomLock = new();
     private static Random? _random;
+#endif
 
     internal static byte[] Compose(
     Uri uri,
@@ -85,5 +88,4 @@ internal static class ClientHandShake
 #endif
         return Convert.ToBase64String(webSocketKey);
     }
-
 }

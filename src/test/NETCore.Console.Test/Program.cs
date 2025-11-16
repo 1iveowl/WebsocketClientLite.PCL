@@ -57,7 +57,7 @@ private static async Task StartWebSocketAsyncWithRetry(
         TlsProtocolType = SslProtocols.Tls12,
     };
 
-    using CompositeDisposable disposables = new();
+    using CompositeDisposable disposables = [];
 
     IDisposable isConnectedDisposable = client.IsConnectedObservable
         .Do(isConnected =>

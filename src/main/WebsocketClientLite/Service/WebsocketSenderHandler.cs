@@ -5,12 +5,11 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Collections.Generic;
-using static WebsocketClientLite.Helper.WebsocketMasking;
 using IWebsocketClientLite;
-using WebsocketClientLite.Extension;
 using WebsocketClientLite.Helper;
 using WebsocketClientLite.Model;
 using WebsocketClientLite.CustomException;
+using static WebsocketClientLite.Helper.WebsocketMasking;
 
 namespace WebsocketClientLite.Service;
 
@@ -50,7 +49,7 @@ internal class WebsocketSenderHandler : ISender
         {
             _connectionStatusAction(
                 ConnectionStatus.Aborted, 
-                new WebsocketClientLiteException("Unable to complete handshake", ex.InnerException));
+                new WebsocketClientLiteException("Unable to complete handshake", ex.InnerException!));
         }
     }
 
@@ -152,22 +151,27 @@ internal class WebsocketSenderHandler : ISender
         IEnumerable<T> list, 
         OpcodeKind opcode, 
         Func<T, FragmentKind, OpcodeKind, Task> sendTask)
-    {
-        if (!list?.Any() ?? true) return;
+    {   
+        if (list is null) return;
 
-        if (list.Count() == 1)
+        // Materialize once to avoid multiple enumeration and LINQ Count/First calls
+        var items = list as IList<T> ?? list.ToList();
+        if (items.Count == 0) return;
+
+        if (items.Count == 1)
         {
-            await sendTask(list.FirstOrDefault(), FragmentKind.None, opcode);
+            await sendTask(items[0], FragmentKind.None, opcode);
             return;
         }
 
-        await foreach (var (item, index) in list.Select((item, index) => (item, index)).ToAsyncEnumerable())
+        for (int index = 0; index < items.Count; index++)
         {
-            if (IsFirstPosition(index))
+            var item = items[index];
+            if (index == 0)
             {
                 await sendTask(item, FragmentKind.First, opcode);
             }
-            else if (IsLastPosition(index))
+            else if (index == items.Count - 1)
             {
                 await sendTask(item, FragmentKind.Last, opcode);
             }
@@ -176,9 +180,6 @@ internal class WebsocketSenderHandler : ISender
                 await sendTask(item, FragmentKind.None, OpcodeKind.Continuation);
             }
         }
-
-        bool IsLastPosition(int i)  => i == list.Count() - 1;
-        bool IsFirstPosition(int i) => i == 0;
     }
 
     private async Task ComposeFrameAndSendAsync(

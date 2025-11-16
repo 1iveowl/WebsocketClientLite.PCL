@@ -62,7 +62,7 @@ internal class WebsocketParserHandler : IDisposable
                     && nextDataframe.DataStream is not null
                     && dataframe is not null)
                 {
-                    await nextDataframe.DataStream.CopyToAsync(dataframe.DataStream,
+                    await nextDataframe.DataStream.CopyToAsync(dataframe.DataStream!,
 #if !NETSTANDARD2_1
                         81920,
 #endif

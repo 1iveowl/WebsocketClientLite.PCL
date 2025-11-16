@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Security.Cryptography;
 using WebsocketClientLite.CustomException;
 using WebsocketClientLite.Model;
 
@@ -34,9 +35,15 @@ internal static class WebsocketMasking
 
     internal static byte[] CreateMaskKey()
     {
-        var rnd = new Random();
         var key = new byte[4];
-        rnd.NextBytes(key);
+#if NETSTANDARD2_0
+        using (var rng = RandomNumberGenerator.Create())
+        {
+            rng.GetBytes(key);
+        }
+#else
+        RandomNumberGenerator.Fill(key);
+#endif
         return key;
     }
 

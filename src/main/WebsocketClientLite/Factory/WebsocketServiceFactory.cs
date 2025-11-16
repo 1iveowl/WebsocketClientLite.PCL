@@ -17,14 +17,16 @@ namespace WebsocketClientLite.Factory;
 
 internal class WebsocketServiceFactory
 {
-    private WebsocketServiceFactory() { }
+    //private WebsocketServiceFactory() { }
 
     internal static async Task<WebsocketService> Create(
         Func<bool> isSecureConnectionSchemeFunc,
         Func<object, X509Certificate, X509Chain, SslPolicyErrors, bool> validateServerCertificateFunc,
         EventLoopScheduler eventLoopScheduler,
         IObserver<ConnectionStatus> observerConnectionStatus,
+#pragma warning disable CS0618 // Type or member is obsolete
         MessageWebsocketRx messageWebSocketRx)
+#pragma warning restore CS0618 // Type or member is obsolete
     {
         var tcpConnectionHandler = new TcpConnectionService(
             isSecureConnectionSchemeFunc: isSecureConnectionSchemeFunc,

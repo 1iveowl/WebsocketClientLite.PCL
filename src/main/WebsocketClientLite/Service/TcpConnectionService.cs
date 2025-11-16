@@ -149,7 +149,11 @@ internal class TcpConnectionService(
                 innerStream: tcpClient.GetStream(),
                 leaveInnerStreamOpen: true,
                 userCertificateValidationCallback: (sender, cert, chain, tlsPolicy) 
-                    => validateServerCertificateFunc(sender, cert, chain, tlsPolicy));
+                    => validateServerCertificateFunc(
+                        sender, 
+                        cert ?? throw new InvalidOperationException("Server certificate is null."), 
+                        chain ?? new X509Chain(), 
+                        tlsPolicy));
 
             try
             {

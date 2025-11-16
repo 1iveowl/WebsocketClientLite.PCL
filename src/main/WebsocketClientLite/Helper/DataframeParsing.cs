@@ -2,7 +2,6 @@
 using System.Collections;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using IWebsocketClientLite;
@@ -145,8 +144,8 @@ internal static class DataframeParsing
             if (BitConverter.IsLittleEndian)
             {
                 // We need to reverse bytes for little-endian platforms
-                var reversedBytes = bytes.Reverse().ToArray();
-                return dataframe with { Length = BitConverter.ToUInt16(reversedBytes, 0) };
+                Array.Reverse(bytes);
+                return dataframe with { Length = BitConverter.ToUInt16(bytes, 0) };
             }
             else
             {
@@ -165,8 +164,8 @@ internal static class DataframeParsing
 
             if (BitConverter.IsLittleEndian)
             {
-                var reversedBytes = bytes.Reverse().ToArray();
-                return dataframe with { Length = BitConverter.ToUInt64(reversedBytes, 0) };
+                Array.Reverse(bytes);
+                return dataframe with { Length = BitConverter.ToUInt64(bytes, 0) };
             }
             else
             {
@@ -174,7 +173,6 @@ internal static class DataframeParsing
             }
         }
     }
-
 
     internal static async Task<Dataframe?> GetPayload(this Task<Dataframe?> dataframeTask)
     {
@@ -186,13 +184,13 @@ internal static class DataframeParsing
         }
 
         // Only create memory stream when needed
-        using var memoryStream = new MemoryStream(checked((int)Math.Min(dataframe.Length, int.MaxValue)));
+        var memoryStream = new MemoryStream(checked((int)Math.Min(dataframe.Length, int.MaxValue)));
 
         var nextBytes = await dataframe.GetNextBytes(dataframe.Length);
         if (nextBytes is not null)
         {
 #if NETSTANDARD2_1
-        await memoryStream.WriteAsync(nextBytes);
+            await memoryStream.WriteAsync(nextBytes);
 #else
             await memoryStream.WriteAsync(nextBytes, 0, nextBytes.Length);
 #endif
@@ -208,10 +206,14 @@ internal static class DataframeParsing
 
         // Only get masking bytes when needed
         var maskingBytes = await dataframe.GetNextBytes(4);
+        if (maskingBytes is not null)
+        {
+            Array.Reverse(maskingBytes);
+        }
 
         return dataframe with
         {
-            MaskingBytes = maskingBytes?.Reverse().ToArray(),
+            MaskingBytes = maskingBytes,
             DataStream = memoryStream
         };
     }
