@@ -1,4 +1,4 @@
-name: Publish Package
+﻿name: Publish Package
 
 on:
   push:
@@ -55,6 +55,10 @@ jobs:
         run: dotnet build WebsocketClientLite.sln --configuration release /p:Version=${{ steps.gitversion.outputs.MajorMinorPatch }} /p:AssemblyVersion=${{ steps.gitversion.outputs.AssemblySemVer }} /p:InformationalVersion=${{ steps.gitversion.outputs.InformationalVersion }} --no-restore
         working-directory: src/main/
 
+      - name: Test .NET
+        run: dotnet test WebsocketClientLite.sln --configuration release --no-build --verbosity normal
+        working-directory: src/main/
+
       - name: Pack WebsocketClientLite
         run: dotnet pack WebsocketClientLite.csproj -c Release --no-build /p:Version=${{ steps.gitversion.outputs.MajorMinorPatch }}
         working-directory: src/main/WebsocketClientLite/
@@ -88,14 +92,23 @@ jobs:
 
       - name: Create Release
         id: create_release
-        uses: actions/create-release@v1 # Note: This is deprecated but retained for compatibility
+        uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: ${{ steps.gitversion.outputs.AssemblySemVer }}
           release_name: Release ${{ steps.gitversion.outputs.AssemblySemVer }}
           body: |
-            Changes in this Release
-            - Bump to HttpMachine 5.0
+            WebsocketClientLite 8.3 – Highlights
+            - Added .NET 10 (net10.0) target with C# 14 features.
+            - Faster send path: pooled frame builder (ArrayPool) and Memory/Span APIs.
+            - Robust stream read loop that reads exactly N bytes (fewer EOF surprises).
+            - Correct WebSocket masking/decoding and cryptographically secure mask/key generation.
+            - Manual big‑endian payload length parsing (8/16/64‑bit).
+            - ValueTask on hot paths to reduce allocations.
+            - Prefer ReadOnlyMemory/Memory ReadAsync/WriteAsync (CA1835) and tightened analyzers.
+            - Clear disposal ownership; factories refactored to satisfy CA2000.
+            - Improved fragment merging using pooled buffers.
+            - New unit tests for payload length boundaries and masked decoding.
           draft: true
           prerelease: true
