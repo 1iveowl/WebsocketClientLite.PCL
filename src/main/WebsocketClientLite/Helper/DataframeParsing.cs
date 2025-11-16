@@ -149,7 +149,7 @@ internal static class DataframeParsing
         }
     }
 
-    internal static async Task<Dataframe?> GetPayload(this Task<Dataframe?> dataframeTask, CancellationToken ct)
+    internal static async Task<Dataframe?> GetPayload(this Task<Dataframe?> dataframeTask, CancellationToken ct = default)
     {
         var dataframe = await dataframeTask.ConfigureAwait(false);
 
@@ -160,36 +160,53 @@ internal static class DataframeParsing
 
         var memoryStream = new MemoryStream(checked((int)Math.Min(dataframe.Length, int.MaxValue)));
 
-        var nextBytes = await dataframe.GetNextBytes(dataframe.Length).ConfigureAwait(false);
-        if (nextBytes is not null)
+        if (dataframe.MASK)
         {
-#if NETSTANDARD2_0
-            // .NET Standard 2.0 does not have the ReadOnlyMemory<byte> overload.
-            await memoryStream.WriteAsync(nextBytes, 0, nextBytes.Length, ct).ConfigureAwait(false);
-#else
-            // Use the more efficient ReadOnlyMemory<byte> overload (CA1835).
-            await memoryStream.WriteAsync(nextBytes.AsMemory(), ct).ConfigureAwait(false);
-#endif
-        }
+            // For masked frames, the masking key comes before the payload per RFC 6455
+            var maskingBytes = await dataframe.GetNextBytes(4).ConfigureAwait(false);
 
-        if (!dataframe.MASK)
+            // Read the masked payload bytes
+            var nextBytes = await dataframe.GetNextBytes(dataframe.Length).ConfigureAwait(false);
+            if (nextBytes is not null)
+            {
+#if NETSTANDARD2_1
+                await memoryStream.WriteAsync(nextBytes, ct).ConfigureAwait(false);
+#else
+#if NETSTANDARD2_0
+                await memoryStream.WriteAsync(nextBytes, 0, nextBytes.Length, ct).ConfigureAwait(false);
+#else
+                await memoryStream.WriteAsync(nextBytes.AsMemory(), ct).ConfigureAwait(false);
+#endif
+#endif
+            }
+
+            return dataframe with
+            {
+                MaskingBytes = maskingBytes,
+                DataStream = memoryStream
+            };
+        }
+        else
         {
+            // Unmasked frames: just read payload
+            var nextBytes = await dataframe.GetNextBytes(dataframe.Length).ConfigureAwait(false);
+            if (nextBytes is not null)
+            {
+#if NETSTANDARD2_1
+                await memoryStream.WriteAsync(nextBytes, ct).ConfigureAwait(false);
+#else
+#if NETSTANDARD2_0
+                await memoryStream.WriteAsync(nextBytes, 0, nextBytes.Length, ct).ConfigureAwait(false);
+#else
+                await memoryStream.WriteAsync(nextBytes.AsMemory(), ct).ConfigureAwait(false);
+#endif
+#endif
+            }
+
             return dataframe with
             {
                 DataStream = memoryStream
             };
         }
-
-        var maskingBytes = await dataframe.GetNextBytes(4).ConfigureAwait(false);
-        if (maskingBytes is not null)
-        {
-            Array.Reverse(maskingBytes);
-        }
-
-        return dataframe with
-        {
-            MaskingBytes = maskingBytes,
-            DataStream = memoryStream
-        };
     }
 }

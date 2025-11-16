@@ -20,4 +20,8 @@
     </PackageReference>
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\WebsocketClientLite\WebsocketClientLite.csproj" />
+  </ItemGroup>
+
 </Project>

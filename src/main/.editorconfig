@@ -11,7 +11,7 @@ dotnet_diagnostic.CA1822.severity = suggestion
 # CA1825: Avoid zero-length array allocations
 dotnet_diagnostic.CA1825.severity = warning
 # CA1835: Prefer 'Memory' overloads for 'ReadAsync'/'WriteAsync'
-dotnet_diagnostic.CA1835.severity = warning
+dotnet_diagnostic.CA1835.severity = error
 # CA1812: Avoid uninstantiated internal classes
 dotnet_diagnostic.CA1812.severity = suggestion
 # CA1820: Test for empty strings using string length
