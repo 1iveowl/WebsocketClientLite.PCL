@@ -153,9 +153,27 @@ internal static class DataframeParsing
     {
         var dataframe = await dataframeTask.ConfigureAwait(false);
 
-        if (dataframe is null || dataframe.Length == 0)
+        if (dataframe is null)
         {
-            return dataframe;
+            return null;
+        }
+
+        // Ensure zero-length frames still consume masking key (if present) and produce empty payload
+        if (dataframe.Length == 0)
+        {
+            if (dataframe.MASK)
+            {
+                var maskingBytesZero = await dataframe.GetNextBytes(4).ConfigureAwait(false);
+                return dataframe with
+                {
+                    MaskingBytes = maskingBytesZero,
+                    DataStream = new MemoryStream() // empty
+                };
+            }
+            else
+            {
+                return dataframe with { DataStream = new MemoryStream() }; // empty
+            }
         }
 
         var memoryStream = new MemoryStream(checked((int)Math.Min(dataframe.Length, int.MaxValue)));
