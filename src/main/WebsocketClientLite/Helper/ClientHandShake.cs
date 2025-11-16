@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 
 namespace WebsocketClientLite.Helper;
@@ -8,7 +9,7 @@ namespace WebsocketClientLite.Helper;
 internal static class ClientHandShake
 {
 
-#if !NET6_0_OR_GREATER  
+#if NETSTANDARD2_0
     // For .NET Standard 2.0/2.1
     private static readonly object _randomLock = new();
     private static Random? _random;
@@ -49,7 +50,7 @@ internal static class ClientHandShake
         sb.Append("Sec-WebSocket-Key: ").Append(key).Append("\r\n");
 
         // Handle subprotocols more efficiently
-        if (subprotocols is not null && subprotocols.Any())
+        if (subprotocols?.Count() > 0)
         {
             sb.Append("Sec-WebSocket-Protocol: ");
 
@@ -73,18 +74,22 @@ internal static class ClientHandShake
 
     static string GenerateRandomWebSocketKey()
     {
+#if NETSTANDARD2_0
+        // netstandard2.0 doesn't have RandomNumberGenerator.Fill nor Convert.ToBase64String(Span<byte>)
         var webSocketKey = new byte[16];
 
-        // Use Random.Shared for .NET 6+ or create a static Random instance for earlier versions
-#if NET6_0_OR_GREATER
-    Random.Shared.NextBytes(webSocketKey);
-#else
-        // Use a static Random instance for thread safety in older frameworks
         lock (_randomLock)
         {
+            using var rng = RandomNumberGenerator.Create();
             _random ??= new Random();
             _random.NextBytes(webSocketKey);
+            rng.GetBytes(webSocketKey);
         }
+
+#else
+        Span<byte> webSocketKey = stackalloc byte[16];
+        RandomNumberGenerator.Fill(webSocketKey);
+
 #endif
         return Convert.ToBase64String(webSocketKey);
     }

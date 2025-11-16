@@ -1,12 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Reactive;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 
 namespace WebsocketClientLite.Extension;
 
-public static class ObservableEx
+// Renamed class to ObservableExtensions to resolve CA1711
+public static class ObservableExtensions
 {
     public static IObservable<T> FinallyAsync<T>(this IObservable<T> source, Func<Task> task)
     {
@@ -18,7 +18,7 @@ public static class ObservableEx
                     {
                         case NotificationKind.OnCompleted:
                         case NotificationKind.OnError:
-                            await task();
+                            await task().ConfigureAwait(false);
                             return n;
                         case NotificationKind.OnNext:
                             return n;
@@ -26,21 +26,6 @@ public static class ObservableEx
                             throw new NotImplementedException();
                     }
                 })
-                .Dematerialize()
-            ;
+                .Dematerialize();
     }
-
-    internal static async IAsyncEnumerable<T> ToAsyncEnumerable<T>(this IEnumerable<T> enumerable)
-    {
-        foreach (var item in enumerable)
-        {
-            yield return await Task.FromResult(item);
-        }
-    }
-
-    //public static IObservable<TSource> UsingAsync<TSource, TResource>(
-    //    Func<Task<TResource>> resourceFactoryAsync,
-    //    Func<TResource, IObservable<TSource>> observableFactory) where TResource : IDisposable =>
-    //        Observable.FromAsync(resourceFactoryAsync)            
-    //            .SelectMany(resource => Observable.Using(() => resource, observableFactory));
 }

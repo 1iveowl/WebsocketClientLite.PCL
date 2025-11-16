@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Diagnostics;
 using System.IO;
 using System.Threading;
@@ -17,7 +16,7 @@ internal static class DataframeParsing
     {
         var dataframe = new Dataframe(tcpConnection, ct);
 
-        var oneByteArray = await dataframe.GetNextBytes(1);
+        var oneByteArray = await dataframe.GetNextBytes(1).ConfigureAwait(false);
 
         if (oneByteArray is null)
         {
@@ -28,25 +27,19 @@ internal static class DataframeParsing
         Debug.WriteLine($"First byte: {oneByteArray[0]}");
 #endif
 
-        // Extract byte value once to avoid repeated array access
         byte firstByte = oneByteArray[0];
 
-        // Optimize bit operations by extracting directly from the byte value
-        // This eliminates the need for BitArray allocation and manipulation
-        bool fin = (firstByte & 0x80) != 0;    // 10000000 - Check if bit 7 is set
-        bool rsv1 = (firstByte & 0x40) != 0;   // 01000000 - Check if bit 6 is set
-        bool rsv2 = (firstByte & 0x20) != 0;   // 00100000 - Check if bit 5 is set
-        bool rsv3 = (firstByte & 0x10) != 0;   // 00010000 - Check if bit 4 is set
+        bool fin = (firstByte & 0x80) != 0;    // bit 7
+        bool rsv1 = (firstByte & 0x40) != 0;   // bit 6
+        bool rsv2 = (firstByte & 0x20) != 0;   // bit 5
+        bool rsv3 = (firstByte & 0x10) != 0;   // bit 4
 
-        // Extract opcode directly - bottom 4 bits https://datatracker.ietf.org/doc/html/rfc6455#section-5.2
-
-        OpcodeKind opcode = (OpcodeKind)(firstByte & 0x0F);
+        OpcodeKind opcode = (OpcodeKind)(firstByte & 0x0F); // low 4 bits
 
 #if DEBUG
         Debug.WriteLine($"Opcode: {opcode}");
 #endif
 
-        // Determine fragment kind directly using byte comparison
         FragmentKind fragmentKind = firstByte switch
         {
             (byte)FragmentKind.First => FragmentKind.First,
@@ -54,7 +47,6 @@ internal static class DataframeParsing
             _ => FragmentKind.None
         };
 
-        // Create the dataframe with all properties set at once
         return dataframe with
         {
             FIN = fin,
@@ -68,44 +60,37 @@ internal static class DataframeParsing
 
     internal static async Task<Dataframe?> PayloadBitLenght(this Task<Dataframe?> dataframeTask)
     {
-        var dataframe = await dataframeTask;
+        var dataframe = await dataframeTask.ConfigureAwait(false);
 
         if (dataframe is null)
         {
             return null;
         }
 
-        var oneByteArray = await dataframe.GetNextBytes(1);
-
+        var oneByteArray = await dataframe.GetNextBytes(1).ConfigureAwait(false);
         if (oneByteArray is null)
         {
             return dataframe;
         }
 
-        var bits = new BitArray(oneByteArray);
-        var @byte = oneByteArray[0];
-        var mask = bits[7];
+        byte b = oneByteArray[0];
+        bool mask = (b & 0x80) != 0; // bit 7
+        byte lenMarker = (byte)(b & 0x7F); // low 7 bits
 
-        // Use switch expression for cleaner, more efficient code
-        return @byte switch
+        return lenMarker switch
         {
-            // If byte <= 0x7D (125), it's a 8-bit payload length
             <= (byte)PayloadBitLengthKind.Bits8 => dataframe with
             {
                 MASK = mask,
-                Length = @byte,
+                Length = lenMarker,
                 PayloadBitLength = PayloadBitLengthKind.Bits8
             },
-
-            // If byte == 0x7E (126), it's a 16-bit payload length
             (byte)PayloadBitLengthKind.Bits16 => dataframe with
             {
                 MASK = mask,
                 PayloadBitLength = PayloadBitLengthKind.Bits16
             },
-
-            // If byte == 0x7F (127), it's a 64-bit payload length
-            (byte)PayloadBitLengthKind.Bits64 or > (byte)PayloadBitLengthKind.Bits64 => dataframe with
+            _ => dataframe with
             {
                 MASK = mask,
                 PayloadBitLength = PayloadBitLengthKind.Bits64
@@ -113,10 +98,9 @@ internal static class DataframeParsing
         };
     }
 
-
     internal static async Task<Dataframe?> PayloadLenght(this Task<Dataframe?> dataframeTask)
     {
-        var dataframe = await dataframeTask;
+        var dataframe = await dataframeTask.ConfigureAwait(false);
 
         if (dataframe is null)
         {
@@ -126,73 +110,65 @@ internal static class DataframeParsing
         return dataframe.PayloadBitLength switch
         {
             PayloadBitLengthKind.Bits8 => dataframe,
-            PayloadBitLengthKind.Bits16 => await HandleBits16(),
-            PayloadBitLengthKind.Bits64 => await HandleBits64(),
+            PayloadBitLengthKind.Bits16 => await HandleBits16().ConfigureAwait(false),
+            PayloadBitLengthKind.Bits64 => await HandleBits64().ConfigureAwait(false),
             _ => throw new WebsocketClientLiteException("Unspecified payload length.")
         };
 
-        // Local async functions to handle specific cases
         async Task<Dataframe?> HandleBits16()
         {
-            var bytes = await dataframe.GetNextBytes(2);
+            var bytes = await dataframe.GetNextBytes(2).ConfigureAwait(false);
             if (bytes is null)
             {
                 return dataframe;
             }
 
-            // Avoid unnecessary array allocation if possible
-            if (BitConverter.IsLittleEndian)
-            {
-                // We need to reverse bytes for little-endian platforms
-                Array.Reverse(bytes);
-                return dataframe with { Length = BitConverter.ToUInt16(bytes, 0) };
-            }
-            else
-            {
-                // For big-endian platforms, no need to reverse
-                return dataframe with { Length = BitConverter.ToUInt16(bytes, 0) };
-            }
+            // Big-endian manual parse
+            ushort len = (ushort)((bytes[0] << 8) | bytes[1]);
+            return dataframe with { Length = len };
         }
 
         async Task<Dataframe?> HandleBits64()
         {
-            var bytes = await dataframe.GetNextBytes(8);
+            var bytes = await dataframe.GetNextBytes(8).ConfigureAwait(false);
             if (bytes is null)
             {
                 return dataframe;
             }
 
-            if (BitConverter.IsLittleEndian)
-            {
-                Array.Reverse(bytes);
-                return dataframe with { Length = BitConverter.ToUInt64(bytes, 0) };
-            }
-            else
-            {
-                return dataframe with { Length = BitConverter.ToUInt64(bytes, 0) };
-            }
+            // Big-endian manual parse
+            ulong len = ((ulong)bytes[0] << 56)
+                      | ((ulong)bytes[1] << 48)
+                      | ((ulong)bytes[2] << 40)
+                      | ((ulong)bytes[3] << 32)
+                      | ((ulong)bytes[4] << 24)
+                      | ((ulong)bytes[5] << 16)
+                      | ((ulong)bytes[6] << 8)
+                      | bytes[7];
+            return dataframe with { Length = len };
         }
     }
 
-    internal static async Task<Dataframe?> GetPayload(this Task<Dataframe?> dataframeTask)
+    internal static async Task<Dataframe?> GetPayload(this Task<Dataframe?> dataframeTask, CancellationToken ct)
     {
-        var dataframe = await dataframeTask;
+        var dataframe = await dataframeTask.ConfigureAwait(false);
 
         if (dataframe is null || dataframe.Length == 0)
         {
             return dataframe;
         }
 
-        // Only create memory stream when needed
         var memoryStream = new MemoryStream(checked((int)Math.Min(dataframe.Length, int.MaxValue)));
 
-        var nextBytes = await dataframe.GetNextBytes(dataframe.Length);
+        var nextBytes = await dataframe.GetNextBytes(dataframe.Length).ConfigureAwait(false);
         if (nextBytes is not null)
         {
-#if NETSTANDARD2_1
-            await memoryStream.WriteAsync(nextBytes);
+#if NETSTANDARD2_0
+            // .NET Standard 2.0 does not have the ReadOnlyMemory<byte> overload.
+            await memoryStream.WriteAsync(nextBytes, 0, nextBytes.Length, ct).ConfigureAwait(false);
 #else
-            await memoryStream.WriteAsync(nextBytes, 0, nextBytes.Length);
+            // Use the more efficient ReadOnlyMemory<byte> overload (CA1835).
+            await memoryStream.WriteAsync(nextBytes.AsMemory(), ct).ConfigureAwait(false);
 #endif
         }
 
@@ -204,8 +180,7 @@ internal static class DataframeParsing
             };
         }
 
-        // Only get masking bytes when needed
-        var maskingBytes = await dataframe.GetNextBytes(4);
+        var maskingBytes = await dataframe.GetNextBytes(4).ConfigureAwait(false);
         if (maskingBytes is not null)
         {
             Array.Reverse(maskingBytes);

@@ -40,7 +40,7 @@ internal record Dataframe : IDataframe
         _ct = ct;
     }
 
-    internal async Task<byte[]?> GetNextBytes(ulong size) => await _tcpConnection.ReadBytesFromStream(size, _ct);
+    internal ValueTask<byte[]?> GetNextBytes(ulong size) => _tcpConnection.ReadBytesFromStream(size, _ct);
 
     private byte[]? GetBinary()
     {

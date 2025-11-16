@@ -25,7 +25,7 @@ internal class TcpConnectionService(
     private readonly bool _keepTcpClientAlive = !hasTransferTcpSocketLifeCycleOwnership;
     private Stream? _stream;
 
-    internal Stream ConnectionStream => _stream ?? throw new NullReferenceException("Stream cannot be null");
+    internal Stream ConnectionStream => _stream ?? throw new ArgumentNullException("Stream cannot be null");
 
     internal virtual async Task ConnectTcpStream(
         Uri uri,
@@ -33,19 +33,19 @@ internal class TcpConnectionService(
         SslProtocols tlsProtocolType,
         TimeSpan timeout = default)
     {
-        await ConnectTcpClient(uri, timeout);
+        await ConnectTcpClient(uri, timeout).ConfigureAwait(false);
 
-        _stream = await GetTcpStream(uri, tcpClient, x509CertificateCollection, tlsProtocolType);
+        _stream = await GetTcpStream(uri, tcpClient, x509CertificateCollection, tlsProtocolType).ConfigureAwait(false);
     }
 
     internal IObservable<byte[]?> BytesObservable() =>
-        Observable.Defer(() => Observable.FromAsync(ct => ReadByteArrayFromStream(1, ct)))
+        Observable.Defer(() => Observable.FromAsync(ct => ReadByteArrayFromStream(1, ct).AsTask()))
         .Where(bytes => bytes is not null);
 
-    internal async Task<byte[]?> ReadBytesFromStream(ulong size, CancellationToken ct) =>
-        await ReadByteArrayFromStream(size, ct);
+    internal ValueTask<byte[]?> ReadBytesFromStream(ulong size, CancellationToken ct) =>
+        ReadByteArrayFromStream(size, ct);
 
-    internal async Task<byte[]?> ReadByteArrayFromStream(ulong size, CancellationToken ct)
+    internal async ValueTask<byte[]?> ReadByteArrayFromStream(ulong size, CancellationToken ct)
     {
         if (_stream is null || !_stream.CanRead)
         {
@@ -94,34 +94,63 @@ internal class TcpConnectionService(
     {
         connectionStatusAction(ConnectionStatus.ConnectingToTcpSocket, null);
 
-        tcpClient ??= new TcpClient(
+        if (tcpClient is null)
+        {
+            using var client = new TcpClient(
                 uri.HostNameType is UriHostNameType.IPv6
                     ? AddressFamily.InterNetworkV6
                     : AddressFamily.InterNetwork);
 
-        try
-        {
-            if (!tcpClient.Connected)
+            try
             {
-                await connectTcpClientFunc(tcpClient, uri)
+                await connectTcpClientFunc(client, uri)
                     .ToObservable()
                     .Timeout(timeout != default ? timeout : TimeSpan.FromSeconds(15));
+
+                tcpClient = client;
+            }
+            catch (TimeoutException ex)
+            {
+                client.Dispose();
+                throw new WebsocketClientLiteTcpConnectException($"TCP Socket connection timed-out to {uri.Host}:{uri.Port}.", ex);
+            }
+            catch (ObjectDisposedException)
+            {
+                client.Dispose();
+                // OK to ignore
+            }
+            catch (Exception ex)
+            {
+                client.Dispose();
+                throw new WebsocketClientLiteTcpConnectException($"Unable to establish TCP Socket connection to: {uri.Host}:{uri.Port}.", ex);
             }
         }
-        catch (TimeoutException ex)
+        else
         {
-            throw new WebsocketClientLiteTcpConnectException($"TCP Socket connection timed-out to {uri.Host}:{uri.Port}.", ex);
-        }
-        catch (ObjectDisposedException)
-        {
-            // OK to ignore
-        }
-        catch (Exception ex)
-        {
-            throw new WebsocketClientLiteTcpConnectException($"Unable to establish TCP Socket connection to: {uri.Host}:{uri.Port}.", ex);
+            try
+            {
+                if (!tcpClient.Connected)
+                {
+                    await connectTcpClientFunc(tcpClient, uri)
+                        .ToObservable()
+                        .Timeout(timeout != default ? timeout : TimeSpan.FromSeconds(15));
+                }
+            }
+            catch (TimeoutException ex)
+            {
+                throw new WebsocketClientLiteTcpConnectException($"TCP Socket connection timed-out to {uri.Host}:{uri.Port}.", ex);
+            }
+            catch (ObjectDisposedException)
+            {
+                // OK to ignore
+            }
+            catch (Exception ex)
+            {
+                throw new WebsocketClientLiteTcpConnectException($"Unable to establish TCP Socket connection to: {uri.Host}:{uri.Port}.", ex);
+            }
         }
 
-        if (tcpClient.Connected)
+        if (tcpClient is not null && tcpClient.Connected)
         {
             connectionStatusAction(ConnectionStatus.TcpSocketConnected, null);
             Debug.WriteLine("Connected");
@@ -140,7 +169,7 @@ internal class TcpConnectionService(
     {
         if (tcpClient is null)
         {
-            throw new NullReferenceException("Tcp Client cannot be null when trying to get socket stream.");
+            throw new ArgumentNullException(nameof(tcpClient), "Tcp Client cannot be null when trying to get socket stream.");
         }
 
         connectionStatusAction(ConnectionStatus.ConnectingToSocketStream, null);
@@ -159,7 +188,8 @@ internal class TcpConnectionService(
 
             try
             {
-                await secureStream.AuthenticateAsClientAsync(uri.Host, x509CertificateCollection, tlsProtocolType, false);
+                await secureStream.AuthenticateAsClientAsync(
+                    uri.Host, x509CertificateCollection, tlsProtocolType, false).ConfigureAwait(false);
 
                 connectionStatusAction(ConnectionStatus.SecureSocketStreamConnected, null);
                 return secureStream;

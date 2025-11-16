@@ -53,7 +53,7 @@ public class MessageWebsocketRx(
     /// <summary>
     /// Websocket known subprotocols.
     /// </summary>
-    public IEnumerable<string>? Subprotocols { get; set; } = default;
+    public IEnumerable<string>? Subprotocols { get; set; }
 
 
     /// <summary>
@@ -81,7 +81,7 @@ public class MessageWebsocketRx(
     /// </summary>
     /// <returns></returns>
     public ISender GetSender() => IsConnected 
-        ? _sender is not null ? _sender : throw new NullReferenceException("Sender not initialized.")
+        ? _sender is not null ? _sender : throw new ArgumentNullException("Sender not initialized.")
         : throw new InvalidOperationException("No sender available, Websocket not connected. You need to subscribe to WebsocketConnectObservable first.");
 
     /// <summary>
@@ -118,7 +118,7 @@ public class MessageWebsocketRx(
     /// <param name="hasClientPing">Set to true to have the client send ping messages to server.</param>
     /// <param name="clientPingInterval">Specific client ping interval. Default is 30 seconds will be used.</param>
     /// <param name="clientPingMessage">Specific client message. Default none. Will stay constant and can only be a <see langword="string"/>. For more advanced scenarios use <see cref="ISender.SendPing"/></param>
-    /// <param name="handshakeTimeout">Specific time out for client trying to connect (aka handshake). Default is 30 seconds.</param>
+    /// <param name="handshaketimeout">Specific time out for client trying to connect (aka handshake). Default is 30 seconds.</param>
     /// <returns></returns>
     public IObservable<(IDataframe? dataframe, ConnectionStatus state)>
         WebsocketConnectWithStatusObservable (
@@ -126,11 +126,11 @@ public class MessageWebsocketRx(
             bool hasClientPing = false,
             TimeSpan clientPingInterval = default,
             string? clientPingMessage = default,
-            TimeSpan handshakeTimeout = default)
+            TimeSpan handshaketimeout = default)
     {
-        if (handshakeTimeout == default)
+        if (handshaketimeout == default)
         {
-            handshakeTimeout = TimeSpan.FromSeconds(30);
+            handshaketimeout = TimeSpan.FromSeconds(30);
         }
 
         return Observable.Create<(IDataframe? dataframe, ConnectionStatus state)>(obsTuple =>
@@ -169,10 +169,10 @@ public class MessageWebsocketRx(
                                                 hasClientPing,
                                                 clientPingInterval,
                                                 clientPingMessage,
-                                                handshakeTimeout,
+                                                handshaketimeout,
                                                 Origin,
                                                 Headers,
-                                                Subprotocols);
+                                                Subprotocols).ConfigureAwait(false);
 
         void InitializeSender(ISender sender)
         {
@@ -187,7 +187,7 @@ public class MessageWebsocketRx(
     /// <param name="uri">Secure connection scheme method. Override for anything but default behavior.</param>
     /// <returns></returns>
     public virtual bool IsSecureConnectionScheme(Uri uri) => 
-        uri.Scheme switch
+        uri?.Scheme switch
         {
             "ws" or "http" => false,
             "https" or "wss"=> true,
@@ -200,31 +200,41 @@ public class MessageWebsocketRx(
     /// <param name="senderObject">Sender object</param>
     /// <param name="certificate">X.509 Certificate</param>
     /// <param name="chain">X.509 Chain</param>
-    /// <param name="tlsPolicyErrors"> TLS/SSL policy Errors</param>
+    /// <param name="TlsPolicyErrors"> TLS/SSL policy Errors</param>
     /// <returns></returns>
     public virtual bool ValidateServerCertificate(
         object senderObject,
         X509Certificate certificate,
         X509Chain chain,
-        SslPolicyErrors tlsPolicyErrors)
+        SslPolicyErrors TlsPolicyErrors)
     {
         if (IgnoreServerCertificateErrors) return true;
 
-        return tlsPolicyErrors switch
+        return TlsPolicyErrors switch
         {
             SslPolicyErrors.None => true,
-            SslPolicyErrors.RemoteCertificateChainErrors => 
-                throw new Exception($"SSL/TLS error: {SslPolicyErrors.RemoteCertificateChainErrors}"),
-            SslPolicyErrors.RemoteCertificateNameMismatch => 
-                throw new Exception($"SSL/TLS error: {SslPolicyErrors.RemoteCertificateNameMismatch}"),
-            SslPolicyErrors.RemoteCertificateNotAvailable => 
-                throw new Exception($"SSL/TLS error: {SslPolicyErrors.RemoteCertificateNotAvailable}"),
-            _ => throw new ArgumentOutOfRangeException(nameof(tlsPolicyErrors), tlsPolicyErrors, null),
+            SslPolicyErrors.RemoteCertificateChainErrors =>
+                throw new AuthenticationException($"SSL/TLS error: {SslPolicyErrors.RemoteCertificateChainErrors}"),
+            SslPolicyErrors.RemoteCertificateNameMismatch =>
+                throw new AuthenticationException($"SSL/TLS error: {SslPolicyErrors.RemoteCertificateNameMismatch}"),
+            SslPolicyErrors.RemoteCertificateNotAvailable =>
+                throw new AuthenticationException($"SSL/TLS error: {SslPolicyErrors.RemoteCertificateNotAvailable}"),
+            _ => throw new ArgumentOutOfRangeException(nameof(TlsPolicyErrors), TlsPolicyErrors, null),
         };
+    }
+
+    protected virtual void Dispose(bool disposing)
+    {
+        if (disposing)
+        {
+            _eventLoopScheduler?.Dispose();
+        }
+        // No unmanaged resources to release, so nothing else needed here.
     }
 
     public void Dispose()
     {
-        _eventLoopScheduler?.Dispose();
+        Dispose(true);
+        GC.SuppressFinalize(this);
     }
 }

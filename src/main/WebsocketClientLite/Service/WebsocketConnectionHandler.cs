@@ -59,16 +59,11 @@ internal class WebsocketConnectionHandler : IDisposable
             clientPingTimeSpan = TimeSpan.FromSeconds(30);
         }
 
-        if (tlsProtocolType is SslProtocols.None)
-        {
-            tlsProtocolType = SslProtocols.Tls12;
-        }
-
         await _tcpConnectionService.ConnectTcpStream(
             uri,
             x509CertificateCollection,
             tlsProtocolType,
-            timeout);
+            timeout).ConfigureAwait(false);
 
         var sender = _createWebsocketSenderFunc(
             _tcpConnectionService.ConnectionStream,
@@ -116,18 +111,18 @@ internal class WebsocketConnectionHandler : IDisposable
             _websocketParserHandler.DataframeObservable()
                 .SelectMany(async dataframe =>
                     // Process control frames and return data frames
-                    await IncomingControlFrameHandler(dataframe, dataframeObserver, cancellationToken))
+                    await IncomingControlFrameHandler(dataframe, dataframeObserver, cancellationToken).ConfigureAwait(false))
                 .Where(dataframe => dataframe is not null)
                 .Subscribe(dataframeObserver))
         .Repeat()
         .FinallyAsync(async () =>
         {
-            await DisconnectWebsocket(sender);
+            await DisconnectWebsocket(sender).ConfigureAwait(false);
         });
 
         IObservable<Unit> SendClientPing(string? message) =>
             Observable.Interval(clientPingTimeSpan)
-            .Select(_ => Observable.FromAsync(ct => sender.SendPing(message)))
+            .Select(_ => Observable.FromAsync(ct => sender.SendPing(message, ct)))
             .Concat();
 
         async Task<Dataframe?> IncomingControlFrameHandler(
@@ -143,7 +138,7 @@ internal class WebsocketConnectionHandler : IDisposable
                 OpcodeKind.Binary => dataframe,
 
                 // Control frames that require special handling
-                OpcodeKind.Ping => await HandlePing(),
+                OpcodeKind.Ping => await HandlePing().ConfigureAwait(false),
                 OpcodeKind.Pong => HandlePong(),
                 OpcodeKind.Close => HandleClose(),
 
@@ -167,7 +162,7 @@ internal class WebsocketConnectionHandler : IDisposable
             async Task<Dataframe?> HandlePing()
             {
                 _connectionStatusAction(ConnectionStatus.PingReceived, null);
-                await sender.SendPong(dataframe!, ct);
+                await sender.SendPong(dataframe!, ct).ConfigureAwait(false);
                 return null;
             }
 
@@ -207,11 +202,7 @@ internal class WebsocketConnectionHandler : IDisposable
 
     public void Dispose()
     {
-        if(_clientPingDisposable is not null)
-        {
-            _clientPingDisposable?.Dispose();
-        }
-
+        _clientPingDisposable?.Dispose();
         _websocketParserHandler?.Dispose();
         _tcpConnectionService?.Dispose();
     }

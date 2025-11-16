@@ -17,13 +17,13 @@ using WebsocketClientLite.Service;
 
 namespace WebsocketClientLite;
 
-public record ClientWebSocketRx: IWebSocketClientRx
+public record ClientWebSocketRx : IWebSocketClientRx, IDisposable, IEquatable<ClientWebSocketRx>
 {
     private readonly CompositeDisposable _disposables = [];
     private readonly IObserver<bool> _observerIsConnected;
     private readonly EventLoopScheduler _eventLoopScheduler = new();
 
-    public bool HasTransferSocketLifeCycleOwnership { get; init; } = false;
+    public bool HasTransferSocketLifeCycleOwnership { get; init; }
 
     public TcpClient TcpClient { get; init; } = new TcpClient();
 
@@ -61,12 +61,12 @@ public record ClientWebSocketRx: IWebSocketClientRx
     /// <summary>
     /// Typically used with Slack. See documentation.
     /// </summary>
-    public bool ExcludeZeroApplicationDataInPong { get; init; } = false;
+    public bool ExcludeZeroApplicationDataInPong { get; init; }
 
     /// <summary>
     /// Use with care. Ignores TLS/SSL certificate checks and errors. See documentation.
     /// </summary>
-    public bool IgnoreServerCertificateErrors { get; init; } = false;
+    public bool IgnoreServerCertificateErrors { get; init; }
 
     /// <summary>
     /// X.509 certificate collection.
@@ -94,7 +94,7 @@ public record ClientWebSocketRx: IWebSocketClientRx
     /// <param name="uri">Secure connection scheme method. Override for anything but default behavior.</param>
     /// <returns></returns>
     public virtual bool IsSecureConnectionScheme(Uri uri) =>
-        uri.Scheme switch
+        uri?.Scheme switch
         {
             "ws" or "http" => false,
             "https" or "wss" => true,
@@ -107,26 +107,26 @@ public record ClientWebSocketRx: IWebSocketClientRx
     /// <param name="senderObject">Sender object</param>
     /// <param name="certificate">X.509 Certificate</param>
     /// <param name="chain">X.509 Chain</param>
-    /// <param name="tlsPolicyErrors"> TLS/SSL policy Errors</param>
+    /// <param name="TlsPolicyErrors"> TLS/SSL policy Errors</param>
     /// <returns></returns>
     public virtual bool ValidateServerCertificate(
         object senderObject,
         X509Certificate certificate,
         X509Chain chain,
-        SslPolicyErrors tlsPolicyErrors)
+        SslPolicyErrors TlsPolicyErrors)
     {
         if (IgnoreServerCertificateErrors) return true;
 
-        return tlsPolicyErrors switch
+        return TlsPolicyErrors switch
         {
             SslPolicyErrors.None => true,
             SslPolicyErrors.RemoteCertificateChainErrors =>
-                throw new Exception($"SSL/TLS error: {SslPolicyErrors.RemoteCertificateChainErrors}"),
+                throw new AuthenticationException($"SSL/TLS error: {SslPolicyErrors.RemoteCertificateChainErrors}"),
             SslPolicyErrors.RemoteCertificateNameMismatch =>
-                throw new Exception($"SSL/TLS error: {SslPolicyErrors.RemoteCertificateNameMismatch}"),
+                throw new AuthenticationException($"SSL/TLS error: {SslPolicyErrors.RemoteCertificateNameMismatch}"),
             SslPolicyErrors.RemoteCertificateNotAvailable =>
-                throw new Exception($"SSL/TLS error: {SslPolicyErrors.RemoteCertificateNotAvailable}"),
-            _ => throw new ArgumentOutOfRangeException(nameof(tlsPolicyErrors), tlsPolicyErrors, null),
+                throw new AuthenticationException($"SSL/TLS error: {SslPolicyErrors.RemoteCertificateNotAvailable}"),
+            _ => throw new ArgumentOutOfRangeException(nameof(TlsPolicyErrors), TlsPolicyErrors, null),
         };
     }
 
@@ -157,7 +157,7 @@ public record ClientWebSocketRx: IWebSocketClientRx
     /// <param name="hasClientPing">Set to true to have the client send ping messages to server.</param>
     /// <param name="clientPingInterval">Specific client ping interval. Default is 30 seconds will be used.</param>
     /// <param name="clientPingMessage">Specific client message. Default none. Will stay constant and can only be a <see langword="string"/>. For more advanced scenarios use <see cref="ISender.SendPing"/></param>
-    /// <param name="handshakeTimeout">Specific time out for client trying to connect (aka handshake). Default is 30 seconds.</param>
+    /// <param name="handshaketimeout">Specific time out for client trying to connect (aka handshake). Default is 30 seconds.</param>
     /// <returns></returns>
     public IObservable<(IDataframe? dataframe, ConnectionStatus state)>
         WebsocketConnectWithStatusObservable(
@@ -165,12 +165,12 @@ public record ClientWebSocketRx: IWebSocketClientRx
             bool hasClientPing = false,
             TimeSpan clientPingInterval = default,
             string? clientPingMessage = default,
-            TimeSpan handshakeTimeout = default,
+            TimeSpan handshaketimeout = default,
             CancellationToken cancellationToken = default)
     {
-        if (handshakeTimeout == default)
+        if (handshaketimeout == default)
         {
-            handshakeTimeout = TimeSpan.FromSeconds(30);
+            handshaketimeout = TimeSpan.FromSeconds(30);
         }
 
         void initSender(ISender sender)
@@ -215,16 +215,27 @@ public record ClientWebSocketRx: IWebSocketClientRx
                 hasClientPing,
                 clientPingInterval,
                 clientPingMessage,
-                handshakeTimeout,
+                handshaketimeout,
                 Origin,
                 Headers,
                 Subprotocols,
-                cancellationToken);
+                cancellationToken).ConfigureAwait(false);
     }
 
+    // Add a protected virtual Dispose(bool disposing) method
+    protected virtual void Dispose(bool disposing)
+    {
+        if (disposing)
+        {
+            _disposables.Dispose();
+            _eventLoopScheduler.Dispose();
+        }
+    }
+
+    // Update Dispose() to call Dispose(true) and GC.SuppressFinalize(this)
     public void Dispose()
     {
-        _disposables.Dispose();
-        _eventLoopScheduler.Dispose();
+        Dispose(true);
+        GC.SuppressFinalize(this);
     }
 }

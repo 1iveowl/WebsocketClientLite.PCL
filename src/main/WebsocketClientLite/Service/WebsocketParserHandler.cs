@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Buffers;
 using System.Collections.Generic;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
@@ -32,19 +33,17 @@ internal class WebsocketParserHandler : IDisposable
             var dataframe = await _tcpConnectionService.CreateDataframe(cts.Token)
                 .PayloadBitLenght()
                 .PayloadLenght()
-                .GetPayload();
+                .GetPayload(cts.Token)
+                .ConfigureAwait(false);
 
             if (dataframe is not null)
             {
                 while (!dataframe.FIN)
                 {
-                    // Merge fragments into one dataframe.
-                    dataframe = await GetNextDataframe(dataframe);
+                    // Merge fragments efficiently
+                    dataframe = await GetNextDataframe(dataframe).ConfigureAwait(false);
 
-                    if (dataframe is null)
-                    {
-                        break;
-                    }                        
+                    if (dataframe is null) break;                      
                 }
 
                 obs.OnNext(dataframe);
@@ -52,30 +51,40 @@ internal class WebsocketParserHandler : IDisposable
                          
             obs.OnCompleted();
 
-            return Disposable.Create(() => cts.Cancel());
+            return Disposable.Create(() => cts?.Cancel());
 
-            async Task<Dataframe?> GetNextDataframe(Dataframe? dataframe)
+            async Task<Dataframe?> GetNextDataframe(Dataframe? df)
             {
-                var nextDataframe = await GetDataframe();
+                var nextDataframe = await GetDataframe().ConfigureAwait(false);
 
                 if (nextDataframe is not null 
                     && nextDataframe.DataStream is not null
-                    && dataframe is not null)
+                    && df is not null
+                    && df.DataStream is not null)
                 {
-                    await nextDataframe.DataStream.CopyToAsync(dataframe.DataStream!,
-#if !NETSTANDARD2_1
-                        81920,
-#endif
-                        cts.Token);
-
-
-                    dataframe = dataframe with
+#if NETSTANDARD2_0
+                    byte[]? rented = null;
+                    try
                     {
-                        FIN = nextDataframe.FIN,
-                    };
+                        rented = ArrayPool<byte>.Shared.Rent(81920);
+                        int read;
+                        nextDataframe.DataStream.Position = 0;
+                        while ((read = nextDataframe.DataStream.Read(rented, 0, rented.Length)) > 0)
+                        {
+                            await df.DataStream.WriteAsync(rented, 0, read, cts.Token);
+                        }
+                    }
+                    finally
+                    {
+                        if (rented is not null) ArrayPool<byte>.Shared.Return(rented);
+                    }
+#else
+                    await nextDataframe.DataStream.CopyToAsync(df.DataStream).ConfigureAwait(false);
+#endif
+                    df = df with { FIN = nextDataframe.FIN };
                 }
 
-                return dataframe;
+                return df;
             }
 
             async Task<Dataframe?> GetDataframe()
@@ -83,7 +92,8 @@ internal class WebsocketParserHandler : IDisposable
                 var newDataframe = await _tcpConnectionService.CreateDataframe(cts.Token)
                     .PayloadBitLenght()
                     .PayloadLenght()
-                    .GetPayload();
+                    .GetPayload(cts.Token)
+                    .ConfigureAwait(false);
 
                 if (newDataframe is null)
                 {

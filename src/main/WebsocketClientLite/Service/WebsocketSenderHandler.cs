@@ -43,7 +43,7 @@ internal class WebsocketSenderHandler : ISender
 
         try
         {
-            await _writeFunc(_tcpConnectionService.ConnectionStream, handShakeBytes, ct);
+            await _writeFunc(_tcpConnectionService.ConnectionStream, handShakeBytes, ct).ConfigureAwait(false);
         }
         catch (Exception ex)
         {
@@ -58,7 +58,8 @@ internal class WebsocketSenderHandler : ISender
             message,
             OpcodeKind.Text,
             FragmentKind.None,
-            ct);
+            ct)
+        .ConfigureAwait(false);
 
     public async Task SendText(
         IEnumerable<string> messageList,
@@ -66,7 +67,8 @@ internal class WebsocketSenderHandler : ISender
             await SendList(
                 messageList,
                 OpcodeKind.Text,
-                (text, frag, op) => ComposeFrameAndSendAsync(text, op, frag, ct));
+                (text, frag, op) => ComposeFrameAndSendAsync(text, op, frag, ct))
+            .ConfigureAwait(false);
 
 
     public async Task SendText(
@@ -78,7 +80,8 @@ internal class WebsocketSenderHandler : ISender
                     message,
                     opcode,
                     fragment,
-                    ct);
+                    ct)
+                .ConfigureAwait(false);
 
     public async Task SendBinary(
         byte[] data,
@@ -87,7 +90,8 @@ internal class WebsocketSenderHandler : ISender
                 data,
                 OpcodeKind.Binary,
                 FragmentKind.None,
-                ct);
+                ct)
+            .ConfigureAwait(false);
 
     public async Task SendBinary(
         IEnumerable<byte[]> dataList,
@@ -95,7 +99,8 @@ internal class WebsocketSenderHandler : ISender
             await SendList(
                 dataList,
                 OpcodeKind.Binary,
-                (data, frag, op) => ComposeFrameAndSendAsync(data, op, frag, ct));
+                (data, frag, op) => ComposeFrameAndSendAsync(data, op, frag, ct))
+            .ConfigureAwait(false);
 
     public async Task SendBinary(
         byte[] data, 
@@ -105,7 +110,8 @@ internal class WebsocketSenderHandler : ISender
                     data,
                     opcode,
                     fragment,
-                    ct);
+                    ct)
+            .ConfigureAwait(false);
 
     public async Task SendPing(
         string? message, 
@@ -114,7 +120,8 @@ internal class WebsocketSenderHandler : ISender
                 message,
                 OpcodeKind.Ping,
                 FragmentKind.None,
-                ct);
+                ct)
+            .ConfigureAwait(false);
 
     public async Task SendPing(
         byte[] data,
@@ -123,7 +130,8 @@ internal class WebsocketSenderHandler : ISender
                 data,
                 OpcodeKind.Ping,
                 FragmentKind.None,
-                ct);
+                ct)
+            .ConfigureAwait(false);
 
     internal async Task SendPong(
         Dataframe dataframe,
@@ -132,7 +140,8 @@ internal class WebsocketSenderHandler : ISender
                 dataframe.Binary ?? Array.Empty<byte>(),
                 OpcodeKind.Pong,
                 FragmentKind.None,
-                ct);
+                ct)
+            .ConfigureAwait(false);
 
     internal async Task SendCloseHandshakeAsync(
         StatusCodes statusCode)
@@ -144,7 +153,8 @@ internal class WebsocketSenderHandler : ISender
             Combine(closeFrameBodyCode, reason),
             OpcodeKind.Close,
             FragmentKind.None,
-            default);
+            default)
+            .ConfigureAwait(false);
 
         static byte[] Combine(byte[] a, byte[] b)
         {
@@ -167,7 +177,7 @@ internal class WebsocketSenderHandler : ISender
 
         if (items.Count == 1)
         {
-            await sendTask(items[0], FragmentKind.None, opcode);
+            await sendTask(items[0], FragmentKind.None, opcode).ConfigureAwait(false);
             return;
         }
 
@@ -176,15 +186,15 @@ internal class WebsocketSenderHandler : ISender
             var item = items[index];
             if (index == 0)
             {
-                await sendTask(item, FragmentKind.First, opcode);
+                await sendTask(item, FragmentKind.First, opcode).ConfigureAwait(false);
             }
             else if (index == items.Count - 1)
             {
-                await sendTask(item, FragmentKind.Last, opcode);
+                await sendTask(item, FragmentKind.Last, opcode).ConfigureAwait(false) ;
             }
             else
             {
-                await sendTask(item, FragmentKind.None, OpcodeKind.Continuation);
+                await sendTask(item, FragmentKind.None, OpcodeKind.Continuation).ConfigureAwait(false);
             }
         }
     }
@@ -196,11 +206,20 @@ internal class WebsocketSenderHandler : ISender
         CancellationToken ct)
     {
         byte[]? bytes = message is not null ? Encoding.UTF8.GetBytes(message) : null;
-        await ComposeFrameAndSendAsync(bytes, opcode, fragment, ct);
+        await ComposeFrameAndSendCoreAsync(bytes, opcode, fragment, ct).ConfigureAwait(false);
     }
 
     private async Task ComposeFrameAndSendAsync(
         byte[]? content, 
+        OpcodeKind opcode,
+        FragmentKind fragment,
+        CancellationToken ct)
+    {
+        await ComposeFrameAndSendCoreAsync(content, opcode, fragment, ct).ConfigureAwait(false);
+    }
+
+    private async ValueTask ComposeFrameAndSendCoreAsync(
+        byte[]? content,
         OpcodeKind opcode,
         FragmentKind fragment,
         CancellationToken ct)
@@ -210,39 +229,31 @@ internal class WebsocketSenderHandler : ISender
             throw new WebsocketClientLiteException("Websocket connection stream have been closed");
         }
 
-        // Determine payload length
         int payloadLength = content?.Length ?? 0;
-        bool hasPayload = payloadLength > 0;
-
-        // Build header size: 1 (FIN/opcode) + 1/3/9 (payload len) + 4 (mask key)
         int payloadLenField = payloadLength <= 125 ? 1 : (payloadLength <= ushort.MaxValue ? 3 : 9);
-        int headerSize = 1 + payloadLenField + 4; // clients must mask
-
-        // Total size: header + encoded payload (same length)
+        int headerSize = 1 + payloadLenField + 4;
         int totalSize = headerSize + payloadLength;
 
         byte[] buffer = ArrayPool<byte>.Shared.Rent(totalSize);
         int written = 0;
         try
         {
-            // Byte 0: FIN/opcode
             buffer[written++] = DetermineFINBit(opcode, fragment);
 
-            // Payload length and mask bit
             if (payloadLenField == 1)
             {
-                buffer[written++] = (byte)(payloadLength | 0x80); // set mask bit
+                buffer[written++] = (byte)(payloadLength | 0x80);
             }
             else if (payloadLenField == 3)
             {
-                buffer[written++] = (byte)(126 | 0x80); // 126 + mask
+                buffer[written++] = (byte)(126 | 0x80);
                 var len = (ushort)payloadLength;
                 buffer[written++] = (byte)(len >> 8);
                 buffer[written++] = (byte)(len & 0xFF);
             }
             else
             {
-                buffer[written++] = (byte)(127 | 0x80); // 127 + mask
+                buffer[written++] = (byte)(127 | 0x80);
                 ulong len = (ulong)payloadLength;
                 buffer[written++] = (byte)((len >> 56) & 0xFF);
                 buffer[written++] = (byte)((len >> 48) & 0xFF);
@@ -254,32 +265,20 @@ internal class WebsocketSenderHandler : ISender
                 buffer[written++] = (byte)(len & 0xFF);
             }
 
-            // Mask key
             var maskKey = CreateMaskKey();
             Buffer.BlockCopy(maskKey, 0, buffer, written, 4);
             written += 4;
 
-            if (hasPayload)
+            if (payloadLength > 0)
             {
-                // Encode in place into buffer after header
                 for (int i = 0; i < payloadLength; i++)
                 {
                     buffer[written + i] = (byte)(content![i] ^ maskKey[i % 4]);
                 }
                 written += payloadLength;
             }
-            else
-            {
-                // For zero-length payload, optionally add explicit 0 payload for Pong if interop requires it
-                // RFC does not require a 0 byte; mask-only header is acceptable. Keep behavior compatible via flag.
-                if (opcode == OpcodeKind.Pong && !_isExcludingZeroApplicationDataInPong)
-                {
-                    // Explicit 0-length content implies no body; nothing to append.
-                    // Old code appended a single 0 byte; with mask header already written, no body is correct.
-                }
-            }
 
-            await SendFrameAsync(buffer.AsSpan(0, written).ToArray(), opcode, fragment, ct);
+            await SendFrameCoreAsync(buffer, written, opcode, fragment, ct).ConfigureAwait(false);
         }
         finally
         {
@@ -303,8 +302,9 @@ internal class WebsocketSenderHandler : ISender
         }
     }
 
-    private async Task SendFrameAsync(
-        byte[] frame, 
+    private async ValueTask SendFrameCoreAsync(
+        byte[] buffer,
+        int length,
         OpcodeKind opcode,
         FragmentKind fragment,
         CancellationToken ct)
@@ -336,7 +336,9 @@ internal class WebsocketSenderHandler : ISender
 
         try
         {
-            await _writeFunc(_tcpConnectionService.ConnectionStream, frame, ct);
+            var frame = new byte[length];
+            Buffer.BlockCopy(buffer, 0, frame, 0, length);
+            await _writeFunc(_tcpConnectionService.ConnectionStream, frame, ct).ConfigureAwait(false);
 
             if (opcode is OpcodeKind.Close)
             {

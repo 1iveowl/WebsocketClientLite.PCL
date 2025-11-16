@@ -20,6 +20,8 @@
 Can be set to ignore SSL/TLS server certificate issues (use with care!).
 Easily and effectively observe incoming message using Reactive Extensions (Rx)</Description>
     <PackageReleaseNotes>Bump to HttpMachine 5.0</PackageReleaseNotes>
+    <EnableNETAnalyzers>true</EnableNETAnalyzers>
+    <AnalysisMode>AllEnabledByDefault</AnalysisMode>
   </PropertyGroup>
 
   <ItemGroup>
@@ -38,6 +40,7 @@ Easily and effectively observe incoming message using Reactive Extensions (Rx)</
     <PackageReference Include="System.Reactive" Version="6.1.0" />
     <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="10.0.0" Condition=" '$(TargetFramework)' == 'netstandard2.0' " />
     <PackageReference Include="System.Memory" Version="4.6.3" Condition=" '$(TargetFramework)' == 'netstandard2.0' " />  
+    <PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="10.0.0" PrivateAssets="all" />
   </ItemGroup>
 
   <ItemGroup>
