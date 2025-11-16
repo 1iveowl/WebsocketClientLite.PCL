@@ -17,8 +17,6 @@ namespace WebsocketClientLite.Factory;
 
 internal class WebsocketServiceFactory
 {
-    //private WebsocketServiceFactory() { }
-
     internal static async Task<WebsocketService> Create(
         Func<bool> isSecureConnectionSchemeFunc,
         Func<object, X509Certificate, X509Chain, SslPolicyErrors, bool> validateServerCertificateFunc,
@@ -31,9 +29,7 @@ internal class WebsocketServiceFactory
         var tcpConnectionHandler = new TcpConnectionService(
             isSecureConnectionSchemeFunc: isSecureConnectionSchemeFunc,
             validateServerCertificateFunc: validateServerCertificateFunc,
-            connectTcpClientFunc: ConnectTcpClient,
-            ReadOneByteFromStream,
-            //readOneByteFunc: (stream, bytes, cts) => RunOnScheduler(ReadOneByteFromStream(stream, bytes, cts), eventLoopScheduler),
+            ConnectTcpClient,
             connectionStatusAction: ConnectionStatusAction,
             messageWebSocketRx.HasTransferSocketLifeCycleOwnership,
             tcpClient: messageWebSocketRx.TcpClient);
@@ -79,19 +75,6 @@ internal class WebsocketServiceFactory
             await stream.FlushAsync().ConfigureAwait(false);
 
             return true;
-        }
-
-        async Task<int> ReadOneByteFromStream(Stream stream, byte[] byteArray, CancellationToken ct)
-        {
-            try
-            {
-                return await stream.ReadAsync(byteArray, 0, byteArray.Length, ct).ConfigureAwait(false);
-            }
-            catch (OperationCanceledException)
-            {
-                return -1;
-            }
-            
         }
 
         async Task ConnectTcpClient(TcpClient tcpClient, Uri uri) 

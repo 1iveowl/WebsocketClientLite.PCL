@@ -18,7 +18,6 @@ internal class TcpConnectionService(
     Func<bool> isSecureConnectionSchemeFunc,
     Func<object, X509Certificate, X509Chain, SslPolicyErrors, bool> validateServerCertificateFunc,
     Func<TcpClient, Uri, Task> connectTcpClientFunc,
-    Func<Stream, byte[], CancellationToken, Task<int>> readOneByteFunc,
     Action<ConnectionStatus, Exception?> connectionStatusAction,
     bool hasTransferTcpSocketLifeCycleOwnership,
     TcpClient? tcpClient = null) : IDisposable
@@ -47,43 +46,46 @@ internal class TcpConnectionService(
         await ReadByteArrayFromStream(size, ct);
 
     internal async Task<byte[]?> ReadByteArrayFromStream(ulong size, CancellationToken ct)
-    {          
+    {
         if (_stream is null || !_stream.CanRead)
         {
             throw new WebsocketClientLiteException("Stream not ready or not connected.");
         }
 
-        var byteArray = new byte[size];
+        // We cannot allocate arrays larger than int.MaxValue
+        int requested = checked((int)Math.Min((ulong)int.MaxValue, size));
+        var buffer = new byte[requested];
+        int totalRead = 0;
 
         try
         {
-            if (_stream is null)
+            while (totalRead < requested)
             {
-                throw new WebsocketClientLiteException("Read stream cannot be null.");
-            }
+#if NETSTANDARD2_0
+                int read = await _stream.ReadAsync(buffer, totalRead, requested - totalRead, ct).ConfigureAwait(false);
+#else
+                int read = await _stream.ReadAsync(buffer.AsMemory(totalRead, requested - totalRead), ct).ConfigureAwait(false);
+#endif
+                if (read == 0)
+                {
+                    // Unexpected EOF
+                    throw new WebsocketClientLiteException("Websocket connection aborted unexpectedly. Check connection and socket security version/TLS version).");
+                }
 
-            if (!_stream.CanRead)
-            {
-                throw new WebsocketClientLiteException("Websocket connection have been closed.");
+                totalRead += read;
             }
-
-            var readLength = await readOneByteFunc(_stream, byteArray, ct);
-
-            if (readLength == 0)
-            {
-                throw new WebsocketClientLiteException("Websocket connection aborted unexpectedly. Check connection and socket security version/TLS version).");
-            }
-
-            if (readLength == -1)
-            {
-                return null;
-            }
+        }
+        catch (OperationCanceledException)
+        {
+            // Align with prior behavior (readOneByteFunc returned -1 on cancel)
+            return null;
         }
         catch (ObjectDisposedException)
         {
             Debug.WriteLine("Ignoring Object Disposed Exception - This is an expected exception");
         }
-        return byteArray;
+
+        return buffer;
     }
 
     private async Task ConnectTcpClient(

@@ -29,8 +29,6 @@ internal class WebsocketClientFactory
             isSecureConnectionSchemeFunc: isSecureConnectionSchemeFunc,
             validateServerCertificateFunc: validateServerCertificateFunc,
             connectTcpClientFunc: ConnectTcpClient,
-            ReadOneByteFromStream,
-            //readOneByteFunc: (stream, bytes, cts) => RunOnScheduler(ReadOneByteFromStream(stream, bytes, cts), eventLoopScheduler),
             connectionStatusAction: ConnectionStatusAction,
             webSocketClientRx.HasTransferSocketLifeCycleOwnership,
             tcpClient: webSocketClientRx.TcpClient);
@@ -76,19 +74,6 @@ internal class WebsocketClientFactory
             await stream.FlushAsync().ConfigureAwait(false);
 
             return true;
-        }
-
-        async Task<int> ReadOneByteFromStream(Stream stream, byte[] byteArray, CancellationToken ct)
-        {
-            try
-            {
-                return await stream.ReadAsync(byteArray, 0, byteArray.Length, ct).ConfigureAwait(false);
-            }
-            catch (OperationCanceledException)
-            {
-                return -1;
-            }
-            
         }
 
         async Task ConnectTcpClient(TcpClient tcpClient, Uri uri) 
