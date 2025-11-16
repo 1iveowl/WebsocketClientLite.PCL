@@ -302,3 +302,18 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 src/main/WebsocketClientLite/nuget.config
+
+
+# OS/editor-støj
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+*~
+*.log
+__blobstorage__/*
+
+# Behold placeholder-filer i tomme mapper
+!.gitkeep
+!**/README.md
