@@ -5,6 +5,7 @@
 [![.NET Standard](http://img.shields.io/badge/.NET_Standard-v2.0-red.svg)](https://docs.microsoft.com/da-dk/dotnet/articles/standard/library)[![.NET Standard](http://img.shields.io/badge/.NET_Standard-v2.1-red.svg)](https://docs.microsoft.com/da-dk/dotnet/articles/standard/library)
 
 [![.NET 8](http://img.shields.io/badge/.NET-v8.0-blue.svg)](https://dotnet.microsoft.com/download/dotnet/8.0)[![.NET 9](http://img.shields.io/badge/.NET-v9.0-blue.svg)](https://dotnet.microsoft.com/download/dotnet/9.0)
+[![.NET 10](http://img.shields.io/badge/.NET-v10.0-blue.svg)](https://dotnet.microsoft.com/download/dotnet/10.0)
 
 [![System.Reactive](http://img.shields.io/badge/Rx-v6.0.1-ff69b4.svg)](http://reactivex.io/)
 
