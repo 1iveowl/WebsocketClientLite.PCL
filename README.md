@@ -7,7 +7,7 @@
 [![.NET 8](http://img.shields.io/badge/.NET-v8.0-blue.svg)](https://dotnet.microsoft.com/download/dotnet/8.0)[![.NET 9](http://img.shields.io/badge/.NET-v9.0-blue.svg)](https://dotnet.microsoft.com/download/dotnet/9.0)
 [![.NET 10](http://img.shields.io/badge/.NET-v10.0-blue.svg)](https://dotnet.microsoft.com/download/dotnet/10.0)
 
-[![System.Reactive](http://img.shields.io/badge/Rx-v6.0.1-ff69b4.svg)](http://reactivex.io/)
+[![System.Reactive](http://img.shields.io/badge/Rx-v6.1.0-ff69b4.svg)](http://reactivex.io/)
 
 ![CI/CD](https://github.com/1iveowl/WebsocketClientLite.PCL/actions/workflows/build.yml/badge.svg)
 
