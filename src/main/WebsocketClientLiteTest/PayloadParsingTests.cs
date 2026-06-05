@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using WebsocketClientLite.Model;
 using WebsocketClientLite.Service;
 using WebsocketClientLite.Helper;
+using WebsocketClientLite.CustomException;
 using Xunit;
 using System.Reflection;
 
@@ -15,13 +16,14 @@ public class PayloadParsingTests
 {
     private class FakeTcpConnectionService : TcpConnectionService
     {
-        public FakeTcpConnectionService(byte[] bytes) : base(
+        public FakeTcpConnectionService(byte[] bytes, int maxFrameSize = 0) : base(
             () => false,
             (o, c, ch, e) => true,
             (client, uri) => Task.CompletedTask,
             (status, ex) => { },
             true,
-            new System.Net.Sockets.TcpClient())
+            new System.Net.Sockets.TcpClient(),
+            maxFrameSize)
         {
             var streamField = typeof(TcpConnectionService)
                 .GetField("_stream", BindingFlags.Instance | BindingFlags.NonPublic);
@@ -29,13 +31,41 @@ public class PayloadParsingTests
         }
     }
 
-    private async Task<Dataframe?> Parse(byte[] frame)
+    private async Task<Dataframe?> Parse(byte[] frame, int maxFrameSize = 0)
     {
-        var fake = new FakeTcpConnectionService(frame);
+        var fake = new FakeTcpConnectionService(frame, maxFrameSize);
         return await fake.CreateDataframe(CancellationToken.None)
             .PayloadBitLenght()
             .PayloadLenght()
             .GetPayload(CancellationToken.None);
+    }
+
+    [Fact]
+    public async Task Parse_FrameExceedingMaxFrameSize_Throws()
+    {
+        // Binary frame, masked, 16-bit length declaring 200 bytes.
+        var frame = new byte[] { 0x82, 0xFE, 0x00, 0xC8 };
+
+        await Assert.ThrowsAsync<WebsocketClientLiteException>(
+            () => Parse(frame, maxFrameSize: 100));
+    }
+
+    [Fact]
+    public async Task Parse_OversizedControlFrame_Throws()
+    {
+        // Ping (control) frame declaring a 200-byte payload (> 125 is illegal).
+        var frame = new byte[] { 0x89, 0xFE, 0x00, 0xC8 };
+
+        await Assert.ThrowsAsync<WebsocketClientLiteException>(() => Parse(frame));
+    }
+
+    [Fact]
+    public async Task Parse_FragmentedControlFrame_Throws()
+    {
+        // Ping (control) frame with FIN = 0 (control frames must not be fragmented).
+        var frame = new byte[] { 0x09, 0x00 };
+
+        await Assert.ThrowsAsync<WebsocketClientLiteException>(() => Parse(frame));
     }
 
     [Theory]
