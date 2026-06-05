@@ -38,9 +38,9 @@ Easily and effectively observe incoming message using Reactive Extensions (Rx)</
   <ItemGroup>
     <PackageReference Include="HttpMachine.PCL" Version="5.0.1" />
     <PackageReference Include="System.Reactive" Version="6.1.0" />
-    <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="10.0.0" Condition=" '$(TargetFramework)' == 'netstandard2.0' " />
+    <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="10.0.8" Condition=" '$(TargetFramework)' == 'netstandard2.0' " />
     <PackageReference Include="System.Memory" Version="4.6.3" Condition=" '$(TargetFramework)' == 'netstandard2.0' " />  
-    <PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="10.0.0" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="10.0.300" PrivateAssets="all" />
   </ItemGroup>
 
   <ItemGroup>
