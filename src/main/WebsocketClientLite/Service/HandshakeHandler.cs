@@ -52,14 +52,24 @@ internal class HandshakeHandler(
 
         async Task WaitForHandshake(HandshakeParser handshakeParser)
         {
-            bool isHandshakeDone;
-
-            do
+            // Read the handshake response one byte at a time so the parser stops
+            // exactly at the end of the HTTP response and does not consume bytes
+            // belonging to the first WebSocket frame(s).
+            while (true)
             {
-                isHandshakeDone = await tcpConnectionService
-                    .BytesObservable()
-                    .Select(b => handshakeParser.Parse(b, subprotocols));
-            } while (!isHandshakeDone);
+                var bytes = await tcpConnectionService.ReadBytesFromStream(1, ct).ConfigureAwait(false);
+
+                if (bytes is null)
+                {
+                    throw new WebsocketClientLiteException(
+                        "Connection closed before the WebSocket handshake completed.");
+                }
+
+                if (handshakeParser.Parse(bytes, subprotocols))
+                {
+                    break;
+                }
+            }
         }
     }
 

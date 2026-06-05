@@ -44,10 +44,6 @@ internal class TcpConnectionService(
         _stream = await GetTcpStream(uri, tcpClient, x509CertificateCollection, tlsProtocolType).ConfigureAwait(false);
     }
 
-    internal IObservable<byte[]?> BytesObservable() =>
-        Observable.Defer(() => Observable.FromAsync(ct => ReadByteArrayFromStream(1, ct).AsTask()))
-        .Where(bytes => bytes is not null);
-
     internal ValueTask<byte[]?> ReadBytesFromStream(ulong size, CancellationToken ct) =>
         ReadByteArrayFromStream(size, ct);
 
