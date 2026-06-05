@@ -65,9 +65,14 @@ private static async Task StartWebSocketAsyncWithRetry(
     {
         TcpClient = tcpClient,
         HasTransferSocketLifeCycleOwnership = false,
+        // WARNING: this disables ALL TLS certificate validation and exposes the
+        // connection to man-in-the-middle attacks. It is set here only for local
+        // testing against self-signed/expired certs. NEVER enable it in production.
         IgnoreServerCertificateErrors = true,
         Headers = new Dictionary<string, string> { { "Pragma", "no-cache" }, { "Cache-Control", "no-cache" } },
         TlsProtocolType = SslProtocols.Tls12,
+        // Reject incoming frames/messages larger than 4 MiB (default is 16 MiB).
+        MaxFrameSize = 4 * 1024 * 1024,
     };
 
     using CompositeDisposable disposables = [];
