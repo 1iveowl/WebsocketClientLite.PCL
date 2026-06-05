@@ -146,7 +146,7 @@ public record ClientWebSocketRx : IWebSocketClientRx, IDisposable, IEquatable<Cl
         string? clientPingMessage = default,
         TimeSpan handshaketimeout = default,
         CancellationToken cancellationToken = default) =>
-            WebsocketConnectWithStatusObservable(uri, hasClientPing, clientPingInterval, clientPingMessage, handshaketimeout)
+            WebsocketConnectWithStatusObservable(uri, hasClientPing, clientPingInterval, clientPingMessage, handshaketimeout, cancellationToken)
                 .Where(tuple => tuple.state is ConnectionStatus.DataframeReceived)
                 .Select(tuple => tuple.dataframe);
 
