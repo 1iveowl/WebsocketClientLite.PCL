@@ -21,7 +21,8 @@ internal class TcpConnectionService(
     Action<ConnectionStatus, Exception?> connectionStatusAction,
     bool hasTransferTcpSocketLifeCycleOwnership,
     TcpClient? tcpClient = null,
-    int maxFrameSize = 0) : IDisposable
+    int maxFrameSize = 0,
+    bool checkCertificateRevocation = false) : IDisposable
 {
     private readonly bool _keepTcpClientAlive = !hasTransferTcpSocketLifeCycleOwnership;
     private bool _ownsCreatedTcpClient;
@@ -181,7 +182,7 @@ internal class TcpConnectionService(
 
             try
             {
-                await secureStream.AuthenticateAsClientAsync(uri.Host, x509CertificateCollection, tlsProtocolType, false).ConfigureAwait(false);
+                await secureStream.AuthenticateAsClientAsync(uri.Host, x509CertificateCollection, tlsProtocolType, checkCertificateRevocation).ConfigureAwait(false);
                 connectionStatusAction(ConnectionStatus.SecureSocketStreamConnected, null);
                 return secureStream;
             }

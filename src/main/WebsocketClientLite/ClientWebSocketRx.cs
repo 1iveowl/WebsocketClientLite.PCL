@@ -87,6 +87,15 @@ public class ClientWebSocketRx : IWebSocketClientRx, IDisposable
     public bool IgnoreServerCertificateErrors { get; init; }
 
     /// <summary>
+    /// Whether to check the server certificate for revocation during the TLS
+    /// handshake. Defaults to <see langword="true"/>. Set to <see langword="false"/>
+    /// if your environment cannot reach the certificate's revocation (OCSP/CRL)
+    /// endpoints, which would otherwise fail the handshake. Has no effect when
+    /// <see cref="IgnoreServerCertificateErrors"/> is <see langword="true"/>.
+    /// </summary>
+    public bool CheckCertificateRevocation { get; init; } = true;
+
+    /// <summary>
     /// X.509 certificate collection.
     /// </summary>
     public X509CertificateCollection? X509CertCollection { get; init; }

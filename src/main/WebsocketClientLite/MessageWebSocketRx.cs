@@ -74,6 +74,14 @@ public class MessageWebsocketRx(
     public bool IgnoreServerCertificateErrors { get; set; }
 
     /// <summary>
+    /// Whether to check the server certificate for revocation during the TLS
+    /// handshake. Defaults to <see langword="true"/>. Set to <see langword="false"/>
+    /// if your environment cannot reach the certificate's revocation endpoints.
+    /// Has no effect when <see cref="IgnoreServerCertificateErrors"/> is true.
+    /// </summary>
+    public bool CheckCertificateRevocation { get; set; } = true;
+
+    /// <summary>
     /// Maximum payload size, in bytes, accepted for a single incoming frame and
     /// for a fully reassembled message. Frames or messages exceeding this are
     /// rejected, guarding against memory-exhaustion from a malicious or
