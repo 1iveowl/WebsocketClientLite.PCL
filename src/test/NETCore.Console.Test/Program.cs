@@ -24,13 +24,26 @@ class Program
 
     static async Task Main()
     {
-        CancellationTokenSource outerCancellationSource = new();
+        using CancellationTokenSource outerCancellationSource = new();
 
-        await StartWebSocketAsyncWithRetry(outerCancellationSource);
+        // Start the connect/retry loop in the background. Do NOT await it here:
+        // it runs until cancellation, and we still need to read a key to stop it.
+        var webSocketTask = StartWebSocketAsyncWithRetry(outerCancellationSource);
 
-        Console.WriteLine("Waiting...");
+        Console.WriteLine("Press any key to stop...");
         Console.ReadKey();
+
+        // Signal shutdown and wait for the background loop to tear down.
         outerCancellationSource.Cancel();
+
+        try
+        {
+            await webSocketTask;
+        }
+        catch (OperationCanceledException)
+        {
+            // Expected when the outer token is cancelled.
+        }
     }
 
 private static async Task StartWebSocketAsyncWithRetry(
