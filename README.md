@@ -25,6 +25,27 @@ The library provides developers with additional flexibility, including the abili
 
 The library utilizes [ReactiveX](http://reactivex.io/) (aka Rx or Reactive Extensions). While this dependency introduces a small learning curve, it's worthwhile for the context.
 
+## New in Version 9.0
+
+Version 9.0 is a correctness and protocol-compliance release.
+
+**Bug fixes**
+
+- **Subprotocols are now sent.** The `Subprotocols` you configure are now included in the `Sec-WebSocket-Protocol` handshake header. Previously they were only used to validate the server's response and never actually sent.
+- **Close codes use network byte order.** WebSocket close status codes are now sent big-endian as required by [RFC 6455 §5.5.1](https://tools.ietf.org/html/rfc6455#section-5.5.1); they were previously byte-swapped on little-endian platforms.
+- **`ExcludeZeroApplicationDataInPong` now works.** The flag is honored when replying to a zero-length ping (required for Slack's RTM API). Previously it had no effect.
+- **`CancellationToken` is honored.** The token passed to `WebsocketConnectObservable` is now forwarded to the underlying connection. Previously it was ignored on that overload.
+- **More robust teardown.** Client-ping failures no longer surface as an unhandled exception on a background thread, a disposed read stream no longer yields a bogus empty frame, a connection closed mid-handshake now reports a clear error, and per-connection resources are disposed correctly.
+
+**Breaking changes**
+
+- `ClientWebSocketRx` is now a `class` instead of a `record`. A connection holds live, disposable state, so value-equality and `with` semantics were both misleading and incorrect.
+- `ClientWebSocketRx.TcpClient` is now nullable (`TcpClient?`). Leave it unset to have the client create one with the address family matching the target URI and dispose it automatically, or supply your own and control its lifetime via `HasTransferSocketLifeCycleOwnership`.
+
+**Internal cleanup**
+
+- Removed dead code (unused masking helpers, an unused scheduler, a duplicate property) and an extra per-frame buffer allocation on the send path.
+
 ## New in Version 8.0
 
 Version 8.0 includes several significant improvements:
@@ -68,15 +89,7 @@ For advanced scenarios, use the `SendPing` method on the `ISender` interface for
 
 ### HTTP/HTTPS Scheme Support (v6.4)
 
-The library supports `ws`, `wss`, `http`, and `https` URI schemes. You can extend supported schemes by overriding the `IsSecureConnectionScheme` method:
-
-## New in version 6.4
-
-Previously the library only accepted the `ws` and `wss` scheme. Now `http` and `https` is also supported. 
-
-To further extend supported schemes override the `IsSecureConnectionScheme` method of the `MessageWebSocketRx` class.
-
-The default virtual method looks like this:
+The library supports the `ws`, `wss`, `http`, and `https` URI schemes. You can extend the supported schemes by overriding the `IsSecureConnectionScheme` method of the `ClientWebSocketRx` class. The default implementation looks like this:
 
 ```csharp
 public virtual bool IsSecureConnectionScheme(Uri uri) => 
@@ -154,8 +167,8 @@ IDisposable connectionSubscription = Observable.Defer(connect)
         }
     })
     .Where(t => t.state == ConnectionStatus.WebsocketConnected)
-    .SelectMany(_ => Observable.FromAsync(_ => SendTest1()))
-    .SelectMany(_ => Observable.FromAsync(_ => SendTest2()))
+    // SendMessages() is your own method that uses client.Sender once connected.
+    .SelectMany(_ => Observable.FromAsync(_ => SendMessages()))
     .Subscribe();
 
 disposables.Add(connectionSubscription);
@@ -214,21 +227,19 @@ When testing against for instance the Postman WebSocket test server [Postman Web
 
 However, when used with the [slack.rtm](https://api.slack.com/rtm) API the byte should **not** be there at all in the case of no data in the data-frame, and if it is, the slack WebSocket server will disconnect.
 
-To manage this *length byte-issue* the following property can be set to `true`, in which case the byte with the zero value will NOT be added to the pong. For instance like this:
-
-For Slack and similar services with specific websocket requirements:
+To manage this *length-byte issue*, set the following property to `true`, in which case the zero-value length byte will not be added to the pong. This is required for Slack's RTM API and similar services:
 
 ```csharp
-var client = new ClientWebSocketRx { ExcludeZeroApplicationDataInPong = true  // Required for Slack's RTM API };
-
+// Required for Slack's RTM API
+var client = new ClientWebSocketRx { ExcludeZeroApplicationDataInPong = true };
 ```
 
 Slack RTM also requires application-level ping messages:
 
 ```csharp
-await sender.SendText("{"id": 1234, "type": "ping"}");
-//or
-await _webSocket.SendText("{\"id\": 1234, // ID, see \"sending messages\" above\"type\": \"ping\",...}");
+// Slack expects an application-level ping as a JSON text message.
+// The id is your own correlation id; see "Sending Messages" above.
+await sender.SendText("{\"id\": 1234, \"type\": \"ping\"}");
 ```
 
 To further complicate matters the [slack.rtm api](https://api.slack.com/rtm) [seems to require a ping at the Slack application layer too](http://stackoverflow.com/questions/38171620/slack-rtm-api-disconnection-following-message-in-scala). 
@@ -263,9 +274,9 @@ This library was developed using the following reference documentation:
 
 ## Building and Contributing
 
-This library targets .NET Standard 2.0, .NET Standard 2.1, .NET 6, .NET 8, and .NET 9. The CI/CD pipeline uses GitHub Actions to build, test, and publish packages.
+This library targets .NET Standard 2.0, .NET Standard 2.1, .NET 8, .NET 9, and .NET 10. The CI/CD pipeline uses GitHub Actions to build, test, and publish packages.
 
-To build locally you need the matching .NET SDKs installed. Some projects target .NET 9.0 which currently requires the preview .NET 9 SDK. If the SDK is not available only the .NET 8 and lower projects can be built.
+To build locally you need the matching .NET SDKs installed. The .NET 10 SDK can build every target framework; with an older SDK only the target frameworks it supports will build.
 
 For contributors and developers, please ensure your changes maintain compatibility with these target frameworks.
 
