@@ -35,7 +35,7 @@ internal class HandshakeHandler(
                 parserDelegate,
                 connectionStatusAction);
 
-            await SendHandshake(uri, sender, ct, origin, headers).ConfigureAwait(false);
+            await SendHandshake(uri, sender, ct, origin, headers, subprotocols).ConfigureAwait(false);
             await WaitForHandshake(handshakeParser).ConfigureAwait(false);
 
             obs.OnCompleted();
@@ -69,7 +69,8 @@ internal class HandshakeHandler(
             WebsocketSenderHandler websocketSenderHandler,
             CancellationToken ct,
             string? origin = null,
-            IDictionary<string, string>? headers = null)
+            IDictionary<string, string>? headers = null,
+            IEnumerable<string>? subprotocols = null)
     {
         try
         {
@@ -80,7 +81,7 @@ internal class HandshakeHandler(
                      ct,
                      origin,
                      headers,
-                     websocketParserHandler.SubprotocolAcceptedNames).ConfigureAwait(false);     
+                     subprotocols).ConfigureAwait(false);
         }
         catch (Exception ex)
         {
