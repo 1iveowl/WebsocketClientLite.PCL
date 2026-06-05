@@ -135,13 +135,41 @@ internal class WebsocketSenderHandler : ISender
 
     internal async Task SendPong(
         Dataframe dataframe,
-        CancellationToken ct) => 
-            await ComposeFrameAndSendAsync(
-                dataframe.Binary ?? Array.Empty<byte>(),
-                OpcodeKind.Pong,
-                FragmentKind.None,
-                ct)
-            .ConfigureAwait(false);
+        CancellationToken ct)
+    {
+        var payload = dataframe.Binary ?? Array.Empty<byte>();
+
+        // Slack's RTM API disconnects if a pong with no application data still
+        // carries the zero-value payload-length byte. When configured, reply with
+        // only the single opcode byte (FIN + Pong opcode) and no length byte.
+        // See the "Slack RTM API" section of the README.
+        if (_isExcludingZeroApplicationDataInPong && payload.Length == 0)
+        {
+            _connectionStatusAction(ConnectionStatus.PongSend, null);
+
+            try
+            {
+                var pongOpcodeOnly = new[] { (byte)((byte)OpcodeKind.Pong + (byte)FragmentKind.Last) };
+                await _writeFunc(_tcpConnectionService.ConnectionStream, pongOpcodeOnly, ct).ConfigureAwait(false);
+                _connectionStatusAction(ConnectionStatus.SendComplete, null);
+            }
+            catch (Exception ex)
+            {
+                _connectionStatusAction(
+                    ConnectionStatus.SendError,
+                    new WebsocketClientLiteException("Websocket send error occured.", ex));
+            }
+
+            return;
+        }
+
+        await ComposeFrameAndSendAsync(
+            payload,
+            OpcodeKind.Pong,
+            FragmentKind.None,
+            ct)
+        .ConfigureAwait(false);
+    }
 
     internal async Task SendCloseHandshakeAsync(
         StatusCodes statusCode)
