@@ -35,6 +35,8 @@ internal static class ClientHandShake
         {
             foreach (var header in headers)
             {
+                EnsureNoCrLf(header.Key, "header name", nameof(headers));
+                EnsureNoCrLf(header.Value, "header value", nameof(headers));
                 sb.Append(header.Key).Append(": ").Append(header.Value).Append("\r\n");
             }
         }
@@ -42,6 +44,7 @@ internal static class ClientHandShake
         // Add origin if provided
         if (!string.IsNullOrEmpty(origin))
         {
+            EnsureNoCrLf(origin, "origin", nameof(origin));
             sb.Append("Origin: ").Append(origin).Append("\r\n");
         }
 
@@ -58,6 +61,7 @@ internal static class ClientHandShake
             bool isFirst = true;
             foreach (var protocol in subprotocols)
             {
+                EnsureNoCrLf(protocol, "subprotocol", nameof(subprotocols));
                 if (!isFirst)
                     sb.Append(", ");
                 sb.Append(protocol);
@@ -70,6 +74,24 @@ internal static class ClientHandShake
 
         // Get the result as a byte array
         return Encoding.UTF8.GetBytes(sb.ToString());
+    }
+
+    // Reject CR, LF, and NUL in caller-supplied values that are written into the
+    // HTTP upgrade request. Without this, a value containing "\r\n" could inject
+    // additional headers or smuggle a request (HTTP header injection).
+    private static void EnsureNoCrLf(string? value, string description, string paramName)
+    {
+        if (value is null)
+        {
+            return;
+        }
+
+        if (value.IndexOf('\r') >= 0 || value.IndexOf('\n') >= 0 || value.IndexOf('\0') >= 0)
+        {
+            throw new ArgumentException(
+                $"The {description} must not contain CR, LF, or NUL characters (possible header injection).",
+                paramName);
+        }
     }
 
     static string GenerateRandomWebSocketKey()
