@@ -48,7 +48,11 @@ internal class WebsocketParserHandler : IDisposable
                          
             obs.OnCompleted();
 
-            return Disposable.Create(() => cts?.Cancel());
+            return Disposable.Create(() =>
+            {
+                cts.Cancel();
+                cts.Dispose();
+            });
 
             async Task<Dataframe?> GetNextDataframe(Dataframe? df)
             {
@@ -116,6 +120,8 @@ internal class WebsocketParserHandler : IDisposable
     
     public void Dispose()
     {
-
+        // No instance-level resources to release here: the per-subscription
+        // CancellationTokenSource is disposed when its subscription ends, and the
+        // TcpConnectionService is owned and disposed by WebsocketService.
     }
 }
