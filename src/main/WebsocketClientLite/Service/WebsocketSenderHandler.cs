@@ -316,7 +316,9 @@ internal class WebsocketSenderHandler : ISender
         }
         finally
         {
-            ArrayPool<byte>.Shared.Return(buffer);
+            // Clear before returning: the buffer held the (masked) outgoing
+            // payload and mask key. Defense-in-depth so a later renter can't read it.
+            ArrayPool<byte>.Shared.Return(buffer, clearArray: true);
         }
 
         static byte DetermineFINBit(OpcodeKind opcode, FragmentKind fragment)
