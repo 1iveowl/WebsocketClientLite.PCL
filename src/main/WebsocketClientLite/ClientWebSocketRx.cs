@@ -16,14 +16,19 @@ using WebsocketClientLite.Service;
 
 namespace WebsocketClientLite;
 
-public record ClientWebSocketRx : IWebSocketClientRx, IDisposable, IEquatable<ClientWebSocketRx>
+public class ClientWebSocketRx : IWebSocketClientRx, IDisposable
 {
     private readonly CompositeDisposable _disposables = [];
     private readonly IObserver<bool> _observerIsConnected;
 
     public bool HasTransferSocketLifeCycleOwnership { get; init; }
 
-    public TcpClient TcpClient { get; init; } = new TcpClient();
+    /// <summary>
+    /// Optional TCP client. When left null, a <see cref="TcpClient"/> is created
+    /// internally with the address family matching the target URI and is disposed
+    /// together with the connection. Supplying one avoids allocating a throwaway.
+    /// </summary>
+    public TcpClient? TcpClient { get; init; }
 
     /// <summary>
     /// Websocket client connected observable.
