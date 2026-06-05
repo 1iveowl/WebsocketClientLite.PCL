@@ -77,8 +77,8 @@ public class MessageWebsocketRx(
     /// Get websocket client sender.
     /// </summary>
     /// <returns></returns>
-    public ISender GetSender() => IsConnected 
-        ? _sender is not null ? _sender : throw new ArgumentNullException("Sender not initialized.")
+    public ISender GetSender() => IsConnected
+        ? _sender ?? throw new InvalidOperationException("Sender not initialized.")
         : throw new InvalidOperationException("No sender available, Websocket not connected. You need to subscribe to WebsocketConnectObservable first.");
 
     /// <summary>
