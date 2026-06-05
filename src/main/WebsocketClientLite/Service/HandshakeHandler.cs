@@ -13,7 +13,6 @@ namespace WebsocketClientLite.Service;
 
 internal class HandshakeHandler(
     TcpConnectionService tcpConnectionService,
-    WebsocketParserHandler websocketParserHandler,
     Action<ConnectionStatus, Exception?> connectionStatusAction)
 {
     internal IObservable<(HandshakeStateKind handshakeState, WebsocketClientLiteException? ex)> Handshake(

@@ -71,7 +71,6 @@ internal class WebsocketConnectionHandler : IDisposable
 
         var handshakeHandler = new HandshakeHandler(
                 _tcpConnectionService,
-                _websocketParserHandler,
                 _connectionStatusAction);
 
         var (handshakeState, handshakeException) = 
