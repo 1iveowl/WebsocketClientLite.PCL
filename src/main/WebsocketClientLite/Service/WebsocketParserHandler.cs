@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Buffers;
-using System.Collections.Generic;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 using System.Threading;
@@ -16,8 +15,6 @@ namespace WebsocketClientLite.Service;
 internal class WebsocketParserHandler : IDisposable
 {
     private readonly TcpConnectionService _tcpConnectionService;
-
-    internal IEnumerable<string>? SubprotocolAcceptedNames { get; private set; }
 
     internal WebsocketParserHandler(
         TcpConnectionService tcpConnectionService)
