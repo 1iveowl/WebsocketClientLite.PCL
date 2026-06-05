@@ -79,11 +79,14 @@ internal static class ClientHandShake
             return;
         }
 
-        if (value.IndexOf('\r') >= 0 || value.IndexOf('\n') >= 0 || value.IndexOf('\0') >= 0)
+        foreach (var c in value)
         {
-            throw new ArgumentException(
-                $"The {description} must not contain CR, LF, or NUL characters (possible header injection).",
-                paramName);
+            if (c is '\r' or '\n' or '\0')
+            {
+                throw new ArgumentException(
+                    $"The {description} must not contain CR, LF, or NUL characters (possible header injection).",
+                    paramName);
+            }
         }
     }
 
