@@ -97,10 +97,12 @@ internal class WebsocketConnectionHandler : IDisposable
             _clientPingDisposable = SendClientPing(clientPingMessage)
                 .Subscribe(
                 _ => { },
-                ex => 
-                { 
-                    throw new WebsocketClientLiteException("Sending client ping failed.", ex); 
-                },
+                // Throwing here would rethrow on the Interval scheduler thread as an
+                // unhandled exception. Surface it through the status callback instead;
+                // connection teardown is driven by the read side.
+                ex => _connectionStatusAction(
+                    ConnectionStatus.SendError,
+                    new WebsocketClientLiteException("Sending client ping failed.", ex)),
                 () => { });
         }
 
