@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Net.Security;
 using System.Net.Sockets;
-using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 using System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
@@ -28,8 +27,6 @@ public class MessageWebsocketRx(
     TcpClient? tcpClient,
     bool hasTransferTcpSocketLifeCycleOwnership = false) : IMessageWebSocketRx
 {
-    private readonly EventLoopScheduler _eventLoopScheduler = new();
-
     internal TcpClient? TcpClient { get; private set; } = tcpClient;
     internal bool HasTransferSocketLifeCycleOwnership { get; private set; } = hasTransferTcpSocketLifeCycleOwnership;
 
@@ -141,7 +138,6 @@ public class MessageWebsocketRx(
                 return await Observable.FromAsync(ct => WebsocketServiceFactory.Create(
                             () => IsSecureConnectionScheme(uri),
                             ValidateServerCertificate,
-                            _eventLoopScheduler,
                             obsStatus,
                             this))
                         .Select(ws => Observable.FromAsync(ct => ConnectWebsocket(ws, ct))
@@ -225,11 +221,7 @@ public class MessageWebsocketRx(
 
     protected virtual void Dispose(bool disposing)
     {
-        if (disposing)
-        {
-            _eventLoopScheduler?.Dispose();
-        }
-        // No unmanaged resources to release, so nothing else needed here.
+        // No managed or unmanaged resources to release here.
     }
 
     public void Dispose()

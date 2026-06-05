@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Net.Security;
 using System.Reactive;
-using System.Reactive.Concurrency;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
@@ -21,7 +20,6 @@ public record ClientWebSocketRx : IWebSocketClientRx, IDisposable, IEquatable<Cl
 {
     private readonly CompositeDisposable _disposables = [];
     private readonly IObserver<bool> _observerIsConnected;
-    private readonly EventLoopScheduler _eventLoopScheduler = new();
 
     public bool HasTransferSocketLifeCycleOwnership { get; init; }
 
@@ -187,7 +185,6 @@ public record ClientWebSocketRx : IWebSocketClientRx, IDisposable, IEquatable<Cl
                 return await Observable.FromAsync<WebsocketService>(_ => WebsocketClientFactory.Create(
                             () => IsSecureConnectionScheme(uri),
                             ValidateServerCertificate,
-                            _eventLoopScheduler,
                             obsStatus,
                             this))
                         .Select(ws => Observable.FromAsync<IObservable<IDataframe?>>(ct => ConnectWebsocket(ws, ct))
@@ -228,7 +225,6 @@ public record ClientWebSocketRx : IWebSocketClientRx, IDisposable, IEquatable<Cl
         if (disposing)
         {
             _disposables.Dispose();
-            _eventLoopScheduler.Dispose();
         }
     }
 

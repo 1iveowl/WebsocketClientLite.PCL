@@ -2,7 +2,6 @@
 using System.IO;
 using System.Net.Security;
 using System.Net.Sockets;
-using System.Reactive.Concurrency;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading;
 using System.Threading.Tasks;
@@ -18,7 +17,6 @@ internal static class WebsocketServiceFactory
     internal static Task<WebsocketService> Create(
         Func<bool> isSecureConnectionSchemeFunc,
         Func<object, X509Certificate, X509Chain, SslPolicyErrors, bool> validateServerCertificateFunc,
-        EventLoopScheduler eventLoopScheduler,
         IObserver<ConnectionStatus> observerConnectionStatus,
 #pragma warning disable CS0618
         MessageWebsocketRx messageWebSocketRx)
