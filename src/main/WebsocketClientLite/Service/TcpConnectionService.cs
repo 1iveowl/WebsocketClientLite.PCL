@@ -20,11 +20,16 @@ internal class TcpConnectionService(
     Func<TcpClient, Uri, Task> connectTcpClientFunc,
     Action<ConnectionStatus, Exception?> connectionStatusAction,
     bool hasTransferTcpSocketLifeCycleOwnership,
-    TcpClient? tcpClient = null) : IDisposable
+    TcpClient? tcpClient = null,
+    int maxFrameSize = 0) : IDisposable
 {
     private readonly bool _keepTcpClientAlive = !hasTransferTcpSocketLifeCycleOwnership;
     private bool _ownsCreatedTcpClient;
     private Stream? _stream;
+
+    // Effective per-frame / per-message payload cap. A value <= 0 means "no
+    // explicit limit" (bounded only by the int.MaxValue array-size limit).
+    internal int MaxFrameSize { get; } = maxFrameSize <= 0 ? int.MaxValue : maxFrameSize;
 
     internal Stream ConnectionStream => _stream ?? throw new ArgumentNullException("Stream cannot be null");
 

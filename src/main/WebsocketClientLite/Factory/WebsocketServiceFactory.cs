@@ -30,7 +30,8 @@ internal static class WebsocketServiceFactory
             connectionStatusAction: ConnectionStatusAction,
 #pragma warning disable CS0618
             hasTransferTcpSocketLifeCycleOwnership: messageWebSocketRx.HasTransferSocketLifeCycleOwnership,
-            tcpClient: messageWebSocketRx.TcpClient);
+            tcpClient: messageWebSocketRx.TcpClient,
+            maxFrameSize: messageWebSocketRx.MaxFrameSize);
 #pragma warning restore CS0618
 
         var parserHandler = new WebsocketParserHandler(tcpConnectionHandler);

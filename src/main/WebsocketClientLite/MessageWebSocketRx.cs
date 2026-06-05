@@ -74,6 +74,15 @@ public class MessageWebsocketRx(
     public bool IgnoreServerCertificateErrors { get; set; }
 
     /// <summary>
+    /// Maximum payload size, in bytes, accepted for a single incoming frame and
+    /// for a fully reassembled message. Frames or messages exceeding this are
+    /// rejected, guarding against memory-exhaustion from a malicious or
+    /// misbehaving server. Defaults to 16 MiB. Set to 0 or a negative value to
+    /// allow up to <see cref="int.MaxValue"/> bytes.
+    /// </summary>
+    public int MaxFrameSize { get; set; } = 16 * 1024 * 1024;
+
+    /// <summary>
     /// Get websocket client sender.
     /// </summary>
     /// <returns></returns>

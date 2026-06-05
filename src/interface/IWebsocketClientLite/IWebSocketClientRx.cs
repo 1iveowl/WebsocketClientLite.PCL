@@ -43,6 +43,14 @@ public interface IWebSocketClientRx : IDisposable
     bool IgnoreServerCertificateErrors { get; }
 
     /// <summary>
+    /// Maximum payload size, in bytes, accepted for a single incoming frame and
+    /// for a fully reassembled message. Frames or messages exceeding this are
+    /// rejected and the connection is torn down, guarding against
+    /// memory-exhaustion from a malicious or misbehaving server.
+    /// </summary>
+    int MaxFrameSize { get; }
+
+    /// <summary>
     /// X.509 certificate collection.
     /// </summary>
     X509CertificateCollection? X509CertCollection { get; }

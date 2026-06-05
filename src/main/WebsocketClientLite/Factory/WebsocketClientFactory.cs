@@ -26,7 +26,8 @@ internal static class WebsocketClientFactory
             connectTcpClientFunc: ConnectTcpClient,
             connectionStatusAction: ConnectionStatusAction,
             hasTransferTcpSocketLifeCycleOwnership: webSocketClientRx.HasTransferSocketLifeCycleOwnership,
-            tcpClient: webSocketClientRx.TcpClient);
+            tcpClient: webSocketClientRx.TcpClient,
+            maxFrameSize: webSocketClientRx.MaxFrameSize);
 
         var parserHandler = new WebsocketParserHandler(tcpConnectionHandler);
 

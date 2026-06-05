@@ -163,6 +163,15 @@ internal static class DataframeParsing
             return null;
         }
 
+        // Guard against memory exhaustion: reject a frame whose declared payload
+        // length exceeds the configured maximum before allocating any buffer sized
+        // by that (server-controlled) value.
+        if (dataframe.Length > (ulong)dataframe.MaxFrameSize)
+        {
+            throw new WebsocketClientLiteException(
+                $"Incoming frame payload length ({dataframe.Length} bytes) exceeds the configured maximum of {dataframe.MaxFrameSize} bytes.");
+        }
+
         // Ensure zero-length frames still consume masking key (if present) and produce empty payload
         if (dataframe.Length == 0)
         {

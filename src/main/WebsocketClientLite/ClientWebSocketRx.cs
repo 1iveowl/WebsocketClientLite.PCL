@@ -24,6 +24,21 @@ public class ClientWebSocketRx : IWebSocketClientRx, IDisposable
     public bool HasTransferSocketLifeCycleOwnership { get; init; }
 
     /// <summary>
+    /// Default value for <see cref="MaxFrameSize"/> (16 MiB).
+    /// </summary>
+    public const int DefaultMaxFrameSizeBytes = 16 * 1024 * 1024;
+
+    /// <summary>
+    /// Maximum payload size, in bytes, accepted for a single incoming frame and
+    /// for a fully reassembled (fragmented) message. Frames or messages exceeding
+    /// this are rejected and the connection is torn down, preventing
+    /// memory-exhaustion from a malicious or misbehaving server. Defaults to
+    /// <see cref="DefaultMaxFrameSizeBytes"/>. Set to 0 (or a negative value) to
+    /// allow up to <see cref="int.MaxValue"/> bytes.
+    /// </summary>
+    public int MaxFrameSize { get; init; } = DefaultMaxFrameSizeBytes;
+
+    /// <summary>
     /// Optional TCP client. When left null, a <see cref="TcpClient"/> is created
     /// internally with the address family matching the target URI and is disposed
     /// together with the connection. Supplying one avoids allocating a throwaway.

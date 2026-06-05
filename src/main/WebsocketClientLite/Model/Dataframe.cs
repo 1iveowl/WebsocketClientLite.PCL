@@ -42,6 +42,8 @@ internal record Dataframe : IDataframe
 
     internal ValueTask<byte[]?> GetNextBytes(ulong size) => _tcpConnection.ReadBytesFromStream(size, _ct);
 
+    internal int MaxFrameSize => _tcpConnection.MaxFrameSize;
+
     private byte[]? GetBinary()
     {
         if (_data is null)

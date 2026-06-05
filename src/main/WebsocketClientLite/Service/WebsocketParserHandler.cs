@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using System.Threading;
 using System.Reactive.Disposables;
 using IWebsocketClientLite;
+using WebsocketClientLite.CustomException;
 using WebsocketClientLite.Helper;
 using WebsocketClientLite.Model;
 using static WebsocketClientLite.Helper.DataframeParsing;
@@ -83,6 +84,14 @@ internal class WebsocketParserHandler : IDisposable
                     await nextDataframe.DataStream.CopyToAsync(df.DataStream).ConfigureAwait(false);
 #endif
                     df = df with { FIN = nextDataframe.FIN };
+
+                    // Guard against memory exhaustion from a flood of fragments:
+                    // bound the reassembled message by the same configured maximum.
+                    if (df.DataStream.Length > _tcpConnectionService.MaxFrameSize)
+                    {
+                        throw new WebsocketClientLiteException(
+                            $"Reassembled message size ({df.DataStream.Length} bytes) exceeds the configured maximum of {_tcpConnectionService.MaxFrameSize} bytes.");
+                    }
                 }
 
                 return df;
