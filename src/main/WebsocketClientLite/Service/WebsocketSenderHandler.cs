@@ -146,7 +146,11 @@ internal class WebsocketSenderHandler : ISender
     internal async Task SendCloseHandshakeAsync(
         StatusCodes statusCode)
     {
-        var closeFrameBodyCode = BitConverter.GetBytes((ushort)statusCode);
+        // The close code is a 2-byte unsigned integer in network (big-endian)
+        // byte order per RFC 6455 §5.5.1. BitConverter is little-endian on most
+        // platforms, so write the bytes explicitly.
+        var code = (ushort)statusCode;
+        var closeFrameBodyCode = new[] { (byte)(code >> 8), (byte)(code & 0xFF) };
         var reason = Encoding.UTF8.GetBytes(statusCode.ToString());
 
         await ComposeFrameAndSendAsync(
