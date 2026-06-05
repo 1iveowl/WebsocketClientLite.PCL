@@ -163,6 +163,23 @@ internal static class DataframeParsing
             return null;
         }
 
+        // RFC 6455 §5.5: control frames (Close/Ping/Pong) must not be fragmented
+        // and must carry a payload of 125 bytes or fewer.
+        if (dataframe.Opcode is OpcodeKind.Close or OpcodeKind.Ping or OpcodeKind.Pong)
+        {
+            if (!dataframe.FIN)
+            {
+                throw new WebsocketClientLiteException(
+                    $"Protocol error: received a fragmented control frame ({dataframe.Opcode}).");
+            }
+
+            if (dataframe.Length > 125)
+            {
+                throw new WebsocketClientLiteException(
+                    $"Protocol error: control frame ({dataframe.Opcode}) payload length {dataframe.Length} exceeds 125 bytes.");
+            }
+        }
+
         // Guard against memory exhaustion: reject a frame whose declared payload
         // length exceeds the configured maximum before allocating any buffer sized
         // by that (server-controlled) value.
