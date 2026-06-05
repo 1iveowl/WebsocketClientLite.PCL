@@ -72,12 +72,12 @@ internal static class WebsocketServiceFactory
             observerConnectionStatus.OnNext(status);
         }
 
-        async Task<bool> WriteToStream(Stream stream, byte[] byteArray, CancellationToken ct)
+        async Task<bool> WriteToStream(Stream stream, byte[] byteArray, int count, CancellationToken ct)
         {
 #if NETSTANDARD2_0
-            await stream.WriteAsync(byteArray, 0, byteArray.Length, ct).ConfigureAwait(false);
+            await stream.WriteAsync(byteArray, 0, count, ct).ConfigureAwait(false);
 #else
-            await stream.WriteAsync(byteArray.AsMemory(), ct).ConfigureAwait(false);
+            await stream.WriteAsync(byteArray.AsMemory(0, count), ct).ConfigureAwait(false);
 #endif
             await stream.FlushAsync(ct).ConfigureAwait(false);
             return true;

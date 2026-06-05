@@ -16,14 +16,16 @@ namespace WebsocketClientLite.Service;
 internal class WebsocketSenderHandler : ISender
 {
     private readonly TcpConnectionService _tcpConnectionService;
-    private readonly Func<Stream, byte[], CancellationToken, Task> _writeFunc;
+    // (stream, buffer, count, ct): writes the first `count` bytes of `buffer`,
+    // so a pooled/oversized buffer can be passed without copying to exact size.
+    private readonly Func<Stream, byte[], int, CancellationToken, Task> _writeFunc;
     private readonly Action<ConnectionStatus, Exception?> _connectionStatusAction;
     private readonly bool _isExcludingZeroApplicationDataInPong;
 
     internal WebsocketSenderHandler(
         TcpConnectionService tcpConnectionService,
         Action<ConnectionStatus, Exception?> connectionStatusAction,
-        Func<Stream, byte[], CancellationToken, Task> writeFunc,            
+        Func<Stream, byte[], int, CancellationToken, Task> writeFunc,
         bool isExcludingZeroApplicationDataInPong)
     {
         _tcpConnectionService = tcpConnectionService;
@@ -43,7 +45,7 @@ internal class WebsocketSenderHandler : ISender
 
         try
         {
-            await _writeFunc(_tcpConnectionService.ConnectionStream, handShakeBytes, ct).ConfigureAwait(false);
+            await _writeFunc(_tcpConnectionService.ConnectionStream, handShakeBytes, handShakeBytes.Length, ct).ConfigureAwait(false);
         }
         catch (Exception ex)
         {
@@ -150,7 +152,7 @@ internal class WebsocketSenderHandler : ISender
             try
             {
                 var pongOpcodeOnly = new[] { (byte)((byte)OpcodeKind.Pong + (byte)FragmentKind.Last) };
-                await _writeFunc(_tcpConnectionService.ConnectionStream, pongOpcodeOnly, ct).ConfigureAwait(false);
+                await _writeFunc(_tcpConnectionService.ConnectionStream, pongOpcodeOnly, pongOpcodeOnly.Length, ct).ConfigureAwait(false);
                 _connectionStatusAction(ConnectionStatus.SendComplete, null);
             }
             catch (Exception ex)
@@ -368,9 +370,7 @@ internal class WebsocketSenderHandler : ISender
 
         try
         {
-            var frame = new byte[length];
-            Buffer.BlockCopy(buffer, 0, frame, 0, length);
-            await _writeFunc(_tcpConnectionService.ConnectionStream, frame, ct).ConfigureAwait(false);
+            await _writeFunc(_tcpConnectionService.ConnectionStream, buffer, length, ct).ConfigureAwait(false);
 
             if (opcode is OpcodeKind.Close)
             {
