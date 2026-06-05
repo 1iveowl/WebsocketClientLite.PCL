@@ -27,12 +27,34 @@ internal class TcpConnectionService(
     private readonly bool _keepTcpClientAlive = !hasTransferTcpSocketLifeCycleOwnership;
     private bool _ownsCreatedTcpClient;
     private Stream? _stream;
+    private readonly SemaphoreSlim _writeGate = new(1, 1);
 
     // Effective per-frame / per-message payload cap. A value <= 0 means "no
     // explicit limit" (bounded only by the int.MaxValue array-size limit).
     internal int MaxFrameSize { get; } = maxFrameSize <= 0 ? int.MaxValue : maxFrameSize;
 
     internal Stream ConnectionStream => _stream ?? throw new ArgumentNullException("Stream cannot be null");
+
+    // Serializes writes to the connection stream. Neither SslStream nor
+    // NetworkStream supports concurrent writes, and the client may write from
+    // several sources at once (user sends, periodic client pings, and automatic
+    // pong replies). Without serialization their bytes interleave on the wire,
+    // producing malformed frames that cause the server to drop the connection.
+    internal async Task WriteSerializedAsync(Func<Stream, CancellationToken, Task> writeAsync, CancellationToken ct)
+    {
+        await _writeGate.WaitAsync(ct).ConfigureAwait(false);
+        try
+        {
+            await writeAsync(ConnectionStream, ct).ConfigureAwait(false);
+        }
+        finally
+        {
+            // The gate may already be disposed if the connection was torn down
+            // while this write was in flight.
+            try { _writeGate.Release(); }
+            catch (ObjectDisposedException) { }
+        }
+    }
 
     internal ValueTask ConnectTcpStream(
         Uri uri,
@@ -199,6 +221,7 @@ internal class TcpConnectionService(
     public void Dispose()
     {
         _stream?.Dispose();
+        _writeGate.Dispose();
 
         if (!_keepTcpClientAlive || _ownsCreatedTcpClient)
         {

@@ -45,7 +45,8 @@ internal class WebsocketSenderHandler : ISender
 
         try
         {
-            await _writeFunc(_tcpConnectionService.ConnectionStream, handShakeBytes, handShakeBytes.Length, ct).ConfigureAwait(false);
+            await _tcpConnectionService.WriteSerializedAsync(
+                (stream, token) => _writeFunc(stream, handShakeBytes, handShakeBytes.Length, token), ct).ConfigureAwait(false);
         }
         catch (Exception ex)
         {
@@ -152,7 +153,8 @@ internal class WebsocketSenderHandler : ISender
             try
             {
                 var pongOpcodeOnly = new[] { (byte)((byte)OpcodeKind.Pong + (byte)FragmentKind.Last) };
-                await _writeFunc(_tcpConnectionService.ConnectionStream, pongOpcodeOnly, pongOpcodeOnly.Length, ct).ConfigureAwait(false);
+                await _tcpConnectionService.WriteSerializedAsync(
+                    (stream, token) => _writeFunc(stream, pongOpcodeOnly, pongOpcodeOnly.Length, token), ct).ConfigureAwait(false);
                 _connectionStatusAction(ConnectionStatus.SendComplete, null);
             }
             catch (Exception ex)
@@ -372,7 +374,8 @@ internal class WebsocketSenderHandler : ISender
 
         try
         {
-            await _writeFunc(_tcpConnectionService.ConnectionStream, buffer, length, ct).ConfigureAwait(false);
+            await _tcpConnectionService.WriteSerializedAsync(
+                (stream, token) => _writeFunc(stream, buffer, length, token), ct).ConfigureAwait(false);
 
             if (opcode is OpcodeKind.Close)
             {
