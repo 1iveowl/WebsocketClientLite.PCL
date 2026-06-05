@@ -88,7 +88,11 @@ internal class TcpConnectionService(
         }
         catch (ObjectDisposedException)
         {
+            // Stream was disposed (e.g. connection torn down). Treat like
+            // cancellation: signal "no data" rather than returning a partially
+            // filled/zeroed buffer that would be misread as a valid frame.
             Debug.WriteLine("Ignoring Object Disposed Exception - This is an expected exception");
+            return null;
         }
 
         return buffer;
