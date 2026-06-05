@@ -48,8 +48,8 @@ internal class WebsocketSenderHandler : ISender
         catch (Exception ex)
         {
             _connectionStatusAction(
-                ConnectionStatus.Aborted, 
-                new WebsocketClientLiteException("Unable to complete handshake", ex.InnerException!));
+                ConnectionStatus.Aborted,
+                new WebsocketClientLiteException("Unable to complete handshake", ex));
         }
     }
 
