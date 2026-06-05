@@ -109,6 +109,8 @@ private static async Task StartWebSocketAsyncWithRetry(
             {
                 Console.WriteLine($"Echo: {tuple.dataframe.Message}");
             }
+
+            Console.ResetColor();
         })
         .Where(tuple => tuple.state == ConnectionStatus.WebsocketConnected)
         .SelectMany(_ => Observable.FromAsync(_ => SendTest1()))
