@@ -8,13 +8,6 @@ namespace WebsocketClientLite.Helper;
 
 internal static class ClientHandShake
 {
-
-#if NETSTANDARD2_0
-    // For .NET Standard 2.0/2.1
-    private static readonly object _randomLock = new();
-    private static Random? _random;
-#endif
-
     internal static byte[] Compose(
     Uri uri,
     string? origin = null,
@@ -99,19 +92,13 @@ internal static class ClientHandShake
 #if NETSTANDARD2_0
         // netstandard2.0 doesn't have RandomNumberGenerator.Fill nor Convert.ToBase64String(Span<byte>)
         var webSocketKey = new byte[16];
-
-        lock (_randomLock)
+        using (var rng = RandomNumberGenerator.Create())
         {
-            using var rng = RandomNumberGenerator.Create();
-            _random ??= new Random();
-            _random.NextBytes(webSocketKey);
             rng.GetBytes(webSocketKey);
         }
-
 #else
         Span<byte> webSocketKey = stackalloc byte[16];
         RandomNumberGenerator.Fill(webSocketKey);
-
 #endif
         return Convert.ToBase64String(webSocketKey);
     }
