@@ -23,6 +23,7 @@ internal class TcpConnectionService(
     TcpClient? tcpClient = null) : IDisposable
 {
     private readonly bool _keepTcpClientAlive = !hasTransferTcpSocketLifeCycleOwnership;
+    private bool _ownsCreatedTcpClient;
     private Stream? _stream;
 
     internal Stream ConnectionStream => _stream ?? throw new ArgumentNullException("Stream cannot be null");
@@ -101,10 +102,14 @@ internal class TcpConnectionService(
 
         if (tcpClient is null)
         {
-            using var tcpClient = new TcpClient(
+            // Reassign the captured field (not a shadowing local) so the created
+            // client is actually used. We allocated it, so we own its lifetime
+            // and dispose it in Dispose() regardless of the ownership flag.
+            tcpClient = new TcpClient(
                 uri.HostNameType is UriHostNameType.IPv6
                     ? AddressFamily.InterNetworkV6
                     : AddressFamily.InterNetwork);
+            _ownsCreatedTcpClient = true;
         }
 
         try
@@ -189,7 +194,7 @@ internal class TcpConnectionService(
     {
         _stream?.Dispose();
 
-        if (!_keepTcpClientAlive)
+        if (!_keepTcpClientAlive || _ownsCreatedTcpClient)
         {
             tcpClient?.Dispose();
         }
