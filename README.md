@@ -37,7 +37,16 @@ Version 9.0 is a correctness and protocol-compliance release.
 - **`CancellationToken` is honored.** The token passed to `WebsocketConnectObservable` is now forwarded to the underlying connection. Previously it was ignored on that overload.
 - **More robust teardown.** Client-ping failures no longer surface as an unhandled exception on a background thread, a disposed read stream no longer yields a bogus empty frame, a connection closed mid-handshake now reports a clear error, and per-connection resources are disposed correctly.
 
+**Security hardening**
+
+- **Incoming frame/message size cap.** A new `MaxFrameSize` property (default 16 MiB) bounds both a single incoming frame and a fully reassembled fragmented message, preventing a malicious server from exhausting memory. See [Limiting incoming message size](#limiting-incoming-message-size).
+- **Control-frame validation.** Control frames (Close/Ping/Pong) that are fragmented or exceed 125 bytes are now rejected per [RFC 6455 §5.5](https://tools.ietf.org/html/rfc6455#section-5.5).
+- **Handshake header-injection guard.** Headers, `Origin`, and subprotocol values containing CR, LF, or NUL are now rejected, preventing HTTP header injection / request smuggling.
+- **Certificate revocation checking.** A new `CheckCertificateRevocation` property (default `true`) enables TLS revocation checking. See [Certificate revocation](#certificate-revocation).
+
 **Breaking changes**
+
+- `CheckCertificateRevocation` now defaults to `true` (TLS revocation checking is performed). If your environment cannot reach the certificate's OCSP/CRL endpoints, set it to `false`.
 
 - `ClientWebSocketRx` is now a `class` instead of a `record`. A connection holds live, disposable state, so value-equality and `with` semantics were both misleading and incorrect.
 - `ClientWebSocketRx.TcpClient` is now nullable (`TcpClient?`). Leave it unset to have the client create one with the address family matching the target URI and dispose it automatically, or supply your own and control its lifetime via `HasTransferSocketLifeCycleOwnership`.
@@ -204,7 +213,10 @@ await sender.SendText("End", OpcodeKind.Text, FragmentKind.Last);
 Control certificate validation behavior:
 
 ```csharp
-// Option 1: Ignore all certificate errors (use with caution) 
+// Option 1: Ignore all certificate errors.
+// ⚠️ WARNING: this disables ALL certificate validation and exposes the
+// connection to man-in-the-middle attacks. Use it only for local testing
+// against self-signed/expired certificates. NEVER enable it in production.
 var client = new ClientWebSocketRx { IgnoreServerCertificateErrors = true };
 
 // Option 2: Override the validation method for custom logic 
@@ -215,6 +227,36 @@ public override bool ValidateServerCertificate(
 	// Fall back to base implementation
     return base.ValidateServerCertificate(senderObject, certificate, chain, tlsPolicyErrors);
 }
+```
+
+#### Certificate revocation
+
+Revocation checking is performed during the TLS handshake by default
+(`CheckCertificateRevocation = true`). If your environment cannot reach the
+certificate's OCSP/CRL endpoints (e.g. some corporate proxies or air-gapped
+networks), the handshake will fail; disable the check in that case:
+
+```csharp
+var client = new ClientWebSocketRx { CheckCertificateRevocation = false };
+```
+
+This setting has no effect when `IgnoreServerCertificateErrors` is `true`.
+
+### Limiting incoming message size
+
+By default the client rejects any incoming frame — or any reassembled
+fragmented message — larger than 16 MiB, then tears down the connection. This
+guards against a malicious or misbehaving server exhausting memory by declaring
+a huge payload length or flooding fragments. Adjust or disable the limit with
+`MaxFrameSize`:
+
+```csharp
+// Cap incoming frames/messages at 4 MiB.
+var client = new ClientWebSocketRx { MaxFrameSize = 4 * 1024 * 1024 };
+
+// Or allow up to int.MaxValue bytes (no explicit limit — not recommended
+// when connecting to untrusted servers).
+var unlimited = new ClientWebSocketRx { MaxFrameSize = 0 };
 ```
 
 ### Working with Specialized WebSocket Implementations
