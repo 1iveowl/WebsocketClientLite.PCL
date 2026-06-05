@@ -40,11 +40,16 @@ internal static class DataframeParsing
         Debug.WriteLine($"Opcode: {opcode}");
 #endif
 
-        FragmentKind fragmentKind = firstByte switch
+        // Classify the frame's role from the FIN bit and opcode (the actual
+        // protocol signals). The previous code compared the whole first byte
+        // against FragmentKind values, whose numeric values (0x00/0x80) collide
+        // with the opcode/FIN bits, so it only ever matched bare continuation
+        // frames.
+        FragmentKind fragmentKind = (fin, opcode) switch
         {
-            (byte)FragmentKind.First => FragmentKind.First,
-            (byte)FragmentKind.Last => FragmentKind.Last,
-            _ => FragmentKind.None
+            (false, not OpcodeKind.Continuation) => FragmentKind.First, // first fragment of a message
+            (true, OpcodeKind.Continuation) => FragmentKind.Last,       // final continuation fragment
+            _ => FragmentKind.None,                                     // single frame or middle continuation
         };
 
         return dataframe with
