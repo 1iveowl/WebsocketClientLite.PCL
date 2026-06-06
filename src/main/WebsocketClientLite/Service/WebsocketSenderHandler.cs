@@ -16,14 +16,16 @@ namespace WebsocketClientLite.Service;
 internal class WebsocketSenderHandler : ISender
 {
     private readonly TcpConnectionService _tcpConnectionService;
-    private readonly Func<Stream, byte[], CancellationToken, Task> _writeFunc;
+    // (stream, buffer, count, ct): writes the first `count` bytes of `buffer`,
+    // so a pooled/oversized buffer can be passed without copying to exact size.
+    private readonly Func<Stream, byte[], int, CancellationToken, Task> _writeFunc;
     private readonly Action<ConnectionStatus, Exception?> _connectionStatusAction;
     private readonly bool _isExcludingZeroApplicationDataInPong;
 
     internal WebsocketSenderHandler(
         TcpConnectionService tcpConnectionService,
         Action<ConnectionStatus, Exception?> connectionStatusAction,
-        Func<Stream, byte[], CancellationToken, Task> writeFunc,            
+        Func<Stream, byte[], int, CancellationToken, Task> writeFunc,
         bool isExcludingZeroApplicationDataInPong)
     {
         _tcpConnectionService = tcpConnectionService;
@@ -43,13 +45,14 @@ internal class WebsocketSenderHandler : ISender
 
         try
         {
-            await _writeFunc(_tcpConnectionService.ConnectionStream, handShakeBytes, ct).ConfigureAwait(false);
+            await _tcpConnectionService.WriteSerializedAsync(
+                (stream, token) => _writeFunc(stream, handShakeBytes, handShakeBytes.Length, token), ct).ConfigureAwait(false);
         }
         catch (Exception ex)
         {
             _connectionStatusAction(
-                ConnectionStatus.Aborted, 
-                new WebsocketClientLiteException("Unable to complete handshake", ex.InnerException!));
+                ConnectionStatus.Aborted,
+                new WebsocketClientLiteException("Unable to complete handshake", ex));
         }
     }
 
@@ -135,18 +138,51 @@ internal class WebsocketSenderHandler : ISender
 
     internal async Task SendPong(
         Dataframe dataframe,
-        CancellationToken ct) => 
-            await ComposeFrameAndSendAsync(
-                dataframe.Binary ?? Array.Empty<byte>(),
-                OpcodeKind.Pong,
-                FragmentKind.None,
-                ct)
-            .ConfigureAwait(false);
+        CancellationToken ct)
+    {
+        var payload = dataframe.Binary ?? Array.Empty<byte>();
+
+        // Slack's RTM API disconnects if a pong with no application data still
+        // carries the zero-value payload-length byte. When configured, reply with
+        // only the single opcode byte (FIN + Pong opcode) and no length byte.
+        // See the "Slack RTM API" section of the README.
+        if (_isExcludingZeroApplicationDataInPong && payload.Length == 0)
+        {
+            _connectionStatusAction(ConnectionStatus.PongSend, null);
+
+            try
+            {
+                var pongOpcodeOnly = new[] { (byte)((byte)OpcodeKind.Pong + (byte)FragmentKind.Last) };
+                await _tcpConnectionService.WriteSerializedAsync(
+                    (stream, token) => _writeFunc(stream, pongOpcodeOnly, pongOpcodeOnly.Length, token), ct).ConfigureAwait(false);
+                _connectionStatusAction(ConnectionStatus.SendComplete, null);
+            }
+            catch (Exception ex)
+            {
+                _connectionStatusAction(
+                    ConnectionStatus.SendError,
+                    new WebsocketClientLiteException("Websocket send error occured.", ex));
+            }
+
+            return;
+        }
+
+        await ComposeFrameAndSendAsync(
+            payload,
+            OpcodeKind.Pong,
+            FragmentKind.None,
+            ct)
+        .ConfigureAwait(false);
+    }
 
     internal async Task SendCloseHandshakeAsync(
         StatusCodes statusCode)
     {
-        var closeFrameBodyCode = BitConverter.GetBytes((ushort)statusCode);
+        // The close code is a 2-byte unsigned integer in network (big-endian)
+        // byte order per RFC 6455 §5.5.1. BitConverter is little-endian on most
+        // platforms, so write the bytes explicitly.
+        var code = (ushort)statusCode;
+        var closeFrameBodyCode = new[] { (byte)(code >> 8), (byte)(code & 0xFF) };
         var reason = Encoding.UTF8.GetBytes(statusCode.ToString());
 
         await ComposeFrameAndSendAsync(
@@ -205,21 +241,21 @@ internal class WebsocketSenderHandler : ISender
         FragmentKind fragment,
         CancellationToken ct)
     {
-        byte[]? bytes = message is not null ? Encoding.UTF8.GetBytes(message) : null;
-        await ComposeFrameAndSendCoreAsync(bytes, opcode, fragment, ct).ConfigureAwait(false);
+        await ComposeFrameAndSendCoreAsync(null, message, opcode, fragment, ct).ConfigureAwait(false);
     }
 
     private async Task ComposeFrameAndSendAsync(
-        byte[]? content, 
+        byte[]? content,
         OpcodeKind opcode,
         FragmentKind fragment,
         CancellationToken ct)
     {
-        await ComposeFrameAndSendCoreAsync(content, opcode, fragment, ct).ConfigureAwait(false);
+        await ComposeFrameAndSendCoreAsync(content, null, opcode, fragment, ct).ConfigureAwait(false);
     }
 
     private async ValueTask ComposeFrameAndSendCoreAsync(
         byte[]? content,
+        string? text,
         OpcodeKind opcode,
         FragmentKind fragment,
         CancellationToken ct)
@@ -229,7 +265,7 @@ internal class WebsocketSenderHandler : ISender
             throw new WebsocketClientLiteException("Websocket connection stream have been closed");
         }
 
-        int payloadLength = content?.Length ?? 0;
+        int payloadLength = content?.Length ?? (text is not null ? Encoding.UTF8.GetByteCount(text) : 0);
         int payloadLenField = payloadLength <= 125 ? 1 : (payloadLength <= ushort.MaxValue ? 3 : 9);
         int headerSize = 1 + payloadLenField + 4;
         int totalSize = headerSize + payloadLength;
@@ -265,15 +301,38 @@ internal class WebsocketSenderHandler : ISender
                 buffer[written++] = (byte)(len & 0xFF);
             }
 
+            int maskOffset = written;
+#if NETSTANDARD2_0
+            // netstandard2.0 lacks RandomNumberGenerator.Fill(Span<byte>), so fall
+            // back to the array-allocating helper and copy the key into the buffer.
             var maskKey = CreateMaskKey();
-            Buffer.BlockCopy(maskKey, 0, buffer, written, 4);
+            Buffer.BlockCopy(maskKey, 0, buffer, maskOffset, 4);
+#else
+            // Generate the masking key straight into the frame buffer (no extra array).
+            System.Security.Cryptography.RandomNumberGenerator.Fill(buffer.AsSpan(maskOffset, 4));
+#endif
             written += 4;
 
             if (payloadLength > 0)
             {
-                for (int i = 0; i < payloadLength; i++)
+                int payloadOffset = written;
+                if (content is not null)
                 {
-                    buffer[written + i] = (byte)(content![i] ^ maskKey[i % 4]);
+                    // Mask while copying from the source array (single pass).
+                    for (int i = 0; i < payloadLength; i++)
+                    {
+                        buffer[payloadOffset + i] = (byte)(content[i] ^ buffer[maskOffset + (i & 3)]);
+                    }
+                }
+                else
+                {
+                    // Encode the text straight into the frame buffer (no intermediate
+                    // array), then mask it in place.
+                    Encoding.UTF8.GetBytes(text!, 0, text!.Length, buffer, payloadOffset);
+                    for (int i = 0; i < payloadLength; i++)
+                    {
+                        buffer[payloadOffset + i] ^= buffer[maskOffset + (i & 3)];
+                    }
                 }
                 written += payloadLength;
             }
@@ -282,7 +341,9 @@ internal class WebsocketSenderHandler : ISender
         }
         finally
         {
-            ArrayPool<byte>.Shared.Return(buffer);
+            // Clear before returning: the buffer held the (masked) outgoing
+            // payload and mask key. Defense-in-depth so a later renter can't read it.
+            ArrayPool<byte>.Shared.Return(buffer, clearArray: true);
         }
 
         static byte DetermineFINBit(OpcodeKind opcode, FragmentKind fragment)
@@ -336,9 +397,8 @@ internal class WebsocketSenderHandler : ISender
 
         try
         {
-            var frame = new byte[length];
-            Buffer.BlockCopy(buffer, 0, frame, 0, length);
-            await _writeFunc(_tcpConnectionService.ConnectionStream, frame, ct).ConfigureAwait(false);
+            await _tcpConnectionService.WriteSerializedAsync(
+                (stream, token) => _writeFunc(stream, buffer, length, token), ct).ConfigureAwait(false);
 
             if (opcode is OpcodeKind.Close)
             {

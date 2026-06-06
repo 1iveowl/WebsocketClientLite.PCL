@@ -2,7 +2,6 @@
 using System.IO;
 using System.Net.Security;
 using System.Net.Sockets;
-using System.Reactive.Concurrency;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading;
 using System.Threading.Tasks;
@@ -18,7 +17,6 @@ internal static class WebsocketServiceFactory
     internal static Task<WebsocketService> Create(
         Func<bool> isSecureConnectionSchemeFunc,
         Func<object, X509Certificate, X509Chain, SslPolicyErrors, bool> validateServerCertificateFunc,
-        EventLoopScheduler eventLoopScheduler,
         IObserver<ConnectionStatus> observerConnectionStatus,
 #pragma warning disable CS0618
         MessageWebsocketRx messageWebSocketRx)
@@ -32,7 +30,9 @@ internal static class WebsocketServiceFactory
             connectionStatusAction: ConnectionStatusAction,
 #pragma warning disable CS0618
             hasTransferTcpSocketLifeCycleOwnership: messageWebSocketRx.HasTransferSocketLifeCycleOwnership,
-            tcpClient: messageWebSocketRx.TcpClient);
+            tcpClient: messageWebSocketRx.TcpClient,
+            maxFrameSize: messageWebSocketRx.MaxFrameSize,
+            checkCertificateRevocation: messageWebSocketRx.CheckCertificateRevocation);
 #pragma warning restore CS0618
 
         var parserHandler = new WebsocketParserHandler(tcpConnectionHandler);
@@ -74,12 +74,12 @@ internal static class WebsocketServiceFactory
             observerConnectionStatus.OnNext(status);
         }
 
-        async Task<bool> WriteToStream(Stream stream, byte[] byteArray, CancellationToken ct)
+        async Task<bool> WriteToStream(Stream stream, byte[] byteArray, int count, CancellationToken ct)
         {
 #if NETSTANDARD2_0
-            await stream.WriteAsync(byteArray, 0, byteArray.Length, ct).ConfigureAwait(false);
+            await stream.WriteAsync(byteArray, 0, count, ct).ConfigureAwait(false);
 #else
-            await stream.WriteAsync(byteArray.AsMemory(), ct).ConfigureAwait(false);
+            await stream.WriteAsync(byteArray.AsMemory(0, count), ct).ConfigureAwait(false);
 #endif
             await stream.FlushAsync(ct).ConfigureAwait(false);
             return true;

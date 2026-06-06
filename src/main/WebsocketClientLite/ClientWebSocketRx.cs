@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Net.Security;
 using System.Reactive;
-using System.Reactive.Concurrency;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
@@ -17,15 +16,34 @@ using WebsocketClientLite.Service;
 
 namespace WebsocketClientLite;
 
-public record ClientWebSocketRx : IWebSocketClientRx, IDisposable, IEquatable<ClientWebSocketRx>
+public class ClientWebSocketRx : IWebSocketClientRx, IDisposable
 {
     private readonly CompositeDisposable _disposables = [];
     private readonly IObserver<bool> _observerIsConnected;
-    private readonly EventLoopScheduler _eventLoopScheduler = new();
 
     public bool HasTransferSocketLifeCycleOwnership { get; init; }
 
-    public TcpClient TcpClient { get; init; } = new TcpClient();
+    /// <summary>
+    /// Default value for <see cref="MaxFrameSize"/> (16 MiB).
+    /// </summary>
+    public const int DefaultMaxFrameSizeBytes = 16 * 1024 * 1024;
+
+    /// <summary>
+    /// Maximum payload size, in bytes, accepted for a single incoming frame and
+    /// for a fully reassembled (fragmented) message. Frames or messages exceeding
+    /// this are rejected and the connection is torn down, preventing
+    /// memory-exhaustion from a malicious or misbehaving server. Defaults to
+    /// <see cref="DefaultMaxFrameSizeBytes"/>. Set to 0 (or a negative value) to
+    /// allow up to <see cref="int.MaxValue"/> bytes.
+    /// </summary>
+    public int MaxFrameSize { get; init; } = DefaultMaxFrameSizeBytes;
+
+    /// <summary>
+    /// Optional TCP client. When left null, a <see cref="TcpClient"/> is created
+    /// internally with the address family matching the target URI and is disposed
+    /// together with the connection. Supplying one avoids allocating a throwaway.
+    /// </summary>
+    public TcpClient? TcpClient { get; init; }
 
     /// <summary>
     /// Websocket client connected observable.
@@ -67,6 +85,15 @@ public record ClientWebSocketRx : IWebSocketClientRx, IDisposable, IEquatable<Cl
     /// Use with care. Ignores TLS/SSL certificate checks and errors. See documentation.
     /// </summary>
     public bool IgnoreServerCertificateErrors { get; init; }
+
+    /// <summary>
+    /// Whether to check the server certificate for revocation during the TLS
+    /// handshake. Defaults to <see langword="true"/>. Set to <see langword="false"/>
+    /// if your environment cannot reach the certificate's revocation (OCSP/CRL)
+    /// endpoints, which would otherwise fail the handshake. Has no effect when
+    /// <see cref="IgnoreServerCertificateErrors"/> is <see langword="true"/>.
+    /// </summary>
+    public bool CheckCertificateRevocation { get; init; } = true;
 
     /// <summary>
     /// X.509 certificate collection.
@@ -146,7 +173,7 @@ public record ClientWebSocketRx : IWebSocketClientRx, IDisposable, IEquatable<Cl
         string? clientPingMessage = default,
         TimeSpan handshaketimeout = default,
         CancellationToken cancellationToken = default) =>
-            WebsocketConnectWithStatusObservable(uri, hasClientPing, clientPingInterval, clientPingMessage, handshaketimeout)
+            WebsocketConnectWithStatusObservable(uri, hasClientPing, clientPingInterval, clientPingMessage, handshaketimeout, cancellationToken)
                 .Where(tuple => tuple.state is ConnectionStatus.DataframeReceived)
                 .Select(tuple => tuple.dataframe);
 
@@ -187,7 +214,6 @@ public record ClientWebSocketRx : IWebSocketClientRx, IDisposable, IEquatable<Cl
                 return await Observable.FromAsync<WebsocketService>(_ => WebsocketClientFactory.Create(
                             () => IsSecureConnectionScheme(uri),
                             ValidateServerCertificate,
-                            _eventLoopScheduler,
                             obsStatus,
                             this))
                         .Select(ws => Observable.FromAsync<IObservable<IDataframe?>>(ct => ConnectWebsocket(ws, ct))
@@ -228,7 +254,6 @@ public record ClientWebSocketRx : IWebSocketClientRx, IDisposable, IEquatable<Cl
         if (disposing)
         {
             _disposables.Dispose();
-            _eventLoopScheduler.Dispose();
         }
     }
 

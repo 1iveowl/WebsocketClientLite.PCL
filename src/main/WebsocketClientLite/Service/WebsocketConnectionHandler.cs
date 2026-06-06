@@ -71,7 +71,6 @@ internal class WebsocketConnectionHandler : IDisposable
 
         var handshakeHandler = new HandshakeHandler(
                 _tcpConnectionService,
-                _websocketParserHandler,
                 _connectionStatusAction);
 
         var (handshakeState, handshakeException) = 
@@ -97,24 +96,27 @@ internal class WebsocketConnectionHandler : IDisposable
             _clientPingDisposable = SendClientPing(clientPingMessage)
                 .Subscribe(
                 _ => { },
-                ex => 
-                { 
-                    throw new WebsocketClientLiteException("Sending client ping failed.", ex); 
-                },
+                // Throwing here would rethrow on the Interval scheduler thread as an
+                // unhandled exception. Surface it through the status callback instead;
+                // connection teardown is driven by the read side.
+                ex => _connectionStatusAction(
+                    ConnectionStatus.SendError,
+                    new WebsocketClientLiteException("Sending client ping failed.", ex)),
                 () => { });
         }
 
         _connectionStatusAction(ConnectionStatus.WebsocketConnected, null);
 
         return Observable.Create<IDataframe?>(dataframeObserver =>
-            // Create a more direct observable that handles frames and clean-up
+            // DataframeObservable now emits every message from a single
+            // subscription, so no .Repeat() (and its per-message re-subscription)
+            // is needed.
             _websocketParserHandler.DataframeObservable()
                 .SelectMany(async dataframe =>
                     // Process control frames and return data frames
                     await IncomingControlFrameHandler(dataframe, dataframeObserver, cancellationToken).ConfigureAwait(false))
                 .Where(dataframe => dataframe is not null)
                 .Subscribe(dataframeObserver))
-        .Repeat()
         .FinallyAsync(async () =>
         {
             await DisconnectWebsocket(sender).ConfigureAwait(false);

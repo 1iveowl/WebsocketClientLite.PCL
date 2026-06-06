@@ -23,6 +23,7 @@ jobs:
           dotnet-version: |
             8.0.x
             9.0.x
+            10.0.x
 
       - name: Install gitversion
         uses: gittools/actions/gitversion/setup@v0.11.0
@@ -99,16 +100,37 @@ jobs:
           tag_name: ${{ steps.gitversion.outputs.AssemblySemVer }}
           release_name: Release ${{ steps.gitversion.outputs.AssemblySemVer }}
           body: |
-            WebsocketClientLite 8.3 – Highlights
-            - Added .NET 10 (net10.0) target with C# 14 features.
-            - Faster send path: pooled frame builder (ArrayPool) and Memory/Span APIs.
-            - Robust stream read loop that reads exactly N bytes (fewer EOF surprises).
-            - Correct WebSocket masking/decoding and cryptographically secure mask/key generation.
-            - Manual big‑endian payload length parsing (8/16/64‑bit).
-            - ValueTask on hot paths to reduce allocations.
-            - Prefer ReadOnlyMemory/Memory ReadAsync/WriteAsync (CA1835) and tightened analyzers.
-            - Clear disposal ownership; factories refactored to satisfy CA2000.
-            - Improved fragment merging using pooled buffers.
-            - New unit tests for payload length boundaries and masked decoding.
+            WebsocketClientLite 9.0.0 – Highlights
+
+            Bug fixes
+            - Subprotocols are now actually sent in the handshake (Sec-WebSocket-Protocol).
+            - Close status codes are sent big-endian per RFC 6455.
+            - ExcludeZeroApplicationDataInPong is now honored (Slack RTM).
+            - The CancellationToken passed to WebsocketConnectObservable is forwarded.
+            - Fragmented messages reassemble correctly on .NET 8/9/10 and .NET Standard 2.1.
+            - Writes to the connection are serialized, fixing mid-stream disconnects when
+              client pings interleave with sends.
+
+            Security hardening
+            - Configurable MaxFrameSize (default 16 MiB) caps incoming frames and reassembled
+              messages to guard against memory-exhaustion from a malicious server.
+            - Control frames are validated (<=125 bytes, not fragmented) per RFC 6455 §5.5.
+            - Handshake header/origin/subprotocol values containing CR/LF/NUL are rejected.
+            - CheckCertificateRevocation option (default true) enables TLS revocation checking.
+
+            Performance
+            - Receive path reads each payload once and unmasks in place (no MemoryStream,
+              far fewer allocations); frames are read from a single subscription.
+            - Send path avoids per-frame mask-key and text-encoding allocations.
+
+            Breaking changes
+            - ClientWebSocketRx is now a class instead of a record, and its TcpClient
+              property is nullable.
+            - CheckCertificateRevocation defaults to true; set it to false if your
+              environment cannot reach OCSP/CRL endpoints.
+
+            Tooling
+            - Tests run against every target framework (netstandard2.0..net10) and a CI
+              workflow builds, tests, and gates code coverage.
           draft: true
           prerelease: true

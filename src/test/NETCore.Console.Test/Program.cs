@@ -24,13 +24,26 @@ class Program
 
     static async Task Main()
     {
-        CancellationTokenSource outerCancellationSource = new();
+        using CancellationTokenSource outerCancellationSource = new();
 
-        await StartWebSocketAsyncWithRetry(outerCancellationSource);
+        // Start the connect/retry loop in the background. Do NOT await it here:
+        // it runs until cancellation, and we still need to read a key to stop it.
+        var webSocketTask = StartWebSocketAsyncWithRetry(outerCancellationSource);
 
-        Console.WriteLine("Waiting...");
+        Console.WriteLine("Press any key to stop...");
         Console.ReadKey();
+
+        // Signal shutdown and wait for the background loop to tear down.
         outerCancellationSource.Cancel();
+
+        try
+        {
+            await webSocketTask;
+        }
+        catch (OperationCanceledException)
+        {
+            // Expected when the outer token is cancelled.
+        }
     }
 
 private static async Task StartWebSocketAsyncWithRetry(
@@ -52,9 +65,14 @@ private static async Task StartWebSocketAsyncWithRetry(
     {
         TcpClient = tcpClient,
         HasTransferSocketLifeCycleOwnership = false,
+        // WARNING: this disables ALL TLS certificate validation and exposes the
+        // connection to man-in-the-middle attacks. It is set here only for local
+        // testing against self-signed/expired certs. NEVER enable it in production.
         IgnoreServerCertificateErrors = true,
         Headers = new Dictionary<string, string> { { "Pragma", "no-cache" }, { "Cache-Control", "no-cache" } },
         TlsProtocolType = SslProtocols.Tls12,
+        // Reject incoming frames/messages larger than 4 MiB (default is 16 MiB).
+        MaxFrameSize = 4 * 1024 * 1024,
     };
 
     using CompositeDisposable disposables = [];
@@ -96,10 +114,12 @@ private static async Task StartWebSocketAsyncWithRetry(
             {
                 Console.WriteLine($"Echo: {tuple.dataframe.Message}");
             }
+
+            Console.ResetColor();
         })
         .Where(tuple => tuple.state == ConnectionStatus.WebsocketConnected)
-        .SelectMany(_ => Observable.FromAsync(_ => SendTest1()))
-        .SelectMany(_ => Observable.FromAsync(_ => SendTest2()))
+        .SelectMany(_ => Observable.FromAsync(_ => SendTestSequence()))
+        .SelectMany(_ => Observable.FromAsync(_ => SendTestSequence()))
         .Subscribe(
             _ => { },
             ex => Console.WriteLine($"Connection status error: {ex}."),
@@ -116,66 +136,11 @@ private static async Task StartWebSocketAsyncWithRetry(
         disposables.Dispose();
     }
 
-        async Task SendTest1(bool isSocketIOTest = false)
+        // One reusable send sequence exercising single frames, a large frame, a
+        // multi-frame list, and manual First/Continuation/Last fragmentation.
+        async Task SendTestSequence()
         {
             var sender = client.Sender;
-
-            if (sender is null)
-            {
-                Console.WriteLine("Sender is null.");
-                return;
-            }
-
-            if(isSocketIOTest)
-            {
-                await sender.SendText("40");
-            }
-
-            await Task.Delay(TimeSpan.FromSeconds(4));
-
-            await sender.SendText(_socketIOMessageFormattingFunc("Test Single Frame 1"));
-
-            await Task.Delay(TimeSpan.FromSeconds(5));
-
-            await sender.SendText(_socketIOMessageFormattingFunc("Test Single Frame 2"));
-
-            await sender.SendText(_socketIOMessageFormattingFunc("Test Single Frame again"));
-
-            await Task.Delay(TimeSpan.FromSeconds(5));
-
-            await sender.SendText(_socketIOMessageFormattingFunc(TestString(1026, 1026)));
-
-            await sender.SendText(new[] 
-            {
-                _socketIOMessageFormattingFunc("Test "),
-                _socketIOMessageFormattingFunc("multiple "),
-                _socketIOMessageFormattingFunc("frames "),
-                _socketIOMessageFormattingFunc("1 "),
-                _socketIOMessageFormattingFunc("2 "),
-                _socketIOMessageFormattingFunc("3 "),
-                _socketIOMessageFormattingFunc("4 "),
-                _socketIOMessageFormattingFunc("5 "),
-                _socketIOMessageFormattingFunc("6 "),
-                _socketIOMessageFormattingFunc("7 "),
-                _socketIOMessageFormattingFunc("8 "),
-                _socketIOMessageFormattingFunc("9.")});
-
-            await sender.SendText(_socketIOMessageFormattingFunc("Start "), OpcodeKind.Text, FragmentKind.First);
-            await Task.Delay(TimeSpan.FromMilliseconds(500));
-            await sender.SendText(_socketIOMessageFormattingFunc("Continue... #1 "), OpcodeKind.Continuation);
-            await Task.Delay(TimeSpan.FromMilliseconds(500));
-            await sender.SendText(_socketIOMessageFormattingFunc("Continue... #2 "), OpcodeKind.Continuation);
-            await Task.Delay(TimeSpan.FromMilliseconds(550));
-            await sender.SendText(_socketIOMessageFormattingFunc("Continue... #3 "), OpcodeKind.Continuation);
-            await Task.Delay(TimeSpan.FromMilliseconds(500));
-            await sender.SendText(_socketIOMessageFormattingFunc("Stop."), OpcodeKind.Text, FragmentKind.Last);           
-
-            await Task.Delay(TimeSpan.FromSeconds(20));
-        }
-
-        async Task SendTest2()
-        {
-            ISender sender = client.Sender;
 
             if (sender is null)
             {
@@ -208,7 +173,8 @@ private static async Task StartWebSocketAsyncWithRetry(
                 _socketIOMessageFormattingFunc("6 "),
                 _socketIOMessageFormattingFunc("7 "),
                 _socketIOMessageFormattingFunc("8 "),
-                _socketIOMessageFormattingFunc("9.")]);
+                _socketIOMessageFormattingFunc("9.")
+            ]);
 
             await sender.SendText(_socketIOMessageFormattingFunc("Start "), OpcodeKind.Text, FragmentKind.First);
             await Task.Delay(TimeSpan.FromMilliseconds(500));

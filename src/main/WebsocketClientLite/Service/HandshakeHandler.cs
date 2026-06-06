@@ -13,7 +13,6 @@ namespace WebsocketClientLite.Service;
 
 internal class HandshakeHandler(
     TcpConnectionService tcpConnectionService,
-    WebsocketParserHandler websocketParserHandler,
     Action<ConnectionStatus, Exception?> connectionStatusAction)
 {
     internal IObservable<(HandshakeStateKind handshakeState, WebsocketClientLiteException? ex)> Handshake(
@@ -35,7 +34,7 @@ internal class HandshakeHandler(
                 parserDelegate,
                 connectionStatusAction);
 
-            await SendHandshake(uri, sender, ct, origin, headers).ConfigureAwait(false);
+            await SendHandshake(uri, sender, ct, origin, headers, subprotocols).ConfigureAwait(false);
             await WaitForHandshake(handshakeParser).ConfigureAwait(false);
 
             obs.OnCompleted();
@@ -52,14 +51,24 @@ internal class HandshakeHandler(
 
         async Task WaitForHandshake(HandshakeParser handshakeParser)
         {
-            bool isHandshakeDone;
-
-            do
+            // Read the handshake response one byte at a time so the parser stops
+            // exactly at the end of the HTTP response and does not consume bytes
+            // belonging to the first WebSocket frame(s).
+            while (true)
             {
-                isHandshakeDone = await tcpConnectionService
-                    .BytesObservable()
-                    .Select(b => handshakeParser.Parse(b, subprotocols));
-            } while (!isHandshakeDone);
+                var bytes = await tcpConnectionService.ReadBytesFromStream(1, ct).ConfigureAwait(false);
+
+                if (bytes is null)
+                {
+                    throw new WebsocketClientLiteException(
+                        "Connection closed before the WebSocket handshake completed.");
+                }
+
+                if (handshakeParser.Parse(bytes, subprotocols))
+                {
+                    break;
+                }
+            }
         }
     }
 
@@ -69,7 +78,8 @@ internal class HandshakeHandler(
             WebsocketSenderHandler websocketSenderHandler,
             CancellationToken ct,
             string? origin = null,
-            IDictionary<string, string>? headers = null)
+            IDictionary<string, string>? headers = null,
+            IEnumerable<string>? subprotocols = null)
     {
         try
         {
@@ -80,7 +90,7 @@ internal class HandshakeHandler(
                      ct,
                      origin,
                      headers,
-                     websocketParserHandler.SubprotocolAcceptedNames).ConfigureAwait(false);     
+                     subprotocols).ConfigureAwait(false);
         }
         catch (Exception ex)
         {

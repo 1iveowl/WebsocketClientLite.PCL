@@ -8,13 +8,6 @@ namespace WebsocketClientLite.Helper;
 
 internal static class ClientHandShake
 {
-
-#if NETSTANDARD2_0
-    // For .NET Standard 2.0/2.1
-    private static readonly object _randomLock = new();
-    private static Random? _random;
-#endif
-
     internal static byte[] Compose(
     Uri uri,
     string? origin = null,
@@ -35,6 +28,8 @@ internal static class ClientHandShake
         {
             foreach (var header in headers)
             {
+                EnsureNoCrLf(header.Key, "header name", nameof(headers));
+                EnsureNoCrLf(header.Value, "header value", nameof(headers));
                 sb.Append(header.Key).Append(": ").Append(header.Value).Append("\r\n");
             }
         }
@@ -42,6 +37,7 @@ internal static class ClientHandShake
         // Add origin if provided
         if (!string.IsNullOrEmpty(origin))
         {
+            EnsureNoCrLf(origin, "origin", nameof(origin));
             sb.Append("Origin: ").Append(origin).Append("\r\n");
         }
 
@@ -58,6 +54,7 @@ internal static class ClientHandShake
             bool isFirst = true;
             foreach (var protocol in subprotocols)
             {
+                EnsureNoCrLf(protocol, "subprotocol", nameof(subprotocols));
                 if (!isFirst)
                     sb.Append(", ");
                 sb.Append(protocol);
@@ -72,24 +69,39 @@ internal static class ClientHandShake
         return Encoding.UTF8.GetBytes(sb.ToString());
     }
 
+    // Reject CR, LF, and NUL in caller-supplied values that are written into the
+    // HTTP upgrade request. Without this, a value containing "\r\n" could inject
+    // additional headers or smuggle a request (HTTP header injection).
+    private static void EnsureNoCrLf(string? value, string description, string paramName)
+    {
+        if (value is null)
+        {
+            return;
+        }
+
+        foreach (var c in value)
+        {
+            if (c is '\r' or '\n' or '\0')
+            {
+                throw new ArgumentException(
+                    $"The {description} must not contain CR, LF, or NUL characters (possible header injection).",
+                    paramName);
+            }
+        }
+    }
+
     static string GenerateRandomWebSocketKey()
     {
 #if NETSTANDARD2_0
         // netstandard2.0 doesn't have RandomNumberGenerator.Fill nor Convert.ToBase64String(Span<byte>)
         var webSocketKey = new byte[16];
-
-        lock (_randomLock)
+        using (var rng = RandomNumberGenerator.Create())
         {
-            using var rng = RandomNumberGenerator.Create();
-            _random ??= new Random();
-            _random.NextBytes(webSocketKey);
             rng.GetBytes(webSocketKey);
         }
-
 #else
         Span<byte> webSocketKey = stackalloc byte[16];
         RandomNumberGenerator.Fill(webSocketKey);
-
 #endif
         return Convert.ToBase64String(webSocketKey);
     }

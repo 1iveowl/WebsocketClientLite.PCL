@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Net.Security;
 using System.Net.Sockets;
-using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 using System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
@@ -28,8 +27,6 @@ public class MessageWebsocketRx(
     TcpClient? tcpClient,
     bool hasTransferTcpSocketLifeCycleOwnership = false) : IMessageWebSocketRx
 {
-    private readonly EventLoopScheduler _eventLoopScheduler = new();
-
     internal TcpClient? TcpClient { get; private set; } = tcpClient;
     internal bool HasTransferSocketLifeCycleOwnership { get; private set; } = hasTransferTcpSocketLifeCycleOwnership;
 
@@ -77,11 +74,28 @@ public class MessageWebsocketRx(
     public bool IgnoreServerCertificateErrors { get; set; }
 
     /// <summary>
+    /// Whether to check the server certificate for revocation during the TLS
+    /// handshake. Defaults to <see langword="true"/>. Set to <see langword="false"/>
+    /// if your environment cannot reach the certificate's revocation endpoints.
+    /// Has no effect when <see cref="IgnoreServerCertificateErrors"/> is true.
+    /// </summary>
+    public bool CheckCertificateRevocation { get; set; } = true;
+
+    /// <summary>
+    /// Maximum payload size, in bytes, accepted for a single incoming frame and
+    /// for a fully reassembled message. Frames or messages exceeding this are
+    /// rejected, guarding against memory-exhaustion from a malicious or
+    /// misbehaving server. Defaults to 16 MiB. Set to 0 or a negative value to
+    /// allow up to <see cref="int.MaxValue"/> bytes.
+    /// </summary>
+    public int MaxFrameSize { get; set; } = 16 * 1024 * 1024;
+
+    /// <summary>
     /// Get websocket client sender.
     /// </summary>
     /// <returns></returns>
-    public ISender GetSender() => IsConnected 
-        ? _sender is not null ? _sender : throw new ArgumentNullException("Sender not initialized.")
+    public ISender GetSender() => IsConnected
+        ? _sender ?? throw new InvalidOperationException("Sender not initialized.")
         : throw new InvalidOperationException("No sender available, Websocket not connected. You need to subscribe to WebsocketConnectObservable first.");
 
     /// <summary>
@@ -141,7 +155,6 @@ public class MessageWebsocketRx(
                 return await Observable.FromAsync(ct => WebsocketServiceFactory.Create(
                             () => IsSecureConnectionScheme(uri),
                             ValidateServerCertificate,
-                            _eventLoopScheduler,
                             obsStatus,
                             this))
                         .Select(ws => Observable.FromAsync(ct => ConnectWebsocket(ws, ct))
@@ -225,11 +238,7 @@ public class MessageWebsocketRx(
 
     protected virtual void Dispose(bool disposing)
     {
-        if (disposing)
-        {
-            _eventLoopScheduler?.Dispose();
-        }
-        // No unmanaged resources to release, so nothing else needed here.
+        // No managed or unmanaged resources to release here.
     }
 
     public void Dispose()

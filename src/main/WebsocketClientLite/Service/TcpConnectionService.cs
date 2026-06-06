@@ -20,12 +20,41 @@ internal class TcpConnectionService(
     Func<TcpClient, Uri, Task> connectTcpClientFunc,
     Action<ConnectionStatus, Exception?> connectionStatusAction,
     bool hasTransferTcpSocketLifeCycleOwnership,
-    TcpClient? tcpClient = null) : IDisposable
+    TcpClient? tcpClient = null,
+    int maxFrameSize = 0,
+    bool checkCertificateRevocation = false) : IDisposable
 {
     private readonly bool _keepTcpClientAlive = !hasTransferTcpSocketLifeCycleOwnership;
+    private bool _ownsCreatedTcpClient;
     private Stream? _stream;
+    private readonly SemaphoreSlim _writeGate = new(1, 1);
+
+    // Effective per-frame / per-message payload cap. A value <= 0 means "no
+    // explicit limit" (bounded only by the int.MaxValue array-size limit).
+    internal int MaxFrameSize { get; } = maxFrameSize <= 0 ? int.MaxValue : maxFrameSize;
 
     internal Stream ConnectionStream => _stream ?? throw new ArgumentNullException("Stream cannot be null");
+
+    // Serializes writes to the connection stream. Neither SslStream nor
+    // NetworkStream supports concurrent writes, and the client may write from
+    // several sources at once (user sends, periodic client pings, and automatic
+    // pong replies). Without serialization their bytes interleave on the wire,
+    // producing malformed frames that cause the server to drop the connection.
+    internal async Task WriteSerializedAsync(Func<Stream, CancellationToken, Task> writeAsync, CancellationToken ct)
+    {
+        await _writeGate.WaitAsync(ct).ConfigureAwait(false);
+        try
+        {
+            await writeAsync(ConnectionStream, ct).ConfigureAwait(false);
+        }
+        finally
+        {
+            // The gate may already be disposed if the connection was torn down
+            // while this write was in flight.
+            try { _writeGate.Release(); }
+            catch (ObjectDisposedException) { }
+        }
+    }
 
     internal ValueTask ConnectTcpStream(
         Uri uri,
@@ -42,10 +71,6 @@ internal class TcpConnectionService(
         await ConnectTcpClient(uri, timeout).ConfigureAwait(false);
         _stream = await GetTcpStream(uri, tcpClient, x509CertificateCollection, tlsProtocolType).ConfigureAwait(false);
     }
-
-    internal IObservable<byte[]?> BytesObservable() =>
-        Observable.Defer(() => Observable.FromAsync(ct => ReadByteArrayFromStream(1, ct).AsTask()))
-        .Where(bytes => bytes is not null);
 
     internal ValueTask<byte[]?> ReadBytesFromStream(ulong size, CancellationToken ct) =>
         ReadByteArrayFromStream(size, ct);
@@ -87,7 +112,11 @@ internal class TcpConnectionService(
         }
         catch (ObjectDisposedException)
         {
+            // Stream was disposed (e.g. connection torn down). Treat like
+            // cancellation: signal "no data" rather than returning a partially
+            // filled/zeroed buffer that would be misread as a valid frame.
             Debug.WriteLine("Ignoring Object Disposed Exception - This is an expected exception");
+            return null;
         }
 
         return buffer;
@@ -101,10 +130,14 @@ internal class TcpConnectionService(
 
         if (tcpClient is null)
         {
-            using var tcpClient = new TcpClient(
+            // Reassign the captured field (not a shadowing local) so the created
+            // client is actually used. We allocated it, so we own its lifetime
+            // and dispose it in Dispose() regardless of the ownership flag.
+            tcpClient = new TcpClient(
                 uri.HostNameType is UriHostNameType.IPv6
                     ? AddressFamily.InterNetworkV6
                     : AddressFamily.InterNetwork);
+            _ownsCreatedTcpClient = true;
         }
 
         try
@@ -171,7 +204,7 @@ internal class TcpConnectionService(
 
             try
             {
-                await secureStream.AuthenticateAsClientAsync(uri.Host, x509CertificateCollection, tlsProtocolType, false).ConfigureAwait(false);
+                await secureStream.AuthenticateAsClientAsync(uri.Host, x509CertificateCollection, tlsProtocolType, checkCertificateRevocation).ConfigureAwait(false);
                 connectionStatusAction(ConnectionStatus.SecureSocketStreamConnected, null);
                 return secureStream;
             }
@@ -188,8 +221,9 @@ internal class TcpConnectionService(
     public void Dispose()
     {
         _stream?.Dispose();
+        _writeGate.Dispose();
 
-        if (!_keepTcpClientAlive)
+        if (!_keepTcpClientAlive || _ownsCreatedTcpClient)
         {
             tcpClient?.Dispose();
         }
