@@ -1,12 +1,11 @@
-﻿using System;
-using System.Buffers;
+using System;
+using System.Collections.Generic;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 using System.Threading;
 using System.Reactive.Disposables;
 using IWebsocketClientLite;
 using WebsocketClientLite.CustomException;
-using WebsocketClientLite.Helper;
 using WebsocketClientLite.Model;
 using static WebsocketClientLite.Helper.DataframeParsing;
 
@@ -23,31 +22,34 @@ internal class WebsocketParserHandler : IDisposable
         _tcpConnectionService = tcpConnectionService;
     }
 
-    internal IObservable<Dataframe?> DataframeObservable() => 
+    internal IObservable<Dataframe?> DataframeObservable() =>
         Observable.Create<Dataframe?>(async obs =>
         {
             var cts = new CancellationTokenSource();
 
-            var dataframe = await _tcpConnectionService.CreateDataframe(cts.Token)
-                .PayloadBitLenght()
-                .PayloadLenght()
-                .GetPayload(cts.Token)
-                .ConfigureAwait(false);
-
-            if (dataframe is not null)
+            try
             {
-                while (!dataframe.FIN)
-                {
-                    // Merge fragments efficiently
-                    dataframe = await GetNextDataframe(dataframe).ConfigureAwait(false);
+                var dataframe = await _tcpConnectionService.ReadDataframeAsync(cts.Token).ConfigureAwait(false);
 
-                    if (dataframe is null) break;                      
+                if (dataframe is not null)
+                {
+                    if (!dataframe.FIN)
+                    {
+                        dataframe = await Reassemble(dataframe).ConfigureAwait(false);
+                    }
+
+                    if (dataframe is not null)
+                    {
+                        obs.OnNext(dataframe);
+                    }
                 }
 
-                obs.OnNext(dataframe);
+                obs.OnCompleted();
             }
-                         
-            obs.OnCompleted();
+            catch (Exception ex)
+            {
+                obs.OnError(ex);
+            }
 
             return Disposable.Create(() =>
             {
@@ -55,81 +57,65 @@ internal class WebsocketParserHandler : IDisposable
                 cts.Dispose();
             });
 
-            async Task<Dataframe?> GetNextDataframe(Dataframe? df)
+            // Reassembles a fragmented message by collecting payload segments and
+            // concatenating them once. Control frames received between fragments
+            // are emitted directly and do not interrupt reassembly (RFC 6455 §5.4).
+            async Task<Dataframe?> Reassemble(Dataframe first)
             {
-                var nextDataframe = await GetDataframe().ConfigureAwait(false);
+                var segments = new List<byte[]>();
+                long total = 0;
 
-                if (nextDataframe is not null 
-                    && nextDataframe.DataStream is not null
-                    && df is not null
-                    && df.DataStream is not null)
+                if (first.Payload is { Length: > 0 })
                 {
-#if NETSTANDARD2_0
-                    byte[]? rented = null;
-                    try
+                    segments.Add(first.Payload);
+                    total = first.Payload.Length;
+                }
+
+                var current = first;
+                while (!current.FIN)
+                {
+                    var next = await _tcpConnectionService.ReadDataframeAsync(cts.Token).ConfigureAwait(false);
+                    if (next is null)
                     {
-                        rented = ArrayPool<byte>.Shared.Rent(81920);
-                        int read;
-                        nextDataframe.DataStream.Position = 0;
-                        while ((read = nextDataframe.DataStream.Read(rented, 0, rented.Length)) > 0)
+                        // Stream closed before the message completed.
+                        return null;
+                    }
+
+                    if (next.Opcode is OpcodeKind.Continuation or OpcodeKind.Text or OpcodeKind.Binary)
+                    {
+                        if (next.Payload is { Length: > 0 })
                         {
-                            await df.DataStream.WriteAsync(rented, 0, read, cts.Token);
+                            total += next.Payload.Length;
+                            if (total > _tcpConnectionService.MaxFrameSize)
+                            {
+                                throw new WebsocketClientLiteException(
+                                    $"Reassembled message size ({total} bytes) exceeds the configured maximum of {_tcpConnectionService.MaxFrameSize} bytes.");
+                            }
+
+                            segments.Add(next.Payload);
                         }
+
+                        current = next;
                     }
-                    finally
+                    else
                     {
-                        if (rented is not null) ArrayPool<byte>.Shared.Return(rented);
-                    }
-#else
-                    // GetPayload leaves the stream positioned at the end, so rewind
-                    // before copying or CopyToAsync would append nothing.
-                    nextDataframe.DataStream.Position = 0;
-                    await nextDataframe.DataStream.CopyToAsync(df.DataStream).ConfigureAwait(false);
-#endif
-                    df = df with { FIN = nextDataframe.FIN };
-
-                    // Guard against memory exhaustion from a flood of fragments:
-                    // bound the reassembled message by the same configured maximum.
-                    if (df.DataStream.Length > _tcpConnectionService.MaxFrameSize)
-                    {
-                        throw new WebsocketClientLiteException(
-                            $"Reassembled message size ({df.DataStream.Length} bytes) exceeds the configured maximum of {_tcpConnectionService.MaxFrameSize} bytes.");
+                        // Interleaved control frame: hand it downstream and keep reassembling.
+                        obs.OnNext(next);
                     }
                 }
 
-                return df;
+                var merged = new byte[(int)total];
+                int offset = 0;
+                foreach (var segment in segments)
+                {
+                    Buffer.BlockCopy(segment, 0, merged, offset, segment.Length);
+                    offset += segment.Length;
+                }
+
+                return first with { Payload = merged, FIN = true };
             }
+        });
 
-            async Task<Dataframe?> GetDataframe()
-            {
-                var newDataframe = await _tcpConnectionService.CreateDataframe(cts.Token)
-                    .PayloadBitLenght()
-                    .PayloadLenght()
-                    .GetPayload(cts.Token)
-                    .ConfigureAwait(false);
-
-                if (newDataframe is null)
-                {
-                    return null;
-                }
-
-                if (newDataframe.Opcode
-                    is OpcodeKind.Text
-                    or OpcodeKind.Binary
-                    or OpcodeKind.Continuation
-                    || newDataframe.Fragment is FragmentKind.Last)
-                {
-                    return newDataframe;
-                }
-                else
-                {
-                    obs.OnNext(newDataframe);
-                }
-
-                return null;
-            }
-        });        
-    
     public void Dispose()
     {
         // No instance-level resources to release here: the per-subscription

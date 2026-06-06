@@ -1,7 +1,9 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reactive.Linq;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using IWebsocketClientLite;
@@ -36,10 +38,7 @@ public class PayloadParsingTests
     private async Task<Dataframe?> Parse(byte[] frame, int maxFrameSize = 0)
     {
         var fake = new FakeTcpConnectionService(frame, maxFrameSize);
-        return await fake.CreateDataframe(CancellationToken.None)
-            .PayloadBitLenght()
-            .PayloadLenght()
-            .GetPayload(CancellationToken.None);
+        return await fake.ReadDataframeAsync(CancellationToken.None);
     }
 
     [Fact]
@@ -75,6 +74,49 @@ public class PayloadParsingTests
         Assert.NotNull(df);
         Assert.Equal(OpcodeKind.Text, df!.Opcode);
         Assert.Equal("abcdefghi", df.Message);
+    }
+
+    [Fact]
+    public async Task Reassembles_MaskedFragmentedMessage()
+    {
+        // Two masked fragments, each with its own key, exercising unmask-in-place
+        // plus reassembly: Text(FIN=0) "abc" + Continuation(FIN=1) "def".
+        byte[] k1 = { 1, 2, 3, 4 };
+        byte[] k2 = { 5, 6, 7, 8 };
+        var e1 = "abc".Select((c, i) => (byte)((byte)c ^ k1[i % 4]));
+        var e2 = "def".Select((c, i) => (byte)((byte)c ^ k2[i % 4]));
+
+        var bytes = new List<byte> { 0x01, 0x80 | 3 };
+        bytes.AddRange(k1);
+        bytes.AddRange(e1);
+        bytes.AddRange(new byte[] { 0x80, 0x80 | 3 });
+        bytes.AddRange(k2);
+        bytes.AddRange(e2);
+
+        var fake = new FakeTcpConnectionService(bytes.ToArray());
+        using var parser = new WebsocketParserHandler(fake);
+
+        var df = await parser.DataframeObservable().FirstAsync();
+
+        Assert.NotNull(df);
+        Assert.Equal("abcdef", df!.Message);
+    }
+
+    [Fact]
+    public async Task Parse_BinaryFrame_ExposesBinaryNotMessage()
+    {
+        byte[] payload = { 10, 20, 30, 40 };
+        var frame = new byte[2 + payload.Length];
+        frame[0] = 0x82;                  // FIN + Binary
+        frame[1] = (byte)payload.Length;  // unmasked
+        Array.Copy(payload, 0, frame, 2, payload.Length);
+
+        var df = await Parse(frame);
+
+        Assert.NotNull(df);
+        Assert.Equal(OpcodeKind.Binary, df!.Opcode);
+        Assert.Equal(payload, df.Binary);
+        Assert.Null(df.Message); // Message is only produced for Text frames
     }
 
     [Fact]
