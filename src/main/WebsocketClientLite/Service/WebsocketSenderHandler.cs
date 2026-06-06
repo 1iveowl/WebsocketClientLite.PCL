@@ -241,21 +241,21 @@ internal class WebsocketSenderHandler : ISender
         FragmentKind fragment,
         CancellationToken ct)
     {
-        byte[]? bytes = message is not null ? Encoding.UTF8.GetBytes(message) : null;
-        await ComposeFrameAndSendCoreAsync(bytes, opcode, fragment, ct).ConfigureAwait(false);
+        await ComposeFrameAndSendCoreAsync(null, message, opcode, fragment, ct).ConfigureAwait(false);
     }
 
     private async Task ComposeFrameAndSendAsync(
-        byte[]? content, 
+        byte[]? content,
         OpcodeKind opcode,
         FragmentKind fragment,
         CancellationToken ct)
     {
-        await ComposeFrameAndSendCoreAsync(content, opcode, fragment, ct).ConfigureAwait(false);
+        await ComposeFrameAndSendCoreAsync(content, null, opcode, fragment, ct).ConfigureAwait(false);
     }
 
     private async ValueTask ComposeFrameAndSendCoreAsync(
         byte[]? content,
+        string? text,
         OpcodeKind opcode,
         FragmentKind fragment,
         CancellationToken ct)
@@ -265,7 +265,7 @@ internal class WebsocketSenderHandler : ISender
             throw new WebsocketClientLiteException("Websocket connection stream have been closed");
         }
 
-        int payloadLength = content?.Length ?? 0;
+        int payloadLength = content?.Length ?? (text is not null ? Encoding.UTF8.GetByteCount(text) : 0);
         int payloadLenField = payloadLength <= 125 ? 1 : (payloadLength <= ushort.MaxValue ? 3 : 9);
         int headerSize = 1 + payloadLenField + 4;
         int totalSize = headerSize + payloadLength;
@@ -315,9 +315,24 @@ internal class WebsocketSenderHandler : ISender
 
             if (payloadLength > 0)
             {
-                for (int i = 0; i < payloadLength; i++)
+                int payloadOffset = written;
+                if (content is not null)
                 {
-                    buffer[written + i] = (byte)(content![i] ^ buffer[maskOffset + (i & 3)]);
+                    // Mask while copying from the source array (single pass).
+                    for (int i = 0; i < payloadLength; i++)
+                    {
+                        buffer[payloadOffset + i] = (byte)(content[i] ^ buffer[maskOffset + (i & 3)]);
+                    }
+                }
+                else
+                {
+                    // Encode the text straight into the frame buffer (no intermediate
+                    // array), then mask it in place.
+                    Encoding.UTF8.GetBytes(text!, 0, text!.Length, buffer, payloadOffset);
+                    for (int i = 0; i < payloadLength; i++)
+                    {
+                        buffer[payloadOffset + i] ^= buffer[maskOffset + (i & 3)];
+                    }
                 }
                 written += payloadLength;
             }

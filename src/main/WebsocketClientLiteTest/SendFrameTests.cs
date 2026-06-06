@@ -82,6 +82,23 @@ public class SendFrameTests
     }
 
     [Fact]
+    public async Task SendText_MultibyteUtf8_SizesFrameByByteCount()
+    {
+        var frames = new List<byte[]>();
+        var sender = CreateSender(frames);
+        var text = "héllo·wörld·☃";          // multibyte: byte count > char count
+        var byteLen = Encoding.UTF8.GetByteCount(text);
+
+        await sender.SendText(text);
+
+        var frame = Assert.Single(frames);
+        Assert.Equal(0x81, frame[0]);
+        Assert.Equal(0x80 | byteLen, frame[1]);   // length field uses byte count, not char count
+        var key = frame[2..6];
+        Assert.Equal(text, Encoding.UTF8.GetString(Unmask(frame[6..], key)));
+    }
+
+    [Fact]
     public async Task SendBinary_ProducesMaskedBinaryFrame()
     {
         var frames = new List<byte[]>();
