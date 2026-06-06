@@ -21,7 +21,19 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\WebsocketClientLite\WebsocketClientLite.csproj" />
+    <!--
+      By default the tests reference the library build matching this test
+      project's TargetFramework. Pass -p:LibTfm=<tfm> to force the tests to link
+      a specific library build (e.g. netstandard2.0, netstandard2.1, net8.0,
+      net9.0, net10.0). A netstandard2.0/2.1 assembly runs fine on the net10
+      runtime, so this exercises that build's #if-conditional code paths even
+      when only the .NET 10 runtime is installed. See test-all-tfms.sh.
+    -->
+    <ProjectReference Include="..\WebsocketClientLite\WebsocketClientLite.csproj"
+                      Condition="'$(LibTfm)' == ''" />
+    <ProjectReference Include="..\WebsocketClientLite\WebsocketClientLite.csproj"
+                      SetTargetFramework="TargetFramework=$(LibTfm)"
+                      Condition="'$(LibTfm)' != ''" />
   </ItemGroup>
 
 </Project>

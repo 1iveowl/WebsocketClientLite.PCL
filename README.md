@@ -322,6 +322,24 @@ To build locally you need the matching .NET SDKs installed. The .NET 10 SDK can 
 
 For contributors and developers, please ensure your changes maintain compatibility with these target frameworks.
 
+### Running the tests across target frameworks
+
+The test project links one library build at a time via the `LibTfm` property, so
+every build — including `netstandard2.0` and `netstandard2.1` — can be exercised
+on a single modern .NET runtime (a netstandard assembly runs fine on .NET 10).
+Run the whole matrix with:
+
+```bash
+./test-all-tfms.sh            # Debug
+./test-all-tfms.sh Release    # Release
+```
+
+Or test a single build directly:
+
+```bash
+dotnet test src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj -p:LibTfm=netstandard2.0
+```
+
 ## Thank You
 
 Thank you to all the developers who have used this library over the years, reported issues, submitted bug fixes, or made contributions to improve the library. Your feedback and support make open source development rewarding and educational.
