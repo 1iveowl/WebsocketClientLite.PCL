@@ -81,6 +81,9 @@ internal class WebsocketParserHandler : IDisposable
                         if (rented is not null) ArrayPool<byte>.Shared.Return(rented);
                     }
 #else
+                    // GetPayload leaves the stream positioned at the end, so rewind
+                    // before copying or CopyToAsync would append nothing.
+                    nextDataframe.DataStream.Position = 0;
                     await nextDataframe.DataStream.CopyToAsync(df.DataStream).ConfigureAwait(false);
 #endif
                     df = df with { FIN = nextDataframe.FIN };

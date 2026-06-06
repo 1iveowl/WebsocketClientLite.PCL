@@ -1,8 +1,10 @@
 using System;
 using System.IO;
 using System.Linq;
+using System.Reactive.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using IWebsocketClientLite;
 using WebsocketClientLite.Model;
 using WebsocketClientLite.Service;
 using WebsocketClientLite.Helper;
@@ -38,6 +40,41 @@ public class PayloadParsingTests
             .PayloadBitLenght()
             .PayloadLenght()
             .GetPayload(CancellationToken.None);
+    }
+
+    [Fact]
+    public async Task Parse_UnmaskedTextFrame()
+    {
+        // FIN + Text, unmasked (server -> client), 7-bit length 5 "world".
+        byte[] frame = { 0x81, 0x05, (byte)'w', (byte)'o', (byte)'r', (byte)'l', (byte)'d' };
+
+        var df = await Parse(frame);
+
+        Assert.NotNull(df);
+        Assert.False(df!.MASK);
+        Assert.Equal(5UL, df.Length);
+        Assert.Equal("world", df.Message);
+    }
+
+    [Fact]
+    public async Task Reassembles_FragmentedTextMessage()
+    {
+        // Unmasked fragments: Text(FIN=0) + Continuation(FIN=0) + Continuation(FIN=1).
+        byte[] frames =
+        {
+            0x01, 0x03, (byte)'a', (byte)'b', (byte)'c', // Text, not final
+            0x00, 0x03, (byte)'d', (byte)'e', (byte)'f', // Continuation, not final
+            0x80, 0x03, (byte)'g', (byte)'h', (byte)'i', // Continuation, final
+        };
+
+        var fake = new FakeTcpConnectionService(frames);
+        using var parser = new WebsocketParserHandler(fake);
+
+        var df = await parser.DataframeObservable().FirstAsync();
+
+        Assert.NotNull(df);
+        Assert.Equal(OpcodeKind.Text, df!.Opcode);
+        Assert.Equal("abcdefghi", df.Message);
     }
 
     [Fact]
