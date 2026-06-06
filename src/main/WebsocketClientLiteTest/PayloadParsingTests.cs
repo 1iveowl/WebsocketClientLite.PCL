@@ -77,6 +77,28 @@ public class PayloadParsingTests
     }
 
     [Fact]
+    public async Task DataframeObservable_EmitsMultipleMessages_FromOneSubscription()
+    {
+        // Two complete unmasked text frames back-to-back; a single subscription
+        // must yield both (the reader loops rather than re-subscribing per message).
+        byte[] frames =
+        {
+            0x81, 0x03, (byte)'o', (byte)'n', (byte)'e',
+            0x81, 0x03, (byte)'t', (byte)'w', (byte)'o',
+        };
+
+        var fake = new FakeTcpConnectionService(frames);
+        using var parser = new WebsocketParserHandler(fake);
+
+        var messages = await parser.DataframeObservable()
+            .Take(2)
+            .Select(df => df!.Message)
+            .ToArray();
+
+        Assert.Equal(new[] { "one", "two" }, messages);
+    }
+
+    [Fact]
     public async Task Reassembles_MaskedFragmentedMessage()
     {
         // Two masked fragments, each with its own key, exercising unmask-in-place

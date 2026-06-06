@@ -108,14 +108,15 @@ internal class WebsocketConnectionHandler : IDisposable
         _connectionStatusAction(ConnectionStatus.WebsocketConnected, null);
 
         return Observable.Create<IDataframe?>(dataframeObserver =>
-            // Create a more direct observable that handles frames and clean-up
+            // DataframeObservable now emits every message from a single
+            // subscription, so no .Repeat() (and its per-message re-subscription)
+            // is needed.
             _websocketParserHandler.DataframeObservable()
                 .SelectMany(async dataframe =>
                     // Process control frames and return data frames
                     await IncomingControlFrameHandler(dataframe, dataframeObserver, cancellationToken).ConfigureAwait(false))
                 .Where(dataframe => dataframe is not null)
                 .Subscribe(dataframeObserver))
-        .Repeat()
         .FinallyAsync(async () =>
         {
             await DisconnectWebsocket(sender).ConfigureAwait(false);
