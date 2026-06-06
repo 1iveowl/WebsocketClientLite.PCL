@@ -301,15 +301,23 @@ internal class WebsocketSenderHandler : ISender
                 buffer[written++] = (byte)(len & 0xFF);
             }
 
+            int maskOffset = written;
+#if NETSTANDARD2_0
+            // netstandard2.0 lacks RandomNumberGenerator.Fill(Span<byte>), so fall
+            // back to the array-allocating helper and copy the key into the buffer.
             var maskKey = CreateMaskKey();
-            Buffer.BlockCopy(maskKey, 0, buffer, written, 4);
+            Buffer.BlockCopy(maskKey, 0, buffer, maskOffset, 4);
+#else
+            // Generate the masking key straight into the frame buffer (no extra array).
+            System.Security.Cryptography.RandomNumberGenerator.Fill(buffer.AsSpan(maskOffset, 4));
+#endif
             written += 4;
 
             if (payloadLength > 0)
             {
                 for (int i = 0; i < payloadLength; i++)
                 {
-                    buffer[written + i] = (byte)(content![i] ^ maskKey[i % 4]);
+                    buffer[written + i] = (byte)(content![i] ^ buffer[maskOffset + (i & 3)]);
                 }
                 written += payloadLength;
             }
