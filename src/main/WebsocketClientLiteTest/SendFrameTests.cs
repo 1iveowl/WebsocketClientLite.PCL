@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using IWebsocketClientLite;
+using WebsocketClientLite.Model;
 using WebsocketClientLite.Service;
 using Xunit;
 
@@ -33,7 +34,9 @@ public class SendFrameTests
 
     // Builds a sender whose writes are captured verbatim (exactly `count` bytes,
     // so the framing/length math is validated too).
-    private static WebsocketSenderHandler CreateSender(List<byte[]> captured)
+    private static WebsocketSenderHandler CreateSender(
+        List<byte[]> captured,
+        bool excludeZeroApplicationDataInPong = false)
     {
         var connection = new FakeConnection(new MemoryStream());
 
@@ -43,7 +46,7 @@ public class SendFrameTests
             return Task.CompletedTask;
         };
 
-        return new WebsocketSenderHandler(connection, (status, ex) => { }, writeFunc, false);
+        return new WebsocketSenderHandler(connection, (status, ex) => { }, writeFunc, excludeZeroApplicationDataInPong);
     }
 
     private static byte[] Unmask(byte[] payload, byte[] key) =>
@@ -112,6 +115,89 @@ public class SendFrameTests
         Assert.Equal(0x80 | 7, frame[1]);
         var key = frame[2..6];
         Assert.Equal(data, Unmask(frame[6..], key));
+    }
+
+    [Fact]
+    public async Task SendText_List_SendsFirstContinuationLastSequence()
+    {
+        var frames = new List<byte[]>();
+        var sender = CreateSender(frames);
+
+        await sender.SendText(new[] { "a", "b", "c" });
+
+        Assert.Equal(3, frames.Count);
+        Assert.Equal(0x01, frames[0][0]); // First: FIN=0, opcode=Text
+        Assert.Equal(0x00, frames[1][0]); // Middle: FIN=0, opcode=Continuation
+        Assert.Equal(0x80, frames[2][0]); // Last: FIN=1, opcode=Continuation
+        Assert.Equal("a", Encoding.UTF8.GetString(Unmask(frames[0][6..], frames[0][2..6])));
+        Assert.Equal("c", Encoding.UTF8.GetString(Unmask(frames[2][6..], frames[2][2..6])));
+    }
+
+    [Fact]
+    public async Task SendText_SingleItemList_SendsOneCompleteFrame()
+    {
+        var frames = new List<byte[]>();
+        var sender = CreateSender(frames);
+
+        await sender.SendText(new[] { "solo" });
+
+        var frame = Assert.Single(frames);
+        Assert.Equal(0x81, frame[0]); // single complete Text frame (FIN + Text)
+        Assert.Equal("solo", Encoding.UTF8.GetString(Unmask(frame[6..], frame[2..6])));
+    }
+
+    [Fact]
+    public async Task SendPing_ProducesPingFrame()
+    {
+        var frames = new List<byte[]>();
+        var sender = CreateSender(frames);
+
+        await sender.SendPing("hi");
+
+        var frame = Assert.Single(frames);
+        Assert.Equal(0x89, frame[0]); // FIN + Ping
+        Assert.Equal("hi", Encoding.UTF8.GetString(Unmask(frame[6..], frame[2..6])));
+    }
+
+    [Fact]
+    public async Task SendCloseHandshake_UsesBigEndianStatusCode()
+    {
+        var frames = new List<byte[]>();
+        var sender = CreateSender(frames);
+
+        await sender.SendCloseHandshakeAsync(StatusCodes.GoingAway); // 1001
+
+        var frame = Assert.Single(frames);
+        Assert.Equal(0x88, frame[0]); // FIN + Close
+        var payload = Unmask(frame[6..], frame[2..6]);
+        Assert.Equal(0x03, payload[0]); // 1001 >> 8  (network byte order)
+        Assert.Equal(0xE9, payload[1]); // 1001 & 0xFF
+    }
+
+    [Fact]
+    public async Task SendPong_ExcludeZeroApplicationData_SendsSingleOpcodeByte()
+    {
+        var frames = new List<byte[]>();
+        var sender = CreateSender(frames, excludeZeroApplicationDataInPong: true);
+
+        await sender.SendPong(new Dataframe { Payload = Array.Empty<byte>() }, CancellationToken.None);
+
+        var frame = Assert.Single(frames);
+        Assert.Equal(new byte[] { 0x8A }, frame); // FIN + Pong only, no length byte (Slack RTM)
+    }
+
+    [Fact]
+    public async Task SendPong_WithData_SendsMaskedPongFrame()
+    {
+        var frames = new List<byte[]>();
+        var sender = CreateSender(frames);
+        var data = new byte[] { 9, 8, 7 };
+
+        await sender.SendPong(new Dataframe { Payload = data }, CancellationToken.None);
+
+        var frame = Assert.Single(frames);
+        Assert.Equal(0x8A, frame[0]); // FIN + Pong
+        Assert.Equal(data, Unmask(frame[6..], frame[2..6]));
     }
 
     [Fact]
