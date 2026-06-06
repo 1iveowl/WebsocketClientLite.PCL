@@ -1,24 +1,22 @@
-﻿using System.Collections.Generic;
-using System.Security.Cryptography;
+﻿using System.Security.Cryptography;
 
 namespace WebsocketClientLite.Helper;
 
 internal static class WebsocketMasking
 {
-    internal static byte[] Decode(IReadOnlyList<byte> data, IReadOnlyList<byte> key)
+    /// <summary>
+    /// XOR-unmasks the payload in place using the 4-byte masking key (RFC 6455
+    /// masking is symmetric). Uses direct array indexing and a bitwise <c>&amp; 3</c>
+    /// (instead of an <see cref="IReadOnlyList{T}"/> indexer and <c>% 4</c>) and
+    /// allocates nothing; returns the same array for convenience.
+    /// </summary>
+    internal static byte[] Decode(byte[] data, byte[] key)
     {
-        return SymmetricCoding(data, key);
-    }
-
-    private static byte[] SymmetricCoding(IReadOnlyList<byte> data, IReadOnlyList<byte> key)
-    {
-        var result = new byte[data.Count];
-
-        for (var i = 0; i < data.Count; i++)
+        for (var i = 0; i < data.Length; i++)
         {
-            result[i] = (byte)(data[i] ^ key[i % 4]);
+            data[i] = (byte)(data[i] ^ key[i & 3]);
         }
-        return result;
+        return data;
     }
 
     internal static byte[] CreateMaskKey()
