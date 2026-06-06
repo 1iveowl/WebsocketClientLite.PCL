@@ -9,7 +9,8 @@
 
 [![System.Reactive](http://img.shields.io/badge/Rx-v6.1.0-ff69b4.svg)](http://reactivex.io/)
 
-![CI/CD](https://github.com/1iveowl/WebsocketClientLite.PCL/actions/workflows/build.yml/badge.svg)
+![CI](https://github.com/1iveowl/WebsocketClientLite.PCL/actions/workflows/ci.yml/badge.svg)
+![Publish](https://github.com/1iveowl/WebsocketClientLite.PCL/actions/workflows/build.yml/badge.svg)
 
 *Please star this project if you find it useful. Thank you.*
 
