@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Reactive;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Reactive.Threading.Tasks;
 using System.Security.Cryptography.X509Certificates;
@@ -107,20 +109,56 @@ internal class WebsocketConnectionHandler : IDisposable
 
         _connectionStatusAction(ConnectionStatus.WebsocketConnected, null);
 
+        // The close handshake must run exactly once, whichever teardown path
+        // fires first: completion/error (via FinallyAsync) or the subscriber
+        // disposing the subscription (via the Disposable below, which previously
+        // sent no close frame at all).
+        int closeHandshakeStarted = 0;
+
+        async Task CloseOnceAsync()
+        {
+            if (Interlocked.Exchange(ref closeHandshakeStarted, 1) == 0)
+            {
+                await DisconnectWebsocket(sender).ConfigureAwait(false);
+            }
+        }
+
         return Observable.Create<IDataframe?>(dataframeObserver =>
-            // DataframeObservable now emits every message from a single
+        {
+            // DataframeObservable emits every message from a single
             // subscription, so no .Repeat() (and its per-message re-subscription)
             // is needed.
-            _websocketParserHandler.DataframeObservable()
+            var subscription = _websocketParserHandler.DataframeObservable()
                 .SelectMany(async dataframe =>
                     // Process control frames and return data frames
                     await IncomingControlFrameHandler(dataframe, dataframeObserver, cancellationToken).ConfigureAwait(false))
                 .Where(dataframe => dataframe is not null)
-                .Subscribe(dataframeObserver))
-        .FinallyAsync(async () =>
-        {
-            await DisconnectWebsocket(sender).ConfigureAwait(false);
-        });
+                .Subscribe(dataframeObserver);
+
+            return new CompositeDisposable(
+                subscription,
+                Disposable.Create(() =>
+                {
+                    // Unsubscribe path: best-effort close handshake, bounded so
+                    // disposal cannot hang. Task.Run avoids deadlocking callers
+                    // that dispose from a synchronization context (e.g. UI).
+                    try
+                    {
+                        var closeTask = Task.Run(CloseOnceAsync);
+                        if (!closeTask.Wait(TimeSpan.FromSeconds(3)))
+                        {
+                            _ = closeTask.ContinueWith(
+                                t => _ = t.Exception,
+                                TaskScheduler.Default);
+                        }
+                    }
+                    catch
+                    {
+                        // The connection is going away regardless.
+                    }
+                }));
+        })
+        .FinallyAsync(CloseOnceAsync);
 
         IObservable<Unit> SendClientPing(string? message) =>
             Observable.Interval(clientPingTimeSpan)
@@ -194,7 +232,10 @@ internal class WebsocketConnectionHandler : IDisposable
         }
         catch (Exception ex)
         {
-            throw new WebsocketClientLiteException("Unable to disconnect gracefully", ex);
+            // Best effort: the close frame is a courtesy. Failing to deliver it
+            // (dead stream, timeout) must not mask the error that triggered the
+            // teardown — especially now that send failures throw.
+            Debug.WriteLine($"Close handshake could not be delivered: {ex.Message}");
         }
         finally
         {

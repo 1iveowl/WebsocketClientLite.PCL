@@ -156,6 +156,53 @@ public class IntegrationTests
     }
 
     [Fact]
+    public async Task DisposingSubscription_SendsCloseHandshakeToServer()
+    {
+        using var server = new LoopbackWebSocketServer();
+        var closeObserved = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+
+        server.Start(async (stream, ct) =>
+        {
+            while (!ct.IsCancellationRequested)
+            {
+                var frame = await LoopbackWebSocketServer.ReadFrameAsync(stream, ct);
+                if (frame is null)
+                {
+                    closeObserved.TrySetResult(false); // TCP closed with no Close frame
+                    return;
+                }
+
+                if (frame.Value.opcode == 0x8)
+                {
+                    closeObserved.TrySetResult(true);  // proper close handshake
+                    return;
+                }
+            }
+        });
+
+        using var client = new ClientWebSocketRx();
+        var connected = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+
+        var subscription = client.WebsocketConnectWithStatusObservable(server.Uri)
+            .Subscribe(tuple =>
+            {
+                if (tuple.state == ConnectionStatus.WebsocketConnected)
+                {
+                    connected.TrySetResult();
+                }
+            },
+            _ => { });
+
+        await connected.Task.WaitAsync(Timeout);
+
+        // Unsubscribing is how users disconnect; the server must see a Close
+        // frame, not just a dropped TCP connection.
+        subscription.Dispose();
+
+        Assert.True(await closeObserved.Task.WaitAsync(Timeout));
+    }
+
+    [Fact]
     public async Task NegotiatedSubprotocols_SurfaceTheServersChoice()
     {
         using var server = new LoopbackWebSocketServer();
