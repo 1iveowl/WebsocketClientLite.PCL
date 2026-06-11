@@ -8,18 +8,18 @@
     <LangVersion>14.0</LangVersion>
     <PackageIcon>images\1iveowl-logo.png</PackageIcon>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <Version>9.0.1</Version>
+    <Version>9.0.2</Version>
     <Authors>Jasper Hedegaard Bojsen</Authors>
     <Copyright>1iveowl Development 2025</Copyright>
     <PackageProjectUrl>https://github.com/1iveowl/WebsocketClientLite.PCL</PackageProjectUrl>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <RepositoryUrl>https://github.com/1iveowl/WebsocketClientLite.PCL</RepositoryUrl>
-    <AssemblyVersion>9.0.1</AssemblyVersion>
-    <FileVersion>9.0.1</FileVersion>
+    <AssemblyVersion>9.0.2</AssemblyVersion>
+    <FileVersion>9.0.2</FileVersion>
     <Description>A simple and light WebSocket client.
 Can be set to ignore SSL/TLS server certificate issues (use with care!).
 Easily and effectively observe incoming message using Reactive Extensions (Rx)</Description>
-    <PackageReleaseNotes>v9.0.1: Unsubscribing now sends the RFC 6455 close handshake; failed handshakes fail fast with the server's status code instead of timing out; send failures now throw at the await site (in addition to the SendError status); the final Disconnected status is delivered; new NegotiatedSubprotocols property; NuGet package no longer double-ships the interface assembly; reconnect requires leaving TcpClient unset (see README). See README for details.</PackageReleaseNotes>
+    <PackageReleaseNotes>v9.0.2: Fixes a race in the 9.0.1 close-on-unsubscribe feature where disposing the subscription immediately after WebsocketConnected could skip the close handshake. Includes all 9.0.1 changes: close handshake on unsubscribe; fail-fast handshake errors with the server's status code; send failures throw at the await site; final Disconnected status delivered; new NegotiatedSubprotocols property; NuGet packaging fix; reconnect requires leaving TcpClient unset. See README for details.</PackageReleaseNotes>
     <EnableNETAnalyzers>true</EnableNETAnalyzers>
     <AnalysisMode>AllEnabledByDefault</AnalysisMode>
   </PropertyGroup>
