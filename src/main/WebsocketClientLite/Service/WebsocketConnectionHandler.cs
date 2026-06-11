@@ -43,7 +43,7 @@ internal class WebsocketConnectionHandler : IDisposable
                 Uri uri,
                 X509CertificateCollection? x509CertificateCollection,
                 SslProtocols tlsProtocolType,
-                Action<ISender> setSenderAction,
+                Action<ISender, IEnumerable<string>?> setSenderAction,
                 CancellationToken ct,
                 bool hasClientPing,
                 TimeSpan clientPingTimeSpan,
@@ -89,7 +89,7 @@ internal class WebsocketConnectionHandler : IDisposable
             throw new WebsocketClientLiteException($"Handshake failed due to unknown error: {handshakeState}");
         }
 
-        setSenderAction(sender);
+        setSenderAction(sender, handshakeHandler.NegotiatedSubprotocols);
 
         if (hasClientPing)
         {

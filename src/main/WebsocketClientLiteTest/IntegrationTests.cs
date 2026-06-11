@@ -156,6 +156,32 @@ public class IntegrationTests
     }
 
     [Fact]
+    public async Task NegotiatedSubprotocols_SurfaceTheServersChoice()
+    {
+        using var server = new LoopbackWebSocketServer();
+        server.Start(LoopbackWebSocketServer.EchoLoopAsync);
+
+        using var client = new ClientWebSocketRx { Subprotocols = new[] { "chat", "superchat" } };
+        var connected = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+
+        using var subscription = client.WebsocketConnectWithStatusObservable(server.Uri)
+            .Subscribe(tuple =>
+            {
+                if (tuple.state == ConnectionStatus.WebsocketConnected)
+                {
+                    connected.TrySetResult();
+                }
+            },
+            _ => { });
+
+        await connected.Task.WaitAsync(Timeout);
+
+        // The loopback server echoes the first offered subprotocol ("chat").
+        Assert.NotNull(client.NegotiatedSubprotocols);
+        Assert.Contains("chat", client.NegotiatedSubprotocols!);
+    }
+
+    [Fact]
     public async Task Non101HandshakeResponse_FailsFast_WithStatusCode()
     {
         using var server = new LoopbackWebSocketServer();

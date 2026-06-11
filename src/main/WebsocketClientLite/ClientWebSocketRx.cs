@@ -72,6 +72,14 @@ public class ClientWebSocketRx : IWebSocketClientRx, IDisposable
     public IEnumerable<string>? Subprotocols { get; init; }
 
     /// <summary>
+    /// The subprotocols the server accepted during the most recent successful
+    /// handshake (the intersection with <see cref="Subprotocols"/>), or
+    /// <see langword="null"/> when none were negotiated or no connection has
+    /// been established yet.
+    /// </summary>
+    public IEnumerable<string>? NegotiatedSubprotocols { get; private set; }
+
+    /// <summary>
     /// TLS protocol
     /// </summary>
     public SslProtocols TlsProtocolType { get; init; } = SslProtocols.None;
@@ -216,9 +224,10 @@ public class ClientWebSocketRx : IWebSocketClientRx, IDisposable
             handshaketimeout = TimeSpan.FromSeconds(30);
         }
 
-        void initSender(ISender sender)
+        void initSender(ISender sender, IEnumerable<string>? negotiatedSubprotocols)
         {
             Sender = sender;
+            NegotiatedSubprotocols = negotiatedSubprotocols;
             SetIsConnected(true);
         }
 

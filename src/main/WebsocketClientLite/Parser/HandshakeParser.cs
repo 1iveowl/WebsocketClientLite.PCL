@@ -43,7 +43,11 @@ internal class HandshakeParser(
                         .Headers
                         .TryGetValue("SEC-WEBSOCKET-PROTOCOL", out var subprotocolAcceptedNames))
                     {
-                        SubprotocolAcceptedNames = subprotocolAcceptedNames.Where(spn => subProtocols.Contains(spn));
+                        // Materialize: evaluated once, and consumers (the public
+                        // NegotiatedSubprotocols property) get a stable snapshot.
+                        SubprotocolAcceptedNames = subprotocolAcceptedNames
+                            .Where(spn => subProtocols.Contains(spn))
+                            .ToList();
 
                         if (!SubprotocolAcceptedNames?.Any() ?? true)
                         {

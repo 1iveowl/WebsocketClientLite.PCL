@@ -187,7 +187,7 @@ public class MessageWebsocketRx(
                                                 Headers,
                                                 Subprotocols).ConfigureAwait(false);
 
-        void InitializeSender(ISender sender)
+        void InitializeSender(ISender sender, IEnumerable<string>? negotiatedSubprotocols)
         {
             _sender = sender;
             IsConnected = true;

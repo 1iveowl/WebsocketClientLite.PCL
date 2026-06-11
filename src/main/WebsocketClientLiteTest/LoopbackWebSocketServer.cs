@@ -223,7 +223,8 @@ internal sealed class LoopbackWebSocketServer : IDisposable
     {
         var request = await ReadRequestHeadersAsync(stream, ct).ConfigureAwait(false);
 
-        var key = ExtractHeader(request, "Sec-WebSocket-Key");
+        var key = TryExtractHeader(request, "Sec-WebSocket-Key")
+            ?? throw new IOException("Missing header: Sec-WebSocket-Key");
         var accept = Convert.ToBase64String(
             SHA1.HashData(Encoding.ASCII.GetBytes(key + WebSocketGuid)));
 
@@ -231,14 +232,24 @@ internal sealed class LoopbackWebSocketServer : IDisposable
             "HTTP/1.1 101 Switching Protocols\r\n" +
             "Upgrade: websocket\r\n" +
             "Connection: Upgrade\r\n" +
-            $"Sec-WebSocket-Accept: {accept}\r\n\r\n";
+            $"Sec-WebSocket-Accept: {accept}\r\n";
+
+        // Echo the first offered subprotocol, like a real server selecting one.
+        var offered = TryExtractHeader(request, "Sec-WebSocket-Protocol");
+        if (offered is not null)
+        {
+            var first = offered.Split(',')[0].Trim();
+            response += $"Sec-WebSocket-Protocol: {first}\r\n";
+        }
+
+        response += "\r\n";
 
         var bytes = Encoding.ASCII.GetBytes(response);
         await stream.WriteAsync(bytes.AsMemory(), ct).ConfigureAwait(false);
         await stream.FlushAsync(ct).ConfigureAwait(false);
     }
 
-    private static string ExtractHeader(string request, string name)
+    private static string? TryExtractHeader(string request, string name)
     {
         foreach (var line in request.Split("\r\n"))
         {
@@ -248,7 +259,7 @@ internal sealed class LoopbackWebSocketServer : IDisposable
                 return line.Substring(colon + 1).Trim();
             }
         }
-        throw new IOException($"Missing header: {name}");
+        return null;
     }
 
     public void Dispose()

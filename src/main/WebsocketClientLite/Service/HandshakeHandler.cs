@@ -15,6 +15,12 @@ internal class HandshakeHandler(
     TcpConnectionService tcpConnectionService,
     Action<ConnectionStatus, Exception?> connectionStatusAction)
 {
+    /// <summary>
+    /// Subprotocols the server accepted (intersection with the ones offered),
+    /// available after a successful handshake.
+    /// </summary>
+    internal IEnumerable<string>? NegotiatedSubprotocols { get; private set; }
+
     internal IObservable<(HandshakeStateKind handshakeState, WebsocketClientLiteException? ex)> Handshake(
         Uri uri,
         WebsocketSenderHandler sender,
@@ -45,6 +51,8 @@ internal class HandshakeHandler(
             }
 
             await WaitForHandshake(handshakeParser).ConfigureAwait(false);
+
+            NegotiatedSubprotocols = handshakeParser.SubprotocolAcceptedNames;
 
             obs.OnCompleted();
         })
