@@ -100,7 +100,14 @@ jobs:
           tag_name: ${{ steps.gitversion.outputs.AssemblySemVer }}
           release_name: Release ${{ steps.gitversion.outputs.AssemblySemVer }}
           body: |
-            WebsocketClientLite 9.0.1 – Highlights
+            WebsocketClientLite 9.0.2 – Highlights
+
+            - Fixes a race in the 9.0.1 close-on-unsubscribe behavior: disposing the
+              subscription immediately after WebsocketConnected could skip the close
+              handshake. The close hook is now registered before WebsocketConnected is
+              emitted and runs on every teardown path. Use 9.0.2 instead of 9.0.1.
+
+            Includes all 9.0.1 changes:
 
             Bug fixes
             - Unsubscribing from the connection observable now sends the RFC 6455 close

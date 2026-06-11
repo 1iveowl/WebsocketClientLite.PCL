@@ -26,6 +26,10 @@ The library provides developers with additional flexibility, including the abili
 
 The library utilizes [ReactiveX](http://reactivex.io/) (aka Rx or Reactive Extensions). While this dependency introduces a small learning curve, it's worthwhile for the context.
 
+## New in Version 9.0.2
+
+Fixes a race in the 9.0.1 close-on-unsubscribe behavior: disposing the connection subscription immediately after `WebsocketConnected` could tear the connection down before the close-handshake hook was wired, skipping the close frame. The hook is now registered before `WebsocketConnected` is emitted and runs on every teardown path. Use 9.0.2 instead of 9.0.1.
+
 ## New in Version 9.0.1
 
 Version 9.0.1 is a correctness and robustness patch on top of 9.0.
