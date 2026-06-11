@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 using System.Threading;
@@ -25,6 +26,10 @@ internal class WebsocketParserHandler : IDisposable
     // element per (reassembled) message. The token is signaled when the
     // subscriber unsubscribes, so there is no per-message re-subscription and no
     // per-subscription CancellationTokenSource to allocate.
+    [SuppressMessage("Design", "CA1031:Do not catch general exception types",
+        Justification = "Rx contract: any failure in the read loop must be routed to the observer via OnError, " +
+                        "not escape the async subscribe body. Catching specific types would let unanticipated " +
+                        "exceptions kill the process instead of erroring the subscription.")]
     internal IObservable<Dataframe?> DataframeObservable() =>
         Observable.Create<Dataframe?>(async (obs, token) =>
         {

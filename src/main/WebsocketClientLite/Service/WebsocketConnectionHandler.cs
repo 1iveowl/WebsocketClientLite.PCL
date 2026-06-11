@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Reactive;
 using System.Threading;
@@ -46,7 +47,6 @@ internal class WebsocketConnectionHandler : IDisposable
                 X509CertificateCollection? x509CertificateCollection,
                 SslProtocols tlsProtocolType,
                 Action<ISender, IEnumerable<string>?> setSenderAction,
-                CancellationToken ct,
                 bool hasClientPing,
                 TimeSpan clientPingTimeSpan,
                 string? clientPingMessage,
@@ -54,6 +54,7 @@ internal class WebsocketConnectionHandler : IDisposable
                 string? origin,
                 IDictionary<string, string>? headers,
                 IEnumerable<string>? subprotocols,
+                CancellationToken ct,
                 CancellationToken cancellationToken = default)
     {
         if (hasClientPing && clientPingTimeSpan == default)
@@ -200,6 +201,10 @@ internal class WebsocketConnectionHandler : IDisposable
         }
     }
 
+    [SuppressMessage("Design", "CA1031:Do not catch general exception types",
+        Justification = "The close frame is a best-effort courtesy. Whatever the failure type (dead stream, " +
+                        "timeout, disposed socket), it must not mask the error that triggered the teardown — " +
+                        "send failures otherwise throw at the call site by design.")]
     internal async Task DisconnectWebsocket(
         WebsocketSenderHandler sender)
     {
@@ -222,6 +227,9 @@ internal class WebsocketConnectionHandler : IDisposable
         }
     }
 
+    [SuppressMessage("Design", "CA1031:Do not catch general exception types",
+        Justification = "Dispose must never throw. The guarded block is the bounded best-effort close " +
+                        "handshake; any failure there is irrelevant because the connection is being torn down.")]
     public void Dispose()
     {
         // Stop the ping timer before saying goodbye.

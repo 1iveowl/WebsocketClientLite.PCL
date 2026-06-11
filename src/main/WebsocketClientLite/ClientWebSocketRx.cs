@@ -268,7 +268,6 @@ public class ClientWebSocketRx : IWebSocketClientRx, IDisposable
                 X509CertCollection,
                 TlsProtocolType,
                 initSender,
-                ct,
                 hasClientPing,
                 clientPingInterval,
                 clientPingMessage,
@@ -276,6 +275,7 @@ public class ClientWebSocketRx : IWebSocketClientRx, IDisposable
                 Origin,
                 Headers,
                 Subprotocols,
+                ct,
                 cancellationToken).ConfigureAwait(false);
     }
 
