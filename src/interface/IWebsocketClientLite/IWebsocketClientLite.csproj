@@ -8,13 +8,13 @@
 	<LangVersion>14.0</LangVersion>
 	<PackageIcon>images\1iveowl-logo.png</PackageIcon>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <Version>9.0.0</Version>
+    <Version>9.0.1</Version>
     <Authors>Jasper Hedegaard Bojsen</Authors>
     <Copyright>1iveowl Development 2025</Copyright>
     <PackageProjectUrl>https://github.com/1iveowl/IWebsocketClientLite.PCL</PackageProjectUrl>
     <RepositoryUrl>https://github.com/1iveowl/WebsocketClientLite.PCL</RepositoryUrl>
-    <AssemblyVersion>9.0.0</AssemblyVersion>
-    <FileVersion>9.0.0</FileVersion>
+    <AssemblyVersion>9.0.1</AssemblyVersion>
+    <FileVersion>9.0.1</FileVersion>
     <Description>Interface for WebSocket Client Lite.</Description>
   </PropertyGroup>
 
