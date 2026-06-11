@@ -51,6 +51,34 @@ internal sealed class LoopbackWebSocketServer : IDisposable
         });
     }
 
+    /// <summary>
+    /// Accept one client, read its handshake request, and reply with the given
+    /// raw HTTP response (e.g. a 404) instead of completing the upgrade. The
+    /// connection is then held open so the client's behavior is driven purely by
+    /// the response content rather than an abrupt EOF.
+    /// </summary>
+    public void StartWithRawHandshakeResponse(string rawHttpResponse)
+    {
+        _serverLoop = Task.Run(async () =>
+        {
+            try
+            {
+                using var tcp = await _listener.AcceptTcpClientAsync(_cts.Token).ConfigureAwait(false);
+                using var stream = tcp.GetStream();
+                await ReadRequestHeadersAsync(stream, _cts.Token).ConfigureAwait(false);
+
+                var bytes = Encoding.ASCII.GetBytes(rawHttpResponse);
+                await stream.WriteAsync(bytes.AsMemory(), _cts.Token).ConfigureAwait(false);
+                await stream.FlushAsync(_cts.Token).ConfigureAwait(false);
+
+                await Task.Delay(Timeout.Infinite, _cts.Token).ConfigureAwait(false);
+            }
+            catch (OperationCanceledException) { /* shutting down */ }
+            catch (IOException) { /* client disconnected */ }
+            catch (ObjectDisposedException) { /* listener stopped */ }
+        });
+    }
+
     /// <summary>Echoes data frames, replies to pings with pongs, and mirrors close.</summary>
     public static async Task EchoLoopAsync(Stream stream, CancellationToken ct)
     {
@@ -174,7 +202,7 @@ internal sealed class LoopbackWebSocketServer : IDisposable
         return buffer;
     }
 
-    private static async Task PerformHandshakeAsync(Stream stream, CancellationToken ct)
+    private static async Task<string> ReadRequestHeadersAsync(Stream stream, CancellationToken ct)
     {
         var sb = new StringBuilder();
         var one = new byte[1];
@@ -188,7 +216,14 @@ internal sealed class LoopbackWebSocketServer : IDisposable
             sb.Append((char)one[0]);
         }
 
-        var key = ExtractHeader(sb.ToString(), "Sec-WebSocket-Key");
+        return sb.ToString();
+    }
+
+    private static async Task PerformHandshakeAsync(Stream stream, CancellationToken ct)
+    {
+        var request = await ReadRequestHeadersAsync(stream, ct).ConfigureAwait(false);
+
+        var key = ExtractHeader(request, "Sec-WebSocket-Key");
         var accept = Convert.ToBase64String(
             SHA1.HashData(Encoding.ASCII.GetBytes(key + WebSocketGuid)));
 

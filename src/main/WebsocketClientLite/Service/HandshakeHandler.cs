@@ -34,7 +34,16 @@ internal class HandshakeHandler(
                 parserDelegate,
                 connectionStatusAction);
 
-            await SendHandshake(uri, sender, ct, origin, headers, subprotocols).ConfigureAwait(false);
+            var sendResult = await SendHandshake(uri, sender, ct, origin, headers, subprotocols).ConfigureAwait(false);
+
+            if (sendResult.handshakeState is HandshakeStateKind.HandshakeSendFailed)
+            {
+                // No point waiting for a response to a request that never went out.
+                obs.OnNext(sendResult);
+                obs.OnCompleted();
+                return;
+            }
+
             await WaitForHandshake(handshakeParser).ConfigureAwait(false);
 
             obs.OnCompleted();

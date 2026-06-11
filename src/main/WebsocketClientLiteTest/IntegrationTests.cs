@@ -156,6 +156,25 @@ public class IntegrationTests
     }
 
     [Fact]
+    public async Task Non101HandshakeResponse_FailsFast_WithStatusCode()
+    {
+        using var server = new LoopbackWebSocketServer();
+        server.StartWithRawHandshakeResponse("HTTP/1.1 404 Not Found\r\nContent-Length: 0\r\n\r\n");
+
+        using var client = new ClientWebSocketRx();
+        var errored = new TaskCompletionSource<Exception>(TaskCreationOptions.RunContinuationsAsynchronously);
+
+        // Generous handshake timeout: the failure must come from the parsed 404,
+        // not from the timeout elapsing.
+        using var subscription = client.WebsocketConnectWithStatusObservable(
+                server.Uri, handshaketimeout: TimeSpan.FromSeconds(30))
+            .Subscribe(_ => { }, ex => errored.TrySetResult(ex));
+
+        var error = await errored.Task.WaitAsync(TimeSpan.FromSeconds(5));
+        Assert.Contains("404", error.Message);
+    }
+
+    [Fact]
     public async Task DisposingClientBeforeSubscription_DoesNotThrowFromTeardown()
     {
         using var server = new LoopbackWebSocketServer();

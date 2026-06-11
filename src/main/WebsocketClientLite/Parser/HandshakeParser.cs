@@ -61,16 +61,17 @@ internal class HandshakeParser(
                     }
                 }
 
-                Debug.WriteLine("HandShake completed");            
+                Debug.WriteLine("HandShake completed");
                 return true;
             }
             else
             {
-                _connectionStatusAction(
-                    ConnectionStatus.Aborted,
-                    new WebsocketClientLiteException($"Unable to connect to websocket Server. " +
-                                    $"Error code: {_parserDelegate.HttpRequestResponse.StatusCode}, " +
-                                    $"Error reason: {_parserDelegate.HttpRequestResponse.ResponseReason}"));
+                // Non-101 response: the HTTP message is complete, so parsing is
+                // done. The failure itself is reported by HandshakeParserDelegate
+                // (HandshakeFailed + exception), which the connect path awaits —
+                // no side-channel Abort needed, and no further bytes to read.
+                Debug.WriteLine($"Handshake rejected: {_parserDelegate.HttpRequestResponse.StatusCode}");
+                return true;
             }
         }
 

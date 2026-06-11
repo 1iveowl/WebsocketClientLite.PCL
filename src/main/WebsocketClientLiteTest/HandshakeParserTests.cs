@@ -13,15 +13,19 @@ namespace WebsocketClientLiteTest;
 
 public class HandshakeParserTests
 {
-    private static (HandshakeParser parser, List<ConnectionStatus> statuses) Create()
+    private static (
+        HandshakeParser parser,
+        List<ConnectionStatus> statuses,
+        List<(HandshakeStateKind state, WebsocketClientLiteException? ex)> states) Create()
     {
         var statuses = new List<ConnectionStatus>();
+        var states = new List<(HandshakeStateKind state, WebsocketClientLiteException? ex)>();
         var observer = Observer.Create<(HandshakeStateKind state, WebsocketClientLiteException? ex)>(
-            _ => { }, _ => { }, () => { });
+            states.Add, _ => { }, () => { });
         var parserDelegate = new HandshakeParserDelegate(observer);
         var parserHandler = new HttpCombinedParser(parserDelegate);
         var parser = new HandshakeParser(parserHandler, parserDelegate, (status, _) => statuses.Add(status));
-        return (parser, statuses);
+        return (parser, statuses, states);
     }
 
     private static byte[] Response(params string[] headerLines)
@@ -36,9 +40,9 @@ public class HandshakeParserTests
     }
 
     [Fact]
-    public void Parse_SwitchingProtocols_ReturnsTrueWithoutAbort()
+    public void Parse_SwitchingProtocols_ReportsSuccess()
     {
-        var (parser, statuses) = Create();
+        var (parser, statuses, states) = Create();
 
         var done = parser.Parse(Response(
             "HTTP/1.1 101 Switching Protocols",
@@ -48,25 +52,31 @@ public class HandshakeParserTests
 
         Assert.True(done);
         Assert.DoesNotContain(ConnectionStatus.Aborted, statuses);
+        Assert.Contains(states, s => s.state == HandshakeStateKind.HandshakeCompletedSuccessfully);
     }
 
     [Fact]
-    public void Parse_NonSwitchingProtocols_AbortsConnection()
+    public void Parse_NonSwitchingProtocols_CompletesWithHandshakeFailed()
     {
-        var (parser, statuses) = Create();
+        var (parser, _, states) = Create();
 
         var done = parser.Parse(Response(
             "HTTP/1.1 404 Not Found",
             "Content-Length: 0"), null);
 
-        Assert.False(done);
-        Assert.Contains(ConnectionStatus.Aborted, statuses);
+        // The HTTP response is complete, so parsing is done — and the outcome is
+        // a failed handshake carrying the server's status code, not success.
+        Assert.True(done);
+        var failed = Assert.Single(states);
+        Assert.Equal(HandshakeStateKind.HandshakeFailed, failed.state);
+        Assert.NotNull(failed.ex);
+        Assert.Contains("404", failed.ex!.Message);
     }
 
     [Fact]
     public void Parse_AcceptedSubprotocol_DoesNotAbort()
     {
-        var (parser, statuses) = Create();
+        var (parser, statuses, states) = Create();
 
         var done = parser.Parse(Response(
             "HTTP/1.1 101 Switching Protocols",
@@ -76,12 +86,13 @@ public class HandshakeParserTests
 
         Assert.True(done);
         Assert.DoesNotContain(ConnectionStatus.Aborted, statuses);
+        Assert.Contains(states, s => s.state == HandshakeStateKind.HandshakeCompletedSuccessfully);
     }
 
     [Fact]
     public void Parse_UnknownSubprotocol_AbortsConnection()
     {
-        var (parser, statuses) = Create();
+        var (parser, statuses, _) = Create();
 
         parser.Parse(Response(
             "HTTP/1.1 101 Switching Protocols",
