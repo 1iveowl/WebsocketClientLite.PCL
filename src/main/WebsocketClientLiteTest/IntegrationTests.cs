@@ -156,6 +156,34 @@ public class IntegrationTests
     }
 
     [Fact]
+    public async Task DisposingClientBeforeSubscription_DoesNotThrowFromTeardown()
+    {
+        using var server = new LoopbackWebSocketServer();
+        server.Start(LoopbackWebSocketServer.EchoLoopAsync);
+
+        var client = new ClientWebSocketRx();
+        var connected = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+
+        var subscription = client.WebsocketConnectWithStatusObservable(server.Uri)
+            .Subscribe(tuple =>
+            {
+                if (tuple.state == ConnectionStatus.WebsocketConnected)
+                {
+                    connected.TrySetResult();
+                }
+            },
+            _ => { });
+
+        await connected.Task.WaitAsync(Timeout);
+
+        // Dispose the client FIRST (disposing the IsConnected subject), then the
+        // subscription. Teardown's Finally reports IsConnected=false on the
+        // disposed subject — this must not throw.
+        client.Dispose();
+        subscription.Dispose();
+    }
+
+    [Fact]
     public async Task ClientPing_KeepsConnectionAlive_WhileSending()
     {
         using var server = new LoopbackWebSocketServer();

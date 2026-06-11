@@ -114,6 +114,22 @@ public class ClientWebSocketRx : IWebSocketClientRx, IDisposable
         _disposables.Add(connectedBehavior);
     }
 
+    // Connection teardown (an Rx Finally) reports IsConnected=false; if the
+    // client was disposed first the BehaviorSubject is already disposed and
+    // OnNext would throw ObjectDisposedException from inside the Finally action,
+    // crashing teardown. Swallow exactly that race.
+    private void SetIsConnected(bool isConnected)
+    {
+        try
+        {
+            _observerIsConnected.OnNext(isConnected);
+        }
+        catch (ObjectDisposedException)
+        {
+            // Client disposed while a connection was still winding down.
+        }
+    }
+
 
     /// <summary>
     /// Is using a secure connection scheme. Override for anything but default behavior.
@@ -203,7 +219,7 @@ public class ClientWebSocketRx : IWebSocketClientRx, IDisposable
         void initSender(ISender sender)
         {
             Sender = sender;
-            _observerIsConnected.OnNext(true);
+            SetIsConnected(true);
         }
 
         return Observable.Create<(IDataframe? dataframe, ConnectionStatus state)>(obsTuple =>
@@ -224,7 +240,7 @@ public class ClientWebSocketRx : IWebSocketClientRx, IDisposable
                                 ex => { obsTuple.OnError(ex); },
                                 () => { obsTuple.OnCompleted(); }));
             })
-            .Finally(() => _observerIsConnected.OnNext(false))
+            .Finally(() => SetIsConnected(false))
             .Subscribe(
                 state => { obsTuple.OnNext((null, state)); },
                 ex => { obsTuple.OnError(ex); },
