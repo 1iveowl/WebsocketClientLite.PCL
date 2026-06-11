@@ -43,9 +43,9 @@ internal class HandshakeHandler(
         .Catch<
             (HandshakeStateKind handshakeState, WebsocketClientLiteException? ex),
             TimeoutException>(
-                tx => Observable.Return(
+                tx => Observable.Return<(HandshakeStateKind, WebsocketClientLiteException?)>(
                     (HandshakeStateKind.HandshakeTimedOut,
-                    new WebsocketClientLiteException("Handshake times out.", tx) ?? null)
+                    new WebsocketClientLiteException("Handshake timed out.", tx))
                 )
             );
 

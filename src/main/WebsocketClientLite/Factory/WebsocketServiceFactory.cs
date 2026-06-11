@@ -60,18 +60,21 @@ internal static class WebsocketServiceFactory
 
         void ConnectionStatusAction(ConnectionStatus status, Exception? ex)
         {
-            if (status is ConnectionStatus.Disconnected)
-            {
-                observerConnectionStatus.OnCompleted();
-            }
-
+            // Terminal Rx events must come last: emit the status first, then
+            // complete/error (mirrors WebsocketClientFactory).
             if (status is ConnectionStatus.Aborted)
             {
                 observerConnectionStatus.OnError(
                     ex ?? new WebsocketClientLiteException("Unknown error."));
+                return;
             }
 
             observerConnectionStatus.OnNext(status);
+
+            if (status is ConnectionStatus.Disconnected)
+            {
+                observerConnectionStatus.OnCompleted();
+            }
         }
 
         async Task<bool> WriteToStream(Stream stream, byte[] byteArray, int count, CancellationToken ct)

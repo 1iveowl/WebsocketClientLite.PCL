@@ -33,7 +33,8 @@ internal class TcpConnectionService(
     // explicit limit" (bounded only by the int.MaxValue array-size limit).
     internal int MaxFrameSize { get; } = maxFrameSize <= 0 ? int.MaxValue : maxFrameSize;
 
-    internal Stream ConnectionStream => _stream ?? throw new ArgumentNullException("Stream cannot be null");
+    internal Stream ConnectionStream => _stream
+        ?? throw new InvalidOperationException("Connection stream is not available. The TCP connection has not been established (or has been disposed).");
 
     // Serializes writes to the connection stream. Neither SslStream nor
     // NetworkStream supports concurrent writes, and the client may write from
