@@ -44,18 +44,12 @@ Easily and effectively observe incoming message using Reactive Extensions (Rx)</
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="bin\Release\netstandard2.0\I*.dll">
-      <PackagePath>lib\netstandard2.0\</PackagePath>
-      <Pack>true</Pack>
-    </Content>
-
-    <Content Include="bin\Release\netstandard2.1\I*.dll">
-      <PackagePath>lib\netstandard2.1\</PackagePath>
-      <Pack>true</Pack>
-    </Content>
-  </ItemGroup>
-
-  <ItemGroup>
+    <!--
+      The interface assembly is delivered via the IWebsocketClientLite package
+      dependency generated from this ProjectReference. Do not also bundle the
+      DLL into lib/ — shipping it twice causes duplicate-assembly/type-conflict
+      issues for consumers.
+    -->
     <ProjectReference Include="..\..\interface\IWebsocketClientLite\IWebsocketClientLite.csproj" />
   </ItemGroup>
 
