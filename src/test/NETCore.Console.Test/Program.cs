@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Net.Sockets;
 using System.Reactive.Linq;
 using System.Reactive.Disposables;
 using System.Security.Authentication;
@@ -59,12 +58,12 @@ private static async Task StartWebSocketAsyncWithRetry(
         _socketIOMessageFormattingFunc = msg => msg;
     }
 
-    TcpClient tcpClient = new() { LingerState = new LingerOption(true, 0) };
-
+    // NOTE: TcpClient is deliberately left unset. The Retry/Repeat pipeline below
+    // reconnects by re-subscribing, and each attempt needs a fresh socket — a
+    // supplied TcpClient can only ever serve the FIRST connection (its socket is
+    // closed on teardown and .NET sockets cannot be reconnected).
     var client = new ClientWebSocketRx
     {
-        TcpClient = tcpClient,
-        HasTransferSocketLifeCycleOwnership = false,
         // WARNING: this disables ALL TLS certificate validation and exposes the
         // connection to man-in-the-middle attacks. It is set here only for local
         // testing against self-signed/expired certs. NEVER enable it in production.

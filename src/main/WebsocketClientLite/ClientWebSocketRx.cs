@@ -39,9 +39,15 @@ public class ClientWebSocketRx : IWebSocketClientRx, IDisposable
     public int MaxFrameSize { get; init; } = DefaultMaxFrameSizeBytes;
 
     /// <summary>
-    /// Optional TCP client. When left null, a <see cref="TcpClient"/> is created
-    /// internally with the address family matching the target URI and is disposed
-    /// together with the connection. Supplying one avoids allocating a throwaway.
+    /// Optional TCP client. When left null (recommended), a <see cref="TcpClient"/>
+    /// is created internally with the address family matching the target URI and is
+    /// disposed together with the connection.
+    /// <para>
+    /// Important: a supplied client can only serve the FIRST connection. Its socket
+    /// is closed when the connection tears down and .NET sockets cannot be
+    /// reconnected, so reconnect patterns (e.g. <c>Retry()</c>/<c>Repeat()</c>)
+    /// require leaving this null so each attempt gets a fresh socket.
+    /// </para>
     /// </summary>
     public TcpClient? TcpClient { get; init; }
 
