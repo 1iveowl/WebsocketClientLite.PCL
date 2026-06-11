@@ -48,6 +48,13 @@ internal class WebsocketParserHandler : IDisposable
                     }
 
                     obs.OnNext(dataframe);
+
+                    // After a Close frame the server will tear down the TCP
+                    // connection; stop reading instead of running into EOF.
+                    if (dataframe.Opcode is OpcodeKind.Close)
+                    {
+                        break;
+                    }
                 }
 
                 obs.OnCompleted();
@@ -100,8 +107,15 @@ internal class WebsocketParserHandler : IDisposable
             }
             else
             {
-                // Interleaved control frame: hand it downstream and keep reassembling.
+                // Interleaved control frame: hand it downstream.
                 obs.OnNext(next);
+
+                // A Close aborts the message — it can never complete, and the
+                // connection is about to go away.
+                if (next.Opcode is OpcodeKind.Close)
+                {
+                    return null;
+                }
             }
         }
 

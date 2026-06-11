@@ -125,6 +125,48 @@ public class PayloadParsingTests
     }
 
     [Fact]
+    public async Task CloseFrame_StopsReading_AndCompletes()
+    {
+        // Complete text frame, then a Close frame, then trailing garbage that must
+        // never be parsed (the reader stops after Close instead of hitting EOF).
+        byte[] frames =
+        {
+            0x81, 0x02, (byte)'h', (byte)'i',
+            0x88, 0x02, 0x03, 0xE8,   // Close, status 1000
+            0xFF, 0xFF, 0xFF,         // garbage past the close
+        };
+
+        var fake = new FakeTcpConnectionService(frames);
+        using var parser = new WebsocketParserHandler(fake);
+
+        var emitted = await parser.DataframeObservable().ToList();
+
+        Assert.Equal(2, emitted.Count);
+        Assert.Equal("hi", emitted[0]!.Message);
+        Assert.Equal(OpcodeKind.Close, emitted[1]!.Opcode);
+    }
+
+    [Fact]
+    public async Task CloseFrame_DuringReassembly_AbortsFragmentedMessage()
+    {
+        // Text(FIN=0) starts a message; a Close arrives before any continuation.
+        byte[] frames =
+        {
+            0x01, 0x02, (byte)'a', (byte)'b', // first fragment, not final
+            0x88, 0x00,                        // Close, no payload
+        };
+
+        var fake = new FakeTcpConnectionService(frames);
+        using var parser = new WebsocketParserHandler(fake);
+
+        var emitted = await parser.DataframeObservable().ToList();
+
+        // Only the Close frame surfaces; the incomplete message is dropped.
+        var frame = Assert.Single(emitted);
+        Assert.Equal(OpcodeKind.Close, frame!.Opcode);
+    }
+
+    [Fact]
     public async Task Parse_BinaryFrame_ExposesBinaryNotMessage()
     {
         byte[] payload = { 10, 20, 30, 40 };
