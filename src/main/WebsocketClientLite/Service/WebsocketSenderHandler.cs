@@ -50,9 +50,9 @@ internal class WebsocketSenderHandler : ISender
         }
         catch (Exception ex)
         {
-            _connectionStatusAction(
-                ConnectionStatus.Aborted,
-                new WebsocketClientLiteException("Unable to complete handshake", ex));
+            // Propagate: HandshakeHandler turns this into HandshakeSendFailed and
+            // the connect path fails with it (no side-channel Abort needed).
+            throw new WebsocketClientLiteException("Unable to send websocket handshake.", ex);
         }
     }
 
@@ -159,9 +159,9 @@ internal class WebsocketSenderHandler : ISender
             }
             catch (Exception ex)
             {
-                _connectionStatusAction(
-                    ConnectionStatus.SendError,
-                    new WebsocketClientLiteException("Websocket send error occured.", ex));
+                var sendError = new WebsocketClientLiteException("Websocket send error occured.", ex);
+                _connectionStatusAction(ConnectionStatus.SendError, sendError);
+                throw sendError;
             }
 
             return;
@@ -411,9 +411,11 @@ internal class WebsocketSenderHandler : ISender
         }
         catch (Exception ex)
         {
-            _connectionStatusAction(
-                ConnectionStatus.SendError, 
-                new WebsocketClientLiteException("Websocket send error occured.", ex));
+            // Report through the status channel AND throw: callers awaiting a
+            // Send* method must observe the failure rather than a silent success.
+            var sendError = new WebsocketClientLiteException("Websocket send error occured.", ex);
+            _connectionStatusAction(ConnectionStatus.SendError, sendError);
+            throw sendError;
         }
     }
 }
