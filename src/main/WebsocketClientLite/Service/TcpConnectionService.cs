@@ -1,6 +1,7 @@
 ﻿using IWebsocketClientLite;
 using System;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Net.Security;
 using System.Net.Sockets;
@@ -145,6 +146,11 @@ internal class TcpConnectionService(
         return true;
     }
 
+    [SuppressMessage("Reliability", "CA2000:Dispose objects before losing scope",
+        Justification = "Ownership is tracked, not lost: the created TcpClient is assigned to the captured " +
+                        "constructor parameter and _ownsCreatedTcpClient is set, so Dispose() always releases " +
+                        "it regardless of the lifecycle-ownership flag. The analyzer cannot follow ownership " +
+                        "through the captured parameter.")]
     private async Task ConnectTcpClient(
         Uri uri,
         TimeSpan timeout = default)

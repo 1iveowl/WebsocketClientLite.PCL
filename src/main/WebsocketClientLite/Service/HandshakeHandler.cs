@@ -1,6 +1,7 @@
 ﻿using System;
 using HttpMachine;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Reactive.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -89,7 +90,11 @@ internal class HandshakeHandler(
         }
     }
 
-    private async Task<(HandshakeStateKind handshakeState, WebsocketClientLiteException? ex)> 
+    [SuppressMessage("Design", "CA1031:Do not catch general exception types",
+        Justification = "Nothing is swallowed: the exception is converted into the HandshakeSendFailed result " +
+                        "state (with the original exception preserved) which the connect path observes and throws. " +
+                        "Any write-failure type must take this path, so the catch is intentionally broad.")]
+    private async Task<(HandshakeStateKind handshakeState, WebsocketClientLiteException? ex)>
         SendHandshake(
             Uri uri,
             WebsocketSenderHandler websocketSenderHandler,
