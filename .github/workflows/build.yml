@@ -100,37 +100,33 @@ jobs:
           tag_name: ${{ steps.gitversion.outputs.AssemblySemVer }}
           release_name: Release ${{ steps.gitversion.outputs.AssemblySemVer }}
           body: |
-            WebsocketClientLite 9.0.0 – Highlights
+            WebsocketClientLite 9.0.1 – Highlights
 
             Bug fixes
-            - Subprotocols are now actually sent in the handshake (Sec-WebSocket-Protocol).
-            - Close status codes are sent big-endian per RFC 6455.
-            - ExcludeZeroApplicationDataInPong is now honored (Slack RTM).
-            - The CancellationToken passed to WebsocketConnectObservable is forwarded.
-            - Fragmented messages reassemble correctly on .NET 8/9/10 and .NET Standard 2.1.
-            - Writes to the connection are serialized, fixing mid-stream disconnects when
-              client pings interleave with sends.
+            - Unsubscribing from the connection observable now sends the RFC 6455 close
+              handshake (best-effort, exactly once) instead of just dropping the TCP
+              connection.
+            - A failed handshake (e.g. HTTP 404) now fails fast with the server's status
+              code instead of reporting an internal success state and waiting out the
+              handshake timeout.
+            - Send failures now throw WebsocketClientLiteException at the await site, in
+              addition to reporting SendError on the status channel.
+            - The final Disconnected status is delivered (Rx-grammar fix in the status
+              callbacks).
+            - A Close frame received mid-fragmentation cleanly aborts the message and the
+              read loop no longer runs into EOF after a close.
+            - Disposing the client while a connection is active no longer throws from
+              teardown.
+            - NuGet packaging: the interface assembly is no longer bundled into
+              lib/netstandard2.0/2.1 alongside the IWebsocketClientLite dependency.
 
-            Security hardening
-            - Configurable MaxFrameSize (default 16 MiB) caps incoming frames and reassembled
-              messages to guard against memory-exhaustion from a malicious server.
-            - Control frames are validated (<=125 bytes, not fragmented) per RFC 6455 §5.5.
-            - Handshake header/origin/subprotocol values containing CR/LF/NUL are rejected.
-            - CheckCertificateRevocation option (default true) enables TLS revocation checking.
+            New
+            - ClientWebSocketRx.NegotiatedSubprotocols exposes the subprotocol(s) the
+              server accepted during the handshake.
 
-            Performance
-            - Receive path reads each payload once and unmasks in place (no MemoryStream,
-              far fewer allocations); frames are read from a single subscription.
-            - Send path avoids per-frame mask-key and text-encoding allocations.
-
-            Breaking changes
-            - ClientWebSocketRx is now a class instead of a record, and its TcpClient
-              property is nullable.
-            - CheckCertificateRevocation defaults to true; set it to false if your
-              environment cannot reach OCSP/CRL endpoints.
-
-            Tooling
-            - Tests run against every target framework (netstandard2.0..net10) and a CI
-              workflow builds, tests, and gates code coverage.
+            Notes
+            - A user-supplied TcpClient can only serve the first connection; leave
+              TcpClient unset when using reconnect patterns (Retry/Repeat). The console
+              sample and README have been updated accordingly.
           draft: true
           prerelease: true

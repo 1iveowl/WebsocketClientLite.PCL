@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Reactive;
 using System.Threading;
@@ -23,6 +24,7 @@ internal class WebsocketConnectionHandler : IDisposable
     private readonly Func<Stream, Action<ConnectionStatus, Exception?>, WebsocketSenderHandler> _createWebsocketSenderFunc;
 
     private IDisposable? _clientPingDisposable;
+    private Func<Task>? _closeHandshakeOnce;
 
     internal WebsocketConnectionHandler(
         TcpConnectionService tcpConnectionService,
@@ -43,7 +45,7 @@ internal class WebsocketConnectionHandler : IDisposable
                 Uri uri,
                 X509CertificateCollection? x509CertificateCollection,
                 SslProtocols tlsProtocolType,
-                Action<ISender> setSenderAction,
+                Action<ISender, IEnumerable<string>?> setSenderAction,
                 CancellationToken ct,
                 bool hasClientPing,
                 TimeSpan clientPingTimeSpan,
@@ -89,7 +91,7 @@ internal class WebsocketConnectionHandler : IDisposable
             throw new WebsocketClientLiteException($"Handshake failed due to unknown error: {handshakeState}");
         }
 
-        setSenderAction(sender);
+        setSenderAction(sender, handshakeHandler.NegotiatedSubprotocols);
 
         if (hasClientPing)
         {
@@ -105,10 +107,28 @@ internal class WebsocketConnectionHandler : IDisposable
                 () => { });
         }
 
+        // The close handshake must run exactly once, whichever teardown path
+        // fires first: completion/error (via FinallyAsync below) or disposal
+        // (via Dispose(), reached on unsubscribe through ws.Dispose()). The hook
+        // is registered BEFORE WebsocketConnected is emitted so even a subscriber
+        // that disposes immediately upon "connected" — possibly before the inner
+        // pipeline subscription exists — still triggers the close handshake.
+        int closeHandshakeStarted = 0;
+
+        async Task CloseOnceAsync()
+        {
+            if (Interlocked.Exchange(ref closeHandshakeStarted, 1) == 0)
+            {
+                await DisconnectWebsocket(sender).ConfigureAwait(false);
+            }
+        }
+
+        _closeHandshakeOnce = CloseOnceAsync;
+
         _connectionStatusAction(ConnectionStatus.WebsocketConnected, null);
 
         return Observable.Create<IDataframe?>(dataframeObserver =>
-            // DataframeObservable now emits every message from a single
+            // DataframeObservable emits every message from a single
             // subscription, so no .Repeat() (and its per-message re-subscription)
             // is needed.
             _websocketParserHandler.DataframeObservable()
@@ -117,10 +137,7 @@ internal class WebsocketConnectionHandler : IDisposable
                     await IncomingControlFrameHandler(dataframe, dataframeObserver, cancellationToken).ConfigureAwait(false))
                 .Where(dataframe => dataframe is not null)
                 .Subscribe(dataframeObserver))
-        .FinallyAsync(async () =>
-        {
-            await DisconnectWebsocket(sender).ConfigureAwait(false);
-        });
+        .FinallyAsync(CloseOnceAsync);
 
         IObservable<Unit> SendClientPing(string? message) =>
             Observable.Interval(clientPingTimeSpan)
@@ -194,7 +211,10 @@ internal class WebsocketConnectionHandler : IDisposable
         }
         catch (Exception ex)
         {
-            throw new WebsocketClientLiteException("Unable to disconnect gracefully", ex);
+            // Best effort: the close frame is a courtesy. Failing to deliver it
+            // (dead stream, timeout) must not mask the error that triggered the
+            // teardown — especially now that send failures throw.
+            Debug.WriteLine($"Close handshake could not be delivered: {ex.Message}");
         }
         finally
         {
@@ -204,7 +224,33 @@ internal class WebsocketConnectionHandler : IDisposable
 
     public void Dispose()
     {
+        // Stop the ping timer before saying goodbye.
         _clientPingDisposable?.Dispose();
+
+        // Unsubscribe path: ws.Dispose() (the outer Finally) is the one teardown
+        // hook guaranteed to run no matter how early the subscriber disposes, so
+        // the best-effort close handshake lives here. The stream is still alive —
+        // TcpConnectionService is disposed below, after the close frame goes out.
+        // Bounded so disposal cannot hang; Task.Run avoids deadlocking callers
+        // disposing from a synchronization context (e.g. UI). No-op when the
+        // close already ran via the completion/error path or never connected.
+        var closeOnce = Interlocked.Exchange(ref _closeHandshakeOnce, null);
+        if (closeOnce is not null)
+        {
+            try
+            {
+                var closeTask = Task.Run(closeOnce);
+                if (!closeTask.Wait(TimeSpan.FromSeconds(3)))
+                {
+                    _ = closeTask.ContinueWith(t => _ = t.Exception, TaskScheduler.Default);
+                }
+            }
+            catch
+            {
+                // Best effort — the connection is going away regardless.
+            }
+        }
+
         _websocketParserHandler?.Dispose();
         _tcpConnectionService?.Dispose();
     }

@@ -39,9 +39,15 @@ public class ClientWebSocketRx : IWebSocketClientRx, IDisposable
     public int MaxFrameSize { get; init; } = DefaultMaxFrameSizeBytes;
 
     /// <summary>
-    /// Optional TCP client. When left null, a <see cref="TcpClient"/> is created
-    /// internally with the address family matching the target URI and is disposed
-    /// together with the connection. Supplying one avoids allocating a throwaway.
+    /// Optional TCP client. When left null (recommended), a <see cref="TcpClient"/>
+    /// is created internally with the address family matching the target URI and is
+    /// disposed together with the connection.
+    /// <para>
+    /// Important: a supplied client can only serve the FIRST connection. Its socket
+    /// is closed when the connection tears down and .NET sockets cannot be
+    /// reconnected, so reconnect patterns (e.g. <c>Retry()</c>/<c>Repeat()</c>)
+    /// require leaving this null so each attempt gets a fresh socket.
+    /// </para>
     /// </summary>
     public TcpClient? TcpClient { get; init; }
 
@@ -70,6 +76,14 @@ public class ClientWebSocketRx : IWebSocketClientRx, IDisposable
     /// Websocket known subprotocols
     /// </summary>
     public IEnumerable<string>? Subprotocols { get; init; }
+
+    /// <summary>
+    /// The subprotocols the server accepted during the most recent successful
+    /// handshake (the intersection with <see cref="Subprotocols"/>), or
+    /// <see langword="null"/> when none were negotiated or no connection has
+    /// been established yet.
+    /// </summary>
+    public IEnumerable<string>? NegotiatedSubprotocols { get; private set; }
 
     /// <summary>
     /// TLS protocol
@@ -112,6 +126,22 @@ public class ClientWebSocketRx : IWebSocketClientRx, IDisposable
 
         // Register the BehaviorSubject with the disposer
         _disposables.Add(connectedBehavior);
+    }
+
+    // Connection teardown (an Rx Finally) reports IsConnected=false; if the
+    // client was disposed first the BehaviorSubject is already disposed and
+    // OnNext would throw ObjectDisposedException from inside the Finally action,
+    // crashing teardown. Swallow exactly that race.
+    private void SetIsConnected(bool isConnected)
+    {
+        try
+        {
+            _observerIsConnected.OnNext(isConnected);
+        }
+        catch (ObjectDisposedException)
+        {
+            // Client disposed while a connection was still winding down.
+        }
     }
 
 
@@ -200,10 +230,11 @@ public class ClientWebSocketRx : IWebSocketClientRx, IDisposable
             handshaketimeout = TimeSpan.FromSeconds(30);
         }
 
-        void initSender(ISender sender)
+        void initSender(ISender sender, IEnumerable<string>? negotiatedSubprotocols)
         {
             Sender = sender;
-            _observerIsConnected.OnNext(true);
+            NegotiatedSubprotocols = negotiatedSubprotocols;
+            SetIsConnected(true);
         }
 
         return Observable.Create<(IDataframe? dataframe, ConnectionStatus state)>(obsTuple =>
@@ -224,7 +255,7 @@ public class ClientWebSocketRx : IWebSocketClientRx, IDisposable
                                 ex => { obsTuple.OnError(ex); },
                                 () => { obsTuple.OnCompleted(); }));
             })
-            .Finally(() => _observerIsConnected.OnNext(false))
+            .Finally(() => SetIsConnected(false))
             .Subscribe(
                 state => { obsTuple.OnNext((null, state)); },
                 ex => { obsTuple.OnError(ex); },

@@ -33,7 +33,8 @@ internal class TcpConnectionService(
     // explicit limit" (bounded only by the int.MaxValue array-size limit).
     internal int MaxFrameSize { get; } = maxFrameSize <= 0 ? int.MaxValue : maxFrameSize;
 
-    internal Stream ConnectionStream => _stream ?? throw new ArgumentNullException("Stream cannot be null");
+    internal Stream ConnectionStream => _stream
+        ?? throw new InvalidOperationException("Connection stream is not available. The TCP connection has not been established (or has been disposed).");
 
     // Serializes writes to the connection stream. Neither SslStream nor
     // NetworkStream supports concurrent writes, and the client may write from
@@ -72,29 +73,51 @@ internal class TcpConnectionService(
         _stream = await GetTcpStream(uri, tcpClient, x509CertificateCollection, tlsProtocolType).ConfigureAwait(false);
     }
 
+    // Reusable buffer for the small fixed-size frame-header reads (first two
+    // header bytes, 2/8-byte extended length, 4-byte mask key). Reads on a
+    // connection are strictly sequential (single reader loop), so one scratch
+    // per connection is safe.
+    private readonly byte[] _headerScratch = new byte[8];
+
     internal ValueTask<byte[]?> ReadBytesFromStream(ulong size, CancellationToken ct) =>
         ReadByteArrayFromStream(size, ct);
 
     internal async ValueTask<byte[]?> ReadByteArrayFromStream(ulong size, CancellationToken ct)
+    {
+        // We cannot allocate arrays larger than int.MaxValue
+        int requested = checked((int)Math.Min((ulong)int.MaxValue, size));
+        var buffer = new byte[requested];
+
+        return await TryFillAsync(buffer, requested, ct).ConfigureAwait(false) ? buffer : null;
+    }
+
+    /// <summary>
+    /// Reads exactly <paramref name="count"/> (at most 8) bytes into the shared
+    /// per-connection scratch buffer, avoiding a small allocation per header
+    /// field. The returned array is only valid until the next read, and only the
+    /// first <paramref name="count"/> bytes are meaningful — callers must consume
+    /// it immediately (the frame parser does).
+    /// </summary>
+    internal async ValueTask<byte[]?> ReadHeaderBytesAsync(int count, CancellationToken ct) =>
+        await TryFillAsync(_headerScratch, count, ct).ConfigureAwait(false) ? _headerScratch : null;
+
+    private async ValueTask<bool> TryFillAsync(byte[] buffer, int count, CancellationToken ct)
     {
         if (_stream is null || !_stream.CanRead)
         {
             throw new WebsocketClientLiteException("Stream not ready or not connected.");
         }
 
-        // We cannot allocate arrays larger than int.MaxValue
-        int requested = checked((int)Math.Min((ulong)int.MaxValue, size));
-        var buffer = new byte[requested];
         int totalRead = 0;
 
         try
         {
-            while (totalRead < requested)
+            while (totalRead < count)
             {
 #if NETSTANDARD2_0
-                int read = await _stream.ReadAsync(buffer, totalRead, requested - totalRead, ct).ConfigureAwait(false);
+                int read = await _stream.ReadAsync(buffer, totalRead, count - totalRead, ct).ConfigureAwait(false);
 #else
-                int read = await _stream.ReadAsync(buffer.AsMemory(totalRead, requested - totalRead), ct).ConfigureAwait(false);
+                int read = await _stream.ReadAsync(buffer.AsMemory(totalRead, count - totalRead), ct).ConfigureAwait(false);
 #endif
                 if (read == 0)
                 {
@@ -108,7 +131,7 @@ internal class TcpConnectionService(
         catch (OperationCanceledException)
         {
             // Align with prior behavior (readOneByteFunc returned -1 on cancel)
-            return null;
+            return false;
         }
         catch (ObjectDisposedException)
         {
@@ -116,10 +139,10 @@ internal class TcpConnectionService(
             // cancellation: signal "no data" rather than returning a partially
             // filled/zeroed buffer that would be misread as a valid frame.
             Debug.WriteLine("Ignoring Object Disposed Exception - This is an expected exception");
-            return null;
+            return false;
         }
 
-        return buffer;
+        return true;
     }
 
     private async Task ConnectTcpClient(

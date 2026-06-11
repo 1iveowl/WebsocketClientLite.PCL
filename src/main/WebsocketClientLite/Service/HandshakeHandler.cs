@@ -15,6 +15,12 @@ internal class HandshakeHandler(
     TcpConnectionService tcpConnectionService,
     Action<ConnectionStatus, Exception?> connectionStatusAction)
 {
+    /// <summary>
+    /// Subprotocols the server accepted (intersection with the ones offered),
+    /// available after a successful handshake.
+    /// </summary>
+    internal IEnumerable<string>? NegotiatedSubprotocols { get; private set; }
+
     internal IObservable<(HandshakeStateKind handshakeState, WebsocketClientLiteException? ex)> Handshake(
         Uri uri,
         WebsocketSenderHandler sender,
@@ -34,8 +40,19 @@ internal class HandshakeHandler(
                 parserDelegate,
                 connectionStatusAction);
 
-            await SendHandshake(uri, sender, ct, origin, headers, subprotocols).ConfigureAwait(false);
+            var sendResult = await SendHandshake(uri, sender, ct, origin, headers, subprotocols).ConfigureAwait(false);
+
+            if (sendResult.handshakeState is HandshakeStateKind.HandshakeSendFailed)
+            {
+                // No point waiting for a response to a request that never went out.
+                obs.OnNext(sendResult);
+                obs.OnCompleted();
+                return;
+            }
+
             await WaitForHandshake(handshakeParser).ConfigureAwait(false);
+
+            NegotiatedSubprotocols = handshakeParser.SubprotocolAcceptedNames;
 
             obs.OnCompleted();
         })
@@ -43,9 +60,9 @@ internal class HandshakeHandler(
         .Catch<
             (HandshakeStateKind handshakeState, WebsocketClientLiteException? ex),
             TimeoutException>(
-                tx => Observable.Return(
+                tx => Observable.Return<(HandshakeStateKind, WebsocketClientLiteException?)>(
                     (HandshakeStateKind.HandshakeTimedOut,
-                    new WebsocketClientLiteException("Handshake times out.", tx) ?? null)
+                    new WebsocketClientLiteException("Handshake timed out.", tx))
                 )
             );
 

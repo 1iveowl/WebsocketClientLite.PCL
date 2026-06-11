@@ -156,6 +156,126 @@ public class IntegrationTests
     }
 
     [Fact]
+    public async Task DisposingSubscription_SendsCloseHandshakeToServer()
+    {
+        using var server = new LoopbackWebSocketServer();
+        var closeObserved = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+
+        server.Start(async (stream, ct) =>
+        {
+            while (!ct.IsCancellationRequested)
+            {
+                var frame = await LoopbackWebSocketServer.ReadFrameAsync(stream, ct);
+                if (frame is null)
+                {
+                    closeObserved.TrySetResult(false); // TCP closed with no Close frame
+                    return;
+                }
+
+                if (frame.Value.opcode == 0x8)
+                {
+                    closeObserved.TrySetResult(true);  // proper close handshake
+                    return;
+                }
+            }
+        });
+
+        using var client = new ClientWebSocketRx();
+        var connected = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+
+        var subscription = client.WebsocketConnectWithStatusObservable(server.Uri)
+            .Subscribe(tuple =>
+            {
+                if (tuple.state == ConnectionStatus.WebsocketConnected)
+                {
+                    connected.TrySetResult();
+                }
+            },
+            _ => { });
+
+        await connected.Task.WaitAsync(Timeout);
+
+        // Unsubscribing is how users disconnect; the server must see a Close
+        // frame, not just a dropped TCP connection.
+        subscription.Dispose();
+
+        Assert.True(await closeObserved.Task.WaitAsync(Timeout));
+    }
+
+    [Fact]
+    public async Task NegotiatedSubprotocols_SurfaceTheServersChoice()
+    {
+        using var server = new LoopbackWebSocketServer();
+        server.Start(LoopbackWebSocketServer.EchoLoopAsync);
+
+        using var client = new ClientWebSocketRx { Subprotocols = new[] { "chat", "superchat" } };
+        var connected = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+
+        using var subscription = client.WebsocketConnectWithStatusObservable(server.Uri)
+            .Subscribe(tuple =>
+            {
+                if (tuple.state == ConnectionStatus.WebsocketConnected)
+                {
+                    connected.TrySetResult();
+                }
+            },
+            _ => { });
+
+        await connected.Task.WaitAsync(Timeout);
+
+        // The loopback server echoes the first offered subprotocol ("chat").
+        Assert.NotNull(client.NegotiatedSubprotocols);
+        Assert.Contains("chat", client.NegotiatedSubprotocols!);
+    }
+
+    [Fact]
+    public async Task Non101HandshakeResponse_FailsFast_WithStatusCode()
+    {
+        using var server = new LoopbackWebSocketServer();
+        server.StartWithRawHandshakeResponse("HTTP/1.1 404 Not Found\r\nContent-Length: 0\r\n\r\n");
+
+        using var client = new ClientWebSocketRx();
+        var errored = new TaskCompletionSource<Exception>(TaskCreationOptions.RunContinuationsAsynchronously);
+
+        // Generous handshake timeout: the failure must come from the parsed 404,
+        // not from the timeout elapsing.
+        using var subscription = client.WebsocketConnectWithStatusObservable(
+                server.Uri, handshaketimeout: TimeSpan.FromSeconds(30))
+            .Subscribe(_ => { }, ex => errored.TrySetResult(ex));
+
+        var error = await errored.Task.WaitAsync(TimeSpan.FromSeconds(5));
+        Assert.Contains("404", error.Message);
+    }
+
+    [Fact]
+    public async Task DisposingClientBeforeSubscription_DoesNotThrowFromTeardown()
+    {
+        using var server = new LoopbackWebSocketServer();
+        server.Start(LoopbackWebSocketServer.EchoLoopAsync);
+
+        var client = new ClientWebSocketRx();
+        var connected = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+
+        var subscription = client.WebsocketConnectWithStatusObservable(server.Uri)
+            .Subscribe(tuple =>
+            {
+                if (tuple.state == ConnectionStatus.WebsocketConnected)
+                {
+                    connected.TrySetResult();
+                }
+            },
+            _ => { });
+
+        await connected.Task.WaitAsync(Timeout);
+
+        // Dispose the client FIRST (disposing the IsConnected subject), then the
+        // subscription. Teardown's Finally reports IsConnected=false on the
+        // disposed subject — this must not throw.
+        client.Dispose();
+        subscription.Dispose();
+    }
+
+    [Fact]
     public async Task ClientPing_KeepsConnectionAlive_WhileSending()
     {
         using var server = new LoopbackWebSocketServer();

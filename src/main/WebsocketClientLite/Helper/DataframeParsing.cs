@@ -20,7 +20,7 @@ internal static class DataframeParsing
         this TcpConnectionService tcpConnection,
         CancellationToken ct)
     {
-        var header = await tcpConnection.ReadBytesFromStream(2, ct).ConfigureAwait(false);
+        var header = await tcpConnection.ReadHeaderBytesAsync(2, ct).ConfigureAwait(false);
         if (header is null)
         {
             return null;
@@ -45,7 +45,7 @@ internal static class DataframeParsing
         }
         else if (lengthMarker == 126)
         {
-            var ext = await tcpConnection.ReadBytesFromStream(2, ct).ConfigureAwait(false);
+            var ext = await tcpConnection.ReadHeaderBytesAsync(2, ct).ConfigureAwait(false);
             if (ext is null)
             {
                 return null;
@@ -54,7 +54,7 @@ internal static class DataframeParsing
         }
         else
         {
-            var ext = await tcpConnection.ReadBytesFromStream(8, ct).ConfigureAwait(false);
+            var ext = await tcpConnection.ReadHeaderBytesAsync(8, ct).ConfigureAwait(false);
             if (ext is null)
             {
                 return null;
@@ -97,7 +97,9 @@ internal static class DataframeParsing
         if (mask)
         {
             // For masked frames the masking key precedes the payload per RFC 6455.
-            maskKey = await tcpConnection.ReadBytesFromStream(4, ct).ConfigureAwait(false);
+            // The scratch buffer stays valid through the payload read below (which
+            // fills its own array) and is consumed by Decode before the next read.
+            maskKey = await tcpConnection.ReadHeaderBytesAsync(4, ct).ConfigureAwait(false);
             if (maskKey is null)
             {
                 return null;

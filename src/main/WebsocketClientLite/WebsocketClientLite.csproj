@@ -8,18 +8,18 @@
     <LangVersion>14.0</LangVersion>
     <PackageIcon>images\1iveowl-logo.png</PackageIcon>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <Version>9.0.0</Version>
+    <Version>9.0.1</Version>
     <Authors>Jasper Hedegaard Bojsen</Authors>
     <Copyright>1iveowl Development 2025</Copyright>
     <PackageProjectUrl>https://github.com/1iveowl/WebsocketClientLite.PCL</PackageProjectUrl>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <RepositoryUrl>https://github.com/1iveowl/WebsocketClientLite.PCL</RepositoryUrl>
-    <AssemblyVersion>9.0.0</AssemblyVersion>
-    <FileVersion>9.0.0</FileVersion>
+    <AssemblyVersion>9.0.1</AssemblyVersion>
+    <FileVersion>9.0.1</FileVersion>
     <Description>A simple and light WebSocket client.
 Can be set to ignore SSL/TLS server certificate issues (use with care!).
 Easily and effectively observe incoming message using Reactive Extensions (Rx)</Description>
-    <PackageReleaseNotes>v9.0.0: Subprotocols are now actually sent in the handshake; close status codes are sent big-endian (RFC 6455); ExcludeZeroApplicationDataInPong is now honored; the CancellationToken passed to WebsocketConnectObservable is now forwarded. More robust error handling and resource cleanup. Breaking: ClientWebSocketRx is now a class (was a record) and its TcpClient property is nullable. See README for details.</PackageReleaseNotes>
+    <PackageReleaseNotes>v9.0.1: Unsubscribing now sends the RFC 6455 close handshake; failed handshakes fail fast with the server's status code instead of timing out; send failures now throw at the await site (in addition to the SendError status); the final Disconnected status is delivered; new NegotiatedSubprotocols property; NuGet package no longer double-ships the interface assembly; reconnect requires leaving TcpClient unset (see README). See README for details.</PackageReleaseNotes>
     <EnableNETAnalyzers>true</EnableNETAnalyzers>
     <AnalysisMode>AllEnabledByDefault</AnalysisMode>
   </PropertyGroup>
@@ -44,18 +44,12 @@ Easily and effectively observe incoming message using Reactive Extensions (Rx)</
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="bin\Release\netstandard2.0\I*.dll">
-      <PackagePath>lib\netstandard2.0\</PackagePath>
-      <Pack>true</Pack>
-    </Content>
-
-    <Content Include="bin\Release\netstandard2.1\I*.dll">
-      <PackagePath>lib\netstandard2.1\</PackagePath>
-      <Pack>true</Pack>
-    </Content>
-  </ItemGroup>
-
-  <ItemGroup>
+    <!--
+      The interface assembly is delivered via the IWebsocketClientLite package
+      dependency generated from this ProjectReference. Do not also bundle the
+      DLL into lib/ — shipping it twice causes duplicate-assembly/type-conflict
+      issues for consumers.
+    -->
     <ProjectReference Include="..\..\interface\IWebsocketClientLite\IWebsocketClientLite.csproj" />
   </ItemGroup>
 

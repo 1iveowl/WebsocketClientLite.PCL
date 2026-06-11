@@ -52,6 +52,54 @@ public class SendFrameTests
     private static byte[] Unmask(byte[] payload, byte[] key) =>
         payload.Select((b, i) => (byte)(b ^ key[i % 4])).ToArray();
 
+    private static WebsocketSenderHandler CreateFailingSender(
+        List<ConnectionStatus> statuses,
+        bool excludeZeroApplicationDataInPong = false)
+    {
+        var connection = new FakeConnection(new MemoryStream());
+
+        Func<Stream, byte[], int, CancellationToken, Task> failingWriteFunc =
+            (s, bytes, count, ct) => throw new IOException("socket reset");
+
+        return new WebsocketSenderHandler(
+            connection, (status, ex) => statuses.Add(status), failingWriteFunc, excludeZeroApplicationDataInPong);
+    }
+
+    [Fact]
+    public async Task SendText_WriteFailure_ThrowsAndReportsSendError()
+    {
+        var statuses = new List<ConnectionStatus>();
+        var sender = CreateFailingSender(statuses);
+
+        var ex = await Assert.ThrowsAsync<WebsocketClientLite.CustomException.WebsocketClientLiteException>(
+            () => sender.SendText("hello"));
+
+        Assert.IsType<IOException>(ex.InnerException);     // original cause preserved
+        Assert.Contains(ConnectionStatus.SendError, statuses); // status channel still notified
+    }
+
+    [Fact]
+    public async Task SendPong_ZeroDataPath_WriteFailure_Throws()
+    {
+        var statuses = new List<ConnectionStatus>();
+        var sender = CreateFailingSender(statuses, excludeZeroApplicationDataInPong: true);
+
+        await Assert.ThrowsAsync<WebsocketClientLite.CustomException.WebsocketClientLiteException>(
+            () => sender.SendPong(new Dataframe { Payload = Array.Empty<byte>() }, CancellationToken.None));
+
+        Assert.Contains(ConnectionStatus.SendError, statuses);
+    }
+
+    [Fact]
+    public async Task SendConnectHandShake_WriteFailure_Throws()
+    {
+        var statuses = new List<ConnectionStatus>();
+        var sender = CreateFailingSender(statuses);
+
+        await Assert.ThrowsAsync<WebsocketClientLite.CustomException.WebsocketClientLiteException>(
+            () => sender.SendConnectHandShake(new Uri("ws://example.com"), CancellationToken.None));
+    }
+
     [Fact]
     public async Task SendText_ProducesMaskedSingleTextFrame()
     {
