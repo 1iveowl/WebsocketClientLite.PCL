@@ -51,6 +51,8 @@
 				"GitHub.copilot-chat"
 			],
 			"settings": {
+				// Required by the Claude extension before bypassPermissions can be selected.
+				"claudeCode.allowDangerouslySkipPermissions": true,
 				"claudeCode.initialPermissionMode": "bypassPermissions",
 				"claudeCode.preferredLocation": "sidebar",
 				"github.copilot.enable": {
