@@ -317,3 +317,7 @@ __blobstorage__/*
 # Behold placeholder-filer i tomme mapper
 !.gitkeep
 !**/README.md
+
+# planning
+/plan/
+

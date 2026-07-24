@@ -8,15 +8,20 @@
 	<LangVersion>14.0</LangVersion>
 	<PackageIcon>images\1iveowl-logo.png</PackageIcon>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <Version>9.0.2</Version>
+    <Version>9.1.0</Version>
     <Authors>Jasper Hedegaard Bojsen</Authors>
     <Copyright>1iveowl Development 2025</Copyright>
     <PackageProjectUrl>https://github.com/1iveowl/IWebsocketClientLite.PCL</PackageProjectUrl>
     <RepositoryUrl>https://github.com/1iveowl/WebsocketClientLite.PCL</RepositoryUrl>
-    <AssemblyVersion>9.0.2</AssemblyVersion>
-    <FileVersion>9.0.2</FileVersion>
+    <AssemblyVersion>9.1.0</AssemblyVersion>
+    <FileVersion>9.1.0</FileVersion>
     <Description>Interface for WebSocket Client Lite.</Description>
   </PropertyGroup>
+
+  <ItemGroup>
+    <!-- IAsyncDisposable for the netstandard2.0 surface (IWebSocketClientRx). -->
+    <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="10.0.8" />
+  </ItemGroup>
 
   <ItemGroup>
     <None Include="..\..\build\1iveowl-logo.png" Link="images\1iveowl-logo.png">

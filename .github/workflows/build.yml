@@ -13,6 +13,11 @@ on:
       - "GitVersion.yml"
   workflow_dispatch:
 
+permissions:
+  contents: write # create the GitHub release
+  packages: write # push to GitHub Packages
+  id-token: write # OIDC token for NuGet.org Trusted Publishing
+
 jobs:
   build_and_publish:
     runs-on: ubuntu-latest
@@ -83,12 +88,22 @@ jobs:
         run: dotnet pack WebsocketClientLite.csproj -c Release --no-build /p:PackageID="WebsocketClientLite.PCL" /p:Version=${{ steps.gitversion.outputs.MajorMinorPatch }}
         working-directory: src/main/WebsocketClientLite/
 
+      # Trusted Publishing: exchanges this run's GitHub OIDC token for a
+      # short-lived NuGet.org API key. Requires a Trusted Publishing policy on
+      # NuGet.org (owner profile -> Trusted Publishing) matching this repository
+      # and workflow file name (build.yml). No long-lived NUGET_TOKEN secret.
+      - name: NuGet login (Trusted Publishing)
+        id: nuget-login
+        uses: NuGet/login@v1
+        with:
+          user: ${{ secrets.NUGET_USER }}
+
       - name: Publish WebsocketClientLite to Nuget.Org
-        run: dotnet nuget push WebsocketClientLite.PCL.*.nupkg --api-key ${{ secrets.NUGET_TOKEN }} --source https://api.nuget.org/v3/index.json --skip-duplicate
+        run: dotnet nuget push WebsocketClientLite.PCL.*.nupkg --api-key ${{ steps.nuget-login.outputs.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json --skip-duplicate
         working-directory: src/main/WebsocketClientLite/bin/Release/
 
       - name: Publish IWebsocketClientLite (interface) to Nuget.Org
-        run: dotnet nuget push "*.nupkg" --api-key ${{ secrets.NUGET_TOKEN }} --source https://api.nuget.org/v3/index.json --skip-duplicate
+        run: dotnet nuget push "*.nupkg" --api-key ${{ steps.nuget-login.outputs.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json --skip-duplicate
         working-directory: src/interface/IWebsocketClientLite/bin/Release/
 
       - name: Create Release
@@ -100,40 +115,30 @@ jobs:
           tag_name: ${{ steps.gitversion.outputs.AssemblySemVer }}
           release_name: Release ${{ steps.gitversion.outputs.AssemblySemVer }}
           body: |
-            WebsocketClientLite 9.0.2 – Highlights
-
-            - Fixes a race in the 9.0.1 close-on-unsubscribe behavior: disposing the
-              subscription immediately after WebsocketConnected could skip the close
-              handshake. The close hook is now registered before WebsocketConnected is
-              emitted and runs on every teardown path. Use 9.0.2 instead of 9.0.1.
-
-            Includes all 9.0.1 changes:
-
-            Bug fixes
-            - Unsubscribing from the connection observable now sends the RFC 6455 close
-              handshake (best-effort, exactly once) instead of just dropping the TCP
-              connection.
-            - A failed handshake (e.g. HTTP 404) now fails fast with the server's status
-              code instead of reporting an internal success state and waiting out the
-              handshake timeout.
-            - Send failures now throw WebsocketClientLiteException at the await site, in
-              addition to reporting SendError on the status channel.
-            - The final Disconnected status is delivered (Rx-grammar fix in the status
-              callbacks).
-            - A Close frame received mid-fragmentation cleanly aborts the message and the
-              read loop no longer runs into EOF after a close.
-            - Disposing the client while a connection is active no longer throws from
-              teardown.
-            - NuGet packaging: the interface assembly is no longer bundled into
-              lib/netstandard2.0/2.1 alongside the IWebsocketClientLite dependency.
+            WebsocketClientLite 9.1.0 – Highlights
 
             New
-            - ClientWebSocketRx.NegotiatedSubprotocols exposes the subprotocol(s) the
-              server accepted during the handshake.
+            - IAsyncDisposable on ClientWebSocketRx (and the legacy MessageWebsocketRx);
+              IWebSocketClientRx now extends IAsyncDisposable. `await using` is the
+              preferred lifecycle: DisposeAsync awaits the RFC 6455 close handshake of
+              any still-active connection before releasing the socket. Dispose() remains
+              the abrupt counterpart (bounded best-effort close, never hangs).
+
+            Bug fixes and internals
+            - Unified teardown: the close handshake runs exactly once on every end path
+              (server close, read error, unsubscribe, Dispose, DisposeAsync) through one
+              shared mechanism, and every path can await an in-flight close — close
+              frame before socket teardown, no cross-mechanism races.
+            - Read-loop errors reliably reach the subscriber as OnError with the
+              original exception; previously they could race teardown and be swallowed
+              into a graceful completion.
+            - Removed the unsound public ObservableExtensions.FinallyAsync operator
+              (never fired on unsubscribe; could replace the stream error).
+            - HttpMachine.PCL 6.0.1: span-based, allocation-free handshake parsing;
+              case-insensitive header lookups; upstream HTTP conformance fixes.
 
             Notes
-            - A user-supplied TcpClient can only serve the first connection; leave
-              TcpClient unset when using reconnect patterns (Retry/Repeat). The console
-              sample and README have been updated accordingly.
+            - Publishing now uses NuGet Trusted Publishing (OIDC) instead of a
+              long-lived API key.
           draft: true
           prerelease: true

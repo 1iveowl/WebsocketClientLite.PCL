@@ -8,18 +8,18 @@
     <LangVersion>14.0</LangVersion>
     <PackageIcon>images\1iveowl-logo.png</PackageIcon>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <Version>9.0.2</Version>
+    <Version>9.1.0</Version>
     <Authors>Jasper Hedegaard Bojsen</Authors>
     <Copyright>1iveowl Development 2025</Copyright>
     <PackageProjectUrl>https://github.com/1iveowl/WebsocketClientLite.PCL</PackageProjectUrl>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <RepositoryUrl>https://github.com/1iveowl/WebsocketClientLite.PCL</RepositoryUrl>
-    <AssemblyVersion>9.0.2</AssemblyVersion>
-    <FileVersion>9.0.2</FileVersion>
+    <AssemblyVersion>9.1.0</AssemblyVersion>
+    <FileVersion>9.1.0</FileVersion>
     <Description>A simple and light WebSocket client.
 Can be set to ignore SSL/TLS server certificate issues (use with care!).
 Easily and effectively observe incoming message using Reactive Extensions (Rx)</Description>
-    <PackageReleaseNotes>v9.0.2: Fixes a race in the 9.0.1 close-on-unsubscribe feature where disposing the subscription immediately after WebsocketConnected could skip the close handshake. Includes all 9.0.1 changes: close handshake on unsubscribe; fail-fast handshake errors with the server's status code; send failures throw at the await site; final Disconnected status delivered; new NegotiatedSubprotocols property; NuGet packaging fix; reconnect requires leaving TcpClient unset. See README for details.</PackageReleaseNotes>
+    <PackageReleaseNotes>v9.1.0: Adds IAsyncDisposable — `await using` is now the preferred lifecycle; DisposeAsync awaits the RFC 6455 close handshake before releasing the socket, Dispose stays bounded best-effort. Connection teardown is unified: the close runs exactly once on every end path (completion, error, unsubscribe, dispose) via one shared mechanism. Read-loop errors now reliably reach the subscriber as OnError instead of racing teardown into a silent completion. Removes the public ObservableExtensions.FinallyAsync operator (unsound: never fired on unsubscribe). Upgrades HttpMachine.PCL to 6.0.1 (span-based, allocation-free handshake parsing; case-insensitive headers). See README for details.</PackageReleaseNotes>
     <EnableNETAnalyzers>true</EnableNETAnalyzers>
     <AnalysisMode>AllEnabledByDefault</AnalysisMode>
   </PropertyGroup>
@@ -36,7 +36,7 @@ Easily and effectively observe incoming message using Reactive Extensions (Rx)</
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="HttpMachine.PCL" Version="5.0.1" />
+    <PackageReference Include="HttpMachine.PCL" Version="6.0.1" />
     <PackageReference Include="System.Reactive" Version="6.1.0" />
     <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="10.0.8" Condition=" '$(TargetFramework)' == 'netstandard2.0' " />
     <PackageReference Include="System.Memory" Version="4.6.3" Condition=" '$(TargetFramework)' == 'netstandard2.0' " />  

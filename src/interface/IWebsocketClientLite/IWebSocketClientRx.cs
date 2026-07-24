@@ -8,9 +8,16 @@ using System.Threading;
 namespace IWebsocketClientLite;
 
 /// <summary>
-/// Websocket Client Lite
+/// Websocket Client Lite.
+/// <para>
+/// <see cref="IAsyncDisposable.DisposeAsync"/> is the graceful teardown: the
+/// RFC 6455 close handshake of any still-active connection is awaited before
+/// the socket is released (<c>await using</c> is the preferred lifecycle).
+/// <see cref="IDisposable.Dispose"/> is the abrupt counterpart: a bounded,
+/// best-effort close.
+/// </para>
 /// </summary>
-public interface IWebSocketClientRx : IDisposable
+public interface IWebSocketClientRx : IDisposable, IAsyncDisposable
 {
     /// <summary>
     /// Origin
