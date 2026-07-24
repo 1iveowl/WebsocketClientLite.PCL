@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Net.Security;
 using System.Net.Sockets;
@@ -25,12 +26,17 @@ namespace WebsocketClientLite.PCL;
 [Obsolete("This class is deprecated. Use WebsocketClientLite.ClientWebSocketRx instead. This class will be removed in a future version.")]
 public class MessageWebsocketRx(
     TcpClient? tcpClient,
-    bool hasTransferTcpSocketLifeCycleOwnership = false) : IMessageWebSocketRx
+    bool hasTransferTcpSocketLifeCycleOwnership = false) : IMessageWebSocketRx, IAsyncDisposable
 {
     internal TcpClient? TcpClient { get; private set; } = tcpClient;
     internal bool HasTransferSocketLifeCycleOwnership { get; private set; } = hasTransferTcpSocketLifeCycleOwnership;
 
     private ISender? _sender;
+
+    // Connections created by active subscriptions, tracked so DisposeAsync can
+    // give each one a graceful, awaited close handshake (and Dispose an abrupt
+    // bounded one). Mirrors ClientWebSocketRx.
+    private readonly ConcurrentDictionary<WebsocketService, byte> _activeConnections = new();
 
     /// <summary>
     /// Is Websocket client connected.
@@ -157,9 +163,14 @@ public class MessageWebsocketRx(
                             ValidateServerCertificate,
                             obsStatus,
                             this))
+                        .Do(ws => _activeConnections.TryAdd(ws, 0))
                         .Select(ws => Observable.FromAsync(ct => ConnectWebsocket(ws, ct))
                             .Concat()
-                            .Finally(() => ws.Dispose())
+                            .Finally(() =>
+                            {
+                                _activeConnections.TryRemove(ws, out _);
+                                ws.Dispose();
+                            })
                             .Subscribe(
                                 dataframe => { obsTuple.OnNext((dataframe, ConnectionStatus.DataframeReceived)); },
                                 ex => { obsTuple.OnError(ex); },
@@ -238,11 +249,42 @@ public class MessageWebsocketRx(
 
     protected virtual void Dispose(bool disposing)
     {
-        // No managed or unmanaged resources to release here.
+        if (disposing)
+        {
+            // Abrupt teardown of any still-active connection (bounded
+            // best-effort close handshake). Prefer DisposeAsync / `await using`
+            // for a fully awaited close.
+            foreach (var ws in _activeConnections.Keys)
+            {
+                if (_activeConnections.TryRemove(ws, out _))
+                {
+                    ws.Dispose();
+                }
+            }
+        }
     }
 
     public void Dispose()
     {
+        Dispose(true);
+        GC.SuppressFinalize(this);
+    }
+
+    /// <summary>
+    /// Disposes the client gracefully: the RFC 6455 close handshake of any
+    /// still-active connection is awaited (bounded internally) before the
+    /// underlying socket is released.
+    /// </summary>
+    public async ValueTask DisposeAsync()
+    {
+        foreach (var ws in _activeConnections.Keys)
+        {
+            if (_activeConnections.TryRemove(ws, out _))
+            {
+                await ws.DisposeAsync().ConfigureAwait(false);
+            }
+        }
+
         Dispose(true);
         GC.SuppressFinalize(this);
     }

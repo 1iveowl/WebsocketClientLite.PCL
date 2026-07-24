@@ -20,15 +20,10 @@ internal class HandshakeParser(
     internal IEnumerable<string>? SubprotocolAcceptedNames { get; private set; }
 
     internal bool Parse(
-        byte[]? byteArray,
+        ReadOnlySpan<byte> bytes,
         IEnumerable<string>? subProtocols)
     {
-        if (byteArray is null)
-        {
-            return false;
-        }
-
-        _parserHandler.Execute(byteArray);
+        _parserHandler.Execute(bytes);
 
         if (_parserDelegate.HttpRequestResponse is not null
             && _parserDelegate.HttpRequestResponse.IsEndOfMessage)
@@ -38,10 +33,13 @@ internal class HandshakeParser(
                 if (subProtocols is not null 
                     && _parserDelegate?.HttpRequestResponse?.Headers is not null)
                 {
+                    // Natural casing: header lookups are case-insensitive as of
+                    // HttpMachine 6.0, so no dependency on the parser's header
+                    // name normalization remains.
                     if (_parserDelegate
                         .HttpRequestResponse
                         .Headers
-                        .TryGetValue("SEC-WEBSOCKET-PROTOCOL", out var subprotocolAcceptedNames))
+                        .TryGetValue("Sec-WebSocket-Protocol", out var subprotocolAcceptedNames))
                     {
                         // Materialize: evaluated once, and consumers (the public
                         // NegotiatedSubprotocols property) get a stable snapshot.

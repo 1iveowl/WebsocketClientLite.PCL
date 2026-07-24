@@ -97,7 +97,9 @@ internal class TcpConnectionService(
     /// per-connection scratch buffer, avoiding a small allocation per header
     /// field. The returned array is only valid until the next read, and only the
     /// first <paramref name="count"/> bytes are meaningful — callers must consume
-    /// it immediately (the frame parser does).
+    /// it immediately (the frame parser and the handshake read loop do). Reads
+    /// on a connection are strictly sequential (handshake first, then a single
+    /// reader loop), so one scratch per connection is safe.
     /// </summary>
     internal async ValueTask<byte[]?> ReadHeaderBytesAsync(int count, CancellationToken ct) =>
         await TryFillAsync(_headerScratch, count, ct).ConfigureAwait(false) ? _headerScratch : null;

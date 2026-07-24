@@ -11,13 +11,12 @@ using System.Reactive.Threading.Tasks;
 using System.Security.Cryptography.X509Certificates;
 using System.Security.Authentication;
 using IWebsocketClientLite;
-using WebsocketClientLite.Extension;
 using WebsocketClientLite.Model;
 using WebsocketClientLite.CustomException;
 
 namespace WebsocketClientLite.Service;
 
-internal class WebsocketConnectionHandler : IDisposable
+internal class WebsocketConnectionHandler : IDisposable, IAsyncDisposable
 {
     private readonly TcpConnectionService _tcpConnectionService;
     private readonly WebsocketParserHandler _websocketParserHandler;
@@ -25,7 +24,15 @@ internal class WebsocketConnectionHandler : IDisposable
     private readonly Func<Stream, Action<ConnectionStatus, Exception?>, WebsocketSenderHandler> _createWebsocketSenderFunc;
 
     private IDisposable? _clientPingDisposable;
-    private Func<Task>? _closeHandshakeOnce;
+
+    // Exactly-once close handshake shared by every teardown path (pipeline
+    // completion/error, unsubscribe, Dispose, DisposeAsync). Backed by a
+    // Lazy<Task>, so all callers get the SAME task: whichever path fires first
+    // starts the close, every other path sees it via IsValueCreated, and
+    // awaiting paths await its completion — guaranteeing the close frame gets
+    // its chance to go out before the socket is torn down, without racing an
+    // in-flight close.
+    private Lazy<Task>? _closeHandshakeOnce;
 
     internal WebsocketConnectionHandler(
         TcpConnectionService tcpConnectionService,
@@ -109,36 +116,94 @@ internal class WebsocketConnectionHandler : IDisposable
         }
 
         // The close handshake must run exactly once, whichever teardown path
-        // fires first: completion/error (via FinallyAsync below) or disposal
-        // (via Dispose(), reached on unsubscribe through ws.Dispose()). The hook
-        // is registered BEFORE WebsocketConnected is emitted so even a subscriber
-        // that disposes immediately upon "connected" — possibly before the inner
-        // pipeline subscription exists — still triggers the close handshake.
-        int closeHandshakeStarted = 0;
+        // fires first: pipeline completion/error (the finally below), or disposal
+        // (Dispose/DisposeAsync, reached on unsubscribe through ws.Dispose()).
+        // Lazy hands every path the same task, so "exactly once" and "await the
+        // in-flight close" come from one mechanism. The hook is registered BEFORE
+        // WebsocketConnected is emitted so even a subscriber that disposes
+        // immediately upon "connected" — possibly before the pipeline
+        // subscription exists — still triggers the close handshake.
+        // Task.Run keeps the factory side-effect-free and instantly returning:
+        // DisconnectWebsocket must NOT start synchronously inside the Lazy
+        // factory, because on a fast (e.g. loopback) socket the whole send —
+        // including the Disconnected status callback and the unsubscribe
+        // cascade it triggers — would run while the Lazy lock is held and
+        // IsValueCreated is still false, deadlocking a re-entrant Dispose. It
+        // also keeps the close off the caller's synchronization context.
+        var closeOnce = new Lazy<Task>(
+            () => Task.Run(() => DisconnectWebsocket(sender)),
+            LazyThreadSafetyMode.ExecutionAndPublication);
 
-        async Task CloseOnceAsync()
-        {
-            if (Interlocked.Exchange(ref closeHandshakeStarted, 1) == 0)
-            {
-                await DisconnectWebsocket(sender).ConfigureAwait(false);
-            }
-        }
+        Task CloseOnceAsync() => closeOnce.Value;
 
-        _closeHandshakeOnce = CloseOnceAsync;
+        _closeHandshakeOnce = closeOnce;
 
         _connectionStatusAction(ConnectionStatus.WebsocketConnected, null);
 
-        return Observable.Create<IDataframe?>(dataframeObserver =>
-            // DataframeObservable emits every message from a single
-            // subscription, so no .Repeat() (and its per-message re-subscription)
-            // is needed.
-            _websocketParserHandler.DataframeObservable()
-                .SelectMany(async dataframe =>
-                    // Process control frames and return data frames
-                    await IncomingControlFrameHandler(dataframe, dataframeObserver, cancellationToken).ConfigureAwait(false))
-                .Where(dataframe => dataframe is not null)
-                .Subscribe(dataframeObserver))
-        .FinallyAsync(CloseOnceAsync);
+        // All three end paths — source completion, source error, and unsubscribe
+        // (the token fires on disposal) — converge on the finally below, so the
+        // close handshake runs before the terminal event reaches the downstream
+        // teardown (ws.Dispose) on the completion path, while the disposal paths
+        // are ordered by Dispose/DisposeAsync waiting on the same shared task.
+        return Observable.Create<IDataframe?>(async (dataframeObserver, ct) =>
+        {
+            Exception? sourceError = null;
+
+            try
+            {
+                var terminated = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+                using var cancellationRegistration = ct.Register(() => terminated.TrySetResult(true));
+
+                // DataframeObservable emits every message from a single
+                // subscription, so no .Repeat() (and its per-message
+                // re-subscription) is needed.
+                using var subscription = _websocketParserHandler.DataframeObservable()
+                    .SelectMany(async dataframe =>
+                        // Process control frames and return data frames
+                        await IncomingControlFrameHandler(dataframe, cancellationToken).ConfigureAwait(false))
+                    .Where(dataframe => dataframe is not null)
+                    .Subscribe(
+                        dataframeObserver.OnNext,
+                        ex => { sourceError = ex; terminated.TrySetResult(true); },
+                        () => terminated.TrySetResult(true));
+
+                await terminated.Task.ConfigureAwait(false);
+
+                // Surface the error BEFORE the close handshake, and through the
+                // STATUS channel (Aborted -> OnError): the subscriber's stream
+                // is fed by two independent branches (status and dataframes)
+                // with no ordering between them, so an error forwarded only on
+                // the dataframe branch races the status stream's completion
+                // (Disconnected -> OnCompleted, emitted inside the close) and
+                // can be swallowed. Routing it via the status observer makes
+                // the error causally precede anything the close produces. The
+                // dataframe-branch OnError below is belt-and-braces; a second
+                // terminal on the subscriber is suppressed by Rx.
+                if (sourceError is not null)
+                {
+                    _connectionStatusAction(ConnectionStatus.Aborted, sourceError);
+                    dataframeObserver.OnError(sourceError);
+                }
+            }
+            finally
+            {
+                // Completion/error paths: run (or await) the close here, before
+                // the terminal event reaches the downstream teardown. On the
+                // unsubscribe path (token cancelled) the disposal cascade owns
+                // the close instead — Dispose/DisposeAsync start it and wait
+                // before touching the socket — so starting it here as well
+                // would only race that cascade.
+                if (!ct.IsCancellationRequested)
+                {
+                    await CloseOnceAsync().ConfigureAwait(false);
+                }
+            }
+
+            if (sourceError is null && !ct.IsCancellationRequested)
+            {
+                dataframeObserver.OnCompleted();
+            }
+        });
 
         IObservable<Unit> SendClientPing(string? message) =>
             Observable.Interval(clientPingTimeSpan)
@@ -146,8 +211,7 @@ internal class WebsocketConnectionHandler : IDisposable
             .Concat();
 
         async Task<Dataframe?> IncomingControlFrameHandler(
-            Dataframe? dataframe, 
-            IObserver<Dataframe?> obs, 
+            Dataframe? dataframe,
             CancellationToken ct)
         {
             return dataframe?.Opcode switch
@@ -194,8 +258,10 @@ internal class WebsocketConnectionHandler : IDisposable
 
             Dataframe? HandleClose()
             {
+                // No explicit completion here: the read loop stops right after a
+                // Close frame (both the main loop and reassembly), so the source
+                // observable completes and the teardown finally takes over.
                 _connectionStatusAction(ConnectionStatus.Close, null);
-                obs.OnCompleted();
                 return null;
             }
         }
@@ -227,6 +293,28 @@ internal class WebsocketConnectionHandler : IDisposable
         }
     }
 
+    /// <summary>
+    /// Graceful teardown: awaits the (shared, exactly-once) close handshake —
+    /// starting it if no other path has yet — and only then releases the parser
+    /// and TCP resources. The close itself is bounded internally
+    /// (<see cref="DisconnectWebsocket"/> times out and never throws), so this
+    /// completes in finite time.
+    /// </summary>
+    public async ValueTask DisposeAsync()
+    {
+        // Stop the ping timer before saying goodbye.
+        _clientPingDisposable?.Dispose();
+
+        var closeOnce = _closeHandshakeOnce;
+        if (closeOnce is not null)
+        {
+            await closeOnce.Value.ConfigureAwait(false);
+        }
+
+        _websocketParserHandler?.Dispose();
+        _tcpConnectionService?.Dispose();
+    }
+
     [SuppressMessage("Design", "CA1031:Do not catch general exception types",
         Justification = "Dispose must never throw. The guarded block is the bounded best-effort close " +
                         "handshake; any failure there is irrelevant because the connection is being torn down.")]
@@ -235,19 +323,30 @@ internal class WebsocketConnectionHandler : IDisposable
         // Stop the ping timer before saying goodbye.
         _clientPingDisposable?.Dispose();
 
-        // Unsubscribe path: ws.Dispose() (the outer Finally) is the one teardown
-        // hook guaranteed to run no matter how early the subscriber disposes, so
-        // the best-effort close handshake lives here. The stream is still alive —
-        // TcpConnectionService is disposed below, after the close frame goes out.
-        // Bounded so disposal cannot hang; Task.Run avoids deadlocking callers
-        // disposing from a synchronization context (e.g. UI). No-op when the
-        // close already ran via the completion/error path or never connected.
-        var closeOnce = Interlocked.Exchange(ref _closeHandshakeOnce, null);
-        if (closeOnce is not null)
+        // Abrupt (bounded best-effort) teardown: ws.Dispose() (the outer
+        // Finally) is the one hook guaranteed to run no matter how early the
+        // subscriber disposes, so the close handshake is started here, BEFORE
+        // TcpConnectionService is disposed below. Bounded so disposal cannot
+        // hang; the close runs on the thread pool (the Lazy factory queues it),
+        // so callers disposing from a synchronization context (e.g. UI) cannot
+        // deadlock. Prefer DisposeAsync for a fully awaited close.
+        //
+        // Only start-and-wait when no other path has started the close yet
+        // (IsValueCreated). When it is already in flight, the frame send is
+        // causally ordered before whatever terminal event led here — and this
+        // Dispose may in fact be re-entered from the close task's own
+        // completion cascade (Disconnected status -> stream completion ->
+        // unsubscribe -> ws.Dispose), where waiting would deadlock until the
+        // bound expires.
+        var closeOnce = _closeHandshakeOnce;
+        if (closeOnce is not null && !closeOnce.IsValueCreated)
         {
             try
             {
-                var closeTask = Task.Run(closeOnce);
+                // Starting the Lazy is cheap and non-blocking (the factory just
+                // queues the close to the thread pool), so the bound applies to
+                // the close itself.
+                var closeTask = closeOnce.Value;
                 if (!closeTask.Wait(TimeSpan.FromSeconds(3)))
                 {
                     _ = closeTask.ContinueWith(t => _ = t.Exception, TaskScheduler.Default);

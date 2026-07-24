@@ -71,10 +71,12 @@ internal class HandshakeHandler(
         {
             // Read the handshake response one byte at a time so the parser stops
             // exactly at the end of the HTTP response and does not consume bytes
-            // belonging to the first WebSocket frame(s).
+            // belonging to the first WebSocket frame(s). The shared header
+            // scratch buffer plus the span-based Execute keep the loop free of
+            // per-byte allocations.
             while (true)
             {
-                var bytes = await tcpConnectionService.ReadBytesFromStream(1, ct).ConfigureAwait(false);
+                var bytes = await tcpConnectionService.ReadHeaderBytesAsync(1, ct).ConfigureAwait(false);
 
                 if (bytes is null)
                 {
@@ -82,7 +84,7 @@ internal class HandshakeHandler(
                         "Connection closed before the WebSocket handshake completed.");
                 }
 
-                if (handshakeParser.Parse(bytes, subprotocols))
+                if (handshakeParser.Parse(bytes.AsSpan(0, 1), subprotocols))
                 {
                     break;
                 }
