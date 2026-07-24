@@ -92,11 +92,14 @@ jobs:
       # short-lived NuGet.org API key. Requires a Trusted Publishing policy on
       # NuGet.org (owner profile -> Trusted Publishing) matching this repository
       # and workflow file name (build.yml). No long-lived NUGET_TOKEN secret.
+      # The user is the NuGet.org profile that owns the Trusted Publishing
+      # policies. A NuGet.org username is public, so it lives inline rather
+      # than in a secret.
       - name: NuGet login (Trusted Publishing)
         id: nuget-login
         uses: NuGet/login@v1
         with:
-          user: ${{ secrets.NUGET_USER }}
+          user: 1iveowl
 
       - name: Publish WebsocketClientLite to Nuget.Org
         run: dotnet nuget push WebsocketClientLite.PCL.*.nupkg --api-key ${{ steps.nuget-login.outputs.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json --skip-duplicate
