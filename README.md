@@ -1,16 +1,15 @@
 # WebSocket Client Lite (Rx)
 
-[![NuGet Badge](https://img.shields.io/nuget/v/WebsocketClientLite.PCL)](https://www.nuget.org/packages/WebsocketClientLite.PCL)
+[![NuGet](https://img.shields.io/nuget/v/WebsocketClientLite.PCL?logo=nuget&label=WebsocketClientLite.PCL)](https://www.nuget.org/packages/WebsocketClientLite.PCL)
+[![Downloads](https://img.shields.io/nuget/dt/WebsocketClientLite.PCL?logo=nuget&color=blue)](https://www.nuget.org/packages/WebsocketClientLite.PCL)
+[![CI](https://github.com/1iveowl/WebsocketClientLite.PCL/actions/workflows/ci.yml/badge.svg)](https://github.com/1iveowl/WebsocketClientLite.PCL/actions/workflows/ci.yml)
+[![Publish](https://github.com/1iveowl/WebsocketClientLite.PCL/actions/workflows/build.yml/badge.svg)](https://github.com/1iveowl/WebsocketClientLite.PCL/actions/workflows/build.yml)
+[![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](License.md)
 
-[![.NET Standard](http://img.shields.io/badge/.NET_Standard-v2.0-red.svg)](https://docs.microsoft.com/da-dk/dotnet/articles/standard/library)[![.NET Standard](http://img.shields.io/badge/.NET_Standard-v2.1-red.svg)](https://docs.microsoft.com/da-dk/dotnet/articles/standard/library)
-
-[![.NET 8](http://img.shields.io/badge/.NET-v8.0-blue.svg)](https://dotnet.microsoft.com/download/dotnet/8.0)[![.NET 9](http://img.shields.io/badge/.NET-v9.0-blue.svg)](https://dotnet.microsoft.com/download/dotnet/9.0)
-[![.NET 10](http://img.shields.io/badge/.NET-v10.0-blue.svg)](https://dotnet.microsoft.com/download/dotnet/10.0)
-
-[![System.Reactive](http://img.shields.io/badge/Rx-v6.1.0-ff69b4.svg)](http://reactivex.io/)
-
-![CI](https://github.com/1iveowl/WebsocketClientLite.PCL/actions/workflows/ci.yml/badge.svg)
-![Publish](https://github.com/1iveowl/WebsocketClientLite.PCL/actions/workflows/build.yml/badge.svg)
+[![.NET](https://img.shields.io/badge/.NET-8.0%20%7C%209.0%20%7C%2010.0-512BD4?logo=dotnet&logoColor=white)](https://dotnet.microsoft.com/)
+[![.NET Standard](https://img.shields.io/badge/.NET%20Standard-2.0%20%7C%202.1-red.svg)](https://learn.microsoft.com/dotnet/standard/net-standard)
+[![System.Reactive](https://img.shields.io/badge/Rx-6.1-ff69b4.svg)](https://reactivex.io/)
+[![RFC 6455](https://img.shields.io/badge/WebSocket-RFC%206455-2563EB.svg)](https://tools.ietf.org/html/rfc6455)
 
 *Please star this project if you find it useful. Thank you.*
 
