@@ -132,3 +132,20 @@ accepted-gap disposition alongside removal of the same finally call (596).
 The aggregate correctly rejected the report until that disposition was recorded.
 Final captures are refreshed after this disposition change; prior receipts are
 not relabeled with the new source identity.
+
+A subsequent run classified critical mutant 627 as Timeout instead of Killed,
+and the gate rejected it. In an isolated source copy, the same removal failed the
+named parser-readiness assertion in 89 ms (the companion read-failure case passed).
+The test detects the defect; the Stryker timeout is not equivalent evidence.
+The selected test set also includes loopback tests whose mutated peer waits can
+consume five seconds each before the controlled assertion runs.
+
+The final configuration therefore sets `additional-timeout` to **30000 ms**.
+[Stryker's per-mutant timeout calculation](https://stryker-mutator.io/docs/stryker-net/configuration/#additional-timeout-number)
+uses the covering tests' baseline duration, with only 3000 ms additional time by
+default. Thirty seconds lets the 15-second diagnostic waits and bounded cleanup
+finish before cancellation by Stryker, with margin for mutated five-second peer
+waits. This increases the opportunity to observe assertions; it does not relabel
+any previous Timeout or relax the requirement for all seven critical mutants to
+be Killed. The overall command/job budgets remain 30/40 minutes and the final
+receipt measures the completed run with this configuration.
