@@ -4,6 +4,8 @@ The library calls C# generated from Dafny for synchronous protocol decisions and
 
 This work implements the five stages in the [adoption plan](../docs/dafny-pdd-plan.md): header validation, fragmentation, outgoing framing/masking, handshake/Close predicates, and integration checks. It does not establish full RFC conformance or prove the asynchronous client.
 
+The proposed [PDD phase 2 plan for 10.2.0.0](../docs/pdd-phase-2-plan.md) adds requirement traceability, repeatable mutation checks, boundary review, CI receipts and controlled asynchronous tests, starting with Close handling.
+
 ## Reading the proof boundary
 
 Dafny verifies the implementations and mathematical lemmas in our `.dfy` source. The compiler translates executable implementations into C#; it omits proof-only lemmas. Dafny does not separately verify the generated C# text, and it does not verify any of our handwritten C# implementations or test harnesses. We trust the verifier, solver, compiler and runtimes, and test the compiled integration.
