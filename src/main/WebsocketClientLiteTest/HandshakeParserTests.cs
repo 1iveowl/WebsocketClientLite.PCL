@@ -24,7 +24,7 @@ public class HandshakeParserTests
             states.Add, _ => { }, () => { });
         var parserDelegate = new HandshakeParserDelegate(observer);
         var parserHandler = new HttpCombinedParser(parserDelegate);
-        var parser = new HandshakeParser(parserHandler, parserDelegate, (status, _) => statuses.Add(status));
+        var parser = new HandshakeParser(parserHandler, parserDelegate, (status, _) => statuses.Add(status), "s3pPLMBiTxaQ9kYGzzhZRbK+xOo=");
         return (parser, statuses, states);
     }
 
@@ -82,6 +82,7 @@ public class HandshakeParserTests
             "HTTP/1.1 101 Switching Protocols",
             "Upgrade: websocket",
             "Connection: Upgrade",
+            "Sec-WebSocket-Accept: s3pPLMBiTxaQ9kYGzzhZRbK+xOo=",
             "Sec-WebSocket-Protocol: chat"), new[] { "chat" });
 
         Assert.True(done);
@@ -103,7 +104,8 @@ public class HandshakeParserTests
         var done = parser.Parse(Response(
             "HTTP/1.1 101 Switching Protocols",
             "Upgrade: websocket",
-            "Connection: Upgrade"), null);
+            "Connection: Upgrade",
+            "Sec-WebSocket-Accept: s3pPLMBiTxaQ9kYGzzhZRbK+xOo="), null);
 
         Assert.True(done);
         Assert.Contains(states, s => s.state == HandshakeStateKind.HandshakeCompletedSuccessfully);
@@ -138,6 +140,7 @@ public class HandshakeParserTests
             "HTTP/1.1 101 Switching Protocols",
             "Upgrade: websocket",
             "Connection: Upgrade",
+            "Sec-WebSocket-Accept: s3pPLMBiTxaQ9kYGzzhZRbK+xOo=",
             "sec-websocket-protocol: chat"), new[] { "chat" });
 
         Assert.True(done);
@@ -154,9 +157,46 @@ public class HandshakeParserTests
             "HTTP/1.1 101 Switching Protocols",
             "Upgrade: websocket",
             "Connection: Upgrade",
+            "Sec-WebSocket-Accept: s3pPLMBiTxaQ9kYGzzhZRbK+xOo=",
             "Sec-WebSocket-Protocol: superchat"), new[] { "chat" });
 
         // Server selected a subprotocol the client never offered.
         Assert.Contains(ConnectionStatus.Aborted, statuses);
     }
+    [Theory]
+    [InlineData("Sec-WebSocket-Accept: wrong")]
+    [InlineData("Sec-WebSocket-Extensions: permessage-deflate")]
+    [InlineData("Sec-WebSocket-Protocol: unoffered")]
+    [InlineData("Sec-WebSocket-Protocol: chat, other")]
+    public void InvalidNegotiationNeverEmitsSuccess(string extra)
+    {
+        var (parser, _, states) = Create();
+        parser.Parse(Response("HTTP/1.1 101 Switching Protocols", "Upgrade: websocket", "Connection: keep-alive, Upgrade",
+            "Sec-WebSocket-Accept: s3pPLMBiTxaQ9kYGzzhZRbK+xOo=", extra), new[] { "chat", "other" });
+        Assert.Equal(HandshakeStateKind.HandshakeFailed, Assert.Single(states).state);
+    }
+
+    [Theory]
+    [InlineData("Upgrade: websocket", "Connection: close")]
+    [InlineData("Upgrade: h2c", "Connection: Upgrade")]
+    public void MissingUpgradeTokensFail(string upgrade, string connection)
+    {
+        var (parser, _, states) = Create();
+        parser.Parse(Response("HTTP/1.1 101 Switching Protocols", upgrade, connection,
+            "Sec-WebSocket-Accept: s3pPLMBiTxaQ9kYGzzhZRbK+xOo="), null);
+        Assert.Equal(HandshakeStateKind.HandshakeFailed, Assert.Single(states).state);
+    }
+
+    [Fact]
+    public void MissingAcceptFailsAndOmittedSubprotocolIsAllowed()
+    {
+        var (parser, _, states) = Create();
+        parser.Parse(Response("HTTP/1.1 101 Switching Protocols", "Upgrade: websocket", "Connection: Upgrade"), null);
+        Assert.Equal(HandshakeStateKind.HandshakeFailed, Assert.Single(states).state);
+        (parser, _, states) = Create();
+        parser.Parse(Response("HTTP/1.1 101 Switching Protocols", "Upgrade: websocket", "Connection: Upgrade",
+            "Sec-WebSocket-Accept: s3pPLMBiTxaQ9kYGzzhZRbK+xOo="), new[] { "chat" });
+        Assert.Equal(HandshakeStateKind.HandshakeCompletedSuccessfully, Assert.Single(states).state);
+    }
+
 }

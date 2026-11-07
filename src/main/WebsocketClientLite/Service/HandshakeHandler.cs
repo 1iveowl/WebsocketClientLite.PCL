@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using HttpMachine;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -31,15 +32,11 @@ internal class HandshakeHandler(
         IDictionary<string, string>? headers = null,
         IEnumerable<string>? subprotocols = null)
     {
+        subprotocols = subprotocols?.ToArray();
         return Observable.Create<(HandshakeStateKind handshakeState, WebsocketClientLiteException? ex)>(async obs =>
         {
             using var parserDelegate = new HandshakeParserDelegate(obs);
             using var parserHandler = new HttpCombinedParser(parserDelegate);
-
-            var handshakeParser = new HandshakeParser(
-                parserHandler,
-                parserDelegate,
-                connectionStatusAction);
 
             var sendResult = await SendHandshake(uri, sender, ct, origin, headers, subprotocols).ConfigureAwait(false);
 
@@ -50,6 +47,9 @@ internal class HandshakeHandler(
                 obs.OnCompleted();
                 return;
             }
+
+            var handshakeParser = new HandshakeParser(parserHandler, parserDelegate,
+                connectionStatusAction, sender.ExpectedAccept!);
 
             await WaitForHandshake(handshakeParser).ConfigureAwait(false);
 

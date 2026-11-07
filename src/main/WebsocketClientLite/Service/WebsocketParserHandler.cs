@@ -2,143 +2,76 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Reactive.Linq;
-using System.Threading.Tasks;
-using System.Threading;
 using IWebsocketClientLite;
 using WebsocketClientLite.CustomException;
+using WebsocketClientLite.Helper;
 using WebsocketClientLite.Model;
-using static WebsocketClientLite.Helper.DataframeParsing;
-
+using Protocol = WebsocketClientLite.VerifiedProtocol.Protocol;
 
 namespace WebsocketClientLite.Service;
 
-internal class WebsocketParserHandler : IDisposable
+internal class WebsocketParserHandler(TcpConnectionService tcpConnectionService) : IDisposable
 {
-    private readonly TcpConnectionService _tcpConnectionService;
-
-    internal WebsocketParserHandler(
-        TcpConnectionService tcpConnectionService)
-    {
-        _tcpConnectionService = tcpConnectionService;
-    }
-
-    // A single long-lived subscription reads frames in a loop and emits one
-    // element per (reassembled) message. The token is signaled when the
-    // subscriber unsubscribes, so there is no per-message re-subscription and no
-    // per-subscription CancellationTokenSource to allocate.
     [SuppressMessage("Design", "CA1031:Do not catch general exception types",
-        Justification = "Rx contract: any failure in the read loop must be routed to the observer via OnError, " +
-                        "not escape the async subscribe body. Catching specific types would let unanticipated " +
-                        "exceptions kill the process instead of erroring the subscription.")]
+        Justification = "All read-loop failures must be delivered through OnError.")]
     internal IObservable<Dataframe?> DataframeObservable() =>
         Observable.Create<Dataframe?>(async (obs, token) =>
         {
+            byte state = 0;
+            uint total = 0;
+            Dataframe? first = null;
+            var segments = new List<byte[]>();
             try
             {
                 while (!token.IsCancellationRequested)
                 {
-                    var dataframe = await _tcpConnectionService.ReadDataframeAsync(token).ConfigureAwait(false);
-                    if (dataframe is null)
+                    var frame = await tcpConnectionService.ReadDataframeAsync(token).ConfigureAwait(false);
+                    if (frame is null) break;
+                    var payload = frame.Payload ?? Array.Empty<byte>();
+                    Protocol.Step(state, (byte)frame.Opcode, frame.FIN, total, (uint)payload.Length,
+                        (uint)tcpConnectionService.MaxFrameSize, out bool ok, out byte next,
+                        out uint size, out bool emit);
+                    if (!ok) throw new WebsocketClientLiteException("Protocol error: invalid fragmentation sequence or message exceeds the configured maximum.");
+
+                    if ((byte)frame.Opcode >= 8)
                     {
-                        break; // stream closed or cancelled
+                        state = next;
+                        total = size;
+                        obs.OnNext(frame);
+                        if (state == 8) break;
+                        continue;
                     }
 
-                    if (!dataframe.FIN)
+                    if (state == 0) first = frame;
+                    if (payload.Length > 0) segments.Add(payload);
+                    state = next;
+                    total = size;
+                    if (!emit) continue;
+
+                    byte[] merged;
+                    if (segments.Count == 0) merged = Array.Empty<byte>();
+                    else if (segments.Count == 1) merged = segments[0];
+                    else
                     {
-                        dataframe = await Reassemble(dataframe, obs, token).ConfigureAwait(false);
-                        if (dataframe is null)
+                        merged = new byte[(int)total];
+                        int offset = 0;
+                        foreach (var segment in segments)
                         {
-                            break;
+                            Buffer.BlockCopy(segment, 0, merged, offset, segment.Length);
+                            offset = checked(offset + segment.Length);
                         }
                     }
-
-                    obs.OnNext(dataframe);
-
-                    // After a Close frame the server will tear down the TCP
-                    // connection; stop reading instead of running into EOF.
-                    if (dataframe.Opcode is OpcodeKind.Close)
-                    {
-                        break;
-                    }
+                    var message = first! with { Payload = merged, FIN = true, Length = total, Fragment = FragmentKind.None };
+                    if (message.Opcode == OpcodeKind.Text) ProtocolPayload.ValidateText(merged);
+                    obs.OnNext(message);
+                    segments.Clear();
+                    first = null;
+                    total = 0;
                 }
-
                 obs.OnCompleted();
             }
-            catch (Exception ex)
-            {
-                obs.OnError(ex);
-            }
+            catch (Exception ex) { obs.OnError(ex); }
         });
 
-    // Reassembles a fragmented message by collecting payload segments and
-    // concatenating them once. Control frames received between fragments are
-    // emitted directly and do not interrupt reassembly (RFC 6455 §5.4).
-    private async Task<Dataframe?> Reassemble(Dataframe first, IObserver<Dataframe?> obs, CancellationToken token)
-    {
-        var segments = new List<byte[]>();
-        long total = 0;
-
-        if (first.Payload is { Length: > 0 })
-        {
-            segments.Add(first.Payload);
-            total = first.Payload.Length;
-        }
-
-        var current = first;
-        while (!current.FIN)
-        {
-            var next = await _tcpConnectionService.ReadDataframeAsync(token).ConfigureAwait(false);
-            if (next is null)
-            {
-                // Stream closed before the message completed.
-                return null;
-            }
-
-            if (next.Opcode is OpcodeKind.Continuation or OpcodeKind.Text or OpcodeKind.Binary)
-            {
-                if (next.Payload is { Length: > 0 })
-                {
-                    total += next.Payload.Length;
-                    if (total > _tcpConnectionService.MaxFrameSize)
-                    {
-                        throw new WebsocketClientLiteException(
-                            $"Reassembled message size ({total} bytes) exceeds the configured maximum of {_tcpConnectionService.MaxFrameSize} bytes.");
-                    }
-
-                    segments.Add(next.Payload);
-                }
-
-                current = next;
-            }
-            else
-            {
-                // Interleaved control frame: hand it downstream.
-                obs.OnNext(next);
-
-                // A Close aborts the message — it can never complete, and the
-                // connection is about to go away.
-                if (next.Opcode is OpcodeKind.Close)
-                {
-                    return null;
-                }
-            }
-        }
-
-        var merged = new byte[(int)total];
-        int offset = 0;
-        foreach (var segment in segments)
-        {
-            Buffer.BlockCopy(segment, 0, merged, offset, segment.Length);
-            offset += segment.Length;
-        }
-
-        return first with { Payload = merged, FIN = true };
-    }
-
-    public void Dispose()
-    {
-        // No instance-level resources to release here: the TcpConnectionService
-        // is owned and disposed by WebsocketService, and the subscription's
-        // cancellation is handled by the observable's own token.
-    }
+    public void Dispose() { }
 }
