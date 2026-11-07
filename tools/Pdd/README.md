@@ -97,7 +97,9 @@ Intentional differences are explicit:
   identity with unchanged tooling. NUL-delimited Git paths support unusual names.
 - JSON duplicate keys are rejected consistently, including receipt and report
   input. Duplicate mutation experiment IDs are rejected instead of taking the
-  last record. Evidence log paths cannot escape their job directory.
+  last record. Evidence log paths cannot escape their job directory. Verifier
+  version records must identify the pinned versions; failed probes and explicit
+  timeout/interruption/launch-error flags invalidate claimed mutation success.
 - A proof record claiming `passed` with a nonzero exit or missing execution/log
   evidence is changed to `failed` on the obligation too. Previously the overall
   gate failed but the proof obligation could still claim success.
@@ -125,11 +127,11 @@ byte-for-byte generated-source check, baseline plus all five targeted mutations,
 same evidence after excluding `created_at`; all six live Dafny classifications
 also matched. All 38 original Python tests passed before their removal.
 
-The C# suite has 116 cases, including the original failure modes, fixture semantic
+The C# suite has 119 cases, including the original failure modes, fixture semantic
 comparisons and real timeout/SIGTERM cleanup of descendants, orphaned children
-and nested sessions. The implementation is 1,119 C# lines and tests are 642 C#
+and nested sessions. The implementation is 1,128 C# lines and tests are 657 C#
 lines (`wc -l tools/Pdd/*.cs tools/Pdd.Tests/*.cs`, including whitespace/comments,
-excluding generated `obj/` code and JSON/TRX/log data). That is about 33% more
+excluding generated `obj/` code and JSON/TRX/log data). That is about 34% more
 implementation text than the 842-line Python baseline; the 141-line shared model
 and JSON helper file, explicit CLI and process/cancellation handling account for
 most of the increase. There are exactly two projects and no new console package

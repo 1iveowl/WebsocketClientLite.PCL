@@ -142,6 +142,14 @@ public sealed partial class Evidence
             {
                 mutations = Read(Path.Combine(directory, "protocol/mutations/results.json")).AsObject();
                 var versions = Read(Path.Combine(directory, "protocol/mutations/tool-versions.json"));
+                foreach (var (name, version) in new[] { ("dafny", "4.11.0"), ("z3", "4.12.1") })
+                {
+                    var probe = versions[name];
+                    Require(probe is JsonObject && S(probe, "stdout").Contains(version), "missing or mismatched verifier version evidence");
+                    if (probe!["exit_code"] is { } exit)
+                        Require(exit.ToString() == "0", "failed verifier version probe");
+                    Require(probe["timed_out"]?.GetValue<bool>() != true && probe["interrupted"]?.GetValue<bool>() != true && probe["launch_error"] is null, "incomplete verifier version probe");
+                }
                 jobs["protocol"]!["tools"]!["verifier"] = versions;
                 var hashes = mutations["source_hashes"]!.AsObject();
                 Require(hashes.Select(p => p.Key).ToHashSet().SetEquals(["verification/Masking.dfy", "verification/Protocol.dfy"]), "missing mutation source hashes");
@@ -150,6 +158,7 @@ public sealed partial class Evidence
                 foreach (var experiment in mutations["experiments"]!.AsArray())
                 {
                     Require(experiment is JsonObject, "invalid mutation experiment");
+                    Require(experiment!["timed_out"]?.GetValue<bool>() != true && experiment["interrupted"]?.GetValue<bool>() != true && experiment["launch_error"] is null, "incomplete mutation execution");
                     if (experiment!["matched_clauses"] is { } clauses)
                         Require(clauses is JsonArray list && list.All(c => c is JsonValue value && value.TryGetValue<string>(out _)), "invalid matched clauses");
                 }

@@ -99,6 +99,9 @@ public class ReceiptTests
     [InlineData("missing-definition")]
     [InlineData("nan-coverage")]
     [InlineData("malformed-clauses")]
+    [InlineData("interrupted-mutation")]
+    [InlineData("malformed-versions")]
+    [InlineData("wrong-version")]
     public void AdditionalFailClosedCases(string mode)
     {
         using var tree = new TemporaryTree();
@@ -113,6 +116,18 @@ public class ReceiptTests
                 break;
             case "malformed-trx":
                 File.WriteAllText(trx, "<");
+                break;
+            case "interrupted-mutation":
+                var interruptedPath = Path.Combine(tree.Path, "protocol/mutations/results.json");
+                var interrupted = Data.Read(interruptedPath);
+                interrupted["experiments"]![1]!["interrupted"] = true;
+                Data.Save(interruptedPath, interrupted);
+                break;
+            case "malformed-versions":
+                File.WriteAllText(Path.Combine(tree.Path, "protocol/mutations/tool-versions.json"), "[]");
+                break;
+            case "wrong-version":
+                File.WriteAllText(Path.Combine(tree.Path, "protocol/mutations/tool-versions.json"), "{\"dafny\":{\"stdout\":\"5.0.0\"},\"z3\":{\"stdout\":\"4.12.1\"}}");
                 break;
             case "malformed-clauses":
                 var malformedPath = Path.Combine(tree.Path, "protocol/mutations/results.json");
