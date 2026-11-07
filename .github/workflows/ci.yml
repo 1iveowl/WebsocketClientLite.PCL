@@ -11,30 +11,29 @@ on:
       - "releases/**"
   workflow_dispatch:
 
+env:
+  PDD_PR_HEAD: ${{ github.event.pull_request.head.sha }}
+
 jobs:
   verify-protocol:
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4
-      - name: Validate Close requirement map and validator failure modes
-        run: |
-          python3 scripts/validate-requirements.py
-          python3 -m unittest discover -s verification/tests -v
-      - name: Verify protocol core and check generated C#
-        run: |
-          set -o pipefail
-          ./scripts/dafny-masking.sh --check 2>&1 | tee protocol-verification.log
-      - name: Detect Close mutations in isolated source trees
-        run: python3 scripts/run-close-mutations.py --output artifacts/close-mutations/ci
+      - name: Capture protocol verification and mutation evidence
+        run: python3 scripts/pdd-receipt.py capture --job protocol --output artifacts/pdd/protocol
       - name: Upload verification evidence
         if: always()
         uses: actions/upload-artifact@v4
         with:
+          name: pdd-protocol
+          path: artifacts/pdd/protocol/
+          if-no-files-found: error
+      - name: Upload generated-code audit
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
           name: protocol-verification
-          path: |
-            protocol-verification.log
-            artifacts/dafny/
-            artifacts/close-mutations/
+          path: artifacts/dafny/
 
   contract-change-report:
     if: github.event_name == 'pull_request'
@@ -81,29 +80,42 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-nuget-
 
-      - name: Restore
-        run: dotnet restore src/main/WebsocketClientLite.sln
-
-      - name: Build (Release, all target frameworks)
-        run: dotnet build src/main/WebsocketClientLite.sln --configuration Release --no-restore
-
-      - name: Test across all target frameworks (netstandard2.0 .. net10.0)
-        run: ./test-all-tfms.sh Release
-
-      - name: Collect code coverage
-        run: >-
-          dotnet test src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj
-          --configuration Release
-          --collect:"XPlat Code Coverage"
-          --results-directory ./coverage
-
-      - name: Check coverage threshold
-        run: ./scripts/check-coverage.sh ./coverage 70
-
-      - name: Upload coverage report
+      - name: Build, test matrix and coverage with evidence
+        run: python3 scripts/pdd-receipt.py capture --job tests --output artifacts/pdd/tests
+      - name: Upload test and coverage evidence
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: coverage
-          path: ./coverage/**/coverage.cobertura.xml
-          if-no-files-found: warn
+          name: pdd-tests
+          path: artifacts/pdd/tests/
+          if-no-files-found: error
+
+  evidence-gate:
+    if: always()
+    needs: [verify-protocol, build-and-test]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download available evidence
+        uses: actions/download-artifact@v4
+        with:
+          pattern: pdd-*
+          path: artifacts/pdd/downloads
+      - name: Assemble and gate evidence
+        if: always()
+        run: |
+          mkdir -p artifacts/pdd
+          if [ -d artifacts/pdd/downloads/pdd-protocol ]; then mv artifacts/pdd/downloads/pdd-protocol artifacts/pdd/protocol; fi
+          if [ -d artifacts/pdd/downloads/pdd-tests ]; then mv artifacts/pdd/downloads/pdd-tests artifacts/pdd/tests; fi
+          python3 scripts/pdd-receipt.py aggregate
+      - name: Upload receipt and partial evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pdd-receipt
+          path: |
+            artifacts/pdd/receipt.json
+            artifacts/pdd/summary.md
+            artifacts/pdd/protocol/
+            artifacts/pdd/tests/
+          if-no-files-found: error
