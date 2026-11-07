@@ -10,12 +10,11 @@ The proposed [PDD phase 2 plan for 10.2.0.0](../docs/pdd-phase-2-plan.md) adds r
 
 The [manifest](requirements.json), [v2 JSON Schema](requirements.schema.json) and
 [intent review](close-intent-review.md) separate sequential Close decisions from
-asynchronous caller responsibilities. Validate them with Python 3.9 or later
-(standard library only):
+asynchronous caller responsibilities. Validate them with the .NET 10 SDK (standard library only):
 
 ```bash
-python3 scripts/validate-requirements.py
-python3 -m unittest discover -s verification/tests -v
+./scripts/pdd.sh validate
+dotnet test tools/Pdd.Tests/Pdd.Tests.csproj -c Release
 ```
 
 The validator also accepts a manifest filename; source paths always resolve from
@@ -42,6 +41,10 @@ Reference resolution is deliberately narrow and fails on ambiguous declarations:
   syntax require an explicit resolver extension. It does not resolve call graphs,
   preprocess conditional compilation or establish semantic coverage.
 
+The [standalone .NET tooling](../tools/Pdd/README.md) replaces the original
+Python implementations in phase 2 increment D2. It builds independently of the
+production solution, with one console project and one test project.
+
 The small schema evaluator supports only the keywords used by the checked-in
 schema and rejects unsupported keywords. The schema is also usable by JSON Schema
 2020-12 tooling; cross-reference checks require this validator. Changing the
@@ -60,8 +63,8 @@ E controlled schedules and PR review remain separate obligations. Receipts and t
 ## Close mutation checks (phase 2, increment B)
 
 ```bash
-python3 scripts/run-close-mutations.py
-python3 -m unittest discover -s verification/tests -v
+./scripts/pdd.sh mutations
+dotnet test tools/Pdd.Tests/Pdd.Tests.csproj -c Release
 ```
 
 The [Close catalog and runner guide](mutations/README.md) describes five exact
@@ -105,7 +108,7 @@ For a committed topic branch, fetch its actual PR target and run:
 
 ```bash
 git fetch origin releases/10.2.0.0
-python3 scripts/report-contract-changes.py --target origin/releases/10.2.0.0 --head HEAD --output artifacts/pdd/contract-changes.md
+./scripts/pdd.sh contract-report --target origin/releases/10.2.0.0 --head HEAD --output artifacts/pdd/contract-changes.md
 ```
 
 `--target` is mandatory; substitute the actual target if the PR is retargeted.
@@ -138,7 +141,7 @@ not acceptance evidence. The boundary schema rejects such fields.
 Tooling tests use temporary Git histories to exercise target divergence,
 precondition/postcondition and helper changes, trust expansion, caller changes,
 file addition/deletion, missing/unrelated refs and malformed registers. Run them
-with the same unittest command above. Increment D will add run receipts; this
+with the same tooling test command above. Increment D will add run receipts; this
 report does not aggregate evidence or close E's asynchronous testing gaps.
 
 ## Reading the proof boundary
@@ -202,7 +205,7 @@ Run from the repository root in the Linux x64 dev container:
 ./scripts/dafny-masking.sh --check
 ```
 
-The script retains its pilot name but verifies both modules, including included files. It downloads the checksum-pinned official Dafny 4.11.0 archive and uses its Z3 4.12.1 solver explicitly. Python 3, curl and unzip are required. Verification errors and assertion timeouts fail the command. The tool cache is outside the repository.
+The script retains its pilot name but verifies both modules, including included files. It downloads the checksum-pinned official Dafny 4.11.0 archive and uses its Z3 4.12.1 solver explicitly. The .NET 10 SDK, curl and unzip are required. Verification errors and assertion timeouts fail the command. The tool cache is outside the repository.
 
 The generated file is checked in; ordinary builds and package consumers do not need Dafny or Z3. Never edit generated methods. Postprocessing only normalizes the machine-specific solver path in embedded metadata, marks generated partial classes internal, and adds generated-code/nullable headers. CI compares regenerated output byte-for-byte and uploads logs and artifacts. Dafny's compiler, solver, runtime and this limited postprocessing are trusted.
 
@@ -284,14 +287,14 @@ alongside the existing verification and build/test checks in branch protection.
 To reproduce locally, use a **new** output directory (capture refuses reuse):
 
 ```bash
-python3 scripts/pdd-receipt.py capture --job protocol --output artifacts/pdd/protocol
-python3 scripts/pdd-receipt.py capture --job tests --output artifacts/pdd/tests
-python3 scripts/pdd-receipt.py aggregate --output artifacts/pdd
+./scripts/pdd.sh capture --job protocol --output artifacts/pdd/protocol
+./scripts/pdd.sh capture --job tests --output artifacts/pdd/tests
+./scripts/pdd.sh aggregate --output artifacts/pdd
 ```
 
 Run these against an unchanged checkout. The receipt records the tested commit,
 PR source head (`PDD_PR_HEAD`, null for local/push runs), worktree dirtiness,
-SHA-256 hashes of tracked and unignored source, manifest, tooling and workflow
+SHA-256 hashes of tracked and unignored source, manifest, tooling (including `tools/`) and workflow
 files, command arrays, exit codes, UTC timestamps, tool/SDK versions and CI run
 identity. Source snapshots are checked before and after each job and compared
 with the aggregator's checkout. CI run/attempt identities must also match.
@@ -329,4 +332,4 @@ reviewed source revision.
 Receipt fixtures cover successful runs, actual failing commands, skipped and
 interrupted results, absent jobs/logs/targets/runtime data, failed or skipped named
 tests, missing mutations, malformed records, revision/hash and CI-attempt
-mismatches. Run them with `python3 -m unittest discover -s verification/tests -v`.
+mismatches. Run them with `dotnet test tools/Pdd.Tests/Pdd.Tests.csproj -c Release`.

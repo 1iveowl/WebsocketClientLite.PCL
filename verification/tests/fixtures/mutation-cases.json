@@ -1,0 +1,255 @@
+[
+  {
+    "name": "target",
+    "record": {
+      "exit_code": 4,
+      "stdout": "verification/Protocol.dfy(153,4): Error: a postcondition could not be proved on this return path\nverification/Protocol.dfy(147,22): Related location: this is the postcondition that could not be proved\nDafny program verifier finished with 40 verified, 1 error\n",
+      "stderr": "",
+      "elapsed_seconds": 0.1
+    },
+    "mutant": true,
+    "expected": [
+      "detected",
+      [
+        "ensures send <==> event == 0 && (state & 5) == 0"
+      ]
+    ]
+  },
+  {
+    "name": "exit_code",
+    "record": {
+      "exit_code": 1,
+      "stdout": "verification/Protocol.dfy(153,4): Error: a postcondition could not be proved on this return path\nverification/Protocol.dfy(147,22): Related location: this is the postcondition that could not be proved\nDafny program verifier finished with 40 verified, 1 error\n",
+      "stderr": "",
+      "elapsed_seconds": 0.1
+    },
+    "mutant": true,
+    "expected": [
+      "inconclusive",
+      []
+    ]
+  },
+  {
+    "name": "timed_out",
+    "record": {
+      "exit_code": 4,
+      "stdout": "verification/Protocol.dfy(153,4): Error: a postcondition could not be proved on this return path\nverification/Protocol.dfy(147,22): Related location: this is the postcondition that could not be proved\nDafny program verifier finished with 40 verified, 1 error\n",
+      "stderr": "",
+      "elapsed_seconds": 0.1,
+      "timed_out": true
+    },
+    "mutant": true,
+    "expected": [
+      "inconclusive",
+      []
+    ]
+  },
+  {
+    "name": "interrupted",
+    "record": {
+      "exit_code": 4,
+      "stdout": "verification/Protocol.dfy(153,4): Error: a postcondition could not be proved on this return path\nverification/Protocol.dfy(147,22): Related location: this is the postcondition that could not be proved\nDafny program verifier finished with 40 verified, 1 error\n",
+      "stderr": "",
+      "elapsed_seconds": 0.1,
+      "interrupted": true
+    },
+    "mutant": true,
+    "expected": [
+      "inconclusive",
+      []
+    ]
+  },
+  {
+    "name": "launch_error",
+    "record": {
+      "exit_code": 4,
+      "stdout": "verification/Protocol.dfy(153,4): Error: a postcondition could not be proved on this return path\nverification/Protocol.dfy(147,22): Related location: this is the postcondition that could not be proved\nDafny program verifier finished with 40 verified, 1 error\n",
+      "stderr": "",
+      "elapsed_seconds": 0.1,
+      "launch_error": "missing"
+    },
+    "mutant": true,
+    "expected": [
+      "inconclusive",
+      []
+    ]
+  },
+  {
+    "name": "(170,4)",
+    "record": {
+      "exit_code": 4,
+      "stdout": "verification/Protocol.dfy(170,4): Error: a postcondition could not be proved on this return path\nverification/Protocol.dfy(147,22): Related location: this is the postcondition that could not be proved\nDafny program verifier finished with 40 verified, 1 error\n",
+      "stderr": "",
+      "elapsed_seconds": 0.1
+    },
+    "mutant": true,
+    "expected": [
+      "inconclusive",
+      []
+    ]
+  },
+  {
+    "name": "Masking.dfy",
+    "record": {
+      "exit_code": 4,
+      "stdout": "verification/Masking.dfy(153,4): Error: a postcondition could not be proved on this return path\nverification/Masking.dfy(147,22): Related location: this is the postcondition that could not be proved\nDafny program verifier finished with 40 verified, 1 error\n",
+      "stderr": "",
+      "elapsed_seconds": 0.1
+    },
+    "mutant": true,
+    "expected": [
+      "inconclusive",
+      []
+    ]
+  },
+  {
+    "name": "assertion might not hold",
+    "record": {
+      "exit_code": 4,
+      "stdout": "verification/Protocol.dfy(153,4): Error: assertion might not hold\nverification/Protocol.dfy(147,22): Related location: this is the postcondition that could not be proved\nDafny program verifier finished with 40 verified, 1 error\n",
+      "stderr": "",
+      "elapsed_seconds": 0.1
+    },
+    "mutant": true,
+    "expected": [
+      "inconclusive",
+      []
+    ]
+  },
+  {
+    "name": "2 errors",
+    "record": {
+      "exit_code": 4,
+      "stdout": "verification/Protocol.dfy(153,4): Error: a postcondition could not be proved on this return path\nverification/Protocol.dfy(147,22): Related location: this is the postcondition that could not be proved\nDafny program verifier finished with 40 verified, 2 errors\n",
+      "stderr": "",
+      "elapsed_seconds": 0.1
+    },
+    "mutant": true,
+    "expected": [
+      "inconclusive",
+      []
+    ]
+  },
+  {
+    "name": "1 error, 1 timed out",
+    "record": {
+      "exit_code": 4,
+      "stdout": "verification/Protocol.dfy(153,4): Error: a postcondition could not be proved on this return path\nverification/Protocol.dfy(147,22): Related location: this is the postcondition that could not be proved\nDafny program verifier finished with 40 verified, 1 error, 1 timed out\n",
+      "stderr": "",
+      "elapsed_seconds": 0.1
+    },
+    "mutant": true,
+    "expected": [
+      "inconclusive",
+      []
+    ]
+  },
+  {
+    "name": "extra-error",
+    "record": {
+      "exit_code": 4,
+      "stdout": "verification/Protocol.dfy(153,4): Error: a postcondition could not be proved on this return path\nverification/Protocol.dfy(147,22): Related location: this is the postcondition that could not be proved\nDafny program verifier finished with 40 verified, 1 error\n",
+      "stderr": "Error: parser failed",
+      "elapsed_seconds": 0.1
+    },
+    "mutant": true,
+    "expected": [
+      "inconclusive",
+      []
+    ]
+  },
+  {
+    "name": "wrong-clause",
+    "record": {
+      "exit_code": 4,
+      "stdout": "verification/Protocol.dfy(153,4): Error: a postcondition could not be proved on this return path\nverification/Protocol.dfy(146,22): Related location: this is the postcondition that could not be proved\nDafny program verifier finished with 40 verified, 1 error\n",
+      "stderr": "",
+      "elapsed_seconds": 0.1
+    },
+    "mutant": true,
+    "expected": [
+      "inconclusive",
+      []
+    ]
+  },
+  {
+    "name": "parse",
+    "record": {
+      "exit_code": 2,
+      "stdout": "parse errors detected",
+      "stderr": ""
+    },
+    "mutant": true,
+    "expected": [
+      "inconclusive",
+      []
+    ]
+  },
+  {
+    "name": "baseline",
+    "record": {
+      "exit_code": 0,
+      "stdout": "Dafny program verifier finished with 41 verified, 0 errors",
+      "stderr": ""
+    },
+    "mutant": false,
+    "expected": [
+      "passed",
+      []
+    ]
+  },
+  {
+    "name": "survival",
+    "record": {
+      "exit_code": 0,
+      "stdout": "Dafny program verifier finished with 41 verified, 0 errors",
+      "stderr": ""
+    },
+    "mutant": true,
+    "expected": [
+      "survived",
+      []
+    ]
+  },
+  {
+    "name": "empty",
+    "record": {
+      "exit_code": 0,
+      "stdout": "Dafny program verifier finished with 0 verified, 0 errors",
+      "stderr": ""
+    },
+    "mutant": false,
+    "expected": [
+      "inconclusive",
+      []
+    ]
+  },
+  {
+    "name": "obligation-timeout",
+    "record": {
+      "exit_code": 4,
+      "timed_out": false,
+      "stdout": "verification/Protocol.dfy(317,20): Error: Verification of 'ProtocolCore.Protocol.HeaderRoundTrip' timed out after 30 seconds.\nDafny program verifier finished with 573 verified, 0 errors, 1 time out\n",
+      "stderr": ""
+    },
+    "mutant": false,
+    "expected": [
+      "inconclusive",
+      []
+    ]
+  },
+  {
+    "name": "mutant-obligation-timeout",
+    "record": {
+      "exit_code": 4,
+      "timed_out": false,
+      "stdout": "verification/Protocol.dfy(317,20): Error: Verification of 'ProtocolCore.Protocol.HeaderRoundTrip' timed out after 30 seconds.\nDafny program verifier finished with 573 verified, 0 errors, 1 time out\n",
+      "stderr": ""
+    },
+    "mutant": true,
+    "expected": [
+      "inconclusive",
+      []
+    ]
+  }
+]

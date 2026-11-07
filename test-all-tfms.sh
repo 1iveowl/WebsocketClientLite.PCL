@@ -25,7 +25,7 @@ for tfm in "${TFMS[@]}"; do
   echo "  Testing against library build: ${tfm} (config: ${CONFIG})"
   echo "=================================================================="
   if [[ -n "${PDD_TEST_RESULTS:-}" ]]; then
-    PDD_TEST_CONFIG="$CONFIG" python3 scripts/pdd-receipt.py test-target --tfm "$tfm" --output "$PDD_TEST_RESULTS/$tfm"
+    PDD_TEST_CONFIG="$CONFIG" ./scripts/pdd.sh test-target --tfm "$tfm" --output "$PDD_TEST_RESULTS/$tfm"
     result=$?
   else
     dotnet test "${PROJECT}" -c "${CONFIG}" -p:LibTfm="${tfm}" --nologo

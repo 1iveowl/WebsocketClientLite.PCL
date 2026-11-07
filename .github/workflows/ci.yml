@@ -19,8 +19,11 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
       - name: Capture protocol verification and mutation evidence
-        run: python3 scripts/pdd-receipt.py capture --job protocol --output artifacts/pdd/protocol
+        run: ./scripts/pdd.sh capture --job protocol --output artifacts/pdd/protocol
       - name: Upload verification evidence
         if: always()
         uses: actions/upload-artifact@v4
@@ -45,13 +48,16 @@ jobs:
         with:
           fetch-depth: 0
           ref: ${{ github.event.pull_request.head.sha }}
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
       - name: Compare actual PR target merge base with source head
         env:
           PR_BASE_SHA: ${{ github.event.pull_request.base.sha }}
           PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
         run: |
           git fetch --no-tags origin "$PR_BASE_SHA"
-          python3 scripts/report-contract-changes.py --target "$PR_BASE_SHA" --head "$PR_HEAD_SHA" --output artifacts/pdd/contract-changes.md
+          ./scripts/pdd.sh contract-report --target "$PR_BASE_SHA" --head "$PR_HEAD_SHA" --output artifacts/pdd/contract-changes.md
           echo 'Contract changes require semantic review; see the contract-change-report artifact for revisions and full source diff.' >> "$GITHUB_STEP_SUMMARY"
       - uses: actions/upload-artifact@v4
         with:
@@ -81,7 +87,7 @@ jobs:
             ${{ runner.os }}-nuget-
 
       - name: Build, test matrix and coverage with evidence
-        run: python3 scripts/pdd-receipt.py capture --job tests --output artifacts/pdd/tests
+        run: ./scripts/pdd.sh capture --job tests --output artifacts/pdd/tests
       - name: Upload test and coverage evidence
         if: always()
         uses: actions/upload-artifact@v4
@@ -96,6 +102,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
       - name: Download available evidence
         uses: actions/download-artifact@v4
         with:
@@ -107,7 +116,7 @@ jobs:
           mkdir -p artifacts/pdd
           if [ -d artifacts/pdd/downloads/pdd-protocol ]; then mv artifacts/pdd/downloads/pdd-protocol artifacts/pdd/protocol; fi
           if [ -d artifacts/pdd/downloads/pdd-tests ]; then mv artifacts/pdd/downloads/pdd-tests artifacts/pdd/tests; fi
-          python3 scripts/pdd-receipt.py aggregate
+          ./scripts/pdd.sh aggregate
       - name: Upload receipt and partial evidence
         if: always()
         uses: actions/upload-artifact@v4

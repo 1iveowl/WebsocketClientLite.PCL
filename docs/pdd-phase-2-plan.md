@@ -25,7 +25,7 @@ Phase 2 connects those checks to stable requirements. A manifest validator check
 
 ## 1. Define the Close requirement map
 
-Add `verification/requirements.json` with a versioned schema and a small Python validator, following the repository's existing Python dependency for generation. Keep the first manifest limited to Close handling. Use stable IDs rather than source line numbers as identities.
+Add `verification/requirements.json` with a versioned schema and a small validator (originally Python in A; migrated to the standalone .NET tool in D2). Keep the first manifest limited to Close handling. Use stable IDs rather than source line numbers as identities.
 
 Each entry records:
 
@@ -118,8 +118,52 @@ Implement one topic branch/PR per increment from the selected release branch:
 | B | Close mutation catalog and isolated runner | A |
 | C | Boundary register and contract-change report | A |
 | D | CI receipt generation and evidence gate | B, C |
-| E | Controlled Close schedules and updated evidence | C, D |
+| D2 | Standalone .NET PDD tooling and compatibility evidence | D |
+| E | Controlled Close schedules and updated evidence | C, D, D2 |
 | F | Extend the established workflow to reassembly and masking | E |
+
+### D2: consolidate repository tooling in C#
+
+Increment D merged into `releases/10.2.0.0` in PR #108 (`a51f52f`). D2 migrates
+its evidence pipeline and the A/B/C tooling to `tools/Pdd`, a standalone .NET 10
+console project with one separate test project. It is independent of the
+production solution and is never a published-package dependency. Commands,
+compatibility findings and future-increment usage are documented in the
+[tooling README](../tools/Pdd/README.md).
+
+Keep D2 a small repository tool, not a general-purpose PDD framework. The prior
+Python implementation's approximately 840 lines plus 610 test lines are a scope
+reference, not a strict C# line limit. Explicit types can increase size, but every
+abstraction needs a concrete current use. Use straightforward commands, shared
+data types, a small process runner and standard .NET facilities. Do not introduce
+plugin systems, generic workflow engines, dependency-injection frameworks,
+speculative extensibility, extra architectural layers or additional projects
+without a demonstrated need. Do not build a general JSON Schema engine or
+language parser, or turn each operation into an interface/service. Keep code
+clear; do not remove validation, cancellation or evidence checks to reduce size.
+Report implementation/test line counts, project count and new dependencies at
+D2 delivery, explaining substantial growth.
+
+D2 preserves existing JSON formats and requirement identities, source matching,
+explicit review requirements, pinned Dafny/Z3, generated C# bytes, targeted
+mutation classification, the five-library-target matrix and actual host runtime.
+Missing, malformed, interrupted or stale evidence must fail closed. Compatibility
+fixtures preserve Python reference outcomes; intentional safety corrections and
+diff-format changes are documented rather than silently hidden in the port.
+
+The exit gate includes tooling failure-mode tests and cross-language fixture
+comparisons, real timeout/SIGTERM descendant cleanup, the pinned baseline plus
+all five Close mutants, generated-source consistency, Release matrix and 70%
+coverage. CI explicitly installs .NET 10 in verification, comparison and
+aggregation jobs. Migrated Python implementations and tests are removed after
+comparison; no PDD execution path requires Python.
+
+E uses `./scripts/pdd.sh capture --job protocol`, `capture --job tests` and
+`aggregate` with fresh job directories. E's controlled schedules and separate
+Stryker results remain pending, as does revision-specific PR acceptance. D2 does
+not satisfy those obligations or turn a machine receipt into review evidence.
+F extends these same focused commands for reassembly/masking with their boundary
+obligations intact.
 
 For F, map `Merge` and `MergeScalar` separately, preserving the production native-copy assumption. Map masking's XOR and preservation guarantees to independent expected-byte tests and the mutation experiment. Do not remove those integration checks because the Dafny algorithm has a proof.
 

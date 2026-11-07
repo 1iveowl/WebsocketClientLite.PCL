@@ -1,0 +1,119 @@
+{
+  "gate": "passed",
+  "requirements": [
+    {
+      "id": "CLOSE-001",
+      "satisfied": false,
+      "obligations": {
+        "CLOSE-001-PROOF": "passed",
+        "CLOSE-001-TEST": "passed",
+        "CLOSE-001-MUTATION": "passed"
+      }
+    },
+    {
+      "id": "CLOSE-002",
+      "satisfied": false,
+      "obligations": {
+        "CLOSE-002-PROOF": "passed",
+        "CLOSE-002-TEST": "passed",
+        "CLOSE-002-MUTATION": "passed"
+      }
+    },
+    {
+      "id": "CLOSE-003",
+      "satisfied": false,
+      "obligations": {
+        "CLOSE-003-PROOF": "passed",
+        "CLOSE-003-TEST": "passed",
+        "CLOSE-003-MUTATION": "passed"
+      }
+    },
+    {
+      "id": "CLOSE-004",
+      "satisfied": false,
+      "obligations": {
+        "CLOSE-004-TEST": "passed",
+        "CLOSE-004-CONTROLLED": "not-run"
+      }
+    },
+    {
+      "id": "CLOSE-005",
+      "satisfied": false,
+      "obligations": {
+        "CLOSE-005-TEST": "passed",
+        "CLOSE-005-CONTROLLED": "not-run"
+      }
+    }
+  ],
+  "reviews": {
+    "CLOSE-001-REVIEW": "not-run",
+    "CLOSE-002-REVIEW": "not-run",
+    "CLOSE-003-REVIEW": "not-run",
+    "CLOSE-004-REVIEW": "not-run",
+    "CLOSE-005-REVIEW": "not-run"
+  },
+  "stryker": "not-run",
+  "matrix": {
+    "netstandard2.0": {
+      "status": "passed",
+      "host_runtime": ".NET 10.0.0",
+      "tests": {
+        "WebsocketClientLiteTest.ProtocolStateTests.CloseResponseTimeoutMakesTheTransportTerminal": "passed",
+        "WebsocketClientLiteTest.ProtocolStateTests.ClosingRequiresBothDirectionsOrTerminalEvent": "passed",
+        "WebsocketClientLiteTest.RuntimeEvidenceTests.RecordHostRuntime": "passed",
+        "WebsocketClientLiteTest.TeardownTests.DisposeAsyncKeepsTransportOpenUntilDelayedPeerClose": "passed",
+        "WebsocketClientLiteTest.TeardownTests.DisposeAsync_AwaitsCloseHandshake_AndCompletesSubscriber": "passed"
+      }
+    },
+    "netstandard2.1": {
+      "status": "passed",
+      "host_runtime": ".NET 10.0.0",
+      "tests": {
+        "WebsocketClientLiteTest.ProtocolStateTests.CloseResponseTimeoutMakesTheTransportTerminal": "passed",
+        "WebsocketClientLiteTest.ProtocolStateTests.ClosingRequiresBothDirectionsOrTerminalEvent": "passed",
+        "WebsocketClientLiteTest.RuntimeEvidenceTests.RecordHostRuntime": "passed",
+        "WebsocketClientLiteTest.TeardownTests.DisposeAsyncKeepsTransportOpenUntilDelayedPeerClose": "passed",
+        "WebsocketClientLiteTest.TeardownTests.DisposeAsync_AwaitsCloseHandshake_AndCompletesSubscriber": "passed"
+      }
+    },
+    "net8.0": {
+      "status": "passed",
+      "host_runtime": ".NET 10.0.0",
+      "tests": {
+        "WebsocketClientLiteTest.ProtocolStateTests.CloseResponseTimeoutMakesTheTransportTerminal": "passed",
+        "WebsocketClientLiteTest.ProtocolStateTests.ClosingRequiresBothDirectionsOrTerminalEvent": "passed",
+        "WebsocketClientLiteTest.RuntimeEvidenceTests.RecordHostRuntime": "passed",
+        "WebsocketClientLiteTest.TeardownTests.DisposeAsyncKeepsTransportOpenUntilDelayedPeerClose": "passed",
+        "WebsocketClientLiteTest.TeardownTests.DisposeAsync_AwaitsCloseHandshake_AndCompletesSubscriber": "passed"
+      }
+    },
+    "net9.0": {
+      "status": "passed",
+      "host_runtime": ".NET 10.0.0",
+      "tests": {
+        "WebsocketClientLiteTest.ProtocolStateTests.CloseResponseTimeoutMakesTheTransportTerminal": "passed",
+        "WebsocketClientLiteTest.ProtocolStateTests.ClosingRequiresBothDirectionsOrTerminalEvent": "passed",
+        "WebsocketClientLiteTest.RuntimeEvidenceTests.RecordHostRuntime": "passed",
+        "WebsocketClientLiteTest.TeardownTests.DisposeAsyncKeepsTransportOpenUntilDelayedPeerClose": "passed",
+        "WebsocketClientLiteTest.TeardownTests.DisposeAsync_AwaitsCloseHandshake_AndCompletesSubscriber": "passed"
+      }
+    },
+    "net10.0": {
+      "status": "passed",
+      "host_runtime": ".NET 10.0.0",
+      "tests": {
+        "WebsocketClientLiteTest.ProtocolStateTests.CloseResponseTimeoutMakesTheTransportTerminal": "passed",
+        "WebsocketClientLiteTest.ProtocolStateTests.ClosingRequiresBothDirectionsOrTerminalEvent": "passed",
+        "WebsocketClientLiteTest.RuntimeEvidenceTests.RecordHostRuntime": "passed",
+        "WebsocketClientLiteTest.TeardownTests.DisposeAsyncKeepsTransportOpenUntilDelayedPeerClose": "passed",
+        "WebsocketClientLiteTest.TeardownTests.DisposeAsync_AwaitsCloseHandshake_AndCompletesSubscriber": "passed"
+      }
+    }
+  },
+  "coverage": "passed",
+  "accepted_jobs": [
+    "protocol",
+    "tests"
+  ],
+  "rejected_jobs": []
+}

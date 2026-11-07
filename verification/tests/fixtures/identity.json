@@ -1,0 +1,9 @@
+{
+  "tested_commit": "merge",
+  "pr_source_head": "head",
+  "dirty_worktree": false,
+  "source_hashes": {
+    "verification/Protocol.dfy": "a",
+    "verification/Masking.dfy": "b"
+  }
+}

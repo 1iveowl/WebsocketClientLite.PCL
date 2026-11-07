@@ -1,0 +1,11 @@
+{
+  "status": "passed",
+  "exit_code": 0,
+  "started_at": "2026-11-07T16:23:16.113746+00:00",
+  "finished_at": "2026-11-07T16:23:16.113749+00:00",
+  "command": [
+    "dotnet",
+    "test",
+    "-p:LibTfm=netstandard2.0"
+  ]
+}
