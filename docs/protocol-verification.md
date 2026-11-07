@@ -6,16 +6,26 @@
 
 Executable Dafny algorithms are compiled into C# so the library runs the implementation whose source was verified. This avoids manually rewriting a proved algorithm in C#. The compiler and runtime remain trusted; Dafny does not separately verify the emitted C# text.
 
+The practical benefit is that the core's contracts cover all permitted inputs, including boundary lengths and state combinations that are easy to miss in example tests. Exact byte-operation contracts protect masking and reassembly; bounded-size and transition contracts constrain frame/message processing. Generated C# brings those algorithms into production without a handwritten translation. This strengthens critical parts of the library and gives maintainers contracts that CI rechecks as implementations change. The caller must still supply valid inputs and use the results correctly.
+
 ```mermaid
 flowchart TD
-    L["PROVED: proof-only Dafny lemmas"] -->|Support proofs| V["Dafny verification"]
-    D["Dafny implementations + contracts"] --> V
-    A["ASSUMED: .NET bulk-copy contract"] -.->|Used by the Merge proof| V
-    V -->|Compiler translates executable algorithms| G["Generated C# used by the library"]
-    H["Handwritten C# networking and integration"] -->|Calls| G
+    subgraph Build["Verification and code generation"]
+        L["PROVED: proof-only Dafny lemmas"] -->|Support proofs| V["Dafny verification"]
+        D["Dafny implementations + contracts"] --> V
+        A["ASSUMED: .NET bulk-copy contract"] -.->|Used by the Merge proof| V
+        V -->|Verified executable source| C["Dafny compiler"]
+    end
+    C -->|Produces| G
+    subgraph Runtime["Runtime: both parts are in the library"]
+        H["Handwritten C#: networking and coordination"] -->|Calls with buffers and state| G["Generated C#: protocol algorithms"]
+        G -->|Returns decisions and sizes; processes bytes| H
+    end
     T["TESTED: selected inputs and schedules"] -->|Exercise| H
-    T -->|Exercise compiled integration| G
+    T -->|Exercise compiled algorithms| G
 ```
+
+Inside the runtime box, an arrow from handwritten C# to generated C# means a **method call**, not code generation or a proof dependency. The return arrow shows how the caller receives decisions/sizes or observes processed bytes. For example, `DataframeParsing.ReadDataframeAsync` calls generated `Admit` with the header and current message state, then uses its decision before allocating or reading the payload. Dafny proves the admission algorithm's contract; integration tests check that the handwritten receive path uses it as intended.
 
 **The diagram does not imply that the handwritten C#, test harness or .NET bulk-copy implementation is formally verified.** The compiler, verifier and runtimes are also trusted components.
 

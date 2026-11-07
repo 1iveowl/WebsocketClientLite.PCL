@@ -30,14 +30,25 @@ The library utilizes [ReactiveX](http://reactivex.io/) (aka Rx or Reactive Exten
 
 Dafny proves the algorithms and mathematical lemmas written in our `.dfy` files against their contracts, under stated preconditions. The executable algorithms are then compiled into C# used by this library. **Dafny does not verify our handwritten C# or test harnesses.**
 
+For the generated core, the value is coverage of **every input allowed by the contracts**, including unusual lengths, buffer offsets and fragment sequences. The proofs establish exact masking bytes, bounded frame/message sizes and defined protocol-state decisions. Compiling those algorithms into C# avoids a manual rewrite that could introduce mistakes. CI rechecks the proofs and checks that the committed generated source matches the Dafny source.
+
+For the library as a whole, these guarantees strengthen the code that handles each frame and message. For example, the receive path uses verified admission decisions to reject invalid fragmentation and excessive message sizes before allocating or reading the payload. This reduces the scope of algorithmic behavior that maintainers must establish through examples alone, and gives future changes explicit contracts to preserve. Networking, concurrency and the way callers use those decisions still need integration tests and review.
+
 ```mermaid
-flowchart LR
-    D["Dafny algorithms + contracts"] --> V["Dafny verification"]
-    L["Proof-only Dafny lemmas"] -->|Support proofs| V
-    V -->|Compiler translates executable algorithms| G["Generated C#"]
-    H["Handwritten C# integration"] -->|Calls| G
-    T["Tests and review"] -->|Check selected behavior| H
+flowchart TD
+    subgraph Build["Verification and code generation"]
+        D["Dafny algorithms + contracts"] --> V["Dafny verification"]
+        L["Proof-only Dafny lemmas"] -->|Support proofs| V
+        V -->|Verified executable source| C["Dafny compiler"]
+    end
+    C -->|Produces| G
+    subgraph Runtime["Runtime: both parts are in the library"]
+        H["Handwritten C#: networking and coordination"] -->|Calls with buffers and state| G["Generated C#: protocol algorithms"]
+        G -->|Returns decisions and sizes; processes bytes| H
+    end
 ```
+
+The runtime arrows show a method call and its outcome: handwritten C# calls a generated algorithm, then uses its result. For example, the receive code calls generated `Admit` to decide whether a header and message state allow the payload to be read. The handwritten code handles the socket and acts on that decision.
 
 The compiler and runtime are trusted. Proof-only lemmas support the Dafny proofs and are omitted from executable code; they do not prove equivalence with handwritten C#. Production concatenation also relies on an explicit, tested contract for `.NET Buffer.BlockCopy`, whose implementation is not verified by Dafny.
 
