@@ -108,6 +108,7 @@ public class ReceiptTests
         using var tree = new TemporaryTree();
         CopyTree(Path.Combine(Fixtures, "evidence"), tree.Path);
         BindCi(tree.Path);
+        var baselineErrors = new Evidence(RequirementsTests.Root).Aggregate(tree.Path, Identity)["errors"]!.AsArray().Select(e => e!.ToString()).ToHashSet();
         var job = Path.Combine(tree.Path, "protocol/job.json");
         var trx = Path.Combine(tree.Path, "tests/tests/net8.0/results.trx");
         switch (mode)
@@ -157,7 +158,9 @@ public class ReceiptTests
                 File.WriteAllText(Path.Combine(tree.Path, "tests/coverage/coverage.cobertura.xml"), "<coverage line-rate=\"NaN\"/>");
                 break;
         }
-        Assert.Equal("failed", new Evidence(RequirementsTests.Root).Aggregate(tree.Path, Identity)["gate"]!["status"]!.ToString());
+        var receipt = new Evidence(RequirementsTests.Root).Aggregate(tree.Path, Identity);
+        Assert.Equal("failed", receipt["gate"]!["status"]!.ToString());
+        Assert.NotEmpty(receipt["errors"]!.AsArray().Select(e => e!.ToString()).Except(baselineErrors));
     }
     [Fact]
     public async Task CaptureFailureSkipsFollowingAndRejectsStaleDirectory()
