@@ -24,6 +24,8 @@ jobs:
         run: |
           set -o pipefail
           ./scripts/dafny-masking.sh --check 2>&1 | tee protocol-verification.log
+      - name: Detect Close mutations in isolated source trees
+        run: python3 scripts/run-close-mutations.py --output artifacts/close-mutations/ci
       - name: Upload verification evidence
         if: always()
         uses: actions/upload-artifact@v4
@@ -32,6 +34,7 @@ jobs:
           path: |
             protocol-verification.log
             artifacts/dafny/
+            artifacts/close-mutations/
 
   build-and-test:
     runs-on: ubuntu-latest

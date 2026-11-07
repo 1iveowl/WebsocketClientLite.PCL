@@ -58,6 +58,28 @@ them into the full boundary register. No validator success means a requirement
 is satisfied: B mutations, C boundary work, E controlled schedules and PR review
 remain separate obligations. Receipts and their aggregation belong to D.
 
+## Close mutation checks (phase 2, increment B)
+
+```bash
+python3 scripts/run-close-mutations.py
+python3 -m unittest discover -s verification/tests -v
+```
+
+The [Close catalog and runner guide](mutations/README.md) describes five exact
+body edits covering duplicate/suppressed send, state-bit loss and
+premature/suppressed release. The runner verifies both unchanged Dafny modules
+first, then each mutant in a separate temporary tree with the same pinned
+Dafny/Z3 toolchain as generation. Only rejection at the mapped postcondition
+counts as detection. Surviving mutants and inconclusive experiments fail the PR
+gate. Generated C# and production sources are never edited by the runner.
+
+Each run writes fresh logs, source snapshots/hashes, versions, commands, budgets,
+exit codes and matched clauses under `artifacts/close-mutations/`. CI uploads
+these alongside the existing verification evidence, including on failure.
+This is mutation evidence, not the aggregated requirement receipt planned for
+increment D, and it does not establish specification completeness or the
+asynchronous guarantees of CLOSE-004/CLOSE-005.
+
 ## Reading the proof boundary
 
 Dafny verifies the implementations and mathematical lemmas in our `.dfy` source. The compiler translates executable implementations into C#; it omits proof-only lemmas. Dafny does not separately verify the generated C# text, and it does not verify any of our handwritten C# implementations or test harnesses. We trust the verifier, solver, compiler and runtimes, and test the compiled integration.

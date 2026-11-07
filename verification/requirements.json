@@ -96,8 +96,8 @@
         {
           "id": "CLOSE-001-MUTATION",
           "kind": "mutation",
-          "delivery": "B",
-          "description": "Reject duplicate send and suppressed eligible send decisions.",
+          "delivery": "existing",
+          "description": "Reject duplicate send and suppressed eligible send decisions. Run scripts/run-close-mutations.py; verification/mutations/close.json maps this obligation to exact edits and target clauses.",
           "references": []
         },
         {
@@ -170,8 +170,8 @@
         {
           "id": "CLOSE-002-MUTATION",
           "kind": "mutation",
-          "delivery": "B",
-          "description": "Reject loss of a previously set state bit.",
+          "delivery": "existing",
+          "description": "Reject loss of a previously set state bit. Run scripts/run-close-mutations.py; verification/mutations/close.json maps this obligation to exact edits and target clauses.",
           "references": []
         },
         {
@@ -252,8 +252,8 @@
         {
           "id": "CLOSE-003-MUTATION",
           "kind": "mutation",
-          "delivery": "B",
-          "description": "Reject premature release and suppressed eligible release.",
+          "delivery": "existing",
+          "description": "Reject premature release and suppressed eligible release. Run scripts/run-close-mutations.py; verification/mutations/close.json maps this obligation to exact edits and target clauses.",
           "references": []
         },
         {
