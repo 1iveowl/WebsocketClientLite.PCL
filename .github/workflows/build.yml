@@ -53,6 +53,24 @@ jobs:
         with:
           useConfigFile: true
 
+      # The release text is the README's "New in Version <x.y.z>" section for this
+      # version. It runs before anything is built or published, so a release without
+      # that section stops here instead of after the packages reach NuGet.org.
+      - name: Release notes from README
+        env:
+          VERSION: ${{ steps.gitversion.outputs.MajorMinorPatch }}
+        run: |
+          awk -v heading="## New in Version ${VERSION}" '
+            $0 == heading { found = 1; next }
+            found && /^## / { exit }
+            found { print }
+          ' README.md > release-notes.md
+          if ! grep -q '[^[:space:]]' release-notes.md; then
+            echo "::error file=README.md::README.md has no '## New in Version ${VERSION}' section. Add it before releasing."
+            exit 1
+          fi
+          cat release-notes.md
+
       - name: Restore
         run: dotnet restore
         working-directory: src/main/
@@ -117,31 +135,6 @@ jobs:
         with:
           tag_name: ${{ steps.gitversion.outputs.AssemblySemVer }}
           release_name: Release ${{ steps.gitversion.outputs.AssemblySemVer }}
-          body: |
-            WebsocketClientLite 9.1.0 – Highlights
-
-            New
-            - IAsyncDisposable on ClientWebSocketRx (and the legacy MessageWebsocketRx);
-              IWebSocketClientRx now extends IAsyncDisposable. `await using` is the
-              preferred lifecycle: DisposeAsync awaits the RFC 6455 close handshake of
-              any still-active connection before releasing the socket. Dispose() remains
-              the abrupt counterpart (bounded best-effort close, never hangs).
-
-            Bug fixes and internals
-            - Unified teardown: the close handshake runs exactly once on every end path
-              (server close, read error, unsubscribe, Dispose, DisposeAsync) through one
-              shared mechanism, and every path can await an in-flight close — close
-              frame before socket teardown, no cross-mechanism races.
-            - Read-loop errors reliably reach the subscriber as OnError with the
-              original exception; previously they could race teardown and be swallowed
-              into a graceful completion.
-            - Removed the unsound public ObservableExtensions.FinallyAsync operator
-              (never fired on unsubscribe; could replace the stream error).
-            - HttpMachine.PCL 6.0.1: span-based, allocation-free handshake parsing;
-              case-insensitive header lookups; upstream HTTP conformance fixes.
-
-            Notes
-            - Publishing now uses NuGet Trusted Publishing (OIDC) instead of a
-              long-lived API key.
+          body_path: release-notes.md
           draft: true
           prerelease: true

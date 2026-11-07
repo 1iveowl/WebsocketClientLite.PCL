@@ -31,7 +31,7 @@ feat/…, fix/…     ●───●   ●───●   one task per branch, s
 - The next version is developed on `releases/<x.y.z>`, made from `main`: a new minor version for features, a new patch version for fixes only.
 - Each task is a topic branch from the release branch (`feat/…`, `fix/…`, `docs/…`, `chore/…`), merged into it through a pull request. CI builds and tests pull requests and pushes on `main` and `releases/**`.
 - A release is three steps on the release branch:
-  1. Update the README's "New in Version" section.
+  1. Add the README's `## New in Version <x.y.z>` section, with the full three-part version in the heading. The publish workflow uses that section as the GitHub release text and stops before publishing if it is missing.
   2. Set `next-version` in `GitVersion.yml`, directly on the release branch. Pushing that change runs the publish workflow: it pushes the packages to NuGet.org and GitHub Packages and creates the GitHub release with its version tag. A pull request into a release branch that changes `GitVersion.yml` starts the same workflow, so the version never changes in a topic branch.
   3. Merge the release branch into `main` through a pull request.
 - A release branch is closed once published. Later work goes to the next release branch, and a fix for a published version gets a new patch branch from `main`.
