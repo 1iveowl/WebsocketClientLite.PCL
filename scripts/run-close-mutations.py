@@ -171,11 +171,14 @@ def main():
     parser.add_argument('--output', type=Path, help='New evidence directory (must not exist)')
     parser.add_argument('--baseline-budget', type=float, default=180)
     parser.add_argument('--mutant-budget', type=float, default=90)
+    parser.add_argument('--verification-time-limit', type=int, default=60,
+                        help='Dafny per-obligation limit in seconds (default: 60); wall-clock budgets still apply')
     args = parser.parse_args()
     output = (args.output or ROOT / 'artifacts/close-mutations' / datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%S.%fZ')).resolve()
     output.mkdir(parents=True, exist_ok=False)
     try:
         v.require(0 < args.baseline_budget < float('inf') and 0 < args.mutant_budget < float('inf'), 'budgets must be positive and finite')
+        v.require(args.verification_time_limit > 0, 'verification time limit must be positive')
         catalog = load_catalog()
         setup = execute(['bash', str(ROOT / 'scripts/dafny-toolchain.sh')], ROOT, output / 'toolchain', 180)
         v.require(setup['exit_code'] == 0 and not setup['timed_out'] and not setup['interrupted'], 'toolchain bootstrap failed')
@@ -191,7 +194,7 @@ def main():
         sources = {f'verification/{name}': (ROOT / 'verification' / name).read_text() for name in ('Masking.dfy', 'Protocol.dfy')}
         command = [str(tool / 'dafny'), 'verify', 'verification/Masking.dfy', '--verify-included-files',
                    '--allow-external-contracts', '--solver-path', str(tool / 'z3/bin/z3-4.12.1'),
-                   '--verification-time-limit', '30', '--cores', '2']
+                   '--verification-time-limit', str(args.verification_time_limit), '--cores', '2']
         for file, source in sources.items():
             snapshot = output / 'sources' / file
             snapshot.parent.mkdir(parents=True, exist_ok=True)

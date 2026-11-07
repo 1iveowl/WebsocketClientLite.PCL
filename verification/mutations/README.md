@@ -67,11 +67,22 @@ interruption and cleanup; classifier tests cover survival and unrelated errors.
 Local measurement on 2026-11-07: baseline 9.785 seconds, mutants 8.930–9.937
 seconds each, 57.004 seconds total verification time, excluding bootstrap/version
 probes. Defaults are provisional: 180 seconds for the baseline, 90 per mutant,
-30 per Dafny obligation, two verifier cores. Override wall-clock budgets with
+60 per Dafny obligation, two verifier cores. Override wall-clock budgets with
 `--baseline-budget` and `--mutant-budget`; exhaustion is explicitly recorded and
 never a detection. CI uploads actual elapsed times on every PR. CI measurements
-are not available yet; review these provisional budgets against those runs
-before expanding the suite. The small Close suite remains a PR gate; no
+now include an 18.317-second successful baseline and a later 37.153-second
+inconclusive baseline on identical source hashes: `HeaderRoundTrip` exceeded
+the original 30-second per-obligation limit. See the [successful PR run](https://github.com/1iveowl/WebsocketClientLite.PCL/actions/runs/42386797831)
+and [failed post-merge run](https://github.com/1iveowl/WebsocketClientLite.PCL/actions/runs/42387119885).
+The default per-obligation limit is increased to 60 seconds to allow more
+headroom, independently of the unchanged wall-clock limits. Override it with
+`--verification-time-limit SECONDS` (positive integer); the exact value is
+recorded in each experiment's command. Larger values do not extend the outer
+wall-clock budget. This mitigates timing sensitivity without establishing its
+cause or guaranteeing future completion. No automatic retries, contract
+changes, skipped proofs or relaxed diagnostic classification are introduced.
+Review these budgets against further runs before expanding the suite.
+The small Close suite remains a PR gate; no
 scheduled-only replacement is introduced.
 
 Full requirement receipts and cross-job source identity checks belong to
