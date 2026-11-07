@@ -6,25 +6,33 @@
 	"remoteUser": "vscode",
 	"workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
 	"features": {
+		"ghcr.io/devcontainers/features/azure-cli:1": {},
 		"ghcr.io/devcontainers/features/dotnet:2": {},
+		"ghcr.io/devcontainers/features/github-cli:1": {},
 		"ghcr.io/devcontainers/features/node:2": {
 			"version": "lts"
-		},
-		"ghcr.io/devcontainers/features/github-cli:1": {}
+		}
 	},
-	// Named volumes keep AI tool state (auth, config, history) across container rebuilds.
+	// Do not persist .vscode-server: a new named volume is root-owned before VS Code starts.
 	"mounts": [
 		"source=codex-home-${localWorkspaceFolderBasename},target=/home/vscode/.codex,type=volume",
 		"source=claude-home-${localWorkspaceFolderBasename},target=/home/vscode/.claude,type=volume",
-		"source=copilot-home-${localWorkspaceFolderBasename},target=/home/vscode/.copilot,type=volume"
+		"source=copilot-home-${localWorkspaceFolderBasename},target=/home/vscode/.copilot,type=volume",
+		// Persist layout and session records; conversation histories stay in the tool homes above.
+		"source=herdr-config-${localWorkspaceFolderBasename},target=/home/vscode/.config/herdr,type=volume",
+		// GitHub CLI login (gh auth login); without the volume a rebuild signs gh out.
+		"source=gh-config-${localWorkspaceFolderBasename},target=/home/vscode/.config/gh,type=volume",
+		// Azure CLI login (az login); without the volume a rebuild signs az out.
+		"source=azure-config-${localWorkspaceFolderBasename},target=/home/vscode/.azure,type=volume",
+		// Keep a single host checkout as the source of truth for assistant skills.
+		// Clone ai-skill to ~/GitHub/ai-skill before creating the container.
+		"source=${localEnv:HOME}/GitHub/ai-skill,target=/opt/ai-skill,type=bind,consistency=cached"
 	],
-	// Static paths inside the container (containerEnv does not support ${localEnv:...})
 	"containerEnv": {
 		"CODEX_HOME": "/home/vscode/.codex",
 		"CLAUDE_CONFIG_DIR": "/home/vscode/.claude",
 		"COPILOT_HOME": "/home/vscode/.copilot"
 	},
-	// API keys pulled from your host shell environment at connect time
 	"remoteEnv": {
 		"ANTHROPIC_API_KEY": "${localEnv:ANTHROPIC_API_KEY}",
 		"OPENAI_API_KEY": "${localEnv:OPENAI_API_KEY}"
@@ -41,25 +49,31 @@
 	"customizations": {
 		"vscode": {
 			"extensions": [
-				// C# tooling
 				"ms-dotnettools.csdevkit",
 				"ms-dotnettools.csharp",
 				"ms-dotnettools.vscode-dotnet-runtime",
-				// AI tools
 				"anthropic.claude-code",
 				"openai.chatgpt",
 				"GitHub.copilot",
 				"GitHub.copilot-chat"
 			],
 			"settings": {
-				// Required by the Claude extension before bypassPermissions can be selected.
 				"claudeCode.allowDangerouslySkipPermissions": true,
 				"claudeCode.initialPermissionMode": "bypassPermissions",
 				"claudeCode.preferredLocation": "sidebar",
 				"github.copilot.enable": {
 					"*": true
 				},
+				// Built-in chat utility flows (chat titles, commit messages) default to
+				// GitHub Copilot's utility models, which need a Copilot entitlement the
+				// container does not persist. Use the BYOK main agent model instead so a
+				// fresh container does not prompt for this setting on every rebuild.
+				"chat.byokUtilityModelDefault": "mainAgent",
 				"terminal.integrated.defaultProfile.linux": "bash",
+				// Pass Herdr's Ctrl+B prefix to the focused terminal instead of toggling the sidebar.
+				"terminal.integrated.commandsToSkipShell": [
+					"-workbench.action.toggleSidebarVisibility"
+				],
 				"files.insertFinalNewline": true,
 				"editor.rulers": [
 					120

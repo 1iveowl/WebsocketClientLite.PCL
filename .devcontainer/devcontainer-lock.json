@@ -1,19 +1,24 @@
 {
-  "features": {
-    "ghcr.io/devcontainers/features/dotnet:2": {
-      "version": "2.5.0",
-      "resolved": "ghcr.io/devcontainers/features/dotnet@sha256:0fc16547ed4db6d7ff2a9f5981d2b93eb314e568affb9958029ad794f1f9a093",
-      "integrity": "sha256:0fc16547ed4db6d7ff2a9f5981d2b93eb314e568affb9958029ad794f1f9a093"
-    },
-    "ghcr.io/devcontainers/features/github-cli:1": {
-      "version": "1.1.3",
-      "resolved": "ghcr.io/devcontainers/features/github-cli@sha256:bd7ab48a832228f633239277552c30b353867fef2e5b037e064b4e64f0b843f2",
-      "integrity": "sha256:bd7ab48a832228f633239277552c30b353867fef2e5b037e064b4e64f0b843f2"
-    },
-    "ghcr.io/devcontainers/features/node:2": {
-      "version": "2.0.0",
-      "resolved": "ghcr.io/devcontainers/features/node@sha256:fedd4c11f7adfb64283b578dddc7da906728daa25fa293351c9d913231acf12f",
-      "integrity": "sha256:fedd4c11f7adfb64283b578dddc7da906728daa25fa293351c9d913231acf12f"
-    }
-  }
+	"features": {
+		"ghcr.io/devcontainers/features/azure-cli:1": {
+			"version": "1.3.0",
+			"resolved": "ghcr.io/devcontainers/features/azure-cli@sha256:d98f1066c077be0fa9d115b718f458bd803e415181b4a96f82a6f5d9f77241ac",
+			"integrity": "sha256:d98f1066c077be0fa9d115b718f458bd803e415181b4a96f82a6f5d9f77241ac"
+		},
+		"ghcr.io/devcontainers/features/dotnet:2": {
+			"version": "2.5.0",
+			"resolved": "ghcr.io/devcontainers/features/dotnet@sha256:0fc16547ed4db6d7ff2a9f5981d2b93eb314e568affb9958029ad794f1f9a093",
+			"integrity": "sha256:0fc16547ed4db6d7ff2a9f5981d2b93eb314e568affb9958029ad794f1f9a093"
+		},
+		"ghcr.io/devcontainers/features/github-cli:1": {
+			"version": "1.1.3",
+			"resolved": "ghcr.io/devcontainers/features/github-cli@sha256:bd7ab48a832228f633239277552c30b353867fef2e5b037e064b4e64f0b843f2",
+			"integrity": "sha256:bd7ab48a832228f633239277552c30b353867fef2e5b037e064b4e64f0b843f2"
+		},
+		"ghcr.io/devcontainers/features/node:2": {
+			"version": "2.0.0",
+			"resolved": "ghcr.io/devcontainers/features/node@sha256:fedd4c11f7adfb64283b578dddc7da906728daa25fa293351c9d913231acf12f",
+			"integrity": "sha256:fedd4c11f7adfb64283b578dddc7da906728daa25fa293351c9d913231acf12f"
+		}
+	}
 }
