@@ -271,3 +271,62 @@ Final sender measurements on .NET 10.0.14 compare equivalent scalar loops with r
 The active sender kernels meet the local budget. Copy-and-mask uses four-byte batches plus a short tail; in-place masking reads the preserved key region directly. Neither uses a variable-shift runtime helper in its hot loop.
 
 The retained, unused receive-side pilot helper measured approximately 45–50% slower than its original scalar comparison in this final build, despite meeting its earlier pilot measurements. It is no longer on the production receive path because masked server frames are rejected. The benchmark continues to report it; the original pilot result is not a portable performance guarantee. Do not reintroduce that helper into a hot path without remeasuring.
+
+## CI verification receipts (phase 2, increment D)
+
+CI captures the existing protocol and build/test jobs independently, then runs
+`evidence-gate` even when a dependency fails. Download the `pdd-receipt` artifact
+for `receipt.json`, `summary.md` and the linked raw logs, TRX, coverage and Dafny
+mutation results. The contract-change report remains a separate review aid;
+it is never treated as approval. Configure `evidence-gate` as a required check
+alongside the existing verification and build/test checks in branch protection.
+
+To reproduce locally, use a **new** output directory (capture refuses reuse):
+
+```bash
+python3 scripts/pdd-receipt.py capture --job protocol --output artifacts/pdd/protocol
+python3 scripts/pdd-receipt.py capture --job tests --output artifacts/pdd/tests
+python3 scripts/pdd-receipt.py aggregate --output artifacts/pdd
+```
+
+Run these against an unchanged checkout. The receipt records the tested commit,
+PR source head (`PDD_PR_HEAD`, null for local/push runs), worktree dirtiness,
+SHA-256 hashes of tracked and unignored source, manifest, tooling and workflow
+files, command arrays, exit codes, UTC timestamps, tool/SDK versions and CI run
+identity. Source snapshots are checked before and after each job and compared
+with the aggregator's checkout. CI run/attempt identities must also match.
+Mismatches are retained as rejected evidence, never combined with valid results.
+These are traceability artifacts, not signed attestations or tamper-proof records.
+
+Every target has a fresh result directory and a recorded test command. TRX test
+identities are resolved through `TestDefinitions/TestMethod`, including every
+case of a named parameterized test. The host runtime comes from
+`RuntimeInformation.FrameworkDescription` emitted **inside the test process**.
+All five library targets currently use a .NET 10 test project; this is not a
+five-runtime test matrix. The ordinary `./test-all-tfms.sh Release` command still
+works; CI capture sets `PDD_TEST_RESULTS` to collect per-target evidence.
+
+The machine gate requires successful manifest/fixture checks, proof plus audit
+and generated-code drift checks, every catalogued targeted Dafny mutation,
+Release build, the complete library-target matrix, named test obligations and
+the existing 70% coverage gate. A zero verifier exit without a verification
+summary is insufficient. Missing, malformed, failed, skipped and interrupted
+results cannot pass. Commands not reached after a failure are `skipped`; commands
+with no completed output are `not-run`. Partial job records are saved before
+commands start; always-run uploads and aggregation preserve available evidence
+on failure/cancellation where GitHub permits remaining steps/jobs to run. A
+cancelled runner cannot guarantee artifact delivery; missing evidence fails.
+
+A passing **machine gate does not mean all Close requirements are satisfied**.
+Review obligations are recorded separately as `not-run`, pending revision-specific
+acceptance through normal PR review. Increment E's controlled tests and separate
+Stryker evidence are also `not-run`; E obligations are not exempted from requirement
+satisfaction. In particular, CLOSE-004 and CLOSE-005 remain unsatisfied. This
+increment does not consume approval booleans or infer review acceptance from
+contract diffs. Future review ingestion must bind actual review decisions to the
+reviewed source revision.
+
+Receipt fixtures cover successful runs, actual failing commands, skipped and
+interrupted results, absent jobs/logs/targets/runtime data, failed or skipped named
+tests, missing mutations, malformed records, revision/hash and CI-attempt
+mismatches. Run them with `python3 -m unittest discover -s verification/tests -v`.
