@@ -1,4 +1,14 @@
-# Protocol verification in version 10.0.0
+# Protocol verification
+
+## Version 10.1.0 additions
+
+The verified core now includes combined header/message admission before payload reads, transmit-state and closing-state decisions, exact segment concatenation, and a theorem composing the length encoder with the decoder. List sends retain exclusive data-message ownership across fragments while allowing controls; invalid list items fail before transmission. Failed partial sends cannot silently resume normal data traffic. Asynchronous disposal waits for the peer's Close response or a bounded timeout.
+
+These changes extend the synchronous guarantees. They do not prove the C# semaphores, async scheduling, socket progress or timer delivery. In particular, production `Merge` proves concatenation assuming an explicit contract for .NET `Buffer.BlockCopy`; the retained `MergeScalar` reference proves the byte loop itself. The C# receive loop remains responsible for retaining the correct arrays and supplying their total length. The [verification guide](../verification/README.md#1010-state-and-composition-proofs) maps every new guarantee to its production caller and trusted boundary.
+
+Local validation of the 10.1.0 changes passed 41 verification results and the generated-source/trust-audit checks, plus 184 tests for each of five library targets. Coverage is 82.3% lines and 75.6% branches. The Release build is warning-free. See the [current validation record](../verification/README.md#1010-local-validation) for negative proof checks and the bulk-copy performance tradeoff.
+
+## Version 10.0.0 foundation
 
 Version 10.0.0 adds a verified synchronous core to WebsocketClientLite. Critical frame parsing, fragmentation decisions, buffer sizing, header encoding and masking operations are written in Dafny and compiled to C#. The library calls that generated code in production.
 
@@ -27,7 +37,7 @@ These guarantees hold under the methods' stated preconditions, including valid b
 
 Handshake and Close acceptance are implemented as Dafny predicates. The handshake predicate requires every supplied acceptance condition; the Close predicate checks length, allowed status codes and the supplied UTF-8-validity result. These predicates make the acceptance rules explicit and executable. They do **not** prove the C# computations that supply those conditions, such as calculating the accept hash or decoding UTF-8.
 
-Encoding and decoding are tested together against independent byte expectations. There is no combined formal theorem proving that the encoder and decoder are inverses.
+Encoding and decoding are tested together against independent byte expectations. Version 10.1.0 adds a length-header composition theorem; full frame/payload equivalence is still outside its scope.
 
 ## What improved
 
@@ -46,10 +56,10 @@ Encoding and decoding are tested together against independent byte expectations.
 Dafny does not directly verify the client's C# async/await code. The following remain reviewed or tested boundaries:
 
 - Socket reads and writes, cancellation, scheduling, Rx delivery and disposal races.
-- Applying state transitions from C#, retaining and concatenating fragments, and delivering the completed message.
+- Applying state transitions from C#, retaining the right fragments and delivering the completed message. Concatenation of supplied arrays is now proved by `Merge`, conditional on the documented .NET bulk-copy contract.
 - ArrayPool ownership and buffer lifetime across asynchronous writes.
 - HTTP parsing, header/token interpretation, SHA-1/Base64, random key generation and UTF-8 decoding.
-- Closing-handshake timing, close-code selection and independently initiated fragmented sends that may interleave.
+- Closing-handshake timing, close-code selection and C# lock ownership. List sends now hold a message gate; manually supplied continuation sequences still need one application owner.
 
 The optional legacy single-byte empty-Pong behavior remains outside standard framing guarantees. The work is not a proof of the entire client or a claim of complete RFC conformance. The verifier, compiler, runtime, .NET and the adapters that establish preconditions remain trusted components.
 

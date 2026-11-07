@@ -86,6 +86,237 @@ module {:extern "WebsocketClientLite.VerifiedProtocol"} ProtocolCore {
       next := if fin then 0 else if state == 0 then op else state;
     }
 
+    // Header admission includes message state BEFORE any payload allocation/read.
+    static method {:isolate_assertions} Admit(first: bv8, second: bv8, extended: array<bv8>, available: Size,
+      state: bv8, total: Size, limit: Size)
+      returns (status: bv8, length: bv64, headerSize: Size, next: bv8, size: Size, emit: bool)
+      requires available as int <= extended.Length
+      requires state == 0 || state == 1 || state == 2 || state == 8
+      requires total <= limit
+      ensures status <= 2
+      ensures status != 2 ==> next == state && size == total && !emit
+      ensures status == 2 ==> HeaderValid(first, second, length, limit as bv64) && size <= limit
+      ensures status == 2 ==> state != 8 &&
+        (if (first & 15) < 8 then
+          (if state == 0 then (first & 15) == 1 || (first & 15) == 2 else (first & 15) == 0) &&
+          size as int == (if state == 0 then 0 else total as int) + length as int &&
+          emit == ((first & 128) != 0)
+         else !emit)
+      ensures status == 2 && (first & 15) < 8 ==> next ==
+        (if (first & 128) != 0 then 0 else if state == 0 then first & 15 else state)
+      ensures status == 2 && (first & 15) == 8 ==> next == 8 && size == 0
+      ensures status == 2 && ((first & 15) == 9 || (first & 15) == 10) ==> next == state && size == total
+    {
+      next, size, emit := state, total, false;
+      status, length, headerSize := DecodeHeader(first, second, extended, available, limit as bv64);
+      if status != 2 { return; }
+      var ok: bool;
+      ok, next, size, emit := Step(state, first & 15, (first & 128) != 0, total, length as Size, limit);
+      if !ok { status := 1; }
+    }
+
+    // Transmit state is committed under the same lock as the wire write.
+    // 0 idle, 1 text, 2 binary, 8 Close sent, 15 failed (only Close allowed).
+    static function TxState(state: bv8): bool { state == 0 || state == 1 || state == 2 || state == 8 || state == 15 }
+    static method SendStep(state: bv8, op: bv8, fin: bool) returns (ok: bool, next: bv8)
+      requires TxState(state)
+      ensures TxState(next)
+      ensures !ok ==> next == state
+      ensures ok <==> Known(op) && (if state == 8 then op == 10 && fin else
+        (if op == 8 then fin else state != 15 &&
+          (if op >= 8 then fin else if state == 0 then op == 1 || op == 2 else op == 0)))
+      ensures ok && op == 8 ==> next == 8
+      ensures ok && (op == 9 || op == 10) ==> next == state
+      ensures ok && op < 8 ==> next == (if fin then 0 else if state == 0 then op else state)
+    {
+      next := state;
+      ok := Known(op) && (if state == 8 then op == 10 && fin else
+        (if op == 8 then fin else state != 15 &&
+          (if op >= 8 then fin else if state == 0 then op == 1 || op == 2 else op == 0)));
+      if ok { next := if op == 8 then 8 else if op >= 8 then state else if fin then 0 else if state == 0 then op else state; }
+    }
+
+    // Failure is irreversible for application data, including a partially written frame.
+    static function SendFailed(state: bv8): bv8 { if state == 8 then 8 else 15 }
+
+    // Closing state bits: sent=1, received=2, terminal timeout/failure=4.
+    // event: 0 request send, 1 receive Close, 2 timeout or transport failure.
+    static method CloseStep(state: bv8, event: bv8) returns (next: bv8, send: bool, release: bool)
+      requires state <= 7 && event <= 2
+      ensures next <= 7 && (next & state) == state
+      ensures send <==> event == 0 && (state & 5) == 0
+      ensures send ==> (next & 1) == 1
+      ensures (state & 1) != 0 ==> !send
+      ensures release <==> (next & 4) != 0 || (next & 3) == 3
+      ensures release ==> (next & 3) == 3 || event == 2 || (state & 4) != 0
+      ensures event == 1 ==> (next & 2) != 0
+    {
+      send := event == 0 && (state & 5) == 0;
+      next := if event == 0 then (if send then state | 1 else state)
+              else if event == 1 then state | 2 else state | 4;
+      release := (next & 4) != 0 || (next & 3) == 3;
+    }
+
+    static ghost function Parts(parts: array<array<bv8>>, n: nat): seq<bv8>
+      requires n <= parts.Length
+      reads parts, set i: int | 0 <= i < parts.Length :: parts[i]
+    {
+      if n == 0 then [] else Parts(parts, n - 1) + parts[n - 1][..]
+    }
+
+    // Copies retained segments in order into one exact-sized message buffer.
+    // Production merge uses the explicitly trusted .NET bulk-copy primitive.
+    // Its orchestration has the same contract as the fully verified scalar reference.
+    static method Merge(parts: array<array<bv8>>, total: Size) returns (result: array<bv8>)
+      requires parts.Length <= 0x7fffffff
+      requires |Parts(parts, parts.Length)| == total as int
+      ensures fresh(result) && result[..] == Parts(parts, parts.Length)
+    {
+      result := new bv8[total];
+      var offset: Size := 0;
+      var p: Size := 0;
+      var partCount := parts.Length as Size;
+      while p < partCount
+        invariant 0 <= p as int <= parts.Length
+        invariant offset as int == |Parts(parts, p as int)| && offset <= total
+        invariant result[..offset] == Parts(parts, p as int)
+        invariant Parts(parts, parts.Length)[..offset] == Parts(parts, p as int)
+      {
+        PartsPrefix(parts, p as int, parts.Length);
+        PartsPrefix(parts, p as int + 1, parts.Length);
+        var segment := parts[p];
+        NativeCopy.CopySlice(segment, result, offset);
+        assert result[..offset as int+segment.Length] == Parts(parts, p as int) + segment[..];
+        offset := offset + segment.Length as Size;
+        p := p + 1;
+      }
+    }
+
+    static method MergeScalar(parts: array<array<bv8>>, total: Size) returns (result: array<bv8>)
+      requires parts.Length <= 0x7fffffff
+      requires |Parts(parts, parts.Length)| == total as int
+      ensures fresh(result) && result[..] == Parts(parts, parts.Length)
+    {
+      result := new bv8[total as int];
+      var offset: Size := 0;
+      var p: Size := 0;
+      var partCount := parts.Length as Size;
+      while p < partCount
+        invariant 0 <= p as int <= parts.Length
+        invariant offset as int == |Parts(parts, p as int)| && offset <= total
+        invariant result[..offset] == Parts(parts, p as int)
+        invariant Parts(parts, parts.Length)[..offset] == Parts(parts, p as int)
+      {
+        PartsPrefix(parts, p as int, parts.Length);
+        PartsPrefix(parts, p as int + 1, parts.Length);
+        var segment := parts[p];
+        var segmentLength := segment.Length as Size;
+        var j: Size := 0;
+        while j < segmentLength
+          invariant 0 <= j as int <= segment.Length
+          invariant result[..offset] == Parts(parts, p as int)
+          invariant result[offset..offset+j] == segment[..j]
+        {
+          result[offset+j] := segment[j];
+          j := j + 1;
+        }
+        assert result[..offset as int+segment.Length] == Parts(parts, p as int) + segment[..];
+        offset := offset + segment.Length as Size;
+        p := p + 1;
+      }
+    }
+
+    static lemma PartsPrefix(parts: array<array<bv8>>, n: nat, end: nat)
+      requires n <= end <= parts.Length
+      ensures |Parts(parts, n)| <= |Parts(parts, end)|
+      ensures Parts(parts, end)[..|Parts(parts, n)|] == Parts(parts, n)
+      decreases end - n
+    {
+      if n < end { PartsPrefix(parts, n, end - 1); }
+    }
+
+    static lemma WordSnoc(prefix: seq<bv8>, last: bv8)
+      ensures Word(prefix + [last]) == (Word(prefix) << 8) | (last as bv64)
+    {
+      assert (prefix + [last])[..|prefix|] == prefix;
+    }
+
+    static lemma {:isolate_assertions} NetworkWord(value: bv32)
+      ensures Word([(((value as bv64) >> 8) & 255) as bv8, (value & 255) as bv8]) == (value & 65535) as bv64
+      ensures Word([0, 0, 0, 0, ((value >> 24) & 255) as bv8, ((value >> 16) & 255) as bv8,
+        ((value >> 8) & 255) as bv8, (value & 255) as bv8]) == value as bv64
+    {
+      var a := ((value >> 24) & 255) as bv8;
+      var b := ((value >> 16) & 255) as bv8;
+      var c := ((value >> 8) & 255) as bv8;
+      var d := (value & 255) as bv8;
+      WordSnoc([], 0);
+      WordSnoc([0], 0);
+      WordSnoc([0, 0], 0);
+      WordSnoc([0, 0, 0], 0);
+      WordSnoc([0, 0, 0, 0], a);
+      WordSnoc([0, 0, 0, 0, a], b);
+      WordSnoc([0, 0, 0, 0, a, b], c);
+      WordSnoc([0, 0, 0, 0, a, b, c], d);
+      var z3: seq<bv8> := [0, 0, 0];
+      var z4: seq<bv8> := [0, 0, 0, 0];
+      var p5: seq<bv8> := [0, 0, 0, 0, a];
+      var p6: seq<bv8> := [0, 0, 0, 0, a, b];
+      var p7: seq<bv8> := [0, 0, 0, 0, a, b, c];
+      assert z3 + [0] == z4;
+      assert z4 + [a] == p5;
+      assert p5 + [b] == p6;
+      assert p6 + [c] == p7;
+      assert p7 + [d] == [0, 0, 0, 0, a, b, c, d];
+      assert Word([0, 0]) == 0;
+      assert Word([0, 0, 0, 0]) == 0;
+      assert Word([0, 0, 0, 0, a]) == a as bv64;
+      assert Word([0, 0, 0, 0, a, b]) == ((a as bv64) << 8) | (b as bv64);
+      assert Word([0, 0, 0, 0, a, b, c]) == ((a as bv64) << 16) | ((b as bv64) << 8) | (c as bv64);
+      assert Word([0, 0, 0, 0, a, b, c, d]) == ((a as bv64) << 24) | ((b as bv64) << 16) | ((c as bv64) << 8) | (d as bv64);
+    }
+
+    // The encoder writes CLIENT headers. Strip only MASK before invoking the
+    // SERVER decoder; masking keys are outside the decoded length field.
+    static method {:isolate_assertions} HeaderRoundTrip(length: bv32) returns (decoded: bv64, serverHeader: Size)
+      requires length <= 0x7fffffff - 14
+      ensures decoded == length as bv64
+      ensures serverHeader == (if length <= 125 then 2 else if length <= 65535 then 4 else 10)
+    {
+      var ok, first, header, total := Outgoing(2, 255, length as Size);
+      assert ok;
+      var buffer := new bv8[14];
+      WriteHeader(buffer, first, length as bv32, header);
+      var ext := new bv8[8];
+      var count: Size := header - 6;
+      var i: Size := 0;
+      while i < count
+        modifies ext
+        invariant i <= count
+        invariant forall j :: 0 <= j < i as int ==> ext[j] == buffer[2+j]
+      { ext[i] := buffer[2+i]; i := i + 1; }
+      var value := length;
+      NetworkWord(value);
+      if count == 2 {
+        assert value <= 65535;
+        assert (value & 65535) == value;
+        assert ext[..2] == [(((value as bv64) >> 8) & 255) as bv8, (value & 255) as bv8];
+        assert Word(ext[..2]) == value as bv64;
+      } else if count == 8 {
+        assert ext[..8] == [0, 0, 0, 0, ((value >> 24) & 255) as bv8,
+          ((value >> 16) & 255) as bv8, ((value >> 8) & 255) as bv8, (value & 255) as bv8];
+        assert Word(ext[..8]) == value as bv64;
+      }
+      assert first == 0x82;
+      assert count == (if length <= 125 then 0 else if length <= 65535 then 2 else 8);
+      assert PrefixValid(first, buffer[1] & 127);
+      assert length > 125 ==> Word(ext[..count as int]) == length as bv64;
+      assert HeaderValid(first, buffer[1] & 127, length as bv64, 0x7fffffff);
+      var status: bv8;
+      status, decoded, serverHeader := DecodeHeader(first, buffer[1] & 127, ext, count, 0x7fffffff);
+      assert status == 2 && decoded == length as bv64 && serverHeader + 4 == header;
+    }
+
     static function CloseCode(code: bv16): bool {
       (1000 <= code <= 1014 && code != 1004 && code != 1005 && code != 1006) || 3000 <= code <= 4999
     }
@@ -224,4 +455,15 @@ module {:extern "WebsocketClientLite.VerifiedProtocol"} ProtocolCore {
       }
     }
   }
+  // Trusted boundary: implemented ONLY by System.Buffer.BlockCopy in C#.
+  // This declaration is an assumption about .NET, not a verified algorithm.
+  class NativeCopy {
+    static method {:extern} CopySlice(source: array<bv8>, dest: array<bv8>, offset: Size)
+      requires source != dest
+      requires offset as int + source.Length <= dest.Length
+      modifies dest
+      ensures dest[offset as int..offset as int + source.Length] == source[..]
+      ensures forall j :: 0 <= j < dest.Length && !(offset as int <= j < offset as int + source.Length) ==> dest[j] == old(dest[j])
+  }
+
 }

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Diagnostics.CodeAnalysis;
 using Protocol = WebsocketClientLite.VerifiedProtocol.Protocol;
 using System.Buffers;
@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using System.Linq;
 using IWebsocketClientLite;
 using WebsocketClientLite.Helper;
 using WebsocketClientLite.Model;
@@ -15,6 +16,8 @@ using static WebsocketClientLite.Helper.WebsocketMasking;
 
 namespace WebsocketClientLite.Service;
 
+[SuppressMessage("Design", "CA1001:Types that own disposable fields should be disposable",
+    Justification = "The async-only message semaphore never exposes AvailableWaitHandle; leaving its managed state to GC avoids disposing it under queued senders.")]
 internal class WebsocketSenderHandler : ISender
 {
     private readonly TcpConnectionService _tcpConnectionService;
@@ -23,6 +26,55 @@ internal class WebsocketSenderHandler : ISender
     private readonly Func<Stream, byte[], int, CancellationToken, Task> _writeFunc;
     private readonly Action<ConnectionStatus, Exception?> _connectionStatusAction;
     private readonly bool _isExcludingZeroApplicationDataInPong;
+
+    // Data-message ownership spans an entire list; control frames bypass this
+    // gate and still serialize at the connection's frame-write gate.
+    private readonly SemaphoreSlim _messageGate = new(1, 1);
+    private readonly object _stateLock = new();
+    private byte _sendState;
+    private byte _closeState;
+    private readonly TaskCompletionSource<bool> _closeReady = new(TaskCreationOptions.RunContinuationsAsynchronously);
+
+    // Caller holds _stateLock. Only the verified release decision wakes the
+    // graceful-close waiter; DisconnectWebsocket also awaits the actual write.
+    private bool AdvanceClose(byte action)
+    {
+        Protocol.CloseStep(_closeState, action, out _closeState, out bool send, out bool release);
+        if (release) _closeReady.TrySetResult(true);
+        return send;
+    }
+
+    internal void NotifyPeerClose()
+    {
+        lock (_stateLock) AdvanceClose(1);
+    }
+
+    internal void NotifyReadFailure()
+    {
+        lock (_stateLock)
+        {
+            _sendState = Protocol.SendFailed(_sendState);
+            AdvanceClose(2);
+        }
+    }
+
+    internal async Task WaitForPeerCloseAsync(TimeSpan timeout)
+    {
+        using var timer = new CancellationTokenSource();
+        var delay = Task.Delay(timeout, timer.Token);
+        if (await Task.WhenAny(_closeReady.Task, delay).ConfigureAwait(false) == delay)
+        {
+            lock (_stateLock) AdvanceClose(2);
+        }
+        else
+        {
+#if NET8_0_OR_GREATER
+            await timer.CancelAsync().ConfigureAwait(false);
+#else
+            timer.Cancel();
+#endif
+        }
+    }
 
     internal WebsocketSenderHandler(
         TcpConnectionService tcpConnectionService,
@@ -81,7 +133,8 @@ internal class WebsocketSenderHandler : ISender
             await SendList(
                 messageList,
                 OpcodeKind.Text,
-                (text, frag, op) => ComposeFrameAndSendAsync(text, op, frag, ct))
+                text => ProtocolPayload.StrictUtf8.GetByteCount(text ?? string.Empty),
+                (text, frag, op) => ComposeFrameAndSendCoreAsync(null, text, op, frag, ct).AsTask(), ct)
             .ConfigureAwait(false);
 
 
@@ -113,7 +166,8 @@ internal class WebsocketSenderHandler : ISender
             await SendList(
                 dataList,
                 OpcodeKind.Binary,
-                (data, frag, op) => ComposeFrameAndSendAsync(data, op, frag, ct))
+                data => data?.Length ?? 0,
+                (data, frag, op) => ComposeFrameAndSendCoreAsync(data, null, op, frag, ct).AsTask(), ct)
             .ConfigureAwait(false);
 
     public async Task SendBinary(
@@ -164,8 +218,7 @@ internal class WebsocketSenderHandler : ISender
             try
             {
                 var pongOpcodeOnly = new[] { (byte)((byte)OpcodeKind.Pong + (byte)FragmentKind.Last) };
-                await _tcpConnectionService.WriteSerializedAsync(
-                    (stream, token) => _writeFunc(stream, pongOpcodeOnly, pongOpcodeOnly.Length, token), ct).ConfigureAwait(false);
+                await WriteFrameSerializedAsync(pongOpcodeOnly, pongOpcodeOnly.Length, ct).ConfigureAwait(false);
                 _connectionStatusAction(ConnectionStatus.SendComplete, null);
             }
             catch (Exception ex)
@@ -213,37 +266,52 @@ internal class WebsocketSenderHandler : ISender
     }
 
     private async Task SendList<T>(
-        IEnumerable<T> list, 
-        OpcodeKind opcode, 
-        Func<T, FragmentKind, OpcodeKind, Task> sendTask)
+        IEnumerable<T> list,
+        OpcodeKind opcode,
+        Func<T, int> getLength,
+        Func<T, FragmentKind, OpcodeKind, Task> sendTask,
+        CancellationToken ct)
     {
         if (list is null) return;
-
-        var items = list as IList<T> ?? [.. list];
-        if (items.Count == 0) return;
-
-        if (items.Count == 1)
+        // Snapshot the sequence and validate every fragment before writing any.
+        var items = list.ToArray();
+        foreach (var item in items)
         {
-            await sendTask(items[0], FragmentKind.None, opcode).ConfigureAwait(false);
-            return;
+            Protocol.Outgoing((byte)opcode, 255, (uint)getLength(item), out bool valid, out _, out _, out _);
+            if (!valid) throw new WebsocketClientLiteException("Outgoing fragment exceeds array bounds.");
         }
-
-        for (int index = 0; index < items.Count; index++)
+        if (items.Length == 0) return;
+        await _messageGate.WaitAsync(ct).ConfigureAwait(false);
+        bool started = false;
+        try
         {
-            var item = items[index];
-            if (index == 0)
+            for (int index = 0; index < items.Length; index++)
             {
-                await sendTask(item, FragmentKind.First, opcode).ConfigureAwait(false);
-            }
-            else if (index == items.Count - 1)
-            {
-                await sendTask(item, FragmentKind.Last, opcode).ConfigureAwait(false) ;
-            }
-            else
-            {
-                await sendTask(item, FragmentKind.None, OpcodeKind.Continuation).ConfigureAwait(false);
+                ct.ThrowIfCancellationRequested();
+                var fragment = items.Length == 1 ? FragmentKind.None : index == 0 ? FragmentKind.First
+                    : index == items.Length - 1 ? FragmentKind.Last : FragmentKind.None;
+                var op = index == 0 ? opcode : OpcodeKind.Continuation;
+                await sendTask(items[index], fragment, op).ConfigureAwait(false);
+                started = true;
             }
         }
+        catch
+        {
+            // A failed list must never leave a reusable, incomplete message.
+            if (started)
+                lock (_stateLock) _sendState = Protocol.SendFailed(_sendState);
+            throw;
+        }
+        finally { _messageGate.Release(); }
+    }
+
+    private async Task SendWithMessageGateAsync(byte[]? content, string? text,
+        OpcodeKind opcode, FragmentKind fragment, CancellationToken ct)
+    {
+        bool data = (uint)opcode < 8;
+        if (data) await _messageGate.WaitAsync(ct).ConfigureAwait(false);
+        try { await ComposeFrameAndSendCoreAsync(content, text, opcode, fragment, ct).ConfigureAwait(false); }
+        finally { if (data) _messageGate.Release(); }
     }
 
     private async Task ComposeFrameAndSendAsync(
@@ -252,7 +320,7 @@ internal class WebsocketSenderHandler : ISender
         FragmentKind fragment,
         CancellationToken ct)
     {
-        await ComposeFrameAndSendCoreAsync(null, message, opcode, fragment, ct).ConfigureAwait(false);
+        await SendWithMessageGateAsync(null, message, opcode, fragment, ct).ConfigureAwait(false);
     }
 
     private async Task ComposeFrameAndSendAsync(
@@ -261,7 +329,7 @@ internal class WebsocketSenderHandler : ISender
         FragmentKind fragment,
         CancellationToken ct)
     {
-        await ComposeFrameAndSendCoreAsync(content, null, opcode, fragment, ct).ConfigureAwait(false);
+        await SendWithMessageGateAsync(content, null, opcode, fragment, ct).ConfigureAwait(false);
     }
 
     private async ValueTask ComposeFrameAndSendCoreAsync(
@@ -337,6 +405,35 @@ internal class WebsocketSenderHandler : ISender
 
     }
 
+    private Task WriteFrameSerializedAsync(byte[] buffer, int length, CancellationToken ct) =>
+        _tcpConnectionService.WriteSerializedAsync(async (stream, token) =>
+        {
+            byte op = (byte)(buffer[0] & 15);
+            lock (_stateLock)
+            {
+                if (op == 8)
+                {
+                    if (!AdvanceClose(0)) return;
+                }
+                // A queued Pong is no longer required after receiving Close.
+                // Before the peer replies, Pong is still allowed after our Close.
+                else if (op == 10 && (_closeState & 6) != 0) return;
+                else if (op != 10 && _closeState != 0)
+                    throw new WebsocketClientLiteException("The closing handshake has started.");
+                Protocol.SendStep(_sendState, op, (buffer[0] & 128) != 0, out bool ok, out byte next);
+                if (!ok) throw new WebsocketClientLiteException("Invalid outgoing message sequence or sender is closed/failed.");
+                _sendState = next;
+            }
+            try { await _writeFunc(stream, buffer, length, token).ConfigureAwait(false); }
+            catch
+            {
+                // A write may have transferred only part of a frame: no further
+                // frame (even Close) may be appended to an unknown wire prefix.
+                NotifyReadFailure();
+                throw;
+            }
+        }, ct);
+
     private async ValueTask SendFrameCoreAsync(
         byte[] buffer,
         int length,
@@ -371,17 +468,11 @@ internal class WebsocketSenderHandler : ISender
 
         try
         {
-            await _tcpConnectionService.WriteSerializedAsync(
-                (stream, token) => _writeFunc(stream, buffer, length, token), ct).ConfigureAwait(false);
+            await WriteFrameSerializedAsync(buffer, length, ct).ConfigureAwait(false);
 
-            if (opcode is OpcodeKind.Close)
-            {
-                _connectionStatusAction(ConnectionStatus.Disconnected, null);
-            }
-            else
-            {
+            // Disconnected belongs to the connection's completed closing handshake.
+            if (opcode is not OpcodeKind.Close)
                 _connectionStatusAction(ConnectionStatus.SendComplete, null);
-            }
         }
         catch (Exception ex)
         {

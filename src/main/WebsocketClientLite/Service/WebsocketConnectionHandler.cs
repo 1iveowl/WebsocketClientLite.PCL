@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
@@ -181,6 +181,7 @@ internal class WebsocketConnectionHandler : IDisposable, IAsyncDisposable
                 // terminal on the subscriber is suppressed by Rx.
                 if (sourceError is not null)
                 {
+                    sender.NotifyReadFailure();
                     _connectionStatusAction(ConnectionStatus.Aborted, sourceError);
                     dataframeObserver.OnError(sourceError);
                 }
@@ -261,6 +262,7 @@ internal class WebsocketConnectionHandler : IDisposable, IAsyncDisposable
                 // No explicit completion here: the read loop stops right after a
                 // Close frame (both the main loop and reassembly), so the source
                 // observable completes and the teardown finally takes over.
+                sender.NotifyPeerClose();
                 _connectionStatusAction(ConnectionStatus.Close, null);
                 return null;
             }
@@ -279,6 +281,7 @@ internal class WebsocketConnectionHandler : IDisposable, IAsyncDisposable
             await sender.SendCloseHandshakeAsync(StatusCodes.GoingAway)
                 .ToObservable()
                 .Timeout(TimeSpan.FromSeconds(5));
+            await sender.WaitForPeerCloseAsync(TimeSpan.FromSeconds(5)).ConfigureAwait(false);
         }
         catch (Exception ex)
         {

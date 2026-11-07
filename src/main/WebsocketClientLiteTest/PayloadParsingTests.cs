@@ -256,6 +256,22 @@ public class PayloadParsingTests
         await Assert.ThrowsAsync<WebsocketClientLiteException>(async () => await parser.DataframeObservable().FirstAsync());
     }
 
+    [Theory]
+    [InlineData(new byte[] { 0x80, 125 })] // orphan, body deliberately absent
+    [InlineData(new byte[] { 0x01, 1, 97, 0x82, 125 })] // new data during a message
+    [InlineData(new byte[] { 0x01, 2, 97, 98, 0x80, 2 })] // exceeds remaining budget
+    public async Task RejectsSequenceBeforeAttemptingPayloadRead(byte[] bytes)
+    {
+        using var fake = new FakeTcpConnectionService(bytes, bytes.Length == 6 ? 3 : 125);
+        using var parser = new WebsocketParserHandler(fake);
+        var error = await Assert.ThrowsAsync<WebsocketClientLiteException>(
+            async () => await parser.DataframeObservable().FirstAsync());
+        // EOF would prove the parser tried to read the absent payload. Admission
+        // must fail from the header and previous state instead.
+        Assert.Contains("fragmentation sequence", error.Message, StringComparison.Ordinal);
+        Assert.DoesNotContain("aborted unexpectedly", error.Message, StringComparison.Ordinal);
+    }
+
     [Fact]
     public async Task TruncatedHeadersNeverProduceFrames()
     {
