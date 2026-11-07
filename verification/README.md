@@ -6,6 +6,58 @@ This work implements the five stages in the [adoption plan](../docs/dafny-pdd-pl
 
 The proposed [PDD phase 2 plan for 10.2.0.0](../docs/pdd-phase-2-plan.md) adds requirement traceability, repeatable mutation checks, boundary review, CI receipts and controlled asynchronous tests, starting with Close handling.
 
+## Close requirement map (phase 2, increment A)
+
+The [manifest](requirements.json), [v1 JSON Schema](requirements.schema.json) and
+[intent review](close-intent-review.md) separate sequential Close decisions from
+asynchronous caller responsibilities. Validate them with Python 3.9 or later
+(standard library only):
+
+```bash
+python3 scripts/validate-requirements.py
+python3 -m unittest discover -s verification/tests -v
+```
+
+The validator also accepts a manifest filename; source paths always resolve from
+the repository root, independent of the working directory. It rejects unknown
+fields (including run results), duplicate IDs/JSON keys, missing obligations,
+dangling assumptions, missing files, paths outside the repository and unresolved
+symbols, clauses or test identities. The malformed-manifest fixtures are in
+[tests/invalid-requirements.json](tests/invalid-requirements.json).
+
+Reference resolution is deliberately narrow and fails on ambiguous declarations:
+
+- Dafny identities use `module.class.method`, not the generated C# namespace.
+  The resolver finds the named module/class and a unique static method declaration
+  in that class, then matches each complete `requires`/`ensures` line in that
+  method's header after whitespace normalization. Clauses in other methods do not
+  count. No source line number is an identity.
+- C# identities use `namespace.class.method` in the named file. The resolver
+  supports file-scoped namespaces and uniquely named methods in the declared
+  class. A test must additionally have an adjacent `[Fact]` or `[Theory]` attribute
+  (with optional data attributes). Theory rows share the method identity.
+- Comments and ordinary/verbatim strings are masked before declaration searches.
+  This is a source locator, not a Dafny/C# parser or compiler: overloads, partial
+  classes across files, raw strings, block namespaces and more complex declaration
+  syntax require an explicit resolver extension. It does not resolve call graphs,
+  preprocess conditional compilation or establish semantic coverage.
+
+The small schema evaluator supports only the keywords used by the checked-in
+schema and rejects unsupported keywords. The schema is also usable by JSON Schema
+2020-12 tooling; cross-reference checks require this validator. Changing the
+manifest shape requires a deliberate schema/version and validator update.
+
+All listed obligations are required, including deferred ones. `delivery` records
+where an obligation is implemented (`existing`, B, C or E), **not a pass status**.
+Existing proof/test obligations must resolve to declarations; future tests and
+mutations have descriptions and stable obligation IDs without invented file or
+test references. Review obligations point to the matching requirement section in
+the intent review. CLOSE-004/005 are tested-only and have empty contract lists.
+The inline boundary seeds allow real assumption references now; C will expand
+them into the full boundary register. No validator success means a requirement
+is satisfied: B mutations, C boundary work, E controlled schedules and PR review
+remain separate obligations. Receipts and their aggregation belong to D.
+
 ## Reading the proof boundary
 
 Dafny verifies the implementations and mathematical lemmas in our `.dfy` source. The compiler translates executable implementations into C#; it omits proof-only lemmas. Dafny does not separately verify the generated C# text, and it does not verify any of our handwritten C# implementations or test harnesses. We trust the verifier, solver, compiler and runtimes, and test the compiled integration.
