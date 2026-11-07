@@ -67,6 +67,11 @@ public sealed partial class Evidence
                 var expectedCases = name.EndsWith("PausedCloseWriteBlocksDisposalAndPeerRaceSendsOnce", StringComparison.Ordinal) || name.EndsWith("PeerWaitEndsByControlledTimeoutOrReadFailure", StringComparison.Ordinal) || name.EndsWith("ParserSignalsPeerCloseOrReadFailureBeforeTimerExpiry", StringComparison.Ordinal) || name.EndsWith("DisposalStopsActivePeriodicPingsBeforeClose", StringComparison.Ordinal) ? 2 : 1;
                 if (count != expectedCases) tests[name] = "failed";
             }
+            foreach (var (name, count) in QueuedCaseCounts)
+            {
+                var fullName = "WebsocketClientLiteTest.QueuedWriteTests." + name;
+                if (caseCounts.TryGetValue(fullName, out var actualCount) && actualCount != count) tests[fullName] = "failed";
+            }
             var run = Read(Path.Combine(path, "run.json"));
             var valid = Passed(run) && (run["command"]?.AsArray() ?? []).Any(c => c?.ToString() == "-p:LibTfm=" + tfm) && File.Exists(Path.Combine(path, "output.log"));
             matrix[tfm] = new JsonObject { ["status"] = valid && tests.Count > 0 && tests.Values.All(x => x == "passed") && !string.IsNullOrEmpty(runtime) ? "passed" : "failed", ["execution"] = run, ["tests"] = Node(tests), ["host_runtime"] = runtime, ["trx"] = Path.GetRelativePath(directory, files[0]) };
@@ -152,6 +157,21 @@ public sealed partial class Evidence
                 boundaries["status"] = "passed"; boundaries["evidence"] = report;
             }
             catch (Exception e) when (e is not OutOfMemoryException) { boundaries["status"] = "failed"; errors.Add("Boundary experiments: " + e.Message); }
+        }
+        var queued = new JsonObject { ["status"] = "not-run" };
+        receipt["queued_experiment"] = queued;
+        if (jobs.ContainsKey("controlled"))
+        {
+            try
+            {
+                Require(Passed(jobs["controlled"]?["runs"]?["queued"]), "unsuccessful queued command");
+                var directoryPath = Path.Combine(directory, "controlled/queued");
+                var report = Read(Path.Combine(directoryPath, "results.json"));
+                Require(Equal(report["source"], Node(expected)) && Equal(report["source_after"], Node(expected)) && Equal(report["ci"], jobs["controlled"]?["ci"]), "queued source/CI mismatch");
+                ValidateQueuedReport(directoryPath, report, expected.SourceHashes[QueuedSource]!);
+                queued["status"] = "passed"; queued["evidence"] = report;
+            }
+            catch (Exception e) when (e is not OutOfMemoryException) { queued["status"] = "failed"; errors.Add("Queued experiment: " + e.Message); }
         }
         if (jobs.ContainsKey("stryker"))
         {
@@ -271,6 +291,11 @@ public sealed partial class Evidence
                     var statuses = Tfms.SelectMany(t => o.References.Select(r => S(matrix[t]?["tests"], r.Symbol, "not-run"))).ToArray();
                     item["status"] = statuses.Contains("failed") ? "failed" : statuses.Length == 0 || statuses.Contains("not-run") ? "not-run" : statuses.Contains("skipped") ? "skipped" : "passed";
                     item["evidence"] = Node(Tfms.Select(t => $"tests/tests/{t}/results.trx").ToArray());
+                }
+                if (o.Id == "WRITE-001-TEST")
+                {
+                    item["evidence"]!.AsArray().Add("controlled/queued/results.json");
+                    if (S(queued, "status") != "passed") item["status"] = S(queued, "status");
                 }
                 if (o.Id == "CLOSE-004-CONTROLLED")
                 {

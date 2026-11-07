@@ -65,3 +65,10 @@ periodic-ping cleanup and a non-pumping calling SynchronizationContext. See the
 source fingerprints, measured reproductions and remaining exclusions. The
 controlled CI job captures both experiment sets; neither substitutes for the
 other or for the independent critical Stryker gate.
+
+## P3-A queued ownership
+
+[Queued-write ownership](queued-write-ownership.md) specifies the message-wait,
+frame-wait and in-flight phases, selected cancellation/abort/terminal schedules,
+the reproduced transport semaphore-disposal defect and isolated overlap detector.
+It reuses CancellationBetweenFragmentsAllowsOnlyClose and preserves all E/G gates.

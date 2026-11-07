@@ -91,7 +91,7 @@ public class PayloadEvidenceTests
         }
         var result = new Evidence(Root).Aggregate(tree.Path, Data.Model<SourceIdentity>(Data.Read(Path.Combine(fixtures, "identity.json"))));
         Assert.Equal("failed", result["gate"]!["status"]!.ToString());
-        var payload = result["requirements"]!.AsArray().Where(r => !r!["id"]!.ToString().StartsWith("CLOSE-", StringComparison.Ordinal)).ToArray();
+        var payload = result["requirements"]!.AsArray().Where(r => r!["id"]!.ToString().StartsWith("REASSEMBLY-", StringComparison.Ordinal) || r["id"]!.ToString().StartsWith("MASK-", StringComparison.Ordinal)).ToArray();
         Assert.Equal(6, payload.Length);
         Assert.All(payload, r =>
         {

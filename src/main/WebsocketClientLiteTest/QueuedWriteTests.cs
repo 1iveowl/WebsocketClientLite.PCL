@@ -26,12 +26,14 @@ public class QueuedWriteTests(ITestOutputHelper output)
             (_, _) => Task.CompletedTask, (_, _) => { }, true, new TcpClient());
         internal WebsocketSenderHandler Sender = null!;
         private int active;
+        internal int MaxActive;
         internal void Initialize()
         {
             typeof(TcpConnectionService).GetField("_stream", BindingFlags.Instance | BindingFlags.NonPublic)!.SetValue(Tcp, Stream);
             Sender = new(Tcp, (_, _) => { }, async (_, bytes, _, _) =>
             {
                 int owners = Interlocked.Increment(ref active);
+                MaxActive = Math.Max(MaxActive, owners);
                 try
                 {
                     Assert.True(owners == 1, "Overlapping frame delegates");
@@ -44,6 +46,10 @@ public class QueuedWriteTests(ITestOutputHelper output)
             }, false);
         }
         internal Task Track(Task task) { Tasks.Enqueue(task); return task; }
+        internal async Task<T> Wait<T>(Task<T> task)
+        {
+            await Wait((Task)task); return await task;
+        }
         internal async Task Wait(Task task)
         {
             try { await task.WaitAsync(TimeSpan.FromSeconds(15)); }
@@ -78,4 +84,104 @@ public class QueuedWriteTests(ITestOutputHelper output)
         await h.Wait(Assert.ThrowsAsync<ObjectDisposedException>(() => queued));
         Assert.Equal(0, queuedCalls);
     }
+    [Theory]
+    [InlineData(false, false)]
+    [InlineData(false, true)]
+    [InlineData(true, false)]
+    [InlineData(true, true)]
+    public async Task CancellationBeforeOrWhileQueuedPreservesAdmission(bool frameGate, bool preCancelled)
+    {
+        await using var h = new Harness(output); h.Initialize();
+        using var cancellation = new CancellationTokenSource();
+        // Ping holds only frame ownership; data holds both message and frame ownership.
+        var owner = h.Track(frameGate ? h.Sender.SendPing("owner") : h.Sender.SendText("owner"));
+        await h.Wait(h.Entered.Task);
+        if (preCancelled) cancellation.Cancel();
+        var queued = h.Track(h.Sender.SendText("cancelled", cancellation.Token));
+        h.Events.Enqueue(frameGate ? "data waiting-frame (message held)" : "data waiting-message");
+        if (!preCancelled) { Assert.False(queued.IsCompleted); cancellation.Cancel(); }
+        // Frame-wait failures are wrapped by the existing SendError contract;
+        // message-wait cancellation is propagated directly. Neither reached the delegate.
+        if (frameGate && !preCancelled)
+        {
+            var error = await h.Wait(Assert.ThrowsAsync<WebsocketClientLite.CustomException.WebsocketClientLiteException>(() => queued));
+            Assert.IsAssignableFrom<OperationCanceledException>(error.InnerException);
+        }
+        else await h.Wait(Assert.ThrowsAnyAsync<OperationCanceledException>(() => queued));
+        Assert.Single(h.Opcodes);
+        h.Resume.TrySetResult(); await h.Wait(owner);
+        await h.Wait(h.Track(h.Sender.SendText("admitted")));
+        Assert.Equal(new byte[] { frameGate ? (byte)9 : (byte)1, 1 }, h.Opcodes);
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task PreCancelledControlNeverAcquiresFrameOwnership(bool held)
+    {
+        await using var h = new Harness(output); h.Initialize();
+        using var cancellation = new CancellationTokenSource(); cancellation.Cancel();
+        Task owner = Task.CompletedTask;
+        if (held)
+        {
+            owner = h.Track(h.Sender.SendText("owner")); await h.Wait(h.Entered.Task);
+        }
+        var cancelled = h.Track(h.Sender.SendPing("cancelled", cancellation.Token));
+        var error = await h.Wait(Assert.ThrowsAsync<WebsocketClientLite.CustomException.WebsocketClientLiteException>(() => cancelled));
+        Assert.IsAssignableFrom<OperationCanceledException>(error.InnerException);
+        Assert.Equal(held ? 1 : 0, h.Opcodes.Count);
+        h.Resume.TrySetResult(); await h.Wait(owner);
+        await h.Wait(h.Track(h.Sender.SendText("admitted")));
+        Assert.Equal(held ? 2 : 1, h.Opcodes.Count);
+    }
+
+    [Fact]
+    public async Task FrameSerializationAdmitsTwoDataSendsAndOneControlWithoutOverlap()
+    {
+        await using var h = new Harness(output); h.Initialize();
+        var owner = h.Track(h.Sender.SendText("first")); await h.Wait(h.Entered.Task);
+        var data = h.Track(h.Sender.SendText("second")); h.Events.Enqueue("second waiting-message");
+        var control = h.Track(h.Sender.SendPing("control")); h.Events.Enqueue("control waiting-frame");
+        Assert.True(h.MaxActive == 1, "Overlapping frame delegates");
+        Assert.False(data.IsCompleted); Assert.False(control.IsCompleted); Assert.Single(h.Opcodes);
+        h.Resume.TrySetResult(); await h.Wait(Task.WhenAll(owner, data, control));
+        Assert.True(h.MaxActive == 1, "Overlapping frame delegates");
+        // Either post-release order is legal: no FIFO assumption.
+        Assert.Equal(2, h.Opcodes.Count(op => op == 1)); Assert.Equal(1, h.Opcodes.Count(op => op == 9));
+    }
+
+    [Theory]
+    [InlineData(false, false)]
+    [InlineData(false, true)]
+    [InlineData(true, false)]
+    [InlineData(true, true)]
+    public async Task TerminalNotificationRejectsDataWaitingAtEitherGate(bool frameGate, bool readFailure)
+    {
+        await using var h = new Harness(output); h.Initialize();
+        var owner = h.Track(frameGate ? h.Sender.SendPing("owner") : h.Sender.SendText("owner"));
+        await h.Wait(h.Entered.Task);
+        var queued = h.Track(h.Sender.SendText("queued")); Assert.False(queued.IsCompleted);
+        h.Events.Enqueue(frameGate ? "data waiting-frame" : "data waiting-message");
+        if (readFailure) h.Sender.NotifyReadFailure(); else h.Sender.NotifyPeerClose();
+        h.Events.Enqueue(readFailure ? "read failure" : "peer Close");
+        h.Resume.TrySetResult(); await h.Wait(owner);
+        await h.Wait(Assert.ThrowsAsync<WebsocketClientLite.CustomException.WebsocketClientLiteException>(() => queued));
+        Assert.Single(h.Opcodes);
+    }
+
+    [Fact]
+    public async Task AbortAllowsQueuedCancellationWhileOwnerRemainsInFlight()
+    {
+        await using var h = new Harness(output); h.Initialize();
+        using var cancellation = new CancellationTokenSource();
+        var owner = h.Track(h.Sender.SendText("owner")); await h.Wait(h.Entered.Task);
+        var queued = h.Track(h.Sender.SendPing("queued", cancellation.Token));
+        Assert.False(queued.IsCompleted); h.Events.Enqueue("control waiting-frame");
+        h.Tcp.Dispose(); cancellation.Cancel(); h.Events.Enqueue("abort and cancel waiter");
+        var error = await h.Wait(Assert.ThrowsAsync<WebsocketClientLite.CustomException.WebsocketClientLiteException>(() => queued));
+        Assert.IsAssignableFrom<OperationCanceledException>(error.InnerException);
+        Assert.False(owner.IsCompleted); Assert.Single(h.Opcodes);
+        h.Resume.TrySetResult(); await h.Wait(owner);
+    }
+
 }

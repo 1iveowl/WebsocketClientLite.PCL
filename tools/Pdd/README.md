@@ -161,3 +161,9 @@ It runs nine isolated source edits (five process repetitions for read-failure,
 The aggregate rejects missing repetitions, wrong edits, mismatched source hashes,
 compile/process failures and unrelated assertions. The original ordering gate
 remains independently required. See `verification/close-evidence-g.md`.
+
+P3-A adds `queued-defect --output <fresh-directory>` to controlled capture and
+`queued-probe --output <fresh-directory>` for the manual 50-repeat smoke probe.
+The isolated capacity-two frame gate must trigger the named overlap assertion;
+source/CI identities, exact edit, runtime and execution/TRX are checked. No G gate
+or budget changes. See [queued ownership](../../verification/queued-write-ownership.md).

@@ -45,6 +45,8 @@ internal class TcpConnectionService(
     // several sources at once (user sends, periodic client pings, and automatic
     // pong replies). Without serialization their bytes interleave on the wire,
     // producing malformed frames that cause the server to drop the connection.
+    [SuppressMessage("Maintainability", "CA1513:Use ObjectDisposedException.ThrowIf",
+        Justification = "The same code supports netstandard2.0 and netstandard2.1.")]
     internal async Task WriteSerializedAsync(Func<Stream, CancellationToken, Task> writeAsync, CancellationToken ct)
     {
         await _writeGate.WaitAsync(ct).ConfigureAwait(false);
