@@ -9,7 +9,8 @@
 		"ghcr.io/devcontainers/features/dotnet:2": {},
 		"ghcr.io/devcontainers/features/node:2": {
 			"version": "lts"
-		}
+		},
+		"ghcr.io/devcontainers/features/github-cli:1": {}
 	},
 	// Named volumes keep AI tool state (auth, config, history) across container rebuilds.
 	"mounts": [
