@@ -10,8 +10,17 @@
     ],
     "mutation-level": "Standard",
     "concurrency": 4,
-    "reporters": ["dots", "html", "json"],
-    "thresholds": { "high": 80, "low": 60, "break": 0 },
-    "break-on-initial-test-failure": true
+    "reporters": [
+      "dots",
+      "html",
+      "json"
+    ],
+    "thresholds": {
+      "high": 80,
+      "low": 60,
+      "break": 0
+    },
+    "break-on-initial-test-failure": true,
+    "additional-timeout": 30000
   }
 }

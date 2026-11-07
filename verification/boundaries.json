@@ -119,7 +119,7 @@
     },
     {
       "id": "CLOSE-TIMER",
-      "assumption": "Task.Delay, Rx Timeout and continuations eventually run; configured durations are not wall-clock completion guarantees.",
+      "assumption": "The default peer-delay delegate uses Task.Delay; it, Rx Timeout and continuations eventually run. Controlled tests replace only the internal peer delay; configured durations are not wall-clock completion guarantees.",
       "review_anchor": "boundary-timer",
       "owners": [
         {

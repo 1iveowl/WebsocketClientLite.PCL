@@ -47,3 +47,105 @@ After this experiment, the configuration was changed to four workers and the dot
 - [Stryker.NET configuration](https://stryker-mutator.io/docs/stryker-net/configuration/): source selection, target framework, reporters and score thresholds.
 - [Stryker.NET reporters](https://stryker-mutator.io/docs/stryker-net/reporters/): local HTML and JSON evidence.
 - [Microsoft Research: Formally verifying agent-written full-stack web apps with PDD Kit](https://www.microsoft.com/en-us/research/blog/formally-verifying-agent-written-full-stack-web-apps-with-pdd-kit/): the phase 2 inspiration for challenging contracts and recording evidence at trusted boundaries.
+
+## Increment E completed pilot and gate
+
+An exploratory four-worker run on November 7, 2026 completed with exit 0 in
+**458.30 seconds (7m 38s)**, using Stryker.NET 5.0.0, Release, the net10.0 library
+and .NET 10 host. It ran the eight initial controlled cases plus the existing
+suite. The selected connection-handler file produced these separate outcomes:
+
+| Outcome | Count |
+| --- | ---: |
+| Killed by tests | 22 |
+| Survived | 45 |
+| No coverage | 8 |
+| Timeout | 1 |
+| Compile error | 3 |
+| Ignored by redundant-block filter | 25 |
+
+The console's 46 compile-error outcomes include mutation preparation outside the
+selected file; the JSON contains nine compile errors across its reported files.
+Neither is counted as a behavioral detection. The headline score was 30.26%; it
+includes the timeout and is **not the gate**. The JSON SHA-256 was
+`2fef3f868596c575038bd716a90d25ebfab288ae46fd1229b843a0c13bdc8538`.
+This exploratory report lives in ignored `artifacts/stryker-close/reports/` and
+is not combined with later revision-bound evidence.
+
+The pilot exposed missing assertions for removal of the parser's
+`NotifyReadFailure` (pilot mutant 590) and `NotifyPeerClose` (627). Two additional
+loopback cases now hold the peer timer and assert readiness after the parser
+notification. The initial report deliberately fails the strengthened gate;
+these mutants must be **Killed** in the final run, as must removal of Close send
+(631), peer wait (632), Disconnected notification (638), disposal await (643), and
+async transport disposal (646). IDs are explanatory only: the gate keys exact
+operator/location/replacement fingerprints and the source hash.
+
+[Machine-readable dispositions](stryker-close-dispositions.json) classify every
+remaining selected survivor, uncovered mutant and timeout individually and map
+Close-relevant entries to CLOSE-004/CLOSE-005. Important distinctions:
+
+- Boolean values carried by the unused termination signal, empty parser Dispose,
+  and Release-elided Debug.WriteLine calls are equivalent for this scope.
+- Handshake/ping setup, reserved-opcode diagnostics, Ping response timeout and
+  synchronous abort cleanup are outside these two graceful-disposal obligations.
+- Custom synchronization contexts, parser-only completion fallback, precise
+  observer terminal routing and active periodic-ping cleanup remain **accepted
+  test gaps**, not detected defects or proofs of equivalence. PR review must
+  assess these dispositions independently. This does not claim all Close-related
+  behavior is covered.
+- The Ping-response timeout is kept as Timeout, never relabeled Killed. The
+  redundant-block ignored cases remain visible and require the known Stryker
+  filter reason. Unexpected ignored outcomes fail the gate.
+
+CI runs the separate Stryker job on PRs, with a **30-minute command budget** and
+**40-minute job limit**. The command budget is almost four times the measured
+pilot duration, allowing slower shared workers and restore overhead; the job
+limit also covers SDK setup and evidence upload. It is an initial budget to
+reassess from CI measurements, not a promised runtime. The small Dafny mutation
+suite and all existing gates remain mandatory.
+
+The empirical gate requires a completed successful run, exact source/config
+identity, actual host-runtime probe, distinct raw outcomes, dispositions for
+survivors/uncovered/timeouts, and Killed outcomes for the seven critical mutants.
+A new or unresolved outcome fails; changing source invalidates the dispositions.
+An aggregate score cannot waive this gate or the independent
+[ordering-defect experiment](controlled-close.md). Review acceptance remains a
+separate unsatisfied obligation.
+
+Use `./scripts/pdd.sh capture --job stryker --output artifacts/pdd/stryker` for a
+fresh source-bound run. `stryker-triage --report <JSON> --output <directory>` can
+check dispositions alone; it does not establish source-bound execution evidence.
+The final receipt reports its own counts, duration, source identity, report hash,
+SDK/tool versions, commands, exits, timestamps and host rather than substituting
+this exploratory measurement. All jobs must capture one unchanged revision.
+
+A second complete run after adding the parser notification tests took **461.41
+seconds (7m 41s)**. All seven critical mutants were Killed. Selected outcomes were
+23 Killed, 43 Survived, seven NoCoverage, three Timeout, three CompileError and 25
+Ignored. Removing Aborted or incoming-Close status callbacks now times out the
+notification barriers; those remain Timeout rather than assertion detection.
+The report exposed one additional survivor: reversing the parser-finally
+cancellation condition (594). Its outcome changed from Killed in the first run
+to Survived, exposing nondeterministic pipeline-only coverage. It has an explicit
+accepted-gap disposition alongside removal of the same finally call (596).
+The aggregate correctly rejected the report until that disposition was recorded.
+Final captures are refreshed after this disposition change; prior receipts are
+not relabeled with the new source identity.
+
+A subsequent run classified critical mutant 627 as Timeout instead of Killed,
+and the gate rejected it. In an isolated source copy, the same removal failed the
+named parser-readiness assertion in 89 ms (the companion read-failure case passed).
+The test detects the defect; the Stryker timeout is not equivalent evidence.
+The selected test set also includes loopback tests whose mutated peer waits can
+consume five seconds each before the controlled assertion runs.
+
+The final configuration therefore sets `additional-timeout` to **30000 ms**.
+[Stryker's per-mutant timeout calculation](https://stryker-mutator.io/docs/stryker-net/configuration/#additional-timeout-number)
+uses the covering tests' baseline duration, with only 3000 ms additional time by
+default. Thirty seconds lets the 15-second diagnostic waits and bounded cleanup
+finish before cancellation by Stryker, with margin for mutated five-second peer
+waits. This increases the opportunity to observe assertions; it does not relabel
+any previous Timeout or relax the requirement for all seven critical mutants to
+be Killed. The overall command/job budgets remain 30/40 minutes and the final
+receipt measures the completed run with this configuration.

@@ -48,13 +48,14 @@ public class ReceiptTests
     }
     public static IEnumerable<object[]> Cases() => Data.Read(Path.Combine(Fixtures, "receipt-cases.json")).AsArray().Select(c => new object[] { c!.ToJsonString() });
     [Fact]
-    public void PythonSuccessFixtureMatchesAndKeepsReviewAndEPending()
+    public void LegacySuccessFixtureNowRequiresEEvidence()
     {
         using var tree = new TemporaryTree();
         CopyTree(Path.Combine(Fixtures, "evidence"), tree.Path);
         BindCi(tree.Path);
         var actual = Projection(new Evidence(RequirementsTests.Root).Aggregate(tree.Path, Identity));
         var expected = Data.Read(Path.Combine(Fixtures, "receipt-success.expected.json"));
+        expected["gate"] = "failed"; // E evidence is now mandatory; preserve the D fixture.
         Assert.True(JsonNode.DeepEquals(expected, actual), actual.ToJsonString());
     }
     [Theory, MemberData(nameof(Cases))]
@@ -107,6 +108,7 @@ public class ReceiptTests
         using var tree = new TemporaryTree();
         CopyTree(Path.Combine(Fixtures, "evidence"), tree.Path);
         BindCi(tree.Path);
+        var baselineErrors = new Evidence(RequirementsTests.Root).Aggregate(tree.Path, Identity)["errors"]!.AsArray().Select(e => e!.ToString()).ToHashSet();
         var job = Path.Combine(tree.Path, "protocol/job.json");
         var trx = Path.Combine(tree.Path, "tests/tests/net8.0/results.trx");
         switch (mode)
@@ -156,7 +158,9 @@ public class ReceiptTests
                 File.WriteAllText(Path.Combine(tree.Path, "tests/coverage/coverage.cobertura.xml"), "<coverage line-rate=\"NaN\"/>");
                 break;
         }
-        Assert.Equal("failed", new Evidence(RequirementsTests.Root).Aggregate(tree.Path, Identity)["gate"]!["status"]!.ToString());
+        var receipt = new Evidence(RequirementsTests.Root).Aggregate(tree.Path, Identity);
+        Assert.Equal("failed", receipt["gate"]!["status"]!.ToString());
+        Assert.NotEmpty(receipt["errors"]!.AsArray().Select(e => e!.ToString()).Except(baselineErrors));
     }
     [Fact]
     public async Task CaptureFailureSkipsFollowingAndRejectsStaleDirectory()

@@ -35,6 +35,7 @@ public sealed partial class Evidence
             var definitions = tree.Descendants(ns + "UnitTest").ToDictionary(e => (string)e.Attribute("id")!, e => e.Element(ns + "TestMethod"));
             var tests = new Dictionary<string, string>();
             string? runtime = null;
+            var caseCounts = new Dictionary<string, int>();
             Dictionary<string, int> severity = new()
             {
                 ["passed"] = 0,
@@ -46,6 +47,7 @@ public sealed partial class Evidence
             {
                 Require(definitions.TryGetValue((string)item.Attribute("testId")!, out var method) && method is not null, "TRX result has no test definition");
                 var name = ((string)method!.Attribute("className")!).Split(',')[0] + "." + (string)method.Attribute("name")!;
+                caseCounts[name] = caseCounts.GetValueOrDefault(name) + 1;
                 var status = (string?)item.Attribute("outcome") switch
                 {
                     "Passed" => "passed",
@@ -59,6 +61,11 @@ public sealed partial class Evidence
                     var match = Regex.Match(item.Value, @"PDD_HOST_RUNTIME=(.+)");
                     runtime = match.Success ? match.Groups[1].Value.Trim() : null;
                 }
+            }
+            foreach (var (name, count) in caseCounts.Where(p => p.Key.StartsWith("WebsocketClientLiteTest.ControlledCloseTests.", StringComparison.Ordinal)))
+            {
+                var expectedCases = name.EndsWith("PausedCloseWriteBlocksDisposalAndPeerRaceSendsOnce", StringComparison.Ordinal) || name.EndsWith("PeerWaitEndsByControlledTimeoutOrReadFailure", StringComparison.Ordinal) || name.EndsWith("ParserSignalsPeerCloseOrReadFailureBeforeTimerExpiry", StringComparison.Ordinal) ? 2 : 1;
+                if (count != expectedCases) tests[name] = "failed";
             }
             var run = Read(Path.Combine(path, "run.json"));
             var valid = Passed(run) && (run["command"]?.AsArray() ?? []).Any(c => c?.ToString() == "-p:LibTfm=" + tfm) && File.Exists(Path.Combine(path, "output.log"));
@@ -74,8 +81,8 @@ public sealed partial class Evidence
         var requirements = new JsonArray();
         var reviews = new JsonArray();
         var ci = Node(CiIdentity());
-        var receipt = new JsonObject { ["schema_version"] = 1, ["created_at"] = Now(), ["source"] = Node(expected), ["ci"] = ci, ["jobs"] = jobs, ["rejected_jobs"] = rejected, ["errors"] = errors, ["requirements"] = requirements, ["review_evidence"] = reviews, ["stryker"] = new JsonObject { ["status"] = "not-run", ["delivery"] = "E", ["reason"] = "Separate C# mutation evidence pending increment E" } };
-        foreach (var job in new[] { "protocol", "tests" })
+        var receipt = new JsonObject { ["schema_version"] = 1, ["created_at"] = Now(), ["source"] = Node(expected), ["ci"] = ci, ["jobs"] = jobs, ["rejected_jobs"] = rejected, ["errors"] = errors, ["requirements"] = requirements, ["review_evidence"] = reviews, ["stryker"] = new JsonObject { ["status"] = "not-run", ["reason"] = "Missing separate Stryker job evidence" } };
+        foreach (var job in new[] { "protocol", "tests", "controlled", "stryker" })
         {
             var path = Path.Combine(directory, job, "job.json");
             if (!File.Exists(path))
@@ -115,6 +122,30 @@ public sealed partial class Evidence
                 rejected[job] = new JsonObject { ["reason"] = error.Message, ["partial_evidence"] = data?.DeepClone() };
                 errors.Add($"{job}: {error.Message}");
             }
+        }
+        var controlled = new JsonObject { ["status"] = "not-run" };
+        receipt["controlled_experiment"] = controlled;
+        if (jobs.ContainsKey("controlled"))
+        {
+            try
+            {
+                Require(Passed(jobs["controlled"]?["runs"]?["defect"]), "unsuccessful defect command");
+                var defect = Read(Path.Combine(directory, "controlled/defect/results.json"));
+                Require(Equal(defect["source"], Node(expected)) && Equal(defect["source_after"], Node(expected)), "defect source mismatch");
+                Require(S(defect, "status") == "passed" && S(defect, "library_target") == "net10.0", "incomplete defect experiment");
+                var runtime = ValidateDefect(Path.Combine(directory, "controlled/defect"), defect["baseline"]!, defect["mutant"]!);
+                controlled["status"] = "passed"; controlled["host_runtime"] = runtime; controlled["evidence"] = defect;
+            }
+            catch (Exception e) when (e is not OutOfMemoryException) { controlled["status"] = "failed"; errors.Add("Controlled experiment: " + e.Message); }
+        }
+        if (jobs.ContainsKey("stryker"))
+        {
+            try
+            {
+                Require(Passed(jobs["stryker"]?["runs"]?["stryker"]) && Passed(jobs["stryker"]?["runs"]?["runtime"]), "unsuccessful Stryker command/runtime probe");
+                receipt["stryker"] = StrykerEvidence(Path.Combine(directory, "stryker"), expected);
+            }
+            catch (Exception e) when (e is not OutOfMemoryException) { receipt["stryker"] = new JsonObject { ["status"] = "failed", ["reason"] = e.Message }; errors.Add("Stryker: " + e.Message); }
         }
         var proof = jobs["protocol"]?["runs"]?["proof"];
         if (S(proof, "status") == "passed")
@@ -205,8 +236,6 @@ public sealed partial class Evidence
                     item["reason"] = "Acceptance must be recorded against the revision in PR review; textual reports are not approval.";
                     reviews.Add(item.DeepClone());
                 }
-                else if (o.Delivery == "E")
-                    item["reason"] = "Pending controlled tests in increment E";
                 else if (o.Kind == "proof")
                 {
                     item["status"] = S(proof, "status", "not-run");
@@ -228,13 +257,18 @@ public sealed partial class Evidence
                     item["status"] = statuses.Contains("failed") ? "failed" : statuses.Length == 0 || statuses.Contains("not-run") ? "not-run" : statuses.Contains("skipped") ? "skipped" : "passed";
                     item["evidence"] = Node(Tfms.Select(t => $"tests/tests/{t}/results.trx").ToArray());
                 }
-                if (o.Kind != "review" && o.Delivery != "E" && S(item, "status") != "passed")
+                if (o.Id == "CLOSE-004-CONTROLLED")
+                {
+                    item["evidence"]!.AsArray().Add("controlled/defect/results.json");
+                    if (S(controlled, "status") != "passed") item["status"] = S(controlled, "status");
+                }
+                if (o.Kind != "review" && S(item, "status") != "passed")
                     errors.Add($"{o.Id}: {item["status"]}");
                 obligations.Add(item);
             }
             requirements.Add(new JsonObject { ["id"] = requirement.Id, ["satisfied"] = obligations.All(o => S(o, "status") == "passed"), ["machine_evidence"] = new JsonArray(obligations.Where(o => S(o, "kind") != "review").Select(o => (JsonNode)o).ToArray()) });
         }
-        receipt["gate"] = new JsonObject { ["status"] = errors.Count > 0 ? "failed" : "passed", ["scope"] = "Existing machine obligations and CI gates; excludes pending E and PR review, which remain unsatisfied." };
+        receipt["gate"] = new JsonObject { ["status"] = errors.Count > 0 ? "failed" : "passed", ["scope"] = "Machine obligations, controlled ordering experiment, recorded Stryker dispositions and existing CI gates; PR review remains separate and unsatisfied." };
         return receipt;
     }
     public static string Summary(JsonObject receipt)
@@ -246,7 +280,7 @@ public sealed partial class Evidence
         foreach (var req in receipt["requirements"]!.AsArray())
             foreach (var item in req!["machine_evidence"]!.AsArray())
                 lines.Add($"| {item!["id"]} | {item["status"]} {string.Join(", ", item["evidence"]!.AsArray().Select(p => $"[{p}]({p})"))} |");
-        lines.AddRange(["", "Review evidence is separate and not-run; no requirement is claimed satisfied without it.", "Stryker and controlled schedule evidence: not-run (increment E).", "", "Receipts are traceability records, not signed attestations.", ""]);
+        lines.AddRange(["", "Review evidence is separate and not-run; no requirement is claimed satisfied without it.", $"Stryker: {receipt["stryker"]!["status"]}; controlled ordering experiment: {receipt["controlled_experiment"]!["status"]}.", "", "Receipts are traceability records, not signed attestations.", ""]);
         lines.AddRange(receipt["errors"]!.AsArray().Select(e => $"- {e}"));
         return string.Join('\n', lines) + "\n";
     }

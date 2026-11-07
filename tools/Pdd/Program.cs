@@ -72,7 +72,15 @@ public static class Program
                     return await new Mutations(root).Run(Path.GetFullPath(Get("--output", Path.Combine(root, "artifacts/close-mutations", DateTime.UtcNow.ToString("yyyyMMddTHHmmss.fffffffZ")))), Number("--baseline-budget", "180"), Number("--mutant-budget", "90"), Integer("--verification-time-limit", "60"), cancellation.Token);
                 case "capture":
                     Allow("--job", "--output", "--command-budget");
-                    return await evidence.Capture(Choice("--job", ["protocol", "tests"]), output, Number("--command-budget", "1800"), cancellation.Token);
+                    return await evidence.Capture(Choice("--job", ["protocol", "tests", "controlled", "stryker"]), output, Number("--command-budget", "1800"), cancellation.Token);
+                case "stryker-triage":
+                    Allow("--report", "--output");
+                    var triage = Evidence.TriageStryker(Data.Read(Get("--report")), Data.Read(Path.Combine(root, "verification/stryker-close-dispositions.json")), Data.Hash(File.ReadAllBytes(Path.Combine(root, Evidence.CloseSource))));
+                    Data.Save(Path.Combine(output, "stryker-triage.json"), triage);
+                    return 0;
+                case "controlled-defect":
+                    Allow("--output");
+                    return await evidence.ControlledDefect(output, cancellation.Token);
                 case "test-target":
                     Allow("--tfm", "--output", "--command-budget");
                     return await evidence.TestTarget(Choice("--tfm", Evidence.Tfms), output, Number("--command-budget", "1800"), cancellation.Token);

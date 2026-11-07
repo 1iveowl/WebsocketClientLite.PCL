@@ -96,9 +96,43 @@ jobs:
           path: artifacts/pdd/tests/
           if-no-files-found: error
 
+  controlled-close:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+      - name: Detect isolated disposal ordering defect
+        run: ./scripts/pdd.sh capture --job controlled --output artifacts/pdd/controlled --command-budget 480
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: pdd-controlled
+          path: artifacts/pdd/controlled/
+          if-no-files-found: error
+
+  stryker-close:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+      - name: Capture separate Close mutation evidence
+        run: ./scripts/pdd.sh capture --job stryker --output artifacts/pdd/stryker --command-budget 1800
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: pdd-stryker
+          path: artifacts/pdd/stryker/
+          if-no-files-found: error
+
   evidence-gate:
     if: always()
-    needs: [verify-protocol, build-and-test]
+    needs: [verify-protocol, build-and-test, controlled-close, stryker-close]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -116,6 +150,8 @@ jobs:
           mkdir -p artifacts/pdd
           if [ -d artifacts/pdd/downloads/pdd-protocol ]; then mv artifacts/pdd/downloads/pdd-protocol artifacts/pdd/protocol; fi
           if [ -d artifacts/pdd/downloads/pdd-tests ]; then mv artifacts/pdd/downloads/pdd-tests artifacts/pdd/tests; fi
+          if [ -d artifacts/pdd/downloads/pdd-controlled ]; then mv artifacts/pdd/downloads/pdd-controlled artifacts/pdd/controlled; fi
+          if [ -d artifacts/pdd/downloads/pdd-stryker ]; then mv artifacts/pdd/downloads/pdd-stryker artifacts/pdd/stryker; fi
           ./scripts/pdd.sh aggregate
       - name: Upload receipt and partial evidence
         if: always()
@@ -127,4 +163,6 @@ jobs:
             artifacts/pdd/summary.md
             artifacts/pdd/protocol/
             artifacts/pdd/tests/
+            artifacts/pdd/controlled/
+            artifacts/pdd/stryker/
           if-no-files-found: error
