@@ -99,29 +99,9 @@ public class PayloadParsingTests
     }
 
     [Fact]
-    public async Task Reassembles_MaskedFragmentedMessage()
+    public async Task RejectsMaskedServerFrame()
     {
-        // Two masked fragments, each with its own key, exercising unmask-in-place
-        // plus reassembly: Text(FIN=0) "abc" + Continuation(FIN=1) "def".
-        byte[] k1 = { 1, 2, 3, 4 };
-        byte[] k2 = { 5, 6, 7, 8 };
-        var e1 = "abc".Select((c, i) => (byte)((byte)c ^ k1[i % 4]));
-        var e2 = "def".Select((c, i) => (byte)((byte)c ^ k2[i % 4]));
-
-        var bytes = new List<byte> { 0x01, 0x80 | 3 };
-        bytes.AddRange(k1);
-        bytes.AddRange(e1);
-        bytes.AddRange(new byte[] { 0x80, 0x80 | 3 });
-        bytes.AddRange(k2);
-        bytes.AddRange(e2);
-
-        var fake = new FakeTcpConnectionService(bytes.ToArray());
-        using var parser = new WebsocketParserHandler(fake);
-
-        var df = await parser.DataframeObservable().FirstAsync();
-
-        Assert.NotNull(df);
-        Assert.Equal("abcdef", df!.Message);
+        await Assert.ThrowsAsync<WebsocketClientLiteException>(() => Parse(new byte[] { 0x81, 0x80, 1, 2, 3, 4 }));
     }
 
     [Fact]
@@ -187,7 +167,7 @@ public class PayloadParsingTests
     public async Task Parse_FrameExceedingMaxFrameSize_Throws()
     {
         // Binary frame, masked, 16-bit length declaring 200 bytes.
-        var frame = new byte[] { 0x82, 0xFE, 0x00, 0xC8 };
+        var frame = new byte[] { 0x82, 0x7E, 0x00, 0xC8 };
 
         await Assert.ThrowsAsync<WebsocketClientLiteException>(
             () => Parse(frame, maxFrameSize: 100));
@@ -197,7 +177,7 @@ public class PayloadParsingTests
     public async Task Parse_OversizedControlFrame_Throws()
     {
         // Ping (control) frame declaring a 200-byte payload (> 125 is illegal).
-        var frame = new byte[] { 0x89, 0xFE, 0x00, 0xC8 };
+        var frame = new byte[] { 0x89, 0x7E, 0x00, 0xC8 };
 
         await Assert.ThrowsAsync<WebsocketClientLiteException>(() => Parse(frame));
     }
@@ -214,72 +194,73 @@ public class PayloadParsingTests
     [Theory]
     [InlineData(0)]
     [InlineData(1)]
-    [InlineData(10)]
     [InlineData(125)]
-    public async Task Parse_8Bit_Length(byte length)
+    [InlineData(126)]
+    [InlineData(300)]
+    [InlineData(65535)]
+    [InlineData(65536)]
+    [InlineData(70000)]
+    public async Task ParsesCanonicalServerLengths(int length)
     {
-        byte opcodeFin = 0x81;
-        byte maskLen = (byte)(0x80 | length);
-        byte[] mask = { 1, 2, 3, 4 };
-        byte[] payload = Enumerable.Repeat((byte)'a', length).ToArray();
-        byte[] encoded = new byte[length];
-        for (int i = 0; i < length; i++) encoded[i] = (byte)(payload[i] ^ mask[i % 4]);
+        var frame = new List<byte> { 0x81 };
+        if (length <= 125) frame.Add((byte)length);
+        else if (length <= 65535) { frame.Add(126); frame.Add((byte)(length >> 8)); frame.Add((byte)length); }
+        else { frame.Add(127); for (int shift = 56; shift >= 0; shift -= 8) frame.Add((byte)((ulong)length >> shift)); }
+        frame.AddRange(Enumerable.Repeat((byte)'a', length));
+        var parsed = await Parse(frame.ToArray());
+        Assert.Equal((ulong)length, parsed!.Length);
+        Assert.Equal(new string('a', length), parsed.Message);
+    }
 
-        var frame = new byte[2 + 4 + length];
-        frame[0] = opcodeFin; frame[1] = maskLen;
-        Array.Copy(mask, 0, frame, 2, 4);
-        Array.Copy(encoded, 0, frame, 6, length);
+    [Theory]
+    [InlineData(new byte[] { 0xC1, 0 })]
+    [InlineData(new byte[] { 0x83, 0 })]
+    [InlineData(new byte[] { 0x81, 126, 0, 125 })]
+    [InlineData(new byte[] { 0x81, 127, 0, 0, 0, 0, 0, 0, 255, 255 })]
+    [InlineData(new byte[] { 0x81, 127, 128, 0, 0, 0, 0, 0, 0, 0 })]
+    [InlineData(new byte[] { 0x88, 1, 0 })]
+    [InlineData(new byte[] { 0x88, 2, 3, 237 })] // forbidden 1005
+    [InlineData(new byte[] { 0x88, 3, 3, 232, 255 })] // invalid reason UTF-8
+    public async Task RejectsMalformedFrames(byte[] bytes) =>
+        await Assert.ThrowsAsync<WebsocketClientLiteException>(() => Parse(bytes));
 
-        var df = await Parse(frame);
-        Assert.NotNull(df);
-        Assert.Equal((ulong)length, df!.Length);
-        Assert.Equal(new string('a', length), df.Message);
+    [Theory]
+    [InlineData(new byte[] { 0x80, 0 })] // orphan continuation
+    [InlineData(new byte[] { 0x01, 0, 0x81, 0 })] // new data during fragments
+    [InlineData(new byte[] { 0x01, 0, 0x82, 0 })]
+    [InlineData(new byte[] { 0x81, 1, 255 })] // invalid text
+    public async Task RejectsInvalidMessageSequence(byte[] bytes)
+    {
+        using var fake = new FakeTcpConnectionService(bytes);
+        using var parser = new WebsocketParserHandler(fake);
+        await Assert.ThrowsAsync<WebsocketClientLiteException>(async () => await parser.DataframeObservable().FirstAsync());
     }
 
     [Fact]
-    public async Task Parse_16Bit_Length()
+    public async Task ReassemblyPreservesUtf8AcrossFragmentsAndInterleavedPing()
     {
-        ushort length = 300;
-        byte opcodeFin = 0x81;
-        byte firstLen = 0xFE; // 126 + mask bit
-        byte[] mask = { 1, 2, 3, 4 };
-        byte[] payload = Enumerable.Repeat((byte)'b', length).ToArray();
-        byte[] encoded = new byte[length];
-        for (int i = 0; i < length; i++) encoded[i] = (byte)(payload[i] ^ mask[i % 4]);
-
-        var frame = new byte[2 + 2 + 4 + length];
-        frame[0] = opcodeFin; frame[1] = firstLen;
-        frame[2] = (byte)(length >> 8); frame[3] = (byte)(length & 0xFF);
-        Array.Copy(mask, 0, frame, 4, 4);
-        Array.Copy(encoded, 0, frame, 8, length);
-
-        var df = await Parse(frame);
-        Assert.NotNull(df);
-        Assert.Equal((ulong)length, df!.Length);
-        Assert.Equal(new string('b', length), df.Message);
+        using var fake = new FakeTcpConnectionService(new byte[] { 0x01, 1, 0xe2, 0x89, 1, 42, 0x80, 2, 0x82, 0xac });
+        using var parser = new WebsocketParserHandler(fake);
+        var messages = await parser.DataframeObservable().Take(2).ToArray();
+        Assert.Equal(OpcodeKind.Ping, messages[0]!.Opcode);
+        Assert.Equal("€", messages[1]!.Message);
+        Assert.Equal(3UL, messages[1]!.Length);
+        Assert.Equal(FragmentKind.None, messages[1]!.Fragment);
     }
 
     [Fact]
-    public async Task Parse_64Bit_Length()
+    public async Task RejectsMessageAboveLimit()
     {
-        ulong length = 70000;
-        byte opcodeFin = 0x81;
-        byte firstLen = 0xFF; // 127 + mask bit
-        byte[] mask = { 1, 2, 3, 4 };
-        byte[] payload = Enumerable.Repeat((byte)'c', (int)length).ToArray();
-        byte[] encoded = new byte[length];
-        for (int i = 0; i < (int)length; i++) encoded[i] = (byte)(payload[i] ^ mask[i % 4]);
+        using var fake = new FakeTcpConnectionService(new byte[] { 0x01, 2, 97, 98, 0x80, 2, 99, 100 }, 3);
+        using var parser = new WebsocketParserHandler(fake);
+        await Assert.ThrowsAsync<WebsocketClientLiteException>(async () => await parser.DataframeObservable().FirstAsync());
+    }
 
-        var frame = new byte[2 + 8 + 4 + length];
-        frame[0] = opcodeFin; frame[1] = firstLen;
-        ulong l = length;
-        frame[2] = (byte)(l >> 56); frame[3] = (byte)(l >> 48); frame[4] = (byte)(l >> 40); frame[5] = (byte)(l >> 32);
-        frame[6] = (byte)(l >> 24); frame[7] = (byte)(l >> 16); frame[8] = (byte)(l >> 8); frame[9] = (byte)(l & 0xFF);
-        Array.Copy(mask, 0, frame, 10, 4); Array.Copy(encoded, 0, frame, 14, (int)length);
-
-        var df = await Parse(frame);
-        Assert.NotNull(df);
-        Assert.Equal(length, df!.Length);
-        Assert.Equal(new string('c', (int)length), df.Message);
+    [Fact]
+    public async Task TruncatedHeadersNeverProduceFrames()
+    {
+        byte[] header = { 0x82, 127, 0, 0, 0, 0, 0, 1, 0, 0 };
+        for (int length = 0; length < header.Length; length++)
+            await Assert.ThrowsAsync<WebsocketClientLiteException>(() => Parse(header.Take(length).ToArray()));
     }
 }

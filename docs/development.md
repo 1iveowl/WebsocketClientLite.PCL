@@ -164,3 +164,10 @@ Terminals and agents in that Space run inside the container as `vscode`. Some de
 **Changes to `.devcontainer/` have no effect.** Run **Dev Containers: Rebuild Container**.
 
 **Builds on the host and in the container interfere.** Both write the same `bin/` and `obj/` folders. Build in one place, or run `dotnet clean` when you switch.
+
+## Dafny protocol verification
+
+The [protocol verification guide](../verification/README.md) records the contracts,
+C# trust boundaries, pinned toolchain, regeneration commands, tests and performance
+methodology. Run `./scripts/dafny-masking.sh --check` after changing either Dafny
+source or the generated code; the historical script name now covers the full core.

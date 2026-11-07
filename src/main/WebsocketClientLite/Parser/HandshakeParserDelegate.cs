@@ -1,55 +1,51 @@
 using HttpMachine;
 using IHttpMachine;
 using System;
+using System.Collections.Generic;
 using WebsocketClientLite.CustomException;
 using WebsocketClientLite.Model;
 
 namespace WebsocketClientLite.Parser;
 
 internal class HandshakeParserDelegate(
-    IObserver<(
-            HandshakeStateKind handshakeState,
-            WebsocketClientLiteException? ex)> observerHandshakeParserState) : HttpParserDelegate
+    IObserver<(HandshakeStateKind handshakeState, WebsocketClientLiteException? ex)> observerHandshakeParserState) : HttpParserDelegate
 {
-    public override void OnMessageBegin(IHttpCombinedParser combinedParser)
+    internal Dictionary<string, List<string>> HeaderValues { get; } = new(StringComparer.OrdinalIgnoreCase);
+    internal int StatusCode { get; private set; }
+    private string? _header;
+
+    public override void OnHeaderName(IHttpCombinedParser parser, string name)
     {
-        base.OnMessageBegin(combinedParser);
+        base.OnHeaderName(parser, name);
+        _header = name;
+        if (!HeaderValues.ContainsKey(name)) HeaderValues.Add(name, new List<string>());
     }
 
-    public override void OnHeadersEnd(IHttpCombinedParser combinedParser)
+    public override void OnHeaderValue(IHttpCombinedParser parser, string value)
     {
-        base.OnHeadersEnd(combinedParser);
+        base.OnHeaderValue(parser, value);
+        HeaderValues[_header!].Add(value);
     }
 
-    public override void OnMessageEnd(IHttpCombinedParser combinedParser)
+    public override void OnResponseCode(IHttpCombinedParser parser, int statusCode, string reason)
     {
-        base.OnMessageEnd(combinedParser);
-
-        if (!HttpRequestResponse.IsEndOfMessage)
-        {
-            // Defensive: should not happen — OnMessageEnd implies a complete message.
-            observerHandshakeParserState
-                .OnNext((HandshakeStateKind.HandshakeFailed, null));
-            observerHandshakeParserState.OnError(new WebsocketClientLiteException("Unable to complete handshake"));
-            return;
-        }
-
-        // Only "101 Switching Protocols" is a successful WebSocket upgrade. Any
-        // other complete response is a failed handshake — report it as such so
-        // the connect path can fail fast with the server's status line.
-        if (HttpRequestResponse.StatusCode == 101)
-        {
-            observerHandshakeParserState
-                .OnNext((HandshakeStateKind.HandshakeCompletedSuccessfully, null));
-        }
-        else
-        {
-            observerHandshakeParserState.OnNext((
-                HandshakeStateKind.HandshakeFailed,
-                new WebsocketClientLiteException(
-                    $"Unable to connect to websocket server. " +
-                    $"HTTP status: {HttpRequestResponse.StatusCode}, " +
-                    $"reason: {HttpRequestResponse.ResponseReason}")));
-        }
+        base.OnResponseCode(parser, statusCode, reason);
+        StatusCode = statusCode;
     }
+
+    public override void OnParserError() => throw new WebsocketClientLiteException("Malformed HTTP handshake response.");
+
+    internal bool HeadersComplete { get; private set; }
+
+    public override void OnHeadersEnd(IHttpCombinedParser parser)
+    {
+        base.OnHeadersEnd(parser);
+        HeadersComplete = true;
+    }
+
+    // HTTP message completion is not WebSocket acceptance. The parser reports
+    // the outcome only after checking the response against the sent request.
+    internal void Report(bool accepted, string reason) => observerHandshakeParserState.OnNext(
+        accepted ? (HandshakeStateKind.HandshakeCompletedSuccessfully, null)
+        : (HandshakeStateKind.HandshakeFailed, new WebsocketClientLiteException(reason)));
 }

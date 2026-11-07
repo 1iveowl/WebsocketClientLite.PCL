@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
+using Protocol = WebsocketClientLite.VerifiedProtocol.Protocol;
 using System.Buffers;
 using System.IO;
 using System.Text;
@@ -34,6 +36,12 @@ internal class WebsocketSenderHandler : ISender
         _isExcludingZeroApplicationDataInPong = isExcludingZeroApplicationDataInPong;
     }
 
+    internal string? ExpectedAccept { get; private set; }
+
+    [SuppressMessage("Security", "CA5350:Do Not Use Weak Cryptographic Algorithms",
+        Justification = "RFC 6455 requires SHA-1 for the handshake accept value; it is not used for authentication.")]
+    [SuppressMessage("Performance", "CA1850:Prefer static HashData method",
+        Justification = "The same handshake implementation supports netstandard2.0.")]
     internal async Task SendConnectHandShake(
         Uri uri,
         CancellationToken ct,
@@ -41,7 +49,10 @@ internal class WebsocketSenderHandler : ISender
         IDictionary<string, string>? headers = null,
         IEnumerable<string>? subprotocol = null)
     {
-        var handShakeBytes = ClientHandShake.Compose(uri, origin, headers, subprotocol);
+        var key = ClientHandShake.GenerateRandomWebSocketKey();
+        using (var sha1 = System.Security.Cryptography.SHA1.Create())
+            ExpectedAccept = Convert.ToBase64String(sha1.ComputeHash(Encoding.ASCII.GetBytes(key + "258EAFA5-E914-47DA-95CA-C5AB0DC85B11")));
+        var handShakeBytes = ClientHandShake.Compose(uri, origin, headers, subprotocol, key);
 
         try
         {
@@ -265,41 +276,23 @@ internal class WebsocketSenderHandler : ISender
             throw new WebsocketClientLiteException("Websocket connection stream have been closed");
         }
 
-        int payloadLength = content?.Length ?? (text is not null ? Encoding.UTF8.GetByteCount(text) : 0);
-        int payloadLenField = payloadLength <= 125 ? 1 : (payloadLength <= ushort.MaxValue ? 3 : 9);
-        int headerSize = 1 + payloadLenField + 4;
-        int totalSize = headerSize + payloadLength;
+        int payloadLength = content?.Length ?? (text is not null ? ProtocolPayload.StrictUtf8.GetByteCount(text) : 0);
+        if ((uint)opcode > 15 || (uint)fragment > 255)
+            throw new WebsocketClientLiteException("Invalid outgoing opcode or fragment kind.");
+        Protocol.Outgoing((byte)opcode, (byte)fragment, (uint)payloadLength,
+            out bool valid, out byte first, out uint header, out uint total);
+        if (!valid) throw new WebsocketClientLiteException("Invalid outgoing frame or frame size exceeds array bounds.");
+        int headerSize = (int)header;
+        int totalSize = (int)total;
+        if (opcode == OpcodeKind.Close)
+            ProtocolPayload.ValidateClose(content ?? ProtocolPayload.StrictUtf8.GetBytes(text ?? string.Empty));
 
         byte[] buffer = ArrayPool<byte>.Shared.Rent(totalSize);
         int written = 0;
         try
         {
-            buffer[written++] = DetermineFINBit(opcode, fragment);
-
-            if (payloadLenField == 1)
-            {
-                buffer[written++] = (byte)(payloadLength | 0x80);
-            }
-            else if (payloadLenField == 3)
-            {
-                buffer[written++] = (byte)(126 | 0x80);
-                var len = (ushort)payloadLength;
-                buffer[written++] = (byte)(len >> 8);
-                buffer[written++] = (byte)(len & 0xFF);
-            }
-            else
-            {
-                buffer[written++] = (byte)(127 | 0x80);
-                ulong len = (ulong)payloadLength;
-                buffer[written++] = (byte)((len >> 56) & 0xFF);
-                buffer[written++] = (byte)((len >> 48) & 0xFF);
-                buffer[written++] = (byte)((len >> 40) & 0xFF);
-                buffer[written++] = (byte)((len >> 32) & 0xFF);
-                buffer[written++] = (byte)((len >> 24) & 0xFF);
-                buffer[written++] = (byte)((len >> 16) & 0xFF);
-                buffer[written++] = (byte)((len >> 8) & 0xFF);
-                buffer[written++] = (byte)(len & 0xFF);
-            }
+            Protocol.WriteHeader(buffer, first, (uint)payloadLength, header);
+            written = headerSize - 4;
 
             int maskOffset = written;
 #if NETSTANDARD2_0
@@ -318,21 +311,17 @@ internal class WebsocketSenderHandler : ISender
                 int payloadOffset = written;
                 if (content is not null)
                 {
-                    // Mask while copying from the source array (single pass).
-                    for (int i = 0; i < payloadLength; i++)
-                    {
-                        buffer[payloadOffset + i] = (byte)(content[i] ^ buffer[maskOffset + (i & 3)]);
-                    }
+                    if (ReferenceEquals(content, buffer))
+                        throw new WebsocketClientLiteException("The payload aliases the rented frame buffer.");
+                    Protocol.CopyMasked(content, buffer, (uint)payloadOffset, (uint)payloadLength,
+                        buffer[maskOffset], buffer[maskOffset + 1], buffer[maskOffset + 2], buffer[maskOffset + 3]);
                 }
                 else
                 {
                     // Encode the text straight into the frame buffer (no intermediate
                     // array), then mask it in place.
-                    Encoding.UTF8.GetBytes(text!, 0, text!.Length, buffer, payloadOffset);
-                    for (int i = 0; i < payloadLength; i++)
-                    {
-                        buffer[payloadOffset + i] ^= buffer[maskOffset + (i & 3)];
-                    }
+                    ProtocolPayload.StrictUtf8.GetBytes(text!, 0, text!.Length, buffer, payloadOffset);
+                    Protocol.MaskSlice(buffer, (uint)payloadOffset, (uint)payloadLength, (uint)maskOffset);
                 }
                 written += payloadLength;
             }
@@ -346,21 +335,6 @@ internal class WebsocketSenderHandler : ISender
             ArrayPool<byte>.Shared.Return(buffer, clearArray: true);
         }
 
-        static byte DetermineFINBit(OpcodeKind opcode, FragmentKind fragment)
-        {
-            if (opcode is OpcodeKind.Continuation)
-            {
-                return 0;
-            }
-
-            return fragment switch
-            {
-                FragmentKind.None => (byte)((byte)opcode + (byte)FragmentKind.Last),
-                FragmentKind.First => (byte)opcode,
-                FragmentKind.Last => (byte)FragmentKind.Last,
-                _ => throw new NotImplementedException()
-            };
-        }
     }
 
     private async ValueTask SendFrameCoreAsync(

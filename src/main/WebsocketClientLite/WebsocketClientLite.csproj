@@ -36,6 +36,8 @@ Easily and effectively observe incoming message using Reactive Extensions (Rx)</
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Include="../../../verification/generated/Masking.g.cs" Link="Verified/Masking.g.cs" />
+    <PackageReference Include="DafnyRuntime" Version="4.11.0" />
     <PackageReference Include="HttpMachine.PCL" Version="6.2.0" />
     <PackageReference Include="System.Reactive" Version="7.0.0" />
     <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="10.0.14" Condition=" '$(TargetFramework)' == 'netstandard2.0' " />

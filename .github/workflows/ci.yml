@@ -12,6 +12,23 @@ on:
   workflow_dispatch:
 
 jobs:
+  verify-protocol:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify protocol core and check generated C#
+        run: |
+          set -o pipefail
+          ./scripts/dafny-masking.sh --check 2>&1 | tee protocol-verification.log
+      - name: Upload verification evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: protocol-verification
+          path: |
+            protocol-verification.log
+            artifacts/dafny/
+
   build-and-test:
     runs-on: ubuntu-latest
     steps:

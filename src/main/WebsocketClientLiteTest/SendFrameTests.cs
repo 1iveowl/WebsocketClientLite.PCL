@@ -262,4 +262,46 @@ public class SendFrameTests
         Assert.Equal(0x00, frames[1][0]); // Middle: FIN=0, opcode=Continuation
         Assert.Equal(0x80, frames[2][0]); // Last: FIN=1, opcode=Continuation
     }
+    [Fact]
+    public async Task ExplicitFinalContinuationHasFinBit()
+    {
+        var frames = new List<byte[]>();
+        var sender = CreateSender(frames);
+        await sender.SendText("a", OpcodeKind.Text, FragmentKind.First);
+        await sender.SendText("b", OpcodeKind.Continuation, FragmentKind.Last);
+        Assert.Equal(0x80, frames[1][0]);
+    }
+
+    [Theory]
+    [InlineData(OpcodeKind.Ping, FragmentKind.First, 0)]
+    [InlineData(OpcodeKind.Ping, FragmentKind.None, 126)]
+    [InlineData(OpcodeKind.Close, FragmentKind.Last, 0)]
+    [InlineData(OpcodeKind.Reserved1, FragmentKind.None, 0)]
+    [InlineData((OpcodeKind)256, FragmentKind.None, 0)]
+    public async Task InvalidFramesNeverWrite(OpcodeKind opcode, FragmentKind fragment, int length)
+    {
+        var frames = new List<byte[]>();
+        var sender = CreateSender(frames);
+        await Assert.ThrowsAsync<WebsocketClientLite.CustomException.WebsocketClientLiteException>(
+            () => sender.SendText(new string('x', length), opcode, fragment));
+        Assert.Empty(frames);
+    }
+
+    [Theory]
+    [InlineData(125)]
+    [InlineData(126)]
+    [InlineData(65535)]
+    [InlineData(65536)]
+    public async Task OutgoingLengthBoundariesRoundTrip(int length)
+    {
+        var frames = new List<byte[]>();
+        var sender = CreateSender(frames);
+        var payload = Enumerable.Range(0, length).Select(i => (byte)i).ToArray();
+        await sender.SendBinary(payload, CancellationToken.None);
+        var frame = Assert.Single(frames);
+        int keyOffset = length <= 125 ? 2 : length <= 65535 ? 4 : 10;
+        Assert.Equal(length + keyOffset + 4, frame.Length);
+        Assert.Equal(payload, Unmask(frame[(keyOffset + 4)..], frame[keyOffset..(keyOffset + 4)]));
+    }
+
 }

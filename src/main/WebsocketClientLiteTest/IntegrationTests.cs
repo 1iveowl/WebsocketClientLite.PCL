@@ -64,6 +64,20 @@ public class IntegrationTests
         }
     }
 
+    [Theory]
+    [InlineData("Upgrade")]
+    [InlineData("close")]
+    public async Task InvalidAcceptNeverConnectsEvenWhenServerStaysOpen(string connection)
+    {
+        using var server = new LoopbackWebSocketServer();
+        server.StartWithRawHandshakeResponse("HTTP/1.1 101 Switching Protocols\r\nUpgrade: websocket\r\nConnection: " + connection +
+            "\r\nSec-WebSocket-Accept: wrong\r\n\r\n");
+        using var client = new TestClient(server.Uri);
+        var error = await client.Errored.Task.WaitAsync(TimeSpan.FromSeconds(3));
+        Assert.Contains("handshake", error.Message, StringComparison.OrdinalIgnoreCase);
+        Assert.False(client.Connected.Task.IsCompleted);
+    }
+
     [Fact]
     public async Task Connects_HandshakesAndEchoesTextMessage()
     {

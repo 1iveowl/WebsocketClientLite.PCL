@@ -12,14 +12,15 @@ internal static class ClientHandShake
     Uri uri,
     string? origin = null,
     IDictionary<string, string>? headers = null,
-    IEnumerable<string>? subprotocols = null)
+    IEnumerable<string>? subprotocols = null,
+    string? webSocketKey = null)
     {
         // Pre-allocate StringBuilder with a reasonable initial capacity
         var sb = new StringBuilder(512);
 
         // Use direct Append chains instead of string interpolation
         sb.Append("GET ").Append(uri.PathAndQuery).Append(" HTTP/1.1\r\n");
-        sb.Append("Host: ").Append(uri.Host).Append("\r\n");
+        sb.Append("Host: ").Append(uri.Authority).Append("\r\n");
         sb.Append("Upgrade: websocket\r\n");
         sb.Append("Connection: Upgrade\r\n");
 
@@ -28,6 +29,9 @@ internal static class ClientHandShake
         {
             foreach (var header in headers)
             {
+                if (new[] { "Host", "Upgrade", "Connection", "Sec-WebSocket-Key", "Sec-WebSocket-Version", "Sec-WebSocket-Protocol", "Sec-WebSocket-Extensions" }
+                    .Contains(header.Key, StringComparer.OrdinalIgnoreCase))
+                    throw new ArgumentException("Protocol-owned handshake headers cannot be overridden.", nameof(headers));
                 EnsureNoCrLf(header.Key, "header name", nameof(headers));
                 EnsureNoCrLf(header.Value, "header value", nameof(headers));
                 sb.Append(header.Key).Append(": ").Append(header.Value).Append("\r\n");
@@ -42,7 +46,7 @@ internal static class ClientHandShake
         }
 
         // Generate websocket key
-        string key = GenerateRandomWebSocketKey();
+        string key = webSocketKey ?? GenerateRandomWebSocketKey();
         sb.Append("Sec-WebSocket-Key: ").Append(key).Append("\r\n");
 
         // Handle subprotocols more efficiently
@@ -90,7 +94,7 @@ internal static class ClientHandShake
         }
     }
 
-    static string GenerateRandomWebSocketKey()
+    internal static string GenerateRandomWebSocketKey()
     {
 #if NETSTANDARD2_0
         // netstandard2.0 doesn't have RandomNumberGenerator.Fill nor Convert.ToBase64String(Span<byte>)
