@@ -105,6 +105,28 @@ if ! install_herdr; then
 	echo "The herdr setup did not finish; continuing." >&2
 fi
 
+# Shortcuts that start an agent without permission prompts in a terminal, as the VS Code extension already does:
+# yolo for Claude Code, yolo-codex for Codex. Only interactive shells read these files, so nothing started without a
+# shell (scripts, Herdr's agent integrations) picks them up. Written once; running the script again changes nothing.
+ensure_shell_aliases() {
+	local rc line
+	local -a lines=(
+		"alias yolo='claude --dangerously-skip-permissions'"
+		"alias yolo-codex='codex --dangerously-bypass-approvals-and-sandbox'"
+	)
+	for rc in "${HOME}/.bashrc" "${HOME}/.zshrc"; do
+		if [[ "${rc}" == *.zshrc && ! -f "${rc}" ]]; then
+			continue
+		fi
+		for line in "${lines[@]}"; do
+			if ! grep -qxF "${line}" "${rc}" 2>/dev/null; then
+				printf '\n%s\n' "${line}" >>"${rc}"
+			fi
+		done
+	done
+}
+ensure_shell_aliases
+
 # Restore last so a feed or project failure cannot abort assistant configuration.
 # A failure here still fails postCreateCommand, but the container stays usable.
 if [[ -f "${solution_path}" ]]; then

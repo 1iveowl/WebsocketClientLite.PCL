@@ -81,6 +81,8 @@ Named Docker volumes keep the agents' logins and history, Herdr's layout, and th
 
 The container is set up as a trusted sandbox. Claude Code starts in `bypassPermissions` mode, and Codex runs with `approval_policy = "never"` and `sandbox_mode = "danger-full-access"`. The agents can edit the checkout, which is your real working copy mounted from the host, and run any command in the container, using any credentials you sign in with there. If you do not want that, remove those settings from `.devcontainer/post-create.sh` and `.devcontainer/devcontainer.json` before you build the container.
 
+In a terminal, `yolo` starts Claude Code and `yolo-codex` starts Codex without permission prompts. They are shell aliases that the setup script adds to `~/.bashrc`, for `claude --dangerously-skip-permissions` and `codex --dangerously-bypass-approvals-and-sandbox`.
+
 `ANTHROPIC_API_KEY` and `OPENAI_API_KEY` are passed into the container when they are set on the host. Otherwise sign in inside the container. [AGENTS.md](../AGENTS.md) holds the rules every agent follows in this repository.
 
 ### Optional shared skills folder

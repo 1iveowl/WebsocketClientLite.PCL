@@ -51,6 +51,21 @@ create unless the owner explicitly requests it. The human handles startup trust 
 processes alive; restoring conversations after a rebuild does not restore an
 interrupted turn or check. Verify task state before continuing.
 
+## Branches and releases
+
+The full process is in [CONTRIBUTING.md](CONTRIBUTING.md). What an agent must follow:
+
+- Work on a topic branch made from the open release branch (`releases/<x.y.z>`; ask the
+  owner which one if more than one exists), named `feat/…`, `fix/…`, `docs/…` or `chore/…`.
+  One task per branch. Never commit to `main`, and never commit to a release branch
+  unless the owner asks for it.
+- Start each commit message with the matching prefix (`feat:`, `fix:`, `docs:`, `chore:`).
+- Never change `GitVersion.yml`: pushing that change to a release branch, or opening a
+  pull request into one with it, publishes the packages to NuGet. Releasing is the
+  owner's step.
+- Never push to `main`, force-push, or delete a branch unless the owner asks for it.
+- Agents working in parallel use separate git worktrees, never the same checkout.
+
 ## Project-specific guidance
 
 - Build: `dotnet build src/main/WebsocketClientLite.sln`. The .NET 10 SDK builds every

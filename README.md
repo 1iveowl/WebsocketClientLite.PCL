@@ -8,7 +8,7 @@
 
 [![.NET](https://img.shields.io/badge/.NET-8.0%20%7C%209.0%20%7C%2010.0-512BD4?logo=dotnet&logoColor=white)](https://dotnet.microsoft.com/)
 [![.NET Standard](https://img.shields.io/badge/.NET%20Standard-2.0%20%7C%202.1-red.svg)](https://learn.microsoft.com/dotnet/standard/net-standard)
-[![System.Reactive](https://img.shields.io/badge/Rx-6.1-ff69b4.svg)](https://reactivex.io/)
+[![System.Reactive](https://img.shields.io/badge/Rx-7.0-ff69b4.svg)](https://reactivex.io/)
 [![RFC 6455](https://img.shields.io/badge/WebSocket-RFC%206455-2563EB.svg)](https://tools.ietf.org/html/rfc6455)
 
 *Please star this project if you find it useful. Thank you.*
@@ -24,6 +24,15 @@ This library is a ground-up implementation of the WebSocket specification [(RFC 
 The library provides developers with additional flexibility, including the ability to establish secure WSS websocket connections to servers with self-signing certificates, expired certificates, etc. This capability should be used with care for obvious reasons, but is valuable for testing environments, closed local networks, local IoT set-ups, and more.
 
 The library utilizes [ReactiveX](http://reactivex.io/) (aka Rx or Reactive Extensions). While this dependency introduces a small learning curve, it's worthwhile for the context.
+
+## New in Version 9.2.0
+
+Version 9.2.0 updates the package dependencies.
+
+**Dependencies**
+
+- **System.Reactive 7.0.** The library now depends on System.Reactive 7.0.0 (previously 6.1.0), so projects that reference this package move to Rx 7.
+- HttpMachine.PCL 6.2.0, and Microsoft.Bcl.AsyncInterfaces 10.0.14 on `netstandard2.0`.
 
 ## New in Version 9.1.0
 
@@ -356,7 +365,7 @@ This library was developed using the following reference documentation:
 
 ## Building and Contributing
 
-This library targets .NET Standard 2.0, .NET Standard 2.1, .NET 8, .NET 9, and .NET 10. Please keep changes compatible with all of them. GitHub Actions builds, tests, and publishes the packages.
+This library targets .NET Standard 2.0, .NET Standard 2.1, .NET 8, .NET 9, and .NET 10. Please keep changes compatible with all of them. GitHub Actions builds, tests, and publishes the packages. See [CONTRIBUTING.md](CONTRIBUTING.md) for how to send a pull request and how changes become releases.
 
 With the [.NET 10 SDK](https://dotnet.microsoft.com/download/dotnet/10.0), which builds every target framework:
 

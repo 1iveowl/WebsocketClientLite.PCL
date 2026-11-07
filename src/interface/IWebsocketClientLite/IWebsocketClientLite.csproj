@@ -20,7 +20,7 @@
 
   <ItemGroup>
     <!-- IAsyncDisposable for the netstandard2.0 surface (IWebSocketClientRx). -->
-    <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="10.0.8" />
+    <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="10.0.14" />
   </ItemGroup>
 
   <ItemGroup>
