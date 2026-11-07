@@ -98,7 +98,8 @@ public class QueuedWriteTests(ITestOutputHelper output)
         await h.Wait(h.Entered.Task);
         if (preCancelled) cancellation.Cancel();
         var queued = h.Track(h.Sender.SendText("cancelled", cancellation.Token));
-        h.Events.Enqueue(frameGate ? "data waiting-frame (message held)" : "data waiting-message");
+        h.Events.Enqueue(preCancelled ? "data cancelled before message admission" :
+            frameGate ? "data waiting-frame (message held)" : "data waiting-message");
         if (!preCancelled) { Assert.False(queued.IsCompleted); cancellation.Cancel(); }
         // Frame-wait failures are wrapped by the existing SendError contract;
         // message-wait cancellation is propagated directly. Neither reached the delegate.
@@ -127,6 +128,7 @@ public class QueuedWriteTests(ITestOutputHelper output)
         {
             owner = h.Track(h.Sender.SendText("owner")); await h.Wait(h.Entered.Task);
         }
+        h.Events.Enqueue(held ? "pre-cancelled control; frame held by data" : "pre-cancelled control; frame free");
         var cancelled = h.Track(h.Sender.SendPing("cancelled", cancellation.Token));
         var error = await h.Wait(Assert.ThrowsAsync<WebsocketClientLite.CustomException.WebsocketClientLiteException>(() => cancelled));
         Assert.IsAssignableFrom<OperationCanceledException>(error.InnerException);
