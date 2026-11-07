@@ -5,6 +5,7 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="../../src/main/WebsocketClientLite/Helper/VerifiedNativeCopy.cs" Link="VerifiedNativeCopy.cs" />
     <Compile Include="../generated/Masking.g.cs" Link="Masking.g.cs" />
     <Compile Include="../../src/main/WebsocketClientLite/Helper/WebsocketMasking.cs" Link="WebsocketMasking.cs" />
     <PackageReference Include="DafnyRuntime" Version="4.11.0" />

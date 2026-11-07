@@ -11,7 +11,7 @@ using System;
 using System.Numerics;
 using System.Collections;
 [assembly: DafnyAssembly.DafnySourceAttribute(@"// dafny 4.11.0.0
-// Command-line arguments: translate cs verification/Masking.dfy --solver-path <pinned-toolchain>/dafny/z3/bin/z3-4.12.1 --verify-included-files --verification-time-limit 30 --cores 2 --output artifacts/dafny/Masking.cs
+// Command-line arguments: translate cs verification/Masking.dfy --solver-path <pinned-toolchain>/dafny/z3/bin/z3-4.12.1 --verify-included-files --allow-external-contracts --verification-time-limit 30 --cores 2 --output artifacts/dafny/Masking.cs
 // Masking.dfy
 
 
@@ -181,6 +181,253 @@ module {:extern ""WebsocketClientLite.VerifiedProtocol""} ProtocolCore {
       next := if fin then 0 else if state == 0 then op else state;
     }
 
+    static method {:isolate_assertions} Admit(first: bv8, second: bv8, extended: array<bv8>, available: Size, state: bv8, total: Size, limit: Size)
+        returns (status: bv8, length: bv64, headerSize: Size, next: bv8, size: Size, emit: bool)
+      requires available as int <= extended.Length
+      requires state == 0 || state == 1 || state == 2 || state == 8
+      requires total <= limit
+      ensures status <= 2
+      ensures status != 2 ==> next == state && size == total && !emit
+      ensures status == 2 ==> HeaderValid(first, second, length, limit as bv64) && size <= limit
+      ensures status == 2 ==> state != 8 && if first & 15 < 8 then (if state == 0 then first & 15 == 1 || first & 15 == 2 else first & 15 == 0) && size as int == (if state == 0 then 0 else total as int) + length as int && emit == (first & 128 != 0) else !emit
+      ensures status == 2 && first & 15 < 8 ==> next == if first & 128 != 0 then 0 else if state == 0 then first & 15 else state
+      ensures status == 2 && first & 15 == 8 ==> next == 8 && size == 0
+      ensures status == 2 && (first & 15 == 9 || first & 15 == 10) ==> next == state && size == total
+      decreases first, second, extended, available, state, total, limit
+    {
+      next, size, emit := state, total, false;
+      status, length, headerSize := DecodeHeader(first, second, extended, available, limit as bv64);
+      if status != 2 {
+        return;
+      }
+      var ok: bool;
+      ok, next, size, emit := Step(state, first & 15, first & 128 != 0, total, length as Size, limit);
+      if !ok {
+        status := 1;
+      }
+    }
+
+    static function TxState(state: bv8): bool
+      decreases state
+    {
+      state == 0 || state == 1 || state == 2 || state == 8 || state == 15
+    }
+
+    static method SendStep(state: bv8, op: bv8, fin: bool)
+        returns (ok: bool, next: bv8)
+      requires TxState(state)
+      ensures TxState(next)
+      ensures !ok ==> next == state
+      ensures ok <==> Known(op) && if state == 8 then op == 10 && fin else if op == 8 then fin else state != 15 && if op >= 8 then fin else if state == 0 then op == 1 || op == 2 else op == 0
+      ensures ok && op == 8 ==> next == 8
+      ensures ok && (op == 9 || op == 10) ==> next == state
+      ensures ok && op < 8 ==> next == if fin then 0 else if state == 0 then op else state
+      decreases state, op, fin
+    {
+      next := state;
+      ok := Known(op) && if state == 8 then op == 10 && fin else if op == 8 then fin else state != 15 && if op >= 8 then fin else if state == 0 then op == 1 || op == 2 else op == 0;
+      if ok {
+        next := if op == 8 then 8 else if op >= 8 then state else if fin then 0 else if state == 0 then op else state;
+      }
+    }
+
+    static function SendFailed(state: bv8): bv8
+      decreases state
+    {
+      if state == 8 then
+        8
+      else
+        15
+    }
+
+    static method CloseStep(state: bv8, event: bv8)
+        returns (next: bv8, send: bool, release: bool)
+      requires state <= 7 && event <= 2
+      ensures next <= 7 && next & state == state
+      ensures send <==> event == 0 && state & 5 == 0
+      ensures send ==> next & 1 == 1
+      ensures state & 1 != 0 ==> !send
+      ensures release <==> next & 4 != 0 || next & 3 == 3
+      ensures release ==> next & 3 == 3 || event == 2 || state & 4 != 0
+      ensures event == 1 ==> next & 2 != 0
+      decreases state, event
+    {
+      send := event == 0 && state & 5 == 0;
+      next := if event == 0 then if send then state | 1 else state else if event == 1 then state | 2 else state | 4;
+      release := next & 4 != 0 || next & 3 == 3;
+    }
+
+    static ghost function Parts(parts: array<array<bv8>>, n: nat): seq<bv8>
+      requires n <= parts.Length
+      reads parts, set i: int {:trigger parts[i]} | 0 <= i < parts.Length :: parts[i]
+      decreases (set i: int {:trigger parts[i]} | 0 <= i < parts.Length :: parts[i]) + {parts}, parts, n
+    {
+      if n == 0 then
+        []
+      else
+        Parts(parts, n - 1) + parts[n - 1][..]
+    }
+
+    static method Merge(parts: array<array<bv8>>, total: Size) returns (result: array<bv8>)
+      requires parts.Length <= 2147483647
+      requires |Parts(parts, parts.Length)| == total as int
+      ensures fresh(result) && result[..] == Parts(parts, parts.Length)
+      decreases parts, total
+    {
+      result := new bv8[total];
+      var offset: Size := 0;
+      var p: Size := 0;
+      var partCount := parts.Length as Size;
+      while p < partCount
+        invariant 0 <= p as int <= parts.Length
+        invariant offset as int == |Parts(parts, p as int)| && offset <= total
+        invariant result[..offset] == Parts(parts, p as int)
+        invariant Parts(parts, parts.Length)[..offset] == Parts(parts, p as int)
+        decreases partCount as int - p as int
+      {
+        PartsPrefix(parts, p as int, parts.Length);
+        PartsPrefix(parts, p as int + 1, parts.Length);
+        var segment := parts[p];
+        NativeCopy.CopySlice(segment, result, offset);
+        assert result[..offset as int + segment.Length] == Parts(parts, p as int) + segment[..];
+        offset := offset + segment.Length as Size;
+        p := p + 1;
+      }
+    }
+
+    static method MergeScalar(parts: array<array<bv8>>, total: Size) returns (result: array<bv8>)
+      requires parts.Length <= 2147483647
+      requires |Parts(parts, parts.Length)| == total as int
+      ensures fresh(result) && result[..] == Parts(parts, parts.Length)
+      decreases parts, total
+    {
+      result := new bv8[total as int];
+      var offset: Size := 0;
+      var p: Size := 0;
+      var partCount := parts.Length as Size;
+      while p < partCount
+        invariant 0 <= p as int <= parts.Length
+        invariant offset as int == |Parts(parts, p as int)| && offset <= total
+        invariant result[..offset] == Parts(parts, p as int)
+        invariant Parts(parts, parts.Length)[..offset] == Parts(parts, p as int)
+        decreases partCount as int - p as int
+      {
+        PartsPrefix(parts, p as int, parts.Length);
+        PartsPrefix(parts, p as int + 1, parts.Length);
+        var segment := parts[p];
+        var segmentLength := segment.Length as Size;
+        var j: Size := 0;
+        while j < segmentLength
+          invariant 0 <= j as int <= segment.Length
+          invariant result[..offset] == Parts(parts, p as int)
+          invariant result[offset .. offset + j] == segment[..j]
+          decreases segmentLength as int - j as int
+        {
+          result[offset + j] := segment[j];
+          j := j + 1;
+        }
+        assert result[..offset as int + segment.Length] == Parts(parts, p as int) + segment[..];
+        offset := offset + segment.Length as Size;
+        p := p + 1;
+      }
+    }
+
+    static lemma /*{:_inductionTrigger Parts(parts, end), Parts(parts, n)}*/ /*{:_induction parts, n, end}*/ PartsPrefix(parts: array<array<bv8>>, n: nat, end: nat)
+      requires n <= end <= parts.Length
+      ensures |Parts(parts, n)| <= |Parts(parts, end)|
+      ensures Parts(parts, end)[..|Parts(parts, n)|] == Parts(parts, n)
+      decreases end - n
+    {
+      if n < end {
+        PartsPrefix(parts, n, end - 1);
+      }
+    }
+
+    static lemma /*{:_inductionTrigger prefix + [last]}*/ /*{:_induction prefix}*/ WordSnoc(prefix: seq<bv8>, last: bv8)
+      ensures Word(prefix + [last]) == (Word(prefix) << 8 as bv7) | last as bv64
+      decreases prefix, last
+    {
+      assert (prefix + [last])[..|prefix|] == prefix;
+    }
+
+    static lemma {:isolate_assertions} NetworkWord(value: bv32)
+      ensures Word([((value as bv64 >> 8 as bv7) & 255) as bv8, (value & 255) as bv8]) == (value & 65535) as bv64
+      ensures Word([0, 0, 0, 0, ((value >> 24 as bv6) & 255) as bv8, ((value >> 16 as bv6) & 255) as bv8, ((value >> 8 as bv6) & 255) as bv8, (value & 255) as bv8]) == value as bv64
+      decreases value
+    {
+      ghost var a := ((value >> 24 as bv6) & 255) as bv8;
+      ghost var b := ((value >> 16 as bv6) & 255) as bv8;
+      ghost var c := ((value >> 8 as bv6) & 255) as bv8;
+      ghost var d := (value & 255) as bv8;
+      WordSnoc([], 0);
+      WordSnoc([0], 0);
+      WordSnoc([0, 0], 0);
+      WordSnoc([0, 0, 0], 0);
+      WordSnoc([0, 0, 0, 0], a);
+      WordSnoc([0, 0, 0, 0, a], b);
+      WordSnoc([0, 0, 0, 0, a, b], c);
+      WordSnoc([0, 0, 0, 0, a, b, c], d);
+      ghost var z3: seq<bv8> := [0, 0, 0];
+      ghost var z4: seq<bv8> := [0, 0, 0, 0];
+      ghost var p5: seq<bv8> := [0, 0, 0, 0, a];
+      ghost var p6: seq<bv8> := [0, 0, 0, 0, a, b];
+      ghost var p7: seq<bv8> := [0, 0, 0, 0, a, b, c];
+      assert z3 + [0] == z4;
+      assert z4 + [a] == p5;
+      assert p5 + [b] == p6;
+      assert p6 + [c] == p7;
+      assert p7 + [d] == [0, 0, 0, 0, a, b, c, d];
+      assert Word([0, 0]) == 0;
+      assert Word([0, 0, 0, 0]) == 0;
+      assert Word([0, 0, 0, 0, a]) == a as bv64;
+      assert Word([0, 0, 0, 0, a, b]) == (a as bv64 << 8 as bv7) | b as bv64;
+      assert Word([0, 0, 0, 0, a, b, c]) == (a as bv64 << 16 as bv7) | (b as bv64 << 8 as bv7) | c as bv64;
+      assert Word([0, 0, 0, 0, a, b, c, d]) == (a as bv64 << 24 as bv7) | (b as bv64 << 16 as bv7) | (c as bv64 << 8 as bv7) | d as bv64;
+    }
+
+    static method {:isolate_assertions} HeaderRoundTrip(length: bv32) returns (decoded: bv64, serverHeader: Size)
+      requires length <= 2147483647 - 14
+      ensures decoded == length as bv64
+      ensures serverHeader == if length <= 125 then 2 else if length <= 65535 then 4 else 10
+      decreases length
+    {
+      var ok, first, header, total := Outgoing(2, 255, length as Size);
+      assert ok;
+      var buffer := new bv8[14];
+      WriteHeader(buffer, first, length as bv32, header);
+      var ext := new bv8[8];
+      var count: Size := header - 6;
+      var i: Size := 0;
+      while i < count
+        invariant i <= count
+        invariant forall j: int {:trigger ext[j]} :: 0 <= j < i as int ==> ext[j] == buffer[2 + j]
+        decreases count as int - i as int
+        modifies ext
+      {
+        ext[i] := buffer[2 + i];
+        i := i + 1;
+      }
+      var value := length;
+      NetworkWord(value);
+      if count == 2 {
+        assert value <= 65535;
+        assert value & 65535 == value;
+        assert ext[..2] == [((value as bv64 >> 8 as bv7) & 255) as bv8, (value & 255) as bv8];
+        assert Word(ext[..2]) == value as bv64;
+      } else if count == 8 {
+        assert ext[..8] == [0, 0, 0, 0, ((value >> 24 as bv6) & 255) as bv8, ((value >> 16 as bv6) & 255) as bv8, ((value >> 8 as bv6) & 255) as bv8, (value & 255) as bv8];
+        assert Word(ext[..8]) == value as bv64;
+      }
+      assert first == 130;
+      assert count == if length <= 125 then 0 else if length <= 65535 then 2 else 8;
+      assert PrefixValid(first, buffer[1] & 127);
+      assert length > 125 ==> Word(ext[..count as int]) == length as bv64;
+      assert HeaderValid(first, buffer[1] & 127, length as bv64, 2147483647);
+      var status: bv8;
+      status, decoded, serverHeader := DecodeHeader(first, buffer[1] & 127, ext, count, 2147483647);
+      assert status == 2 && decoded == length as bv64 && serverHeader + 4 == header;
+    }
+
     static function CloseCode(code: bv16): bool
       decreases code
     {
@@ -331,6 +578,16 @@ module {:extern ""WebsocketClientLite.VerifiedProtocol""} ProtocolCore {
         i := i + 1;
       }
     }
+  }
+
+  class NativeCopy {
+    static method {:extern} CopySlice(source: array<bv8>, dest: array<bv8>, offset: Size)
+      requires source != dest
+      requires offset as int + source.Length <= dest.Length
+      modifies dest
+      ensures dest[offset as int .. offset as int + source.Length] == source[..]
+      ensures forall j: int {:trigger old(dest[j])} {:trigger dest[j]} :: 0 <= j < dest.Length && !(offset as int <= j < offset as int + source.Length) ==> dest[j] == old(dest[j])
+      decreases source, dest, offset
   }
 }
 ")]
@@ -541,6 +798,184 @@ namespace WebsocketClientLite.VerifiedProtocol {
         next = state;
       }
     }
+    public static void Admit(byte first, byte second, byte[] extended, uint available, byte state, uint total, uint limit, out byte status, out ulong length, out uint headerSize, out byte next, out uint size, out bool emit)
+    {
+      status = 0;
+      length = 0;
+      headerSize = 0;
+      next = 0;
+      size = 0;
+      emit = false;
+      byte _rhs0 = state;
+      uint _rhs1 = total;
+      bool _rhs2 = false;
+      next = _rhs0;
+      size = _rhs1;
+      emit = _rhs2;
+      byte _out0;
+      ulong _out1;
+      uint _out2;
+      WebsocketClientLite.VerifiedProtocol.Protocol.DecodeHeader(first, second, extended, available, (ulong)(limit), out _out0, out _out1, out _out2);
+      status = _out0;
+      length = _out1;
+      headerSize = _out2;
+      if ((status) != ((byte)(2))) {
+        return ;
+      }
+      bool _0_ok = false;
+      bool _out3;
+      byte _out4;
+      uint _out5;
+      bool _out6;
+      WebsocketClientLite.VerifiedProtocol.Protocol.Step(state, (byte)((first) & ((byte)(15))), ((byte)((first) & ((byte)(128)))) != ((byte)(0)), total, (uint)(length), limit, out _out3, out _out4, out _out5, out _out6);
+      _0_ok = _out3;
+      next = _out4;
+      size = _out5;
+      emit = _out6;
+      if (!(_0_ok)) {
+        status = (byte)(1);
+      }
+    }
+    public static bool TxState(byte state) {
+      return (((((state) == ((byte)(0))) || ((state) == ((byte)(1)))) || ((state) == ((byte)(2)))) || ((state) == ((byte)(8)))) || ((state) == ((byte)(15)));
+    }
+    public static void SendStep(byte state, byte op, bool fin, out bool ok, out byte next)
+    {
+      ok = false;
+      next = 0;
+      next = state;
+      ok = (WebsocketClientLite.VerifiedProtocol.Protocol.Known(op)) && ((((state) == ((byte)(8))) ? (((op) == ((byte)(10))) && (fin)) : ((((op) == ((byte)(8))) ? (fin) : (((state) != ((byte)(15))) && ((((op) >= ((byte)(8))) ? (fin) : ((((state) == ((byte)(0))) ? (((op) == ((byte)(1))) || ((op) == ((byte)(2)))) : ((op) == ((byte)(0))))))))))));
+      if (ok) {
+        if ((op) == ((byte)(8))) {
+          next = (byte)(8);
+        } else if ((op) >= ((byte)(8))) {
+          next = state;
+        } else if (fin) {
+          next = (byte)(0);
+        } else if ((state) == ((byte)(0))) {
+          next = op;
+        } else {
+          next = state;
+        }
+      }
+    }
+    public static byte SendFailed(byte state) {
+      if ((state) == ((byte)(8))) {
+        return (byte)(8);
+      } else {
+        return (byte)(15);
+      }
+    }
+    public static void CloseStep(byte state, byte @event, out byte next, out bool send, out bool release)
+    {
+      next = 0;
+      send = false;
+      release = false;
+      send = ((@event) == ((byte)(0))) && (((byte)((state) & ((byte)(5)))) == ((byte)(0)));
+      if ((@event) == ((byte)(0))) {
+        if (send) {
+          next = (byte)((state) | ((byte)(1)));
+        } else {
+          next = state;
+        }
+      } else if ((@event) == ((byte)(1))) {
+        next = (byte)((state) | ((byte)(2)));
+      } else {
+        next = (byte)((state) | ((byte)(4)));
+      }
+      release = (((byte)((next) & ((byte)(4)))) != ((byte)(0))) || (((byte)((next) & ((byte)(3)))) == ((byte)(3)));
+    }
+    public static byte[] Merge(byte[][] parts, uint total)
+    {
+      byte[] result = new byte[0];
+      byte[] _nw0 = new byte[Dafny.Helpers.ToIntChecked(total, "array size exceeds memory limit")];
+      result = _nw0;
+      uint _0_offset;
+      _0_offset = 0U;
+      uint _1_p;
+      _1_p = 0U;
+      uint _2_partCount;
+      _2_partCount = (uint)(parts).LongLength;
+      while ((_1_p) < (_2_partCount)) {
+        byte[] _3_segment;
+        _3_segment = (parts)[(int)(_1_p)];
+        WebsocketClientLite.VerifiedProtocol.NativeCopy.CopySlice(_3_segment, result, _0_offset);
+        _0_offset = (_0_offset) + ((uint)(_3_segment).LongLength);
+        _1_p = (_1_p) + (1U);
+      }
+      return result;
+    }
+    public static byte[] MergeScalar(byte[][] parts, uint total)
+    {
+      byte[] result = new byte[0];
+      byte[] _nw0 = new byte[Dafny.Helpers.ToIntChecked(new BigInteger(total), "array size exceeds memory limit")];
+      result = _nw0;
+      uint _0_offset;
+      _0_offset = 0U;
+      uint _1_p;
+      _1_p = 0U;
+      uint _2_partCount;
+      _2_partCount = (uint)(parts).LongLength;
+      while ((_1_p) < (_2_partCount)) {
+        byte[] _3_segment;
+        _3_segment = (parts)[(int)(_1_p)];
+        uint _4_segmentLength;
+        _4_segmentLength = (uint)(_3_segment).LongLength;
+        uint _5_j;
+        _5_j = 0U;
+        while ((_5_j) < (_4_segmentLength)) {
+          uint _index0 = (_0_offset) + (_5_j);
+          (result)[(int)(_index0)] = (_3_segment)[(int)(_5_j)];
+          _5_j = (_5_j) + (1U);
+        }
+        _0_offset = (_0_offset) + ((uint)(_3_segment).LongLength);
+        _1_p = (_1_p) + (1U);
+      }
+      return result;
+    }
+    public static void HeaderRoundTrip(uint length, out ulong decoded, out uint serverHeader)
+    {
+      decoded = 0;
+      serverHeader = 0;
+      bool _0_ok;
+      byte _1_first;
+      uint _2_header;
+      uint _3_total;
+      bool _out0;
+      byte _out1;
+      uint _out2;
+      uint _out3;
+      WebsocketClientLite.VerifiedProtocol.Protocol.Outgoing((byte)(2), (byte)(255), (uint)(length), out _out0, out _out1, out _out2, out _out3);
+      _0_ok = _out0;
+      _1_first = _out1;
+      _2_header = _out2;
+      _3_total = _out3;
+      byte[] _4_buffer;
+      byte[] _nw0 = new byte[Dafny.Helpers.ToIntChecked(new BigInteger(14), "array size exceeds memory limit")];
+      _4_buffer = _nw0;
+      WebsocketClientLite.VerifiedProtocol.Protocol.WriteHeader(_4_buffer, _1_first, length, _2_header);
+      byte[] _5_ext;
+      byte[] _nw1 = new byte[Dafny.Helpers.ToIntChecked(new BigInteger(8), "array size exceeds memory limit")];
+      _5_ext = _nw1;
+      uint _6_count;
+      _6_count = (_2_header) - (6U);
+      uint _7_i;
+      _7_i = 0U;
+      while ((_7_i) < (_6_count)) {
+        (_5_ext)[(int)((_7_i))] = (_4_buffer)[(int)((2U) + (_7_i))];
+        _7_i = (_7_i) + (1U);
+      }
+      uint _8_value;
+      _8_value = length;
+      byte _9_status = 0;
+      byte _out4;
+      ulong _out5;
+      uint _out6;
+      WebsocketClientLite.VerifiedProtocol.Protocol.DecodeHeader(_1_first, (byte)(((_4_buffer)[(int)(BigInteger.One)]) & ((byte)(127))), _5_ext, _6_count, 2147483647UL, out _out4, out _out5, out _out6);
+      _9_status = _out4;
+      decoded = _out5;
+      serverHeader = _out6;
+    }
     public static bool CloseCode(ushort code) {
       return (((((((ushort)(1000)) <= (code)) && ((code) <= ((ushort)(1014)))) && ((code) != ((ushort)(1004)))) && ((code) != ((ushort)(1005)))) && ((code) != ((ushort)(1006)))) || ((((ushort)(3000)) <= (code)) && ((code) <= ((ushort)(4999))));
     }
@@ -681,6 +1116,11 @@ namespace WebsocketClientLite.VerifiedProtocol {
         (dest)[(int)(_index0)] = (byte)(((dest)[(int)((offset) + (_0_i))]) ^ ((dest)[(int)((keyOffset) + ((_0_i) % (4U)))]));
         _0_i = (_0_i) + (1U);
       }
+    }
+  }
+
+  internal partial class NativeCopy {
+    public NativeCopy() {
     }
   }
 } // end of namespace WebsocketClientLite.VerifiedProtocol
