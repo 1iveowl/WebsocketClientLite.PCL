@@ -53,6 +53,29 @@ class MutationTests(unittest.TestCase):
         record['stdout'] = record['stdout'].replace('41 verified', '0 verified')
         self.assertEqual(m.classify(record, self.source)[0], 'inconclusive')
 
+    def test_obligation_timeout_remains_inconclusive_without_process_timeout(self):
+        # Actual failure shape from post-merge CI: the process finishes inside
+        # its 180-second budget, but an individual Dafny obligation times out.
+        record = {'exit_code': 4, 'timed_out': False, 'stdout':
+                  "verification/Protocol.dfy(317,20): Error: Verification of 'ProtocolCore.Protocol.HeaderRoundTrip' timed out after 30 seconds.\n"
+                  'Dafny program verifier finished with 573 verified, 0 errors, 1 time out\n',
+                  'stderr': ''}
+        self.assertEqual(m.classify(record, self.source)[0], 'inconclusive')
+        self.assertEqual(m.classify(record, self.source, self.mutant)[0], 'inconclusive')
+
+    def test_nonpositive_obligation_limit_fails_before_toolchain_execution(self):
+        import json
+        for limit in ('0', '-1'):
+            with self.subTest(limit=limit), tempfile.TemporaryDirectory() as temporary:
+                output = Path(temporary) / 'evidence'
+                result = subprocess.run([sys.executable, str(ROOT / 'scripts/run-close-mutations.py'),
+                                         '--verification-time-limit', limit, '--output', str(output)],
+                                        capture_output=True, text=True, timeout=5)
+                self.assertEqual(result.returncode, 1)
+                self.assertIn('verification time limit must be positive',
+                              json.loads((output / 'failure.json').read_text())['error'])
+                self.assertFalse((output / 'toolchain').exists())
+
     def test_exact_edit_rejects_missing_duplicate_or_contract_edit(self):
         for source in [self.source.replace(self.mutant['before'], ''), self.source + self.mutant['before']]:
             with self.assertRaises(m.v.Invalid):
