@@ -119,3 +119,16 @@ check dispositions alone; it does not establish source-bound execution evidence.
 The final receipt reports its own counts, duration, source identity, report hash,
 SDK/tool versions, commands, exits, timestamps and host rather than substituting
 this exploratory measurement. All jobs must capture one unchanged revision.
+
+A second complete run after adding the parser notification tests took **461.41
+seconds (7m 41s)**. All seven critical mutants were Killed. Selected outcomes were
+23 Killed, 43 Survived, seven NoCoverage, three Timeout, three CompileError and 25
+Ignored. Removing Aborted or incoming-Close status callbacks now times out the
+notification barriers; those remain Timeout rather than assertion detection.
+The report exposed one additional survivor: reversing the parser-finally
+cancellation condition (594). Its outcome changed from Killed in the first run
+to Survived, exposing nondeterministic pipeline-only coverage. It has an explicit
+accepted-gap disposition alongside removal of the same finally call (596).
+The aggregate correctly rejected the report until that disposition was recorded.
+Final captures are refreshed after this disposition change; prior receipts are
+not relabeled with the new source identity.

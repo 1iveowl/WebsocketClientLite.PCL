@@ -167,6 +167,18 @@
       "reason": "The duplicate Aborted-status/observer error routes mask removal of one notification. Exact error-channel delivery is a remaining test gap outside the Close disposal obligations."
     },
     {
+      "key": "caffe57c741d09d58e0b3c6697782cbdccfe6afc42593571b6891b4f374e2cc8",
+      "pilot_id": "594",
+      "line": 197,
+      "pilot_outcome": "Survived",
+      "classification": "accepted-gap",
+      "requirements": [
+        "CLOSE-004",
+        "CLOSE-005"
+      ],
+      "reason": "Reversing the parser-finally cancellation condition can fall back to outer synchronous disposal. It was killed in the exploratory run but survived the subsequent run, showing nondeterministic pipeline-only coverage. Explicit DisposeAsync ordering remains independently gated; parser-only completion without disposal remains a test gap."
+    },
+    {
       "key": "df1f1d197e3f55df9eb4feff145cb9f6c2885bdec5cf9c07ff3858100fa02014",
       "pilot_id": "596",
       "line": 199,
