@@ -37,11 +37,11 @@ can be used directly with the same arguments.
 | --- | --- |
 | `validate [manifest.json]` | Validate requirements, boundaries, references and catalog-independent obligations. |
 | `contract-report --target REF --head HEAD --output FILE` | Compare committed trees from the actual target's unique merge base; requires semantic PR review. |
-| `mutations [--output DIR]` | Validate the Close catalog, verify baseline, then run all five isolated negative proofs. |
+| `mutations [--scope all|close|payload] [--output DIR]` | Verify baseline and isolated catalog edits (default: all 15). |
 | `capture --job protocol --output DIR` | Capture manifest, tooling tests, proof/audit/generated-source check and Dafny mutations. |
 | `capture --job tests --output DIR` | Capture Release restore/build, five library targets and the 70% coverage gate. |
 | `test-target --tfm TFM --output DIR` | Run one library target and capture TRX plus actual host-runtime evidence. |
-| `aggregate [--output artifacts/pdd]` | Validate and combine `protocol/` and `tests/` into `receipt.json` and `summary.md`. |
+| `aggregate [--output artifacts/pdd]` | Validate and combine `protocol/`, `tests/`, `controlled/` and `stryker/` into `receipt.json` and `summary.md`. |
 | `normalize-generated --file FILE --tool-directory DIR` | Apply the existing generated-C# normalization byte-for-byte. Called by `dafny-masking.sh`. |
 
 `mutations`, `capture` and `test-target` refuse existing evidence directories.
@@ -49,7 +49,7 @@ Aggregation can be rerun; it never infers missing results. Exit 0 means the
 requested check completed successfully, 1 means invalid data/failed execution or
 an unsuccessful evidence gate, and 2 means invalid CLI usage. A successful
 contract report is a review aid, not approval. A passing receipt machine gate
-does not satisfy pending review and increment E obligations.
+does not satisfy pending human review.
 
 ## Execution, budgets and cancellation
 
@@ -112,7 +112,7 @@ Intentional differences are explicit:
   and the full committed source diff remain present. This does not add a semantic
   weakening detector or establish approval.
 
-Future E work uses these same capture/aggregate commands. Controlled schedules,
+E uses these same capture/aggregate commands. Controlled schedules,
 revision-bound human review and separate Stryker evidence remain required;
 Stryker results must never become Dafny mutation detections. F extends the
 repository's manifests/catalog and explicit checks for reassembly and masking,
@@ -145,3 +145,12 @@ Increment E adds `controlled-defect --output <fresh-directory>` and capture jobs
 [controlled schedules](../../verification/controlled-close.md) and the
 [Stryker pilot](../../verification/stryker-close-pilot.md). Stryker dispositions
 are source-bound; an untriaged outcome fails the gate, independent of its score.
+
+F extends the existing manifests, catalog runner and receipt checks to reassembly
+and masking, with no new projects, packages or production algorithms. Method-scoped
+edits distinguish `Merge` from `MergeScalar`; strict pinned diagnostics now also
+recognize mapped loop invariants and a frame violation. Multiline contracts and
+`modifies` clauses resolve explicitly. Recorded diagnostic fixtures exercise wrong
+clauses/files, unrelated errors, launch failures, interruption and timeouts. The
+historical Python compatibility projection stays Close-only; separate tests require
+the new obligations to fail when only those historical receipts are supplied.

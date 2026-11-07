@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "title": "Close requirements v2",
+  "title": "Protocol requirements v2",
   "type": "object",
   "properties": {
     "schema_version": {
@@ -13,7 +13,7 @@
         "properties": {
           "id": {
             "type": "string",
-            "pattern": "^CLOSE-[0-9]{3}$"
+            "pattern": "^(CLOSE|REASSEMBLY|MASK)-[0-9]{3}$"
           },
           "intent": {
             "type": "string",
