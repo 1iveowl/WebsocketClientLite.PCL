@@ -110,8 +110,9 @@ public class QueuedWriteTests(ITestOutputHelper output)
         else await h.Wait(Assert.ThrowsAnyAsync<OperationCanceledException>(() => queued));
         Assert.Single(h.Opcodes);
         h.Resume.TrySetResult(); await h.Wait(owner);
-        await h.Wait(h.Track(h.Sender.SendText("admitted")));
-        Assert.Equal(new byte[] { frameGate ? (byte)9 : (byte)1, 1 }, h.Opcodes);
+        // Stay within two data sends and one control contender per connection.
+        await h.Wait(h.Track(frameGate ? h.Sender.SendText("admitted") : h.Sender.SendPing("admitted")));
+        Assert.Equal(new byte[] { frameGate ? (byte)9 : (byte)1, frameGate ? (byte)1 : (byte)9 }, h.Opcodes);
     }
 
     [Theory]
