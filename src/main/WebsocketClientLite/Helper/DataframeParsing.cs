@@ -18,7 +18,7 @@ internal static class DataframeParsing
     /// </summary>
     internal static async Task<Dataframe?> ReadDataframeAsync(
         this TcpConnectionService tcpConnection,
-        CancellationToken ct)
+        CancellationToken ct, byte state = 0, uint total = 0)
     {
         var header = await tcpConnection.ReadHeaderBytesAsync(2, ct).ConfigureAwait(false);
         if (header is null)
@@ -36,18 +36,18 @@ internal static class DataframeParsing
         var opcode = (OpcodeKind)(b0 & 0x0F);
 
         bool mask = (b1 & 0x80) != 0;
-        Protocol.DecodeHeader(b0, b1, Array.Empty<byte>(), 0, (ulong)tcpConnection.MaxFrameSize,
-            out byte status, out ulong length, out uint headerSize);
+        Protocol.Admit(b0, b1, Array.Empty<byte>(), 0, state, total, (uint)tcpConnection.MaxFrameSize,
+            out byte status, out ulong length, out uint headerSize, out _, out _, out _);
         if (status == 0)
         {
             int count = (int)headerSize - 2;
             var ext = await tcpConnection.ReadHeaderBytesAsync(count, ct).ConfigureAwait(false);
             if (ext is null) return null;
-            Protocol.DecodeHeader(b0, b1, ext, (uint)count, (ulong)tcpConnection.MaxFrameSize,
-                out status, out length, out _);
+            Protocol.Admit(b0, b1, ext, (uint)count, state, total, (uint)tcpConnection.MaxFrameSize,
+                out status, out length, out _, out _, out _, out _);
         }
         if (status != 2)
-            throw new WebsocketClientLiteException("Protocol error: invalid server frame header or payload exceeds the configured maximum.");
+            throw new WebsocketClientLiteException("Protocol error: invalid server frame header/fragmentation sequence or payload exceeds the configured maximum.");
 
         byte[] payload;
         if (length == 0)
@@ -62,7 +62,8 @@ internal static class DataframeParsing
                 return null;
             }
 
-            payload = read;        }
+            payload = read;
+        }
 
         if (opcode == OpcodeKind.Close) ProtocolPayload.ValidateClose(payload);
 

@@ -25,7 +25,7 @@ internal class WebsocketParserHandler(TcpConnectionService tcpConnectionService)
             {
                 while (!token.IsCancellationRequested)
                 {
-                    var frame = await tcpConnectionService.ReadDataframeAsync(token).ConfigureAwait(false);
+                    var frame = await tcpConnectionService.ReadDataframeAsync(token, state, total).ConfigureAwait(false);
                     if (frame is null) break;
                     var payload = frame.Payload ?? Array.Empty<byte>();
                     Protocol.Step(state, (byte)frame.Opcode, frame.FIN, total, (uint)payload.Length,
@@ -53,13 +53,9 @@ internal class WebsocketParserHandler(TcpConnectionService tcpConnectionService)
                     else if (segments.Count == 1) merged = segments[0];
                     else
                     {
-                        merged = new byte[(int)total];
-                        int offset = 0;
-                        foreach (var segment in segments)
-                        {
-                            Buffer.BlockCopy(segment, 0, merged, offset, segment.Length);
-                            offset = checked(offset + segment.Length);
-                        }
+                        // Step's accumulated total equals the retained segment lengths.
+                        // Merge proves exact concatenation and bounds for every copied byte.
+                        merged = Protocol.Merge(segments.ToArray(), total);
                     }
                     var message = first! with { Payload = merged, FIN = true, Length = total, Fragment = FragmentKind.None };
                     if (message.Opcode == OpcodeKind.Text) ProtocolPayload.ValidateText(merged);

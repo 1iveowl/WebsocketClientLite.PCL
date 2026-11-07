@@ -20,9 +20,16 @@ fi
 mkdir -p artifacts/dafny
 "$tool_dir/dafny/dafny" --version
 "$tool_dir/dafny/z3/bin/z3-4.12.1" --version
+# Audit BOTH roots explicitly: Dafny audit does not include included files by default.
+# New assumptions/externs must change the reviewed trust report, never slip in silently.
+"$tool_dir/dafny/dafny" audit verification/Masking.dfy verification/Protocol.dfy \
+  --allow-external-contracts --report-file artifacts/dafny/trusted-boundaries.md --report-format md
+diff -u verification/trusted-boundaries.md artifacts/dafny/trusted-boundaries.md
+# NativeCopy.CopySlice is the one explicit external contract: System.Buffer.BlockCopy.
+# See verification/README.md for its trust boundary and independent adapter tests.
 "$tool_dir/dafny/dafny" translate cs verification/Masking.dfy \
   --solver-path "$tool_dir/dafny/z3/bin/z3-4.12.1" \
-  --verify-included-files --verification-time-limit 30 --cores 2 \
+  --verify-included-files --allow-external-contracts --verification-time-limit 30 --cores 2 \
   --output artifacts/dafny/Masking.cs
 # The command line contains a machine-specific solver path in an assembly metadata
 # string. Normalize that metadata only, and hide the generated types from public API.

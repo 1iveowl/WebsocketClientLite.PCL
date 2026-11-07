@@ -88,6 +88,39 @@ foreach (int size in new[] { 125, 1024, 65536 })
     Console.WriteLine($"{size},{a[3]:F2},{b[3]:F2},{b[3]/a[3]:F3},{ab},{bb}");
 }
 
+// Reassembly includes destination allocation on both paths. The scalar proof
+// reference is reported separately; production uses the trusted BCL copy leaf.
+Console.WriteLine("merge_bytes,blockcopy_ns,verified_bulk_ns,verified_scalar_ns");
+foreach (int size in new[] { 1024, 65536 })
+{
+    byte[][] parts = { new byte[size / 2], new byte[size - size / 2] };
+    Func<byte[], byte[], byte[]> baseline = (_, _) => {
+        var result = new byte[size];
+        Buffer.BlockCopy(parts[0], 0, result, 0, parts[0].Length);
+        Buffer.BlockCopy(parts[1], 0, result, parts[0].Length, parts[1].Length);
+        return result;
+    };
+    Func<byte[], byte[], byte[]> bulk = (_, _) => WebsocketClientLite.VerifiedProtocol.Protocol.Merge(parts, (uint)size);
+    Func<byte[], byte[], byte[]> scalar = (_, _) => WebsocketClientLite.VerifiedProtocol.Protocol.MergeScalar(parts, (uint)size);
+    var a = new double[7]; var b = new double[7]; var c = new double[7];
+    int iterations = 64 * 1024 * 1024 / size;
+    for (int i = 0; i < 1000; i++) { baseline(key, key); bulk(key, key); scalar(key, key); }
+    for (int trial = 0; trial < 7; trial++)
+    {
+        if (trial % 2 == 0) {
+            (a[trial], _) = Measure(baseline, key, key, iterations);
+            (b[trial], _) = Measure(bulk, key, key, iterations);
+            (c[trial], _) = Measure(scalar, key, key, iterations);
+        } else {
+            (c[trial], _) = Measure(scalar, key, key, iterations);
+            (b[trial], _) = Measure(bulk, key, key, iterations);
+            (a[trial], _) = Measure(baseline, key, key, iterations);
+        }
+    }
+    Array.Sort(a); Array.Sort(b); Array.Sort(c);
+    Console.WriteLine($"{size},{a[3]:F2},{b[3]:F2},{c[3]:F2}");
+}
+
 [MethodImpl(MethodImplOptions.NoInlining)]
 static byte[] SliceOriginal(byte[] data, int offset, int count, int keyOffset)
 {
@@ -113,7 +146,7 @@ static (double, long) Measure(Func<byte[], byte[], byte[]> operation, byte[] dat
 {
     long before = GC.GetAllocatedBytesForCurrentThread();
     long start = Stopwatch.GetTimestamp();
-    for (int i = 0; i < iterations; i++) operation(data, key);
+    for (int i = 0; i < iterations; i++) GC.KeepAlive(operation(data, key));
     long elapsed = Stopwatch.GetTimestamp() - start;
     long allocated = GC.GetAllocatedBytesForCurrentThread() - before;
     GC.KeepAlive(data);

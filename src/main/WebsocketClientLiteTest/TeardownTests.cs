@@ -194,6 +194,42 @@ public class TeardownTests
     }
 
     [Fact]
+    public async Task DisposeAsyncKeepsTransportOpenUntilDelayedPeerClose()
+    {
+        var receivedClose = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        var allowResponse = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        var responseSent = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        var transportClosed = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+        using var server = new LoopbackWebSocketServer();
+        server.Start(async (stream, ct) =>
+        {
+            var close = await LoopbackWebSocketServer.ReadFrameAsync(stream, ct);
+            Assert.Equal(8, close!.Value.opcode);
+            receivedClose.SetResult();
+            await allowResponse.Task.WaitAsync(ct);
+            await LoopbackWebSocketServer.WriteFrameAsync(stream, 8, close.Value.payload, true, ct);
+            responseSent.SetResult();
+            transportClosed.TrySetResult(await LoopbackWebSocketServer.ReadFrameAsync(stream, ct) is null);
+        });
+        var client = new ClientWebSocketRx();
+        var (subscription, completed, _) = await ConnectAsync(client, server.Uri);
+        using var cleanup = subscription;
+        var disposal = client.DisposeAsync().AsTask();
+        try
+        {
+            await receivedClose.Task.WaitAsync(Timeout);
+            await Task.Delay(100);
+            Assert.False(disposal.IsCompleted);
+            Assert.False(completed.Task.IsCompleted);
+        }
+        finally { allowResponse.TrySetResult(); }
+        await responseSent.Task.WaitAsync(Timeout);
+        await disposal.WaitAsync(Timeout);
+        await completed.Task.WaitAsync(Timeout);
+        Assert.True(await transportClosed.Task.WaitAsync(Timeout));
+    }
+
+    [Fact]
     public async Task Dispose_IsBounded_AndStillAttemptsCloseHandshake()
     {
         using var server = new LoopbackWebSocketServer();
