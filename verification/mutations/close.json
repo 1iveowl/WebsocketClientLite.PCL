@@ -1,0 +1,77 @@
+{
+  "schema_version": 1,
+  "mutants": [
+    {
+      "id": "CLOSE-001-duplicate-send",
+      "requirement": "CLOSE-001",
+      "obligation": "CLOSE-001-MUTATION",
+      "file": "verification/Protocol.dfy",
+      "symbol": "ProtocolCore.Protocol.CloseStep",
+      "before": "send := event == 0 && (state & 5) == 0;",
+      "after": "send := event == 0 && (state & 4) == 0;",
+      "target_clause": "ensures send <==> event == 0 && (state & 5) == 0",
+      "allowed_clauses": [
+        "ensures send <==> event == 0 && (state & 5) == 0",
+        "ensures (state & 1) != 0 ==> !send"
+      ],
+      "classification": "postcondition"
+    },
+    {
+      "id": "CLOSE-001-suppressed-send",
+      "requirement": "CLOSE-001",
+      "obligation": "CLOSE-001-MUTATION",
+      "file": "verification/Protocol.dfy",
+      "symbol": "ProtocolCore.Protocol.CloseStep",
+      "before": "send := event == 0 && (state & 5) == 0;",
+      "after": "send := false;",
+      "target_clause": "ensures send <==> event == 0 && (state & 5) == 0",
+      "allowed_clauses": [
+        "ensures send <==> event == 0 && (state & 5) == 0"
+      ],
+      "classification": "postcondition"
+    },
+    {
+      "id": "CLOSE-002-state-bit-loss",
+      "requirement": "CLOSE-002",
+      "obligation": "CLOSE-002-MUTATION",
+      "file": "verification/Protocol.dfy",
+      "symbol": "ProtocolCore.Protocol.CloseStep",
+      "before": "else if event == 1 then state | 2 else state | 4;",
+      "after": "else if event == 1 then 2 else state | 4;",
+      "target_clause": "ensures next <= 7 && (next & state) == state",
+      "allowed_clauses": [
+        "ensures next <= 7 && (next & state) == state"
+      ],
+      "classification": "postcondition"
+    },
+    {
+      "id": "CLOSE-003-premature-release",
+      "requirement": "CLOSE-003",
+      "obligation": "CLOSE-003-MUTATION",
+      "file": "verification/Protocol.dfy",
+      "symbol": "ProtocolCore.Protocol.CloseStep",
+      "before": "release := (next & 4) != 0 || (next & 3) == 3;",
+      "after": "release := true;",
+      "target_clause": "ensures release <==> (next & 4) != 0 || (next & 3) == 3",
+      "allowed_clauses": [
+        "ensures release <==> (next & 4) != 0 || (next & 3) == 3",
+        "ensures release ==> (next & 3) == 3 || event == 2 || (state & 4) != 0"
+      ],
+      "classification": "postcondition"
+    },
+    {
+      "id": "CLOSE-003-suppressed-release",
+      "requirement": "CLOSE-003",
+      "obligation": "CLOSE-003-MUTATION",
+      "file": "verification/Protocol.dfy",
+      "symbol": "ProtocolCore.Protocol.CloseStep",
+      "before": "release := (next & 4) != 0 || (next & 3) == 3;",
+      "after": "release := false;",
+      "target_clause": "ensures release <==> (next & 4) != 0 || (next & 3) == 3",
+      "allowed_clauses": [
+        "ensures release <==> (next & 4) != 0 || (next & 3) == 3"
+      ],
+      "classification": "postcondition"
+    }
+  ]
+}
