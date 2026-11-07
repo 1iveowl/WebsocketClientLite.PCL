@@ -163,6 +163,10 @@
         {
           "file": "src/main/WebsocketClientLite/Service/WebsocketConnectionHandler.cs",
           "symbol": "WebsocketClientLite.Service.WebsocketConnectionHandler.Dispose"
+        },
+        {
+          "file": "src/main/WebsocketClientLite/Service/WebsocketConnectionHandler.cs",
+          "symbol": "WebsocketClientLite.Service.WebsocketConnectionHandler.ObserveFrames"
         }
       ],
       "requirements": [
@@ -177,7 +181,8 @@
       ],
       "exclusions": [
         "Concurrent synchronous Dispose, unsubscribe or external transport disposal may abort graceful closure.",
-        "Blocking callbacks or resource cleanup may prevent completion."
+        "Blocking callbacks or resource cleanup may prevent completion.",
+        "G tests selected parser completion/cancellation, observer routes, virtual-time periodic cleanup and a non-pumping calling context. Arbitrary callback/context behavior and exhaustive asynchronous verification remain outside the evidence."
       ]
     },
     {

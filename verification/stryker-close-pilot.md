@@ -149,3 +149,31 @@ waits. This increases the opportunity to observe assertions; it does not relabel
 any previous Timeout or relax the requirement for all seven critical mutants to
 be Killed. The overall command/job budgets remain 30/40 minutes and the final
 receipt measures the completed run with this configuration.
+
+## Increment G supersedes the gap dispositions above
+
+The [G record](close-evidence-g.md) retains the post-F failure rather than treating
+its critical Timeout as Killed. G extracts the existing parser lifecycle into an
+internal task seam and injects the default-preserving periodic scheduler. Exact
+old/new operator, source-snippet and replacement matches are retained in
+[evidence/increment-g/fingerprint-migration.json](evidence/increment-g/fingerprint-migration.json);
+all seven original critical obligations remain, now bound to the new source hash.
+Eight newly detected lifecycle/routing/cleanup/context fingerprints and the
+scheduler-substitution check are also required Killed. Numeric IDs are not keys.
+
+Stryker runs with `disable-mix-mutants: true` and two workers. This separates
+unrelated missing-Pong and status-notification waits from critical assertion
+experiments and matches the failed CI runner's recommended worker count. No test
+or mutant is excluded; the 30-second additional timeout and 30/40-minute budgets
+are unchanged. Real loopback and the 200-iteration error-routing stress test stay
+in Stryker and the complete framework matrix. The stress test now releases the
+peer wait only in cleanup after its assertion and drains disposal before its next
+iteration, reducing background teardown work under mutation.
+
+The direct lifecycle tests distinguish cancellation, explicit terminal routing
+and fallback closure; the virtual scheduler tests cover timer cleanup and a paused
+periodic Ping. DisposeAsync is tested under a non-pumping caller context. Other
+ConfigureAwait sites still have explicit accepted-gap dispositions. All raw
+outcomes, including timeout and compile-error, remain distinct. Human review of
+these dispositions is pending; this file records source-based rationale, not
+revision-specific acceptance.

@@ -23,7 +23,7 @@ public static class Program
         try
         {
             if (args.Length == 0)
-                throw new ArgumentException("Usage: pdd <validate|contract-report|mutations|capture|test-target|aggregate|normalize-generated> [options]");
+                throw new ArgumentException("Usage: pdd <validate|contract-report|mutations|capture|test-target|aggregate|controlled-defect|boundary-defects|stryker-triage|normalize-generated> [options]");
             var root = FindRoot();
             var options = new Dictionary<string, string>();
             var positionals = new List<string>();
@@ -78,6 +78,9 @@ public static class Program
                     var triage = Evidence.TriageStryker(Data.Read(Get("--report")), Data.Read(Path.Combine(root, "verification/stryker-close-dispositions.json")), Data.Hash(File.ReadAllBytes(Path.Combine(root, Evidence.CloseSource))));
                     Data.Save(Path.Combine(output, "stryker-triage.json"), triage);
                     return 0;
+                case "boundary-defects":
+                    Allow("--output");
+                    return await evidence.BoundaryDefects(output, cancellation.Token);
                 case "controlled-defect":
                     Allow("--output");
                     return await evidence.ControlledDefect(output, cancellation.Token);
