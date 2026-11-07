@@ -30,9 +30,9 @@
     "stdout": "verification/Protocol.dfy(427,18): Error: this invariant could not be proved to be maintained by the loop\n Related message: loop invariant violation\n    |\n427 |         invariant forall j :: 0 <= j < i as int ==> dest[offset as int + j] == source[j] ^\n    |                   ^^^^^^\n\n\nDafny program verifier finished with 573 verified, 1 error\n"
   },
   {
-    "id": "MASK-002-skip-bulk-blocks",
+    "id": "MASK-002-corrupt-bulk-byte",
     "exit_code": 4,
-    "stdout": "verification/Protocol.dfy(400,18): Error: this invariant could not be proved to be maintained by the loop\n Related message: loop invariant violation\n    |\n400 |         invariant forall j :: 0 <= j < i as int ==> dest[offset as int + j] == source[j] ^\n    |                   ^^^^^^\n\n\nDafny program verifier finished with 575 verified, 1 error\n"
+    "stdout": "verification/Protocol.dfy(400,18): Error: this invariant could not be proved to be maintained by the loop\n Related message: loop invariant violation\n    |\n400 |         invariant forall j :: 0 <= j < i as int ==> dest[offset as int + j] == source[j] ^\n    |                   ^^^^^^\n\n\nDafny program verifier finished with 576 verified, 1 error\n"
   },
   {
     "id": "MASK-002-preserve-prefix",

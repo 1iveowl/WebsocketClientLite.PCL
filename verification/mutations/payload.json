@@ -90,13 +90,13 @@
       "contract_clause": "ensures forall j :: 0 <= j < count as int ==> dest[offset as int + j] == source[j] ^ (if j % 4 == 0 then k0 else if j % 4 == 1 then k1 else if j % 4 == 2 then k2 else k3)"
     },
     {
-      "id": "MASK-002-skip-bulk-blocks",
+      "id": "MASK-002-corrupt-bulk-byte",
       "requirement": "MASK-002",
       "obligation": "MASK-002-MUTATION",
       "file": "verification/Protocol.dfy",
       "symbol": "ProtocolCore.Protocol.CopyMasked",
       "before": "i := i + 4;",
-      "after": "i := count - count % 4;",
+      "after": "i := i + 4; dest[offset] := 0;",
       "target_clause": "invariant forall j :: 0 <= j < i as int ==> dest[offset as int + j] == source[j] ^ (if j % 4 == 0 then k0 else if j % 4 == 1 then k1 else if j % 4 == 2 then k2 else k3)",
       "allowed_clauses": [
         "invariant forall j :: 0 <= j < i as int ==> dest[offset as int + j] == source[j] ^ (if j % 4 == 0 then k0 else if j % 4 == 1 then k1 else if j % 4 == 2 then k2 else k3)"

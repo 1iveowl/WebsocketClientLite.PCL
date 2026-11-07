@@ -100,7 +100,7 @@ The default artifact directory retains its historical `close-mutations` name.
 | REASSEMBLY-001 | Stalled segment offset; oversized result | Offset invariant; concatenation postcondition |
 | REASSEMBLY-002 | Stalled scalar segment offset | Offset invariant |
 | MASK-001 | XOR replaced by OR; write into key | Processed-prefix invariant; `modifies data` frame |
-| MASK-002 | Tail XOR replaced by OR; skip bulk blocks; write before slice | Processed-prefix and outside-slice invariants |
+| MASK-002 | Tail XOR replaced by OR; corrupt a completed bulk byte; write before slice | Processed-prefix and outside-slice invariants |
 | MASK-003 | XOR replaced by OR; write before slice | Processed-prefix and outside-slice invariants |
 
 Invariant entries include `contract_clause` to associate an exact loop invariant
@@ -126,3 +126,10 @@ The first F payload run on 2026-11-07 completed baseline plus ten detections in
 180s, each mutant 90s and each proof obligation 60s. There is no scheduled-only
 replacement, relaxed classifier or automatic retry. CI records each actual
 duration; budget exhaustion fails explicitly and requires investigation.
+
+The initial PR run rejected the exploratory skip-bulk-blocks mutant: its target
+invariant failed, but a separate quantified proof timed out after 60 seconds
+([run 42400196766](https://github.com/1iveowl/WebsocketClientLite.PCL/actions/runs/42400196766)).
+That result is inconclusive, not detected. The final catalog instead corrupts a
+completed bulk byte and requires the same exact processed-prefix invariant
+failure. No budget or classifier relaxation hides the failed experiment.
