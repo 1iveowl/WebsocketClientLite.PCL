@@ -103,7 +103,7 @@ public sealed class Requirements(string root)
         {
             var module = One(text, @"\bmodule\s+(?:\{:[^}]*\}\s*)?" + Regex.Escape(ns) + @"\s*\{", label);
             scope = Body(text, module.Index + module.Length - 1);
-            prefix = @"^\s*static\s+method\s+";
+            prefix = @"^\s*static\s+method\s+(?:\{:[^}]*\}\s*)?";
         }
         else
         {
@@ -120,8 +120,29 @@ public sealed class Requirements(string root)
         if (test)
             Require(Regex.IsMatch(before, @"\[(?:Fact|Theory)\](?:\s*\[[^\]]+\])*\s*$"), $"not an xUnit test declaration: {label}");
         var end = scope.IndexOf('{', declaration.Index + declaration.Length);
+        if (reference.File.EndsWith(".cs"))
+        {
+            var arrow = scope.IndexOf("=>", declaration.Index + declaration.Length, StringComparison.Ordinal);
+            if (arrow >= 0 && (end < 0 || arrow < end)) end = arrow;
+        }
         Require(end >= 0, $"missing declaration body: {label}");
         return scope[declaration.Index..end];
+    }
+    // Fold only more-indented continuation lines in the repository's Dafny style.
+    public static string LogicalLine(string[] lines, int index)
+    {
+        var first = lines[index];
+        var indent = first.Length - first.TrimStart().Length;
+        var text = first.Trim();
+        for (int i = index + 1; i < lines.Length && lines[i].Trim().Length > 0 && lines[i].Length - lines[i].TrimStart().Length > indent; i++)
+            text += " " + lines[i].Trim();
+        return Regex.Replace(text, @"\s+", " ");
+    }
+    public static string[] Clauses(string source, string kinds = "requires|ensures|modifies")
+    {
+        var lines = Masked(source).Split('\n');
+        return Enumerable.Range(0, lines.Length).Where(i => Regex.IsMatch(lines[i].TrimStart(), "^(" + kinds + @")\b"))
+            .Select(i => LogicalLine(lines, i)).ToArray();
     }
     public RequirementManifest Validate(JsonNode? manifest = null, JsonNode? register = null, string? sourceRoot = null)
     {
@@ -148,9 +169,9 @@ public sealed class Requirements(string root)
             Require(req.Assumptions.All(boundaryIds.Contains), $"{req.Id}: dangling boundary reference");
             foreach (var c in req.Contracts)
             {
-                var lines = Resolve(sourceRoot, c).Split('\n').Select(l => Regex.Replace(l.Trim(), @"\s+", " ")).ToArray();
+                var lines = Clauses(Resolve(sourceRoot, c));
                 foreach (var clause in c.Clauses)
-                    Require((clause.StartsWith("requires ") || clause.StartsWith("ensures ")) && lines.Contains(clause), $"{req.Id}: unresolved contract clause: {clause}");
+                    Require((clause.StartsWith("requires ") || clause.StartsWith("ensures ") || clause.StartsWith("modifies ")) && lines.Contains(clause), $"{req.Id}: unresolved contract clause: {clause}");
             }
             foreach (var p in req.ProductionPaths)
                 Resolve(sourceRoot, p.Reference);

@@ -414,6 +414,488 @@
         "No unconditional liveness, exact total disposal deadline, or exhaustive concurrency guarantee.",
         "No promise that a timeout completes or cancels an outstanding stream write."
       ]
+    },
+    {
+      "id": "REASSEMBLY-001",
+      "intent": "Given stable retained segments and their exact valid total, production Merge returns a fresh exact-sized concatenation in segment order, assuming the native-copy contract.",
+      "origin": [
+        "Library policy: verified payload algorithms with explicit C# adapter assumptions",
+        "https://www.rfc-editor.org/rfc/rfc6455.html#section-5.4"
+      ],
+      "contracts": [
+        {
+          "file": "verification/Protocol.dfy",
+          "symbol": "ProtocolCore.Protocol.Merge",
+          "clauses": [
+            "requires parts.Length <= 0x7fffffff",
+            "requires |Parts(parts, parts.Length)| == total as int",
+            "ensures fresh(result) && result[..] == Parts(parts, parts.Length)"
+          ]
+        }
+      ],
+      "production_paths": [
+        {
+          "reference": {
+            "file": "src/main/WebsocketClientLite/Service/WebsocketParserHandler.cs",
+            "symbol": "WebsocketClientLite.Service.WebsocketParserHandler.DataframeObservable"
+          },
+          "responsibility": "Retain owned payloads, maintain the validated total, and invoke production Merge only for multiple retained segments."
+        },
+        {
+          "reference": {
+            "file": "src/main/WebsocketClientLite/Helper/VerifiedNativeCopy.cs",
+            "symbol": "WebsocketClientLite.VerifiedProtocol.NativeCopy.CopySlice"
+          },
+          "responsibility": "Implement the explicitly trusted copy primitive; this C# code is not proved by Dafny."
+        }
+      ],
+      "assumptions": [
+        "PAYLOAD-OWNERSHIP",
+        "REASSEMBLY-TOTALS",
+        "NATIVE-COPY"
+      ],
+      "obligations": [
+        {
+          "id": "REASSEMBLY-001-PROOF",
+          "kind": "proof",
+          "delivery": "existing",
+          "description": "Verify the mapped contracts using the pinned toolchain and generated-code check. Frame conditions and preconditions remain unchanged.",
+          "references": [
+            {
+              "file": "verification/Protocol.dfy",
+              "symbol": "ProtocolCore.Protocol.Merge"
+            }
+          ]
+        },
+        {
+          "id": "REASSEMBLY-001-TEST",
+          "kind": "test",
+          "delivery": "existing",
+          "description": "Require these independent byte, adapter or loopback tests on every supported library target; tests do not prove all inputs.",
+          "references": [
+            {
+              "file": "src/main/WebsocketClientLiteTest/ProtocolStateTests.cs",
+              "symbol": "WebsocketClientLiteTest.ProtocolStateTests.MergePreservesEmptyAndNonemptySegmentsInOrder"
+            },
+            {
+              "file": "src/main/WebsocketClientLiteTest/ProtocolStateTests.cs",
+              "symbol": "WebsocketClientLiteTest.ProtocolStateTests.BulkMergeMatchesScalarProofAndIndependentConcatenation"
+            },
+            {
+              "file": "src/main/WebsocketClientLiteTest/PayloadBoundaryTests.cs",
+              "symbol": "WebsocketClientLiteTest.PayloadBoundaryTests.MergeVariantsPreserveAliasedSegmentsAndReturnFreshStorage"
+            },
+            {
+              "file": "src/main/WebsocketClientLiteTest/IntegrationTests.cs",
+              "symbol": "WebsocketClientLiteTest.IntegrationTests.Reassembles_ServerFragmentedMessage_EndToEnd"
+            }
+          ]
+        },
+        {
+          "id": "REASSEMBLY-001-MUTATION",
+          "kind": "mutation",
+          "delivery": "existing",
+          "description": "Run the exact payload mutations with scripts/pdd.sh mutations. Only the catalogued semantic failure counts; unrelated assertions, syntax errors, survival and timeout fail the experiment.",
+          "references": []
+        },
+        {
+          "id": "REASSEMBLY-001-REVIEW",
+          "kind": "review",
+          "delivery": "existing",
+          "description": "Review the corresponding decision and boundaries in verification/close-intent-review.md against the PR revision. A machine result does not record acceptance.",
+          "references": []
+        }
+      ],
+      "exclusions": [
+        "The production proof assumes NativeCopy.CopySlice; it is not the fully scalar proof.",
+        "C# retained-total bookkeeping and the entire asynchronous parser are not proved by this requirement.",
+        "No proof of generated C#, compiler/runtime correctness, successful allocation, concurrent buffer access or complete RFC conformance."
+      ]
+    },
+    {
+      "id": "REASSEMBLY-002",
+      "intent": "Under the same stable-segment and exact-total preconditions, MergeScalar returns a fresh exact concatenation using verified element copies, without the native-copy assumption.",
+      "origin": [
+        "Library policy: verified payload algorithms with explicit C# adapter assumptions",
+        "https://www.rfc-editor.org/rfc/rfc6455.html#section-5.4"
+      ],
+      "contracts": [
+        {
+          "file": "verification/Protocol.dfy",
+          "symbol": "ProtocolCore.Protocol.MergeScalar",
+          "clauses": [
+            "requires parts.Length <= 0x7fffffff",
+            "requires |Parts(parts, parts.Length)| == total as int",
+            "ensures fresh(result) && result[..] == Parts(parts, parts.Length)"
+          ]
+        }
+      ],
+      "production_paths": [
+        {
+          "reference": {
+            "file": "src/main/WebsocketClientLiteTest/PayloadBoundaryTests.cs",
+            "symbol": "WebsocketClientLiteTest.PayloadBoundaryTests.MergeVariantsPreserveAliasedSegmentsAndReturnFreshStorage"
+          },
+          "responsibility": "Test-only reference path: exercise MergeScalar independently. Production receive code uses Merge, not this scalar oracle."
+        }
+      ],
+      "assumptions": [
+        "PAYLOAD-OWNERSHIP",
+        "REASSEMBLY-TOTALS"
+      ],
+      "obligations": [
+        {
+          "id": "REASSEMBLY-002-PROOF",
+          "kind": "proof",
+          "delivery": "existing",
+          "description": "Verify the mapped contracts using the pinned toolchain and generated-code check. Frame conditions and preconditions remain unchanged.",
+          "references": [
+            {
+              "file": "verification/Protocol.dfy",
+              "symbol": "ProtocolCore.Protocol.MergeScalar"
+            }
+          ]
+        },
+        {
+          "id": "REASSEMBLY-002-TEST",
+          "kind": "test",
+          "delivery": "existing",
+          "description": "Require these independent byte, adapter or loopback tests on every supported library target; tests do not prove all inputs.",
+          "references": [
+            {
+              "file": "src/main/WebsocketClientLiteTest/ProtocolStateTests.cs",
+              "symbol": "WebsocketClientLiteTest.ProtocolStateTests.BulkMergeMatchesScalarProofAndIndependentConcatenation"
+            },
+            {
+              "file": "src/main/WebsocketClientLiteTest/PayloadBoundaryTests.cs",
+              "symbol": "WebsocketClientLiteTest.PayloadBoundaryTests.MergeVariantsPreserveAliasedSegmentsAndReturnFreshStorage"
+            }
+          ]
+        },
+        {
+          "id": "REASSEMBLY-002-MUTATION",
+          "kind": "mutation",
+          "delivery": "existing",
+          "description": "Run the exact payload mutations with scripts/pdd.sh mutations. Only the catalogued semantic failure counts; unrelated assertions, syntax errors, survival and timeout fail the experiment.",
+          "references": []
+        },
+        {
+          "id": "REASSEMBLY-002-REVIEW",
+          "kind": "review",
+          "delivery": "existing",
+          "description": "Review the corresponding decision and boundaries in verification/close-intent-review.md against the PR revision. A machine result does not record acceptance.",
+          "references": []
+        }
+      ],
+      "exclusions": [
+        "Comparing production and scalar outputs on selected cases is not a proof of their compiled C# equivalence.",
+        "No proof of generated C#, compiler/runtime correctness, successful allocation, concurrent buffer access or complete RFC conformance."
+      ]
+    },
+    {
+      "id": "REASSEMBLY-003",
+      "intent": "For distinct source/destination arrays and an in-bounds offset, the native copy adapter copies exactly the source bytes while preserving the source and destination outside that slice.",
+      "origin": [
+        "Library policy: verified payload algorithms with explicit C# adapter assumptions",
+        "https://www.rfc-editor.org/rfc/rfc6455.html#section-5.4"
+      ],
+      "contracts": [],
+      "production_paths": [
+        {
+          "reference": {
+            "file": "src/main/WebsocketClientLite/Helper/VerifiedNativeCopy.cs",
+            "symbol": "WebsocketClientLite.VerifiedProtocol.NativeCopy.CopySlice"
+          },
+          "responsibility": "Delegate to Buffer.BlockCopy with a checked offset conversion; the runtime primitive remains trusted."
+        }
+      ],
+      "assumptions": [
+        "PAYLOAD-OWNERSHIP",
+        "NATIVE-COPY"
+      ],
+      "obligations": [
+        {
+          "id": "REASSEMBLY-003-TEST",
+          "kind": "test",
+          "delivery": "existing",
+          "description": "Require these independent byte, adapter or loopback tests on every supported library target; tests do not prove all inputs.",
+          "references": [
+            {
+              "file": "src/main/WebsocketClientLiteTest/ProtocolStateTests.cs",
+              "symbol": "WebsocketClientLiteTest.ProtocolStateTests.BulkCopyContractPreservesSourceAndDestinationOutsideSlice"
+            }
+          ]
+        },
+        {
+          "id": "REASSEMBLY-003-REVIEW",
+          "kind": "review",
+          "delivery": "existing",
+          "description": "Review the corresponding decision and boundaries in verification/close-intent-review.md against the PR revision. A machine result does not record acceptance.",
+          "references": []
+        }
+      ],
+      "exclusions": [
+        "This is a tested assumption, not a proved algorithm; the external Dafny declaration is not proof evidence.",
+        "No Dafny mutation obligation: mutating the extern contract would change an assumption rather than test its implementation. Independent native-copy tests remain mandatory.",
+        "No proof of generated C#, compiler/runtime correctness, successful allocation, concurrent buffer access or complete RFC conformance."
+      ]
+    },
+    {
+      "id": "MASK-001",
+      "intent": "For a distinct key with at least four bytes and count equal to payload length, Apply XORs each payload byte with the corresponding repeating key byte and preserves the key through its data-only frame condition.",
+      "origin": [
+        "Library policy: verified payload algorithms with explicit C# adapter assumptions",
+        "https://www.rfc-editor.org/rfc/rfc6455.html#section-5.3"
+      ],
+      "contracts": [
+        {
+          "file": "verification/Masking.dfy",
+          "symbol": "MaskingCore.Masking.Apply",
+          "clauses": [
+            "requires data != key",
+            "requires key.Length >= 4",
+            "requires count as int == data.Length",
+            "modifies data",
+            "ensures forall j :: 0 <= j < data.Length ==> data[j] == old(data[j]) ^ key[j % 4]"
+          ]
+        }
+      ],
+      "production_paths": [
+        {
+          "reference": {
+            "file": "src/main/WebsocketClientLite/Helper/WebsocketMasking.cs",
+            "symbol": "WebsocketClientLite.Helper.WebsocketMasking.Decode"
+          },
+          "responsibility": "Reject null, short-key and aliased buffers; pass the payload length to the generated in-place kernel."
+        }
+      ],
+      "assumptions": [
+        "PAYLOAD-OWNERSHIP",
+        "MASK-ADAPTER"
+      ],
+      "obligations": [
+        {
+          "id": "MASK-001-PROOF",
+          "kind": "proof",
+          "delivery": "existing",
+          "description": "Verify the mapped contracts using the pinned toolchain and generated-code check. Frame conditions and preconditions remain unchanged.",
+          "references": [
+            {
+              "file": "verification/Masking.dfy",
+              "symbol": "MaskingCore.Masking.Apply"
+            }
+          ]
+        },
+        {
+          "id": "MASK-001-TEST",
+          "kind": "test",
+          "delivery": "existing",
+          "description": "Require these independent byte, adapter or loopback tests on every supported library target; tests do not prove all inputs.",
+          "references": [
+            {
+              "file": "src/main/WebsocketClientLiteTest/MaskingTests.cs",
+              "symbol": "WebsocketClientLiteTest.MaskingTests.Decode_MatchesRfc6455HelloVector"
+            },
+            {
+              "file": "src/main/WebsocketClientLiteTest/MaskingTests.cs",
+              "symbol": "WebsocketClientLiteTest.MaskingTests.Decode_PreservesScratchKeyAndRoundTrips"
+            },
+            {
+              "file": "src/main/WebsocketClientLiteTest/MaskingTests.cs",
+              "symbol": "WebsocketClientLiteTest.MaskingTests.Decode_CoversEveryByteAndKeyValueAtEachKeyPosition"
+            },
+            {
+              "file": "src/main/WebsocketClientLiteTest/MaskingTests.cs",
+              "symbol": "WebsocketClientLiteTest.MaskingTests.Decode_RejectsInvalidAdapterInputsBeforeMutation"
+            }
+          ]
+        },
+        {
+          "id": "MASK-001-MUTATION",
+          "kind": "mutation",
+          "delivery": "existing",
+          "description": "Run the exact payload mutations with scripts/pdd.sh mutations. Only the catalogued semantic failure counts; unrelated assertions, syntax errors, survival and timeout fail the experiment.",
+          "references": []
+        },
+        {
+          "id": "MASK-001-REVIEW",
+          "kind": "review",
+          "delivery": "existing",
+          "description": "Review the corresponding decision and boundaries in verification/close-intent-review.md against the PR revision. A machine result does not record acceptance.",
+          "references": []
+        }
+      ],
+      "exclusions": [
+        "The cryptographic randomness of mask-key generation is outside this XOR/preservation requirement.",
+        "No proof of generated C#, compiler/runtime correctness, successful allocation, concurrent buffer access or complete RFC conformance."
+      ]
+    },
+    {
+      "id": "MASK-002",
+      "intent": "CopyMasked writes XOR-masked bytes from exactly the requested source prefix into the destination slice, preserving the source and every destination byte outside that slice.",
+      "origin": [
+        "Library policy: verified payload algorithms with explicit C# adapter assumptions",
+        "https://www.rfc-editor.org/rfc/rfc6455.html#section-5.3"
+      ],
+      "contracts": [
+        {
+          "file": "verification/Protocol.dfy",
+          "symbol": "ProtocolCore.Protocol.CopyMasked",
+          "clauses": [
+            "requires source != dest",
+            "requires count as int <= source.Length",
+            "requires offset as int + count as int <= dest.Length",
+            "requires offset as int + count as int <= 0x7fffffff",
+            "modifies dest",
+            "ensures forall j :: 0 <= j < count as int ==> dest[offset as int + j] == source[j] ^ (if j % 4 == 0 then k0 else if j % 4 == 1 then k1 else if j % 4 == 2 then k2 else k3)",
+            "ensures forall j :: 0 <= j < dest.Length && !(offset as int <= j < offset as int + count as int) ==> dest[j] == old(dest[j])"
+          ]
+        }
+      ],
+      "production_paths": [
+        {
+          "reference": {
+            "file": "src/main/WebsocketClientLite/Service/WebsocketSenderHandler.cs",
+            "symbol": "WebsocketClientLite.Service.WebsocketSenderHandler.ComposeFrameAndSendCoreAsync"
+          },
+          "responsibility": "Establish non-aliasing, source count and destination bounds for the pooled output buffer; supply the four header key bytes."
+        }
+      ],
+      "assumptions": [
+        "PAYLOAD-OWNERSHIP",
+        "MASK-ADAPTER"
+      ],
+      "obligations": [
+        {
+          "id": "MASK-002-PROOF",
+          "kind": "proof",
+          "delivery": "existing",
+          "description": "Verify the mapped contracts using the pinned toolchain and generated-code check. Frame conditions and preconditions remain unchanged.",
+          "references": [
+            {
+              "file": "verification/Protocol.dfy",
+              "symbol": "ProtocolCore.Protocol.CopyMasked"
+            }
+          ]
+        },
+        {
+          "id": "MASK-002-TEST",
+          "kind": "test",
+          "delivery": "existing",
+          "description": "Require these independent byte, adapter or loopback tests on every supported library target; tests do not prove all inputs.",
+          "references": [
+            {
+              "file": "src/main/WebsocketClientLiteTest/ProtocolCoreTests.cs",
+              "symbol": "WebsocketClientLiteTest.ProtocolCoreTests.SliceMaskingPreservesPrefixSuffixAndSource"
+            },
+            {
+              "file": "src/main/WebsocketClientLiteTest/PayloadBoundaryTests.cs",
+              "symbol": "WebsocketClientLiteTest.PayloadBoundaryTests.CopyMaskedUsesOnlyRequestedPrefixAndPreservesOtherBytes"
+            }
+          ]
+        },
+        {
+          "id": "MASK-002-MUTATION",
+          "kind": "mutation",
+          "delivery": "existing",
+          "description": "Run the exact payload mutations with scripts/pdd.sh mutations. Only the catalogued semantic failure counts; unrelated assertions, syntax errors, survival and timeout fail the experiment.",
+          "references": []
+        },
+        {
+          "id": "MASK-002-REVIEW",
+          "kind": "review",
+          "delivery": "existing",
+          "description": "Review the corresponding decision and boundaries in verification/close-intent-review.md against the PR revision. A machine result does not record acceptance.",
+          "references": []
+        }
+      ],
+      "exclusions": [
+        "No proof of array-pool ownership, UTF-8 encoding or completed wire writes.",
+        "No proof of generated C#, compiler/runtime correctness, successful allocation, concurrent buffer access or complete RFC conformance."
+      ]
+    },
+    {
+      "id": "MASK-003",
+      "intent": "MaskSlice XORs exactly the requested in-place payload slice using the four earlier key bytes and preserves every byte outside the slice, including the key and guards.",
+      "origin": [
+        "Library policy: verified payload algorithms with explicit C# adapter assumptions",
+        "https://www.rfc-editor.org/rfc/rfc6455.html#section-5.3"
+      ],
+      "contracts": [
+        {
+          "file": "verification/Protocol.dfy",
+          "symbol": "ProtocolCore.Protocol.MaskSlice",
+          "clauses": [
+            "requires keyOffset as int + 4 <= offset as int",
+            "requires offset as int + count as int <= dest.Length",
+            "requires offset as int + count as int <= 0x7fffffff",
+            "modifies dest",
+            "ensures forall j :: 0 <= j < count as int ==> dest[offset as int + j] == old(dest[offset as int + j]) ^ old(dest[keyOffset as int + j % 4])",
+            "ensures forall j :: 0 <= j < dest.Length && !(offset as int <= j < offset as int + count as int) ==> dest[j] == old(dest[j])"
+          ]
+        }
+      ],
+      "production_paths": [
+        {
+          "reference": {
+            "file": "src/main/WebsocketClientLite/Service/WebsocketSenderHandler.cs",
+            "symbol": "WebsocketClientLite.Service.WebsocketSenderHandler.ComposeFrameAndSendCoreAsync"
+          },
+          "responsibility": "Encode text inside the allocated payload slice and establish that the key precedes the payload before masking."
+        }
+      ],
+      "assumptions": [
+        "PAYLOAD-OWNERSHIP",
+        "MASK-ADAPTER"
+      ],
+      "obligations": [
+        {
+          "id": "MASK-003-PROOF",
+          "kind": "proof",
+          "delivery": "existing",
+          "description": "Verify the mapped contracts using the pinned toolchain and generated-code check. Frame conditions and preconditions remain unchanged.",
+          "references": [
+            {
+              "file": "verification/Protocol.dfy",
+              "symbol": "ProtocolCore.Protocol.MaskSlice"
+            }
+          ]
+        },
+        {
+          "id": "MASK-003-TEST",
+          "kind": "test",
+          "delivery": "existing",
+          "description": "Require these independent byte, adapter or loopback tests on every supported library target; tests do not prove all inputs.",
+          "references": [
+            {
+              "file": "src/main/WebsocketClientLiteTest/ProtocolCoreTests.cs",
+              "symbol": "WebsocketClientLiteTest.ProtocolCoreTests.SliceMaskingPreservesPrefixSuffixAndSource"
+            },
+            {
+              "file": "src/main/WebsocketClientLiteTest/PayloadBoundaryTests.cs",
+              "symbol": "WebsocketClientLiteTest.PayloadBoundaryTests.MaskSliceMatchesKnownBytesAndPreservesEntireOutsideSlice"
+            }
+          ]
+        },
+        {
+          "id": "MASK-003-MUTATION",
+          "kind": "mutation",
+          "delivery": "existing",
+          "description": "Run the exact payload mutations with scripts/pdd.sh mutations. Only the catalogued semantic failure counts; unrelated assertions, syntax errors, survival and timeout fail the experiment.",
+          "references": []
+        },
+        {
+          "id": "MASK-003-REVIEW",
+          "kind": "review",
+          "delivery": "existing",
+          "description": "Review the corresponding decision and boundaries in verification/close-intent-review.md against the PR revision. A machine result does not record acceptance.",
+          "references": []
+        }
+      ],
+      "exclusions": [
+        "No proof of encoding, header construction, array-pool ownership or completed wire writes.",
+        "No proof of generated C#, compiler/runtime correctness, successful allocation, concurrent buffer access or complete RFC conformance."
+      ]
     }
   ],
   "boundaries_file": "verification/boundaries.json"

@@ -1,0 +1,52 @@
+[
+  {
+    "id": "REASSEMBLY-001-offset-stall",
+    "exit_code": 4,
+    "stdout": "verification/Protocol.dfy(181,32): Error: this invariant could not be proved to be maintained by the loop\n Related message: loop invariant violation\n    |\n181 |         invariant offset as int == |Parts(parts, p as int)| && offset <= total\n    |                                 ^^\n\n\nDafny program verifier finished with 573 verified, 1 error\n"
+  },
+  {
+    "id": "REASSEMBLY-002-offset-stall",
+    "exit_code": 4,
+    "stdout": "verification/Protocol.dfy(206,32): Error: this invariant could not be proved to be maintained by the loop\n Related message: loop invariant violation\n    |\n206 |         invariant offset as int == |Parts(parts, p as int)| && offset <= total\n    |                                 ^^\n\n\nDafny program verifier finished with 573 verified, 1 error\n"
+  },
+  {
+    "id": "REASSEMBLY-001-oversized-result",
+    "exit_code": 4,
+    "stdout": "verification/Protocol.dfy(174,4): Error: a postcondition could not be proved on this return path\n    |\n174 |     {\n    |     ^\n\nverification/Protocol.dfy(173,42): Related location: this is the postcondition that could not be proved\n    |\n173 |       ensures fresh(result) && result[..] == Parts(parts, parts.Length)\n    |                                           ^^\n\n\nDafny program verifier finished with 573 verified, 1 error\n"
+  },
+  {
+    "id": "MASK-001-xor-to-or",
+    "exit_code": 4,
+    "stdout": "verification/Masking.dfy(18,18): Error: this invariant could not be proved to be maintained by the loop\n Related message: loop invariant violation\n   |\n18 |         invariant forall j :: 0 <= j < i as int ==>\n   |                   ^^^^^^\n\n\nDafny program verifier finished with 573 verified, 1 error\n"
+  },
+  {
+    "id": "MASK-001-key-write",
+    "exit_code": 4,
+    "stdout": "verification/Masking.dfy(23,44): Error: assignment might update an array element not in the enclosing context's modifies clause\n   |\n23 |         data[i] := data[i] ^ key[i % 4]; key[0] := 0;\n   |                                             ^\n\n\nDafny program verifier finished with 573 verified, 1 error\n"
+  },
+  {
+    "id": "MASK-002-tail-xor-to-or",
+    "exit_code": 4,
+    "stdout": "verification/Protocol.dfy(427,18): Error: this invariant could not be proved to be maintained by the loop\n Related message: loop invariant violation\n    |\n427 |         invariant forall j :: 0 <= j < i as int ==> dest[offset as int + j] == source[j] ^\n    |                   ^^^^^^\n\n\nDafny program verifier finished with 573 verified, 1 error\n"
+  },
+  {
+    "id": "MASK-002-skip-bulk-blocks",
+    "exit_code": 4,
+    "stdout": "verification/Protocol.dfy(400,18): Error: this invariant could not be proved to be maintained by the loop\n Related message: loop invariant violation\n    |\n400 |         invariant forall j :: 0 <= j < i as int ==> dest[offset as int + j] == source[j] ^\n    |                   ^^^^^^\n\n\nDafny program verifier finished with 575 verified, 1 error\n"
+  },
+  {
+    "id": "MASK-002-preserve-prefix",
+    "exit_code": 4,
+    "stdout": "verification/Protocol.dfy(427,18): Error: this invariant could not be proved to be maintained by the loop\n Related message: loop invariant violation\n    |\n427 |         invariant forall j :: 0 <= j < i as int ==> dest[offset as int + j] == source[j] ^\n    |                   ^^^^^^\n\nverification/Protocol.dfy(429,18): Error: this invariant could not be proved to be maintained by the loop\n Related message: loop invariant violation\n    |\n429 |         invariant forall j :: 0 <= j < dest.Length && !(offset as int <= j < offset as int + i as int) ==> dest[j] == old(dest[j])\n    |                   ^^^^^^\n\n\nDafny program verifier finished with 575 verified, 2 errors\n"
+  },
+  {
+    "id": "MASK-003-xor-to-or",
+    "exit_code": 4,
+    "stdout": "verification/Protocol.dfy(449,18): Error: this invariant could not be proved to be maintained by the loop\n Related message: loop invariant violation\n    |\n449 |         invariant forall j :: 0 <= j < i as int ==> dest[offset as int + j] == old(dest[offset as int + j]) ^ old(dest[keyOffset as int + j % 4])\n    |                   ^^^^^^\n\n\nDafny program verifier finished with 573 verified, 1 error\n"
+  },
+  {
+    "id": "MASK-003-preserve-prefix",
+    "exit_code": 4,
+    "stdout": "verification/Protocol.dfy(450,18): Error: this invariant could not be proved to be maintained by the loop\n Related message: loop invariant violation\n    |\n450 |         invariant forall j :: 0 <= j < dest.Length && !(offset as int <= j < offset as int + i as int) ==> dest[j] == old(dest[j])\n    |                   ^^^^^^\n\n\nDafny program verifier finished with 573 verified, 1 error\n"
+  }
+]

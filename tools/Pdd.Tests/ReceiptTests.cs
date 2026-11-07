@@ -21,7 +21,7 @@ public class ReceiptTests
     static JsonObject Projection(JsonObject receipt)
     {
         var requirements = new JsonArray();
-        foreach (var q in receipt["requirements"]!.AsArray())
+        foreach (var q in receipt["requirements"]!.AsArray().Where(q => q!["id"]!.ToString().StartsWith("CLOSE-", StringComparison.Ordinal)))
         {
             var obligations = new JsonObject();
             foreach (var o in q!["machine_evidence"]!.AsArray())
@@ -29,7 +29,7 @@ public class ReceiptTests
             requirements.Add(new JsonObject { ["id"] = q["id"]!.DeepClone(), ["satisfied"] = q["satisfied"]!.DeepClone(), ["obligations"] = obligations });
         }
         var reviews = new JsonObject();
-        foreach (var r in receipt["review_evidence"]!.AsArray())
+        foreach (var r in receipt["review_evidence"]!.AsArray().Where(r => r!["id"]!.ToString().StartsWith("CLOSE-", StringComparison.Ordinal)))
             reviews[r!["id"]!.ToString()] = r["status"]!.DeepClone();
         var matrix = new JsonObject();
         foreach (var (key, value) in receipt["framework_matrix"]!.AsObject())

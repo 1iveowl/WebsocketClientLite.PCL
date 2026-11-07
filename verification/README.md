@@ -6,7 +6,7 @@ This work implements the five stages in the [adoption plan](../docs/dafny-pdd-pl
 
 The proposed [PDD phase 2 plan for 10.2.0.0](../docs/pdd-phase-2-plan.md) adds requirement traceability, repeatable mutation checks, boundary review, CI receipts and controlled asynchronous tests, starting with Close handling.
 
-## Close requirement map (phase 2, increment A)
+## Requirement maps (phase 2, increments A and F)
 
 The [manifest](requirements.json), [v2 JSON Schema](requirements.schema.json) and
 [intent review](close-intent-review.md) separate sequential Close decisions from
@@ -28,11 +28,11 @@ Reference resolution is deliberately narrow and fails on ambiguous declarations:
 
 - Dafny identities use `module.class.method`, not the generated C# namespace.
   The resolver finds the named module/class and a unique static method declaration
-  in that class, then matches each complete `requires`/`ensures` line in that
-  method's header after whitespace normalization. Clauses in other methods do not
+  in that class, then matches each complete `requires`/`ensures`/`modifies` clause in that
+  method's header after folding indented continuation lines and normalizing whitespace. The known `{:isolate_assertions}` method attribute is supported. Clauses in other methods do not
   count. No source line number is an identity.
 - C# identities use `namespace.class.method` in the named file. The resolver
-  supports file-scoped namespaces and uniquely named methods in the declared
+  supports expression-bodied methods, file-scoped namespaces and uniquely named methods in the declared
   class. A test must additionally have an adjacent `[Fact]` or `[Theory]` attribute
   (with optional data attributes). Theory rows share the method identity.
 - Comments and ordinary/verbatim strings are masked before declaration searches.
@@ -63,7 +63,7 @@ E controlled schedules and PR review remain separate obligations. Receipts and t
 ## Close mutation checks (phase 2, increment B)
 
 ```bash
-./scripts/pdd.sh mutations
+./scripts/pdd.sh mutations --scope close
 dotnet test tools/Pdd.Tests/Pdd.Tests.csproj -c Release
 ```
 
@@ -98,8 +98,7 @@ are visible obligations, not invented passing tests.
 
 The initial register covers state-lock ownership, reservation versus completed
 writes, failure/abort paths, timer delivery, and observer/disposal progress.
-Buffer ownership, native-copy implementation, retained-fragment totals, UTF-8 and
-handshake parsing remain future register work. The generated
+F adds buffer ownership, native-copy implementation, retained-fragment totals and masking adapter obligations. UTF-8 and handshake parsing remain outside this register expansion. The generated
 [trusted-boundaries.md](trusted-boundaries.md) is still exclusively the
 machine-compared Dafny external-contract audit; the existing `--check` gate is
 unchanged. A handwritten boundary entry cannot authorize a new external contract.
@@ -289,6 +288,8 @@ To reproduce locally, use a **new** output directory (capture refuses reuse):
 ```bash
 ./scripts/pdd.sh capture --job protocol --output artifacts/pdd/protocol
 ./scripts/pdd.sh capture --job tests --output artifacts/pdd/tests
+./scripts/pdd.sh capture --job controlled --output artifacts/pdd/controlled
+./scripts/pdd.sh capture --job stryker --output artifacts/pdd/stryker
 ./scripts/pdd.sh aggregate --output artifacts/pdd
 ```
 
@@ -323,8 +324,7 @@ cancelled runner cannot guarantee artifact delivery; missing evidence fails.
 A passing **machine gate does not mean all Close requirements are satisfied**.
 Review obligations are recorded separately as `not-run`, pending revision-specific
 acceptance through normal PR review. Increment E's controlled tests and separate
-Stryker evidence are also `not-run`; E obligations are not exempted from requirement
-satisfaction. In particular, CLOSE-004 and CLOSE-005 remain unsatisfied. This
+Stryker evidence are consumed from their separate jobs; missing results remain `not-run` and cannot satisfy those obligations. CLOSE-004 and CLOSE-005 still require revision-specific human review. This
 increment does not consume approval booleans or infer review acceptance from
 contract diffs. Future review ingestion must bind actual review decisions to the
 reviewed source revision.
@@ -342,3 +342,34 @@ folders beside `protocol` and `tests`, then run `./scripts/pdd.sh aggregate`.
 All four captures must use the same unchanged source identity. The aggregate
 gate requires the ordering-defect experiment independently of Stryker outcomes;
 review acceptance is never inferred from either experiment.
+
+## Reassembly and masking evidence (phase 2, increment F)
+
+The manifest separately maps production `Merge` (REASSEMBLY-001), scalar reference
+`MergeScalar` (REASSEMBLY-002), and the tested-only native copy implementation
+(REASSEMBLY-003). Production concatenation relies on `NativeCopy.CopySlice`'s
+external contract. Scalar concatenation does not; it is a reference path, not
+production integration evidence. The native copy implementation has an explicit
+proof/mutation exception, with its guard/source preservation test retained.
+
+MASK-001 maps the original whole-array `Apply` helper; MASK-002 and MASK-003 map
+the sender's `CopyMasked` and `MaskSlice`. Independent expected-byte tests cover
+XOR, zero-length/prefix/tail/bulk cases, key/source preservation and the entire
+outside destination slice. Aliased reassembly segments are checked against literal
+concatenation bytes, fresh output and unchanged inputs for both variants. Existing
+loopback, adapter, RFC-vector and integration tests remain in place.
+
+Run `./scripts/pdd.sh mutations` for all 15 experiments or select `--scope close`
+(five) / `--scope payload` (ten) for investigation. Only the full suite satisfies
+the protocol receipt. See the [catalog guide](mutations/README.md) for exact
+postcondition, loop-invariant and frame diagnostics and their contract mappings.
+The four capture jobs above and aggregation use identical source identities; old
+Close-only receipts cannot satisfy the new obligations. JSON records preserve
+actual library target and host runtime separately.
+
+This completes the planned implementation sequence A–F, not human acceptance of
+Phase 2. The [intent review](close-intent-review.md) includes F's requirement and
+boundary decisions but does not record reviewer approval. Review remains separate
+and `not-run` in machine receipts. Native-copy correctness, toolchain trust,
+concurrent caller ownership and the documented [Close pilot gaps](stryker-close-pilot.md)
+remain explicit limits. No exhaustive schedule exploration or full RFC proof is claimed.

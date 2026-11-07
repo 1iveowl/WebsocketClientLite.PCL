@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "title": "Close boundaries v1",
+  "title": "Protocol boundaries v1",
   "type": "object",
   "properties": {
     "schema_version": {

@@ -68,8 +68,8 @@ public static class Program
                     Console.WriteLine($"Contract-change report: {reportPath} (review aid only).");
                     return 0;
                 case "mutations":
-                    Allow("--output", "--baseline-budget", "--mutant-budget", "--verification-time-limit");
-                    return await new Mutations(root).Run(Path.GetFullPath(Get("--output", Path.Combine(root, "artifacts/close-mutations", DateTime.UtcNow.ToString("yyyyMMddTHHmmss.fffffffZ")))), Number("--baseline-budget", "180"), Number("--mutant-budget", "90"), Integer("--verification-time-limit", "60"), cancellation.Token);
+                    Allow("--output", "--baseline-budget", "--mutant-budget", "--verification-time-limit", "--scope");
+                    return await new Mutations(root).Run(Path.GetFullPath(Get("--output", Path.Combine(root, "artifacts/close-mutations", DateTime.UtcNow.ToString("yyyyMMddTHHmmss.fffffffZ")))), Number("--baseline-budget", "180"), Number("--mutant-budget", "90"), Integer("--verification-time-limit", "60"), cancellation.Token, Get("--scope", "all"));
                 case "capture":
                     Allow("--job", "--output", "--command-budget");
                     return await evidence.Capture(Choice("--job", ["protocol", "tests", "controlled", "stryker"]), output, Number("--command-budget", "1800"), cancellation.Token);

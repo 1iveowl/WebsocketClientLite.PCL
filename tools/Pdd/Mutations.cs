@@ -7,9 +7,29 @@ namespace Pdd;
 
 public sealed class Mutations(string root)
 {
-    public MutationCatalog LoadCatalog(JsonNode? data = null)
+    static readonly Dictionary<string, string> Scopes = new()
     {
-        data ??= Read(Path.Combine(root, "verification/mutations/close.json"));
+        ["ProtocolCore.Protocol.CloseStep"] = "verification/Protocol.dfy",
+        ["ProtocolCore.Protocol.Merge"] = "verification/Protocol.dfy",
+        ["ProtocolCore.Protocol.MergeScalar"] = "verification/Protocol.dfy",
+        ["ProtocolCore.Protocol.CopyMasked"] = "verification/Protocol.dfy",
+        ["ProtocolCore.Protocol.MaskSlice"] = "verification/Protocol.dfy",
+        ["MaskingCore.Masking.Apply"] = "verification/Masking.dfy"
+    };
+    public MutationCatalog LoadCatalog(JsonNode? data = null, string scope = "all")
+    {
+        Require(scope is "all" or "close" or "payload", "unsupported mutation suite");
+        if (data is null)
+        {
+            var entries = new JsonArray();
+            foreach (var name in scope == "all" ? new[] { "close", "payload" } : new[] { scope })
+            {
+                var file = Read(Path.Combine(root, $"verification/mutations/{name}.json"));
+                Require(file["schema_version"]?.GetValue<int>() == 1 && file.AsObject().Select(p => p.Key).ToHashSet().SetEquals(["schema_version", "mutants"]), "unsupported catalog shape/version");
+                foreach (var item in file["mutants"]!.AsArray()) entries.Add(item!.DeepClone());
+            }
+            data = new JsonObject { ["schema_version"] = 1, ["mutants"] = entries };
+        }
         Require(data is JsonObject && data.AsObject().Select(p => p.Key).ToHashSet().SetEquals(["schema_version", "mutants"]) && data["schema_version"]?.GetValue<int>() == 1, "unsupported catalog shape/version");
         var manifest = new Requirements(root).Validate();
         var ids = new HashSet<string>();
@@ -17,77 +37,111 @@ public sealed class Mutations(string root)
         string[] fields = ["id", "requirement", "obligation", "file", "symbol", "before", "after", "target_clause", "allowed_clauses", "classification"];
         foreach (var item in data["mutants"]!.AsArray())
         {
-            Require(item is JsonObject && item.AsObject().Select(p => p.Key).ToHashSet().SetEquals(fields), "invalid mutant fields");
+            Require(item is JsonObject && fields.All(item.AsObject().ContainsKey) && item.AsObject().All(p => fields.Contains(p.Key) || p.Key == "contract_clause"), "invalid mutant fields");
             Require(fields.Where(k => k != "allowed_clauses").All(k => item![k] is JsonValue v && v.TryGetValue<string>(out var s) && s.Length > 0), "empty mutant field");
             Require(item!["allowed_clauses"] is JsonArray a && a.All(c => c is JsonValue v && v.TryGetValue<string>(out _)), "missing target clause");
         }
         var catalog = Model<MutationCatalog>(data);
+        bool Selected(string id) => scope == "all" || id.StartsWith("CLOSE-", StringComparison.Ordinal) == (scope == "close");
         foreach (var m in catalog.Mutants)
         {
-            Require(Regex.IsMatch(m.Id, @"^CLOSE-[0-9]{3}-[a-z-]+$") && ids.Add(m.Id), "invalid/duplicate mutant ID");
-            Require(m.File == "verification/Protocol.dfy" && m.Symbol == "ProtocolCore.Protocol.CloseStep", "unsupported mutation scope");
+            Require(Regex.IsMatch(m.Id, @"^(CLOSE|REASSEMBLY|MASK)-[0-9]{3}-[a-z-]+$") && ids.Add(m.Id), "invalid/duplicate mutant ID");
+            Require(Selected(m.Requirement), "mutant outside selected suite");
+            Require(Scopes.TryGetValue(m.Symbol, out var file) && file == m.File, "unsupported mutation scope");
             var req = manifest.Requirements.SingleOrDefault(r => r.Id == m.Requirement);
             Require(req is not null && req.Obligations.Any(o => o.Id == m.Obligation && o.Kind == "mutation"), "dangling mutation obligation");
-            Require(req!.Contracts.Any(c => c.Clauses.Contains(m.TargetClause)), "target not mapped to requirement");
-            var header = Requirements.Resolve(root, m).Split('\n').Select(l => l.Trim()).ToArray();
+            Require(req!.Contracts.Any(c => c.File == m.File && c.Symbol == m.Symbol && c.Clauses.Contains(m.ContractClause ?? m.TargetClause)), "target not mapped to requirement");
+            var header = Requirements.Clauses(Requirements.Resolve(root, m));
+            var source = Requirements.Source(root, m.File);
+            var (start, end) = Bounds(source, m);
+            var body = Requirements.Clauses(source[(start + 1)..end], "invariant");
             Require(m.AllowedClauses.Contains(m.TargetClause), "missing target clause");
-            Require(m.AllowedClauses.All(c => c.StartsWith("ensures ") && header.Contains(c)), "unresolved allowed clause");
-            Require(m.Classification == "postcondition", "unsupported classification");
-            Apply(Requirements.Source(root, m.File), m);
+            Require(m.Classification switch
+            {
+                "postcondition" => m.ContractClause is null && m.AllowedClauses.All(c => c.StartsWith("ensures ") && header.Contains(c)),
+                "invariant" => m.ContractClause is not null && header.Contains(m.ContractClause) && m.AllowedClauses.All(c => c.StartsWith("invariant ") && body.Contains(c)),
+                "frame" => m.ContractClause is null && m.AllowedClauses.Length == 1 && m.TargetClause.StartsWith("modifies ") && header.Contains(m.TargetClause),
+                _ => false
+            }, "unresolved allowed clause or unsupported classification");
+            Apply(source, m);
         }
-        foreach (var o in manifest.Requirements.SelectMany(r => r.Obligations).Where(o => o.Kind == "mutation" && o.Delivery is "B" or "existing"))
+        foreach (var o in manifest.Requirements.Where(r => Selected(r.Id)).SelectMany(r => r.Obligations).Where(o => o.Kind == "mutation" && o.Delivery is "B" or "existing"))
             Require(catalog.Mutants.Any(m => m.Obligation == o.Id), "uncovered mutation obligation");
         return catalog;
     }
+    static (int Start, int End) Bounds(string source, Mutant m)
+    {
+        Require(Scopes.TryGetValue(m.Symbol, out var file) && file == m.File, "unsupported mutation scope");
+        var masked = Requirements.Masked(source);
+        var declarations = Regex.Matches(masked, @"\bstatic\s+method\s+(?:\{:[^}]*\}\s*)?" + Regex.Escape(m.Symbol.Split('.').Last()) + @"\s*\(");
+        Require(declarations.Count == 1, "missing or ambiguous mutation method");
+        var start = masked.IndexOf('{', declarations[0].Index + declarations[0].Length);
+        var body = Requirements.Body(masked, start);
+        return (start, start + 1 + body.Length);
+    }
     public static string Apply(string source, Mutant m)
     {
-        var method = source.IndexOf("static method CloseStep(", StringComparison.Ordinal);
-        Require(method >= 0, "missing CloseStep");
-        var start = source.IndexOf('{', method) + 1;
-        var end = source.IndexOf("\n    }", start, StringComparison.Ordinal);
-        Require(start > 0 && end > start, "missing CloseStep body");
-        Require(!(m.Before + m.After).Contains('\n') && m.Before != m.After && source.Split(m.Before).Length == 2, "mutation must be a unique, changed single line");
-        Require(source[start..end].Contains(m.Before) && !m.After.Any(c => c is '{' or '}'), "mutation outside CloseStep body");
-        return source.Replace(m.Before, m.After);
+        var (start, end) = Bounds(source, m);
+        var body = source[(start + 1)..end];
+        Require(!(m.Before + m.After).Contains('\n') && m.Before != m.After && body.Split(m.Before).Length == 2, "mutation must be a unique, changed single line in its method");
+        Require(!m.After.Any(c => c is '{' or '}') && !Regex.IsMatch(m.Before + "\n" + m.After, @"\b(requires|ensures|invariant|modifies|assert|assume)\b"), "mutation must change implementation, not proof clauses");
+        return source[..(start + 1)] + body.Replace(m.Before, m.After) + source[end..];
     }
     public static MutationOutcome Classify(ExecutionResult record, string source, Mutant? mutant = null)
     {
         MutationOutcome Inconclusive() => new("inconclusive", []);
-        if (record.TimedOut || record.Interrupted || record.LaunchError is not null)
-            return Inconclusive();
+        if (record.TimedOut || record.Interrupted || record.LaunchError is not null) return Inconclusive();
         var output = record.Stdout + "\n" + record.Stderr;
         var summaries = Regex.Matches(output, @"Dafny program verifier finished with (\d+) verified, (\d+) errors?");
-        if (summaries.Count != 1 || Regex.IsMatch(output, @"timed out|timeout|resource limit|inconclusive", RegexOptions.IgnoreCase))
-            return Inconclusive();
+        if (summaries.Count != 1 || Regex.IsMatch(output, @"timed out|timeout|resource limit|inconclusive", RegexOptions.IgnoreCase)) return Inconclusive();
         var verified = int.Parse(summaries[0].Groups[1].Value);
         var errors = int.Parse(summaries[0].Groups[2].Value);
-        if (record.ExitCode == 0 && errors == 0 && verified > 0 && !output.Contains("Error:"))
-            return new(mutant is null ? "passed" : "survived", []);
-        if (mutant is null || record.ExitCode != 4 || errors == 0)
-            return Inconclusive();
+        if (record.ExitCode == 0 && errors == 0 && verified > 0 && !output.Contains("Error:")) return new(mutant is null ? "passed" : "survived", []);
+        if (mutant is null || record.ExitCode != 4 || errors == 0 || !mutant.AllowedClauses.Contains(mutant.TargetClause)) return Inconclusive();
         var primary = Regex.Matches(output, @"^(.+?)\((\d+),(\d+)\): Error: (.+)$", RegexOptions.Multiline);
         var related = Regex.Matches(output, @"^(.+?)\((\d+),(\d+)\): Related location: (.+)$", RegexOptions.Multiline);
-        if (primary.Count != errors || related.Count != errors || output.Split("Error:").Length - 1 != errors)
-            return Inconclusive();
-        var method = source.IndexOf("static method CloseStep(", StringComparison.Ordinal);
-        if (method < 0)
-            return Inconclusive();
-        var start = source[..source.IndexOf('{', method)].Count(c => c == '\n') + 1;
-        var end = source[..source.IndexOf("\n    }", method, StringComparison.Ordinal)].Count(c => c == '\n') + 2;
+        if (primary.Count != errors || output.Split("Error:").Length - 1 != errors) return Inconclusive();
+        int start, end;
+        try { (start, end) = Bounds(source, mutant); } catch (InvalidDataException) { return Inconclusive(); }
+        var firstLine = source[..start].Count(c => c == '\n') + 1;
+        var lastLine = source[..end].Count(c => c == '\n') + 1;
         var lines = source.Split('\n');
         var matched = new List<string>();
         foreach (Match p in primary)
-            if (p.Groups[1].Value != "verification/Protocol.dfy" || !int.TryParse(p.Groups[2].Value, out var line) || line < start || line > end || p.Groups[4].Value != "a postcondition could not be proved on this return path")
-                return Inconclusive();
-        foreach (Match p in related)
         {
-            if (p.Groups[1].Value != "verification/Protocol.dfy" || !int.TryParse(p.Groups[2].Value, out var line) || line < 1 || line > lines.Length || p.Groups[4].Value != "this is the postcondition that could not be proved")
-                return Inconclusive();
-            var clause = lines[line - 1].Trim();
-            if (!mutant.AllowedClauses.Contains(clause))
-                return Inconclusive();
-            matched.Add(clause);
+            if (p.Groups[1].Value != mutant.File || !int.TryParse(p.Groups[2].Value, out var line) || line < firstLine || line > lastLine) return Inconclusive();
+            var message = p.Groups[4].Value;
+            if (mutant.Classification == "postcondition")
+            {
+                if (message != "a postcondition could not be proved on this return path") return Inconclusive();
+            }
+            else if (mutant.Classification == "invariant")
+            {
+                if (message != "this invariant could not be proved to be maintained by the loop") return Inconclusive();
+                var clause = Requirements.LogicalLine(lines, line - 1);
+                if (!mutant.AllowedClauses.Contains(clause)) return Inconclusive();
+                matched.Add(clause);
+            }
+            else if (mutant.Classification == "frame")
+            {
+                if (message != "assignment might update an array element not in the enclosing context's modifies clause" || !lines[line - 1].Contains(mutant.After)) return Inconclusive();
+                matched.Add(mutant.TargetClause);
+            }
+            else return Inconclusive();
         }
+        if (mutant.Classification == "postcondition")
+        {
+            if (related.Count != errors) return Inconclusive();
+            foreach (Match p in related)
+            {
+                if (p.Groups[1].Value != mutant.File || !int.TryParse(p.Groups[2].Value, out var line) || line < 1 || line > lines.Length || p.Groups[4].Value != "this is the postcondition that could not be proved") return Inconclusive();
+                var clause = Requirements.LogicalLine(lines, line - 1);
+                if (!mutant.AllowedClauses.Contains(clause)) return Inconclusive();
+                matched.Add(clause);
+            }
+        }
+        else if (related.Count != 0) return Inconclusive();
+        if (mutant.Classification == "invariant" && Regex.Matches(output, @"^\s*Related message: loop invariant violation\s*$", RegexOptions.Multiline).Count != errors) return Inconclusive();
         return new(matched.Contains(mutant.TargetClause) ? "detected" : "inconclusive", matched.ToArray());
     }
     public delegate Task<ExecutionResult> Executor(string[] command, string tree, string directory, double budget, CancellationToken cancellation);
@@ -111,6 +165,8 @@ public sealed class Mutations(string root)
                     experiment["requirement"] = mutant.Requirement;
                     experiment["obligation"] = mutant.Obligation;
                     experiment["target_clause"] = mutant.TargetClause;
+                    experiment["classification"] = mutant.Classification;
+                    experiment["contract_clause"] = mutant.ContractClause ?? mutant.TargetClause;
                 }
                 SaveReport();
                 using (var tree = new TemporaryTree())
@@ -125,7 +181,7 @@ public sealed class Mutations(string root)
                     var record = await executor(command, tree.Path, Path.Combine(output, name), mutant is null ? baselineBudget : mutantBudget, cancellation);
                     foreach (var (key, value) in Node(record).AsObject())
                         experiment[key] = value?.DeepClone();
-                    var outcome = Classify(record, Text(Path.Combine(tree.Path, "verification/Protocol.dfy")), mutant);
+                    var outcome = Classify(record, Text(Path.Combine(tree.Path, mutant?.File ?? "verification/Protocol.dfy")), mutant);
                     experiment["status"] = outcome.Status;
                     experiment["matched_clauses"] = Node(outcome.MatchedClauses);
                     Console.WriteLine($"{name}: {outcome.Status} ({record.ElapsedSeconds}s)");
@@ -139,14 +195,14 @@ public sealed class Mutations(string root)
         }
         finally { SaveReport(); }
     }
-    public async Task<int> Run(string output, double baselineBudget, double mutantBudget, int proofLimit, CancellationToken cancellation)
+    public async Task<int> Run(string output, double baselineBudget, double mutantBudget, int proofLimit, CancellationToken cancellation, string scope = "all")
     {
         Fresh(output);
         try
         {
             Require(double.IsFinite(baselineBudget) && baselineBudget > 0 && double.IsFinite(mutantBudget) && mutantBudget > 0, "budgets must be positive and finite");
             Require(proofLimit > 0, "verification time limit must be positive");
-            var catalog = LoadCatalog();
+            var catalog = LoadCatalog(scope: scope);
             var setup = await Processes.Run(["bash", Path.Combine(root, "scripts/dafny-toolchain.sh")], root, Path.Combine(output, "toolchain"), 180, cancellation);
             Require(setup.Success, "toolchain bootstrap failed");
             var tool = Path.Combine(setup.Stdout.Trim(), "dafny");
@@ -158,7 +214,7 @@ public sealed class Mutations(string root)
                 Require(result.Success && result.Stdout.Contains(expected), $"{name}: unexpected/missing version");
             }
             Save(Path.Combine(output, "tool-versions.json"), versions);
-            File.Copy(Path.Combine(root, "verification/mutations/close.json"), Path.Combine(output, "catalog.json"));
+            Save(Path.Combine(output, "catalog.json"), catalog);
             File.Copy(Path.Combine(root, "verification/requirements.json"), Path.Combine(output, "requirements.json"));
             var sources = new[] { "verification/Masking.dfy", "verification/Protocol.dfy" }.ToDictionary(f => f, f => Text(Path.Combine(root, f)));
             foreach (var (file, source) in sources)

@@ -1,4 +1,4 @@
-# Close negative proof checks
+# Targeted protocol negative proof checks
 
 Run `./scripts/pdd.sh mutations` using its absolute path from any directory. The .NET 10 SDK,
 Linux x64, curl and unzip are required. `scripts/dafny-toolchain.sh` shares the
@@ -6,9 +6,9 @@ existing checksum-pinned Dafny 4.11.0 / Z3 4.12.1 bootstrap with generation; the
 runner checks versions and explicitly selects that solver. It does not use a
 verifier from PATH. No public library API or proof contract changes here.
 
-`close.json` is the version-1 catalog. Each entry has a unique ID, requirement
+`close.json` and `payload.json` are version-1 catalogs. Each entry has a unique ID, requirement
 and mutation obligation from `requirements.json`, qualified method, exact
-single-line body edit, target postcondition, allowed companion postconditions
+single-line body edit, target clause, allowed companion clauses
 and diagnostic classification. The runner validates these links and rejects
 missing, ambiguous or out-of-body edits before running the toolchain. Every
 existing or increment-B mutation obligation must have a catalog entry. Changing
@@ -36,8 +36,7 @@ Edits do not change line counts; diagnostic locations resolve back to exact
 catalogued clauses rather than treating line numbers as stable identities.
 
 Detection requires Dafny exit code 4, a completed nonzero-error verification
-summary, and only postcondition errors at `CloseStep` with related locations at
-the allowed clauses. At least one must match the intended target clause. Any
+summary, and only the catalogued diagnostic class in the selected method. Close experiments require postcondition errors at `CloseStep` with related locations at the allowed clauses. At least one must match the intended target clause. Any
 additional failure, malformed/unknown diagnostic, parse error, zero verified
 baseline, missing tool, application error or exhausted budget fails the
 experiment as inconclusive. A completed successful mutant is reported as
@@ -87,3 +86,43 @@ scheduled-only replacement is introduced.
 
 Full requirement receipts and cross-job source identity checks belong to
 increment D. Controlled asynchronous Close schedules belong to increment E.
+
+## F: reassembly and masking
+
+Default `mutations` runs both catalogs (15 edits); `--scope close` and
+`--scope payload` select five and ten respectively. CI retains the full suite as
+a PR gate. Catalog validation requires every selected mutation obligation and
+rejects mismatched symbols, contract clauses, duplicate IDs and unsupported scopes.
+The default artifact directory retains its historical `close-mutations` name.
+
+| Requirement | Edits | Exact failure required |
+| --- | --- | --- |
+| REASSEMBLY-001 | Stalled segment offset; oversized result | Offset invariant; concatenation postcondition |
+| REASSEMBLY-002 | Stalled scalar segment offset | Offset invariant |
+| MASK-001 | XOR replaced by OR; write into key | Processed-prefix invariant; `modifies data` frame |
+| MASK-002 | Tail XOR replaced by OR; skip bulk blocks; write before slice | Processed-prefix and outside-slice invariants |
+| MASK-003 | XOR replaced by OR; write before slice | Processed-prefix and outside-slice invariants |
+
+Invariant entries include `contract_clause` to associate an exact loop invariant
+with the public guarantee it supports. Only pinned loop-maintenance errors at
+allowed invariant lines count, with the matching loop-invariant diagnostic. Frame
+detection requires the pinned modifies-clause error at the edited assignment and
+the catalogued frame clause. Companion errors are allowlisted; an unrelated
+assertion, parse failure or timeout remains inconclusive. The exploratory scalar
+oversized-result edit also failed an unrelated assertion and was therefore excluded,
+not counted as a detection. NativeCopy is tested-only: its extern declaration is
+not an implementation proof, and scalar tests cannot discharge that assumption.
+
+Edits must be unique within the selected method body. Identical offset statements
+in Merge and MergeScalar are not ambiguous across methods. Proof clauses, assertions
+and assumptions cannot be edited. Each copied tree is removed on completion;
+checked-in Dafny and generated C# are untouched. The observed diagnostic JSON
+fixture is classifier test input, never receipt evidence from a current run.
+
+The first F payload run on 2026-11-07 completed baseline plus ten detections in
+148.299 seconds of verifier time (baseline 9.789s, individual mutants
+8.686–55.955s). The bulk-block edit was the slowest. This supports retaining all
+15 mutants in the existing 1,800-second protocol command budget, with baseline
+180s, each mutant 90s and each proof obligation 60s. There is no scheduled-only
+replacement, relaxed classifier or automatic retry. CI records each actual
+duration; budget exhaustion fails explicitly and requires investigation.

@@ -12,7 +12,7 @@ public record Requirement(string Id, string Intent, string[] Origin, string[] Ex
 public record RequirementManifest(int SchemaVersion, string BoundariesFile, Requirement[] Requirements);
 public record Boundary(string Id, string Assumption, SourceReference[] Owners, string[] Requirements, string[] TestObligations, string[] Exclusions, string ReviewAnchor);
 public record BoundaryRegister(int SchemaVersion, Boundary[] Boundaries);
-public record Mutant(string Id, string Requirement, string Obligation, string File, string Symbol, string Before, string After, string TargetClause, string[] AllowedClauses, string Classification) : SourceReference(File, Symbol);
+public record Mutant(string Id, string Requirement, string Obligation, string File, string Symbol, string Before, string After, string TargetClause, string[] AllowedClauses, string Classification, [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] string? ContractClause = null) : SourceReference(File, Symbol);
 public record MutationCatalog(int SchemaVersion, Mutant[] Mutants);
 public record MutationOutcome(string Status, string[] MatchedClauses);
 public sealed class ExecutionResult

@@ -172,3 +172,10 @@ Phase 2 is complete when Close, reassembly and masking have reviewed requirement
 For documentation-only increments, validate links and diffs. For tooling changes, test meaningful failure modes as well as the happy path. For runtime/test integration changes, run the Release solution build, `./test-all-tfms.sh Release`, the existing 70% coverage gate and `./scripts/dafny-masking.sh --check`. Run the new PDD checks for every affected requirement. Record measured CI cost before deciding whether the expanded mutation suite needs a separate scheduled run; the small Close suite remains a PR gate.
 
 Defer introducing another verifier, proving the complete asynchronous client, exhaustive schedule exploration, a general-purpose PDD framework and automated test pruning. These can be evaluated after the focused workflow demonstrates useful defect detection and manageable maintenance cost.
+
+Implementation status: D2 merged in PR #109 (`6dc67ed`), and E merged in PR #110
+(`4808b10`). F extends the same tooling to reassembly and masking; its commands,
+boundary distinctions and remaining review/evidence gaps are documented in the
+[verification guide](../verification/README.md#reassembly-and-masking-evidence-phase-2-increment-f).
+F is the final planned increment. Implementation and machine checks do not replace
+the revision-specific human review required by the Phase 2 completion criterion.

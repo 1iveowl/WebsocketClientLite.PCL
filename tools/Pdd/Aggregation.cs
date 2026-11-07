@@ -222,7 +222,7 @@ public sealed partial class Evidence
         receipt["framework_matrix"] = matrix;
         receipt["dafny_mutations"] = mutations;
         var manifest = Model<RequirementManifest>(Read(Path.Combine(root, "verification/requirements.json")));
-        var catalog = Model<MutationCatalog>(Read(Path.Combine(root, "verification/mutations/close.json"))).Mutants;
+        var catalog = new Mutations(root).LoadCatalog().Mutants;
         foreach (var requirement in manifest.Requirements)
         {
             var obligations = new List<JsonObject>();

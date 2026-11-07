@@ -8,7 +8,7 @@ public class MutationTests
 {
     static string Root => RequirementsTests.Root;
     static string Source => Data.Text(Path.Combine(Root, "verification/Protocol.dfy"));
-    static MutationCatalog Catalog => new Mutations(Root).LoadCatalog();
+    static MutationCatalog Catalog => new Mutations(Root).LoadCatalog(scope: "close");
     static Dictionary<string, string> Sources => new[] { "verification/Protocol.dfy", "verification/Masking.dfy" }.ToDictionary(f => f, f => Data.Text(Path.Combine(Root, f)));
     public static IEnumerable<object[]> Cases() => Data.Read(Path.Combine(Root, "verification/tests/fixtures/mutation-cases.json")).AsArray().Select(c => new object[] { c!.ToJsonString() });
     [Theory, MemberData(nameof(Cases))]
@@ -23,7 +23,7 @@ public class MutationTests
     public void ExactEditRejectsMissingDuplicateAndContractEdits()
     {
         var mutant = Catalog.Mutants[0];
-        foreach (var source in new[] { Source.Replace(mutant.Before, ""), Source + mutant.Before })
+        foreach (var source in new[] { Source.Replace(mutant.Before, ""), Source.Replace(mutant.Before, mutant.Before + "\n" + mutant.Before) })
             Assert.Throws<InvalidDataException>(() => Mutations.Apply(source, mutant));
         Assert.Throws<InvalidDataException>(() => Mutations.Apply(Source, mutant with { Before = mutant.TargetClause, After = "ensures true" }));
     }
@@ -52,7 +52,7 @@ public class MutationTests
                 mutants[0]!["target_clause"] = "ensures true";
                 break;
         }
-        Assert.Throws<InvalidDataException>(() => new Mutations(Root).LoadCatalog(data));
+        Assert.Throws<InvalidDataException>(() => new Mutations(Root).LoadCatalog(data, "close"));
     }
     static ExecutionResult Passed() => new() { ExitCode = 0, Stdout = "Dafny program verifier finished with 41 verified, 0 errors", ElapsedSeconds = .1 };
     static ExecutionResult Detected(Mutant mutant)

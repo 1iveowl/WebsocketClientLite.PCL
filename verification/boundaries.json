@@ -179,6 +179,128 @@
         "Concurrent synchronous Dispose, unsubscribe or external transport disposal may abort graceful closure.",
         "Blocking callbacks or resource cleanup may prevent completion."
       ]
+    },
+    {
+      "id": "PAYLOAD-OWNERSHIP",
+      "assumption": "Input arrays and retained segments stay stable during each operation; destination ownership is exclusive and required source/destination non-aliasing holds.",
+      "review_anchor": "boundary-payload-ownership",
+      "owners": [
+        {
+          "file": "src/main/WebsocketClientLite/Service/WebsocketParserHandler.cs",
+          "symbol": "WebsocketClientLite.Service.WebsocketParserHandler.DataframeObservable"
+        },
+        {
+          "file": "src/main/WebsocketClientLite/Service/WebsocketSenderHandler.cs",
+          "symbol": "WebsocketClientLite.Service.WebsocketSenderHandler.ComposeFrameAndSendCoreAsync"
+        },
+        {
+          "file": "src/main/WebsocketClientLite/Helper/WebsocketMasking.cs",
+          "symbol": "WebsocketClientLite.Helper.WebsocketMasking.Decode"
+        },
+        {
+          "file": "src/main/WebsocketClientLite/Helper/VerifiedNativeCopy.cs",
+          "symbol": "WebsocketClientLite.VerifiedProtocol.NativeCopy.CopySlice"
+        }
+      ],
+      "requirements": [
+        "REASSEMBLY-001",
+        "REASSEMBLY-002",
+        "REASSEMBLY-003",
+        "MASK-001",
+        "MASK-002",
+        "MASK-003"
+      ],
+      "test_obligations": [
+        "REASSEMBLY-001-TEST",
+        "REASSEMBLY-002-TEST",
+        "REASSEMBLY-003-TEST",
+        "MASK-001-TEST",
+        "MASK-002-TEST",
+        "MASK-003-TEST"
+      ],
+      "exclusions": [
+        "No concurrent caller mutation or proof of C# ownership; aliased retained segments are allowed when stable, but destination aliasing is not."
+      ]
+    },
+    {
+      "id": "REASSEMBLY-TOTALS",
+      "assumption": "Callers provide the exact retained-byte total within Size bounds; empty payload segments do not change that sum.",
+      "review_anchor": "boundary-reassembly-totals",
+      "owners": [
+        {
+          "file": "src/main/WebsocketClientLite/Service/WebsocketParserHandler.cs",
+          "symbol": "WebsocketClientLite.Service.WebsocketParserHandler.DataframeObservable"
+        },
+        {
+          "file": "src/main/WebsocketClientLiteTest/PayloadBoundaryTests.cs",
+          "symbol": "WebsocketClientLiteTest.PayloadBoundaryTests.MergeVariantsPreserveAliasedSegmentsAndReturnFreshStorage"
+        }
+      ],
+      "requirements": [
+        "REASSEMBLY-001",
+        "REASSEMBLY-002"
+      ],
+      "test_obligations": [
+        "REASSEMBLY-001-TEST",
+        "REASSEMBLY-002-TEST"
+      ],
+      "exclusions": [
+        "The parser total and retained segment list are C# bookkeeping, not verified by the Merge proof."
+      ]
+    },
+    {
+      "id": "NATIVE-COPY",
+      "assumption": "System.Buffer.BlockCopy implements the external CopySlice contract: exact slice copy and preservation outside it, with distinct arrays and valid bounds.",
+      "review_anchor": "boundary-native-copy",
+      "owners": [
+        {
+          "file": "src/main/WebsocketClientLite/Helper/VerifiedNativeCopy.cs",
+          "symbol": "WebsocketClientLite.VerifiedProtocol.NativeCopy.CopySlice"
+        },
+        {
+          "file": "src/main/WebsocketClientLite/Service/WebsocketParserHandler.cs",
+          "symbol": "WebsocketClientLite.Service.WebsocketParserHandler.DataframeObservable"
+        }
+      ],
+      "requirements": [
+        "REASSEMBLY-001",
+        "REASSEMBLY-003"
+      ],
+      "test_obligations": [
+        "REASSEMBLY-001-TEST",
+        "REASSEMBLY-003-TEST"
+      ],
+      "exclusions": [
+        "This is the existing explicit external assumption. MergeScalar does not depend on it. No native implementation proof or native mutation claim is made."
+      ]
+    },
+    {
+      "id": "MASK-ADAPTER",
+      "assumption": "Adapters establish null/alias/key-length and slice bounds, retain buffer ownership, and pass the intended payload count and header key to generated masking methods.",
+      "review_anchor": "boundary-mask-adapter",
+      "owners": [
+        {
+          "file": "src/main/WebsocketClientLite/Helper/WebsocketMasking.cs",
+          "symbol": "WebsocketClientLite.Helper.WebsocketMasking.Decode"
+        },
+        {
+          "file": "src/main/WebsocketClientLite/Service/WebsocketSenderHandler.cs",
+          "symbol": "WebsocketClientLite.Service.WebsocketSenderHandler.ComposeFrameAndSendCoreAsync"
+        }
+      ],
+      "requirements": [
+        "MASK-001",
+        "MASK-002",
+        "MASK-003"
+      ],
+      "test_obligations": [
+        "MASK-001-TEST",
+        "MASK-002-TEST",
+        "MASK-003-TEST"
+      ],
+      "exclusions": [
+        "No proof of the C# adapter, pool lifetime, entropy, encoding or I/O completion."
+      ]
     }
   ]
 }

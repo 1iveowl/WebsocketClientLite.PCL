@@ -159,3 +159,83 @@ This review checks wording against callers and RFC text. It does not freeze inte
 on behalf of the owner. PR reviewers should accept or revise the scoped decisions,
 especially reservation versus delivery, abort exceptions and conditional liveness.
 Subsequent semantic changes must update this review and the manifest together.
+
+## Increment F: reassembly and masking intent decisions
+
+These additions are proposed intent decisions for revision-specific PR review. They do not record approval. The established review-file path is retained for compatibility.
+
+### REASSEMBLY-001
+
+Given stable retained segments and their exact valid total, production Merge returns a fresh exact-sized concatenation in segment order, assuming the native-copy contract.
+
+Chosen: production concatenation conditional on the native-copy contract. Rejected alternative: describing the native adapter as fully proved scalar code.
+
+The production proof assumes NativeCopy.CopySlice; it is not the fully scalar proof. C# retained-total bookkeeping and the entire asynchronous parser are not proved by this requirement. No proof of generated C#, compiler/runtime correctness, successful allocation, concurrent buffer access or complete RFC conformance.
+
+### REASSEMBLY-002
+
+Under the same stable-segment and exact-total preconditions, MergeScalar returns a fresh exact concatenation using verified element copies, without the native-copy assumption.
+
+Chosen: a separate scalar-reference guarantee. Rejected alternative: treating selected equality tests as proof of compiled implementation equivalence.
+
+Comparing production and scalar outputs on selected cases is not a proof of their compiled C# equivalence. No proof of generated C#, compiler/runtime correctness, successful allocation, concurrent buffer access or complete RFC conformance.
+
+### REASSEMBLY-003
+
+For distinct source/destination arrays and an in-bounds offset, the native copy adapter copies exactly the source bytes while preserving the source and destination outside that slice.
+
+Chosen: tested-only native assumption, preserving independent source/guard tests. Rejected alternative: counting verification of an extern declaration as implementation proof. No proof-mutation obligation is assigned to this external runtime primitive.
+
+This is a tested assumption, not a proved algorithm; the external Dafny declaration is not proof evidence. No Dafny mutation obligation: mutating the extern contract would change an assumption rather than test its implementation. Independent native-copy tests remain mandatory. No proof of generated C#, compiler/runtime correctness, successful allocation, concurrent buffer access or complete RFC conformance.
+
+### MASK-001
+
+For a distinct key with at least four bytes and count equal to payload length, Apply XORs each payload byte with the corresponding repeating key byte and preserves the key through its data-only frame condition.
+
+Chosen: exact XOR and frame/preservation guarantees under the mapped preconditions, with independent expected-byte tests. Rejected alternative: round-trip tests alone, which can miss paired defects or a no-op.
+
+The cryptographic randomness of mask-key generation is outside this XOR/preservation requirement. No proof of generated C#, compiler/runtime correctness, successful allocation, concurrent buffer access or complete RFC conformance.
+
+### MASK-002
+
+CopyMasked writes XOR-masked bytes from exactly the requested source prefix into the destination slice, preserving the source and every destination byte outside that slice.
+
+Chosen: exact XOR and frame/preservation guarantees under the mapped preconditions, with independent expected-byte tests. Rejected alternative: round-trip tests alone, which can miss paired defects or a no-op.
+
+No proof of array-pool ownership, UTF-8 encoding or completed wire writes. No proof of generated C#, compiler/runtime correctness, successful allocation, concurrent buffer access or complete RFC conformance.
+
+### MASK-003
+
+MaskSlice XORs exactly the requested in-place payload slice using the four earlier key bytes and preserves every byte outside the slice, including the key and guards.
+
+Chosen: exact XOR and frame/preservation guarantees under the mapped preconditions, with independent expected-byte tests. Rejected alternative: round-trip tests alone, which can miss paired defects or a no-op.
+
+No proof of encoding, header construction, array-pool ownership or completed wire writes. No proof of generated C#, compiler/runtime correctness, successful allocation, concurrent buffer access or complete RFC conformance.
+
+<a id="boundary-payload-ownership"></a>
+### PAYLOAD-OWNERSHIP
+
+Input arrays and retained segments stay stable during each operation; destination ownership is exclusive and required source/destination non-aliasing holds.
+
+No concurrent caller mutation or proof of C# ownership; aliased retained segments are allowed when stable, but destination aliasing is not.
+
+<a id="boundary-reassembly-totals"></a>
+### REASSEMBLY-TOTALS
+
+Callers provide the exact retained-byte total within Size bounds; empty payload segments do not change that sum.
+
+The parser total and retained segment list are C# bookkeeping, not verified by the Merge proof.
+
+<a id="boundary-native-copy"></a>
+### NATIVE-COPY
+
+System.Buffer.BlockCopy implements the external CopySlice contract: exact slice copy and preservation outside it, with distinct arrays and valid bounds.
+
+This is the existing explicit external assumption. MergeScalar does not depend on it. No native implementation proof or native mutation claim is made.
+
+<a id="boundary-mask-adapter"></a>
+### MASK-ADAPTER
+
+Adapters establish null/alias/key-length and slice bounds, retain buffer ownership, and pass the intended payload count and header key to generated masking methods.
+
+No proof of the C# adapter, pool lifetime, entropy, encoding or I/O completion.
