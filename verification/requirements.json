@@ -295,7 +295,7 @@
           "id": "CLOSE-004-CONTROLLED",
           "kind": "test",
           "delivery": "existing",
-          "description": "Pause Close write and prove graceful disposal waits; detect an isolated ordering defect.",
+          "description": "Pause Close write and prove graceful disposal waits; detect an isolated ordering defect. G adds parser lifecycle, observer routing, active periodic-ping cleanup and custom-context schedules with independently gated isolated defects; no exhaustive scheduling claim.",
           "references": [
             {
               "file": "src/main/WebsocketClientLiteTest/ControlledCloseTests.cs",
@@ -308,6 +308,38 @@
             {
               "file": "src/main/WebsocketClientLiteTest/ControlledCloseTests.cs",
               "symbol": "WebsocketClientLiteTest.ControlledCloseTests.QueuedPongIsSuppressedAfterPeerClose"
+            },
+            {
+              "file": "src/main/WebsocketClientLiteTest/CloseBoundaryTests.cs",
+              "symbol": "WebsocketClientLiteTest.CloseBoundaryTests.ReadFailureReleasesReadinessBeforeObserverError"
+            },
+            {
+              "file": "src/main/WebsocketClientLiteTest/CloseBoundaryTests.cs",
+              "symbol": "WebsocketClientLiteTest.CloseBoundaryTests.ParserCompletionAwaitsFallbackCloseBeforeObserverCompletion"
+            },
+            {
+              "file": "src/main/WebsocketClientLiteTest/CloseBoundaryTests.cs",
+              "symbol": "WebsocketClientLiteTest.CloseBoundaryTests.CancelledParserLeavesCloseToDisposalAndDoesNotCompleteObserver"
+            },
+            {
+              "file": "src/main/WebsocketClientLiteTest/CloseBoundaryTests.cs",
+              "symbol": "WebsocketClientLiteTest.CloseBoundaryTests.ObserverErrorPrecedesCloseAndNeverBecomesCompletion"
+            },
+            {
+              "file": "src/main/WebsocketClientLiteTest/CloseBoundaryTests.cs",
+              "symbol": "WebsocketClientLiteTest.CloseBoundaryTests.ParserCompletionRoutesOneObserverCompletionAfterClose"
+            },
+            {
+              "file": "src/main/WebsocketClientLiteTest/CloseBoundaryTests.cs",
+              "symbol": "WebsocketClientLiteTest.CloseBoundaryTests.DisposalStopsActivePeriodicPingsBeforeClose"
+            },
+            {
+              "file": "src/main/WebsocketClientLiteTest/CloseBoundaryTests.cs",
+              "symbol": "WebsocketClientLiteTest.CloseBoundaryTests.AsyncDisposalDoesNotRequireCallingSynchronizationContext"
+            },
+            {
+              "file": "src/main/WebsocketClientLiteTest/CloseBoundaryTests.cs",
+              "symbol": "WebsocketClientLiteTest.CloseBoundaryTests.DisposalCancelsPausedPeriodicPingAndReleasesTransport"
             }
           ]
         },
@@ -382,7 +414,7 @@
           "id": "CLOSE-005-CONTROLLED",
           "kind": "test",
           "delivery": "existing",
-          "description": "Control peer wait timeout and transport failure through disposal, with diagnostic bounded waits.",
+          "description": "Control peer wait timeout and transport failure through disposal, with diagnostic bounded waits. G adds parser lifecycle, observer routing, active periodic-ping cleanup and custom-context schedules with independently gated isolated defects; no exhaustive scheduling claim.",
           "references": [
             {
               "file": "src/main/WebsocketClientLiteTest/ControlledCloseTests.cs",
@@ -399,6 +431,38 @@
             {
               "file": "src/main/WebsocketClientLiteTest/ControlledCloseTests.cs",
               "symbol": "WebsocketClientLiteTest.ControlledCloseTests.ParserSignalsPeerCloseOrReadFailureBeforeTimerExpiry"
+            },
+            {
+              "file": "src/main/WebsocketClientLiteTest/CloseBoundaryTests.cs",
+              "symbol": "WebsocketClientLiteTest.CloseBoundaryTests.ReadFailureReleasesReadinessBeforeObserverError"
+            },
+            {
+              "file": "src/main/WebsocketClientLiteTest/CloseBoundaryTests.cs",
+              "symbol": "WebsocketClientLiteTest.CloseBoundaryTests.ParserCompletionAwaitsFallbackCloseBeforeObserverCompletion"
+            },
+            {
+              "file": "src/main/WebsocketClientLiteTest/CloseBoundaryTests.cs",
+              "symbol": "WebsocketClientLiteTest.CloseBoundaryTests.CancelledParserLeavesCloseToDisposalAndDoesNotCompleteObserver"
+            },
+            {
+              "file": "src/main/WebsocketClientLiteTest/CloseBoundaryTests.cs",
+              "symbol": "WebsocketClientLiteTest.CloseBoundaryTests.ObserverErrorPrecedesCloseAndNeverBecomesCompletion"
+            },
+            {
+              "file": "src/main/WebsocketClientLiteTest/CloseBoundaryTests.cs",
+              "symbol": "WebsocketClientLiteTest.CloseBoundaryTests.ParserCompletionRoutesOneObserverCompletionAfterClose"
+            },
+            {
+              "file": "src/main/WebsocketClientLiteTest/CloseBoundaryTests.cs",
+              "symbol": "WebsocketClientLiteTest.CloseBoundaryTests.DisposalStopsActivePeriodicPingsBeforeClose"
+            },
+            {
+              "file": "src/main/WebsocketClientLiteTest/CloseBoundaryTests.cs",
+              "symbol": "WebsocketClientLiteTest.CloseBoundaryTests.AsyncDisposalDoesNotRequireCallingSynchronizationContext"
+            },
+            {
+              "file": "src/main/WebsocketClientLiteTest/CloseBoundaryTests.cs",
+              "symbol": "WebsocketClientLiteTest.CloseBoundaryTests.DisposalCancelsPausedPeriodicPingAndReleasesTransport"
             }
           ]
         },

@@ -62,9 +62,9 @@ public sealed partial class Evidence
                     runtime = match.Success ? match.Groups[1].Value.Trim() : null;
                 }
             }
-            foreach (var (name, count) in caseCounts.Where(p => p.Key.StartsWith("WebsocketClientLiteTest.ControlledCloseTests.", StringComparison.Ordinal)))
+            foreach (var (name, count) in caseCounts.Where(p => p.Key.StartsWith("WebsocketClientLiteTest.ControlledCloseTests.", StringComparison.Ordinal) || p.Key.StartsWith("WebsocketClientLiteTest.CloseBoundaryTests.", StringComparison.Ordinal)))
             {
-                var expectedCases = name.EndsWith("PausedCloseWriteBlocksDisposalAndPeerRaceSendsOnce", StringComparison.Ordinal) || name.EndsWith("PeerWaitEndsByControlledTimeoutOrReadFailure", StringComparison.Ordinal) || name.EndsWith("ParserSignalsPeerCloseOrReadFailureBeforeTimerExpiry", StringComparison.Ordinal) ? 2 : 1;
+                var expectedCases = name.EndsWith("PausedCloseWriteBlocksDisposalAndPeerRaceSendsOnce", StringComparison.Ordinal) || name.EndsWith("PeerWaitEndsByControlledTimeoutOrReadFailure", StringComparison.Ordinal) || name.EndsWith("ParserSignalsPeerCloseOrReadFailureBeforeTimerExpiry", StringComparison.Ordinal) || name.EndsWith("DisposalStopsActivePeriodicPingsBeforeClose", StringComparison.Ordinal) ? 2 : 1;
                 if (count != expectedCases) tests[name] = "failed";
             }
             var run = Read(Path.Combine(path, "run.json"));
@@ -137,6 +137,21 @@ public sealed partial class Evidence
                 controlled["status"] = "passed"; controlled["host_runtime"] = runtime; controlled["evidence"] = defect;
             }
             catch (Exception e) when (e is not OutOfMemoryException) { controlled["status"] = "failed"; errors.Add("Controlled experiment: " + e.Message); }
+        }
+        var boundaries = new JsonObject { ["status"] = "not-run" };
+        receipt["boundary_experiments"] = boundaries;
+        if (jobs.ContainsKey("controlled"))
+        {
+            try
+            {
+                Require(Passed(jobs["controlled"]?["runs"]?["boundaries"]), "unsuccessful boundary command");
+                var directoryPath = Path.Combine(directory, "controlled/boundaries");
+                var report = Read(Path.Combine(directoryPath, "results.json"));
+                Require(Equal(report["source"], Node(expected)) && Equal(report["source_after"], Node(expected)), "boundary source mismatch");
+                ValidateBoundaryReport(directoryPath, report, expected.SourceHashes[CloseSource]!);
+                boundaries["status"] = "passed"; boundaries["evidence"] = report;
+            }
+            catch (Exception e) when (e is not OutOfMemoryException) { boundaries["status"] = "failed"; errors.Add("Boundary experiments: " + e.Message); }
         }
         if (jobs.ContainsKey("stryker"))
         {
@@ -262,13 +277,18 @@ public sealed partial class Evidence
                     item["evidence"]!.AsArray().Add("controlled/defect/results.json");
                     if (S(controlled, "status") != "passed") item["status"] = S(controlled, "status");
                 }
+                if (o.Id is "CLOSE-004-CONTROLLED" or "CLOSE-005-CONTROLLED")
+                {
+                    item["evidence"]!.AsArray().Add("controlled/boundaries/results.json");
+                    if (S(boundaries, "status") != "passed") item["status"] = S(boundaries, "status");
+                }
                 if (o.Kind != "review" && S(item, "status") != "passed")
                     errors.Add($"{o.Id}: {item["status"]}");
                 obligations.Add(item);
             }
             requirements.Add(new JsonObject { ["id"] = requirement.Id, ["satisfied"] = obligations.All(o => S(o, "status") == "passed"), ["machine_evidence"] = new JsonArray(obligations.Where(o => S(o, "kind") != "review").Select(o => (JsonNode)o).ToArray()) });
         }
-        receipt["gate"] = new JsonObject { ["status"] = errors.Count > 0 ? "failed" : "passed", ["scope"] = "Machine obligations, controlled ordering experiment, recorded Stryker dispositions and existing CI gates; PR review remains separate and unsatisfied." };
+        receipt["gate"] = new JsonObject { ["status"] = errors.Count > 0 ? "failed" : "passed", ["scope"] = "Machine obligations, controlled ordering and boundary experiments, recorded Stryker dispositions and existing CI gates; PR review remains separate and unsatisfied." };
         return receipt;
     }
     public static string Summary(JsonObject receipt)
@@ -280,7 +300,7 @@ public sealed partial class Evidence
         foreach (var req in receipt["requirements"]!.AsArray())
             foreach (var item in req!["machine_evidence"]!.AsArray())
                 lines.Add($"| {item!["id"]} | {item["status"]} {string.Join(", ", item["evidence"]!.AsArray().Select(p => $"[{p}]({p})"))} |");
-        lines.AddRange(["", "Review evidence is separate and not-run; no requirement is claimed satisfied without it.", $"Stryker: {receipt["stryker"]!["status"]}; controlled ordering experiment: {receipt["controlled_experiment"]!["status"]}.", "", "Receipts are traceability records, not signed attestations.", ""]);
+        lines.AddRange(["", "Review evidence is separate and not-run; no requirement is claimed satisfied without it.", $"Stryker: {receipt["stryker"]!["status"]}; controlled ordering experiment: {receipt["controlled_experiment"]!["status"]}; boundary experiments: {receipt["boundary_experiments"]!["status"]}.", "", "Receipts are traceability records, not signed attestations.", ""]);
         lines.AddRange(receipt["errors"]!.AsArray().Select(e => $"- {e}"));
         return string.Join('\n', lines) + "\n";
     }

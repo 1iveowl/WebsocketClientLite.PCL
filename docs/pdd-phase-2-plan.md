@@ -121,6 +121,7 @@ Implement one topic branch/PR per increment from the selected release branch:
 | D2 | Standalone .NET PDD tooling and compatibility evidence | D |
 | E | Controlled Close schedules and updated evidence | C, D, D2 |
 | F | Extend the established workflow to reassembly and masking | E |
+| G | Close evidence reliability and remaining boundary tests | D2, E, F |
 
 ### D2: consolidate repository tooling in C#
 
@@ -179,3 +180,37 @@ boundary distinctions and remaining review/evidence gaps are documented in the
 [verification guide](../verification/README.md#reassembly-and-masking-evidence-phase-2-increment-f).
 F is the final planned increment. Implementation and machine checks do not replace
 the revision-specific human review required by the Phase 2 completion criterion.
+
+### G: Close evidence reliability and remaining boundary tests
+
+Baseline: D2 #109 (`6dc67ed`), E #110 (`4808b10`) and F #111 (`f3d5ed4`).
+Investigate release run [42401715327](https://github.com/1iveowl/WebsocketClientLite.PCL/actions/runs/42401715327),
+preserving its failed receipt and exact NotifyReadFailure statement fingerprint.
+A Timeout is inconclusive, never a Killed result. A passing retry is insufficient.
+
+Acceptance criteria:
+
+- Diagnose and bound the critical experiment, with repeated assertion-based
+  detection, unchanged independent critical gates and measured CI budgets.
+- Exercise parser completion fallback and cancellation, separate observer
+  completion/error routes, active periodic-ping cleanup and custom calling
+  SynchronizationContext behavior using causal barriers and injected delegates.
+  Each gap needs a passing baseline and an isolated defect rejected at its intended
+  assertion. Keep the real loopback tests and bound diagnostic waits/cleanup.
+- Prefer internal seams; preserve runtime intent and public API. Any runtime
+  correction needs its own scope, regression and evidence.
+- Update requirements, boundaries, review notes and fingerprinted dispositions.
+  Keep Killed, Survived, NoCoverage, Timeout, CompileError and Ignored distinct.
+  Map the new tests/independent experiments to CLOSE-004/CLOSE-005.
+- Capture unchanged source/config hashes, versions, commands, exit codes,
+  timestamps, CI identity, library target and actual host runtime. Reject mixed
+  source identities and incomplete experiment evidence. Human review remains
+  unsatisfied until an actual revision-specific decision is recorded.
+- Pass Release build, five library-target tests, 70% coverage, pinned proof,
+  trust/generated-code checks, tooling/failure fixtures, all 15 Dafny mutations,
+  ordering/new defect experiments and a complete Stryker run. Verify the evidence
+  gate again on the release-branch run after merge; repair failures by follow-up PR.
+
+Native-copy and compiler/runtime trust, exhaustive asynchronous verification and
+additional runtime hosts remain outside G. Remaining gaps must be recorded, not
+silently converted into equivalence. See [G evidence](../verification/close-evidence-g.md).

@@ -373,3 +373,14 @@ boundary decisions but does not record reviewer approval. Review remains separat
 and `not-run` in machine receipts. Native-copy correctness, toolchain trust,
 concurrent caller ownership and the documented [Close pilot gaps](stryker-close-pilot.md)
 remain explicit limits. No exhaustive schedule exploration or full RFC proof is claimed.
+
+## Increment G Close evidence
+
+The [G record](close-evidence-g.md) retains the failed post-F receipt and maps
+parser/cancellation, observer, periodic-ping and synchronization-context schedules
+to CLOSE-004/CLOSE-005. The controlled job now requires both the existing ordering
+experiment and `./scripts/pdd.sh boundary-defects --output <fresh-directory>`.
+Five independent process repetitions challenge read-failure notification. Every
+experiment must fail its named behavioral assertion; timeouts and infrastructure
+errors remain inconclusive. Source-matched aggregate evidence and revision-specific
+human review remain distinct.

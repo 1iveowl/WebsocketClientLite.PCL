@@ -55,3 +55,13 @@ limit. The corresponding status callback follows the production parser's sender
 notification synchronously. A fresh waiter must immediately observe readiness;
 disposal must finish without timer expiry. This closes the pilot's missing tests
 for removal of `NotifyPeerClose` and `NotifyReadFailure` in the connection handler.
+
+## Increment G
+
+`CloseBoundaryTests` and the independent `boundary-defects` command extend the
+selected schedules to parser completion/cancellation, explicit observer routing,
+periodic-ping cleanup and a non-pumping calling SynchronizationContext. See the
+[G evidence/design record](close-evidence-g.md) for exact causal checkpoints,
+source fingerprints, measured reproductions and remaining exclusions. The
+controlled CI job captures both experiment sets; neither substitutes for the
+other or for the independent critical Stryker gate.

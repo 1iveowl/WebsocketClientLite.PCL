@@ -154,3 +154,10 @@ recognize mapped loop invariants and a frame violation. Multiline contracts and
 clauses/files, unrelated errors, launch failures, interruption and timeouts. The
 historical Python compatibility projection stays Close-only; separate tests require
 the new obligations to fail when only those historical receipts are supplied.
+
+G adds `boundary-defects --output <fresh-directory>` to the controlled capture.
+It runs nine isolated source edits (five process repetitions for read-failure,
+13 experiments total) and validates named assertion failures and actual runtime.
+The aggregate rejects missing repetitions, wrong edits, mismatched source hashes,
+compile/process failures and unrelated assertions. The original ordering gate
+remains independently required. See `verification/close-evidence-g.md`.

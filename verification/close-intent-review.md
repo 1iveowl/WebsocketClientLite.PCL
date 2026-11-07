@@ -239,3 +239,27 @@ This is the existing explicit external assumption. MergeScalar does not depend o
 Adapters establish null/alias/key-length and slice bounds, retain buffer ownership, and pass the intended payload count and header key to generated masking methods.
 
 No proof of the C# adapter, pool lifetime, entropy, encoding or I/O completion.
+
+## Increment G: lifecycle intent review (acceptance pending)
+
+CLOSE-004/CLOSE-005 now require the G tests and independent defect experiments
+listed in [the evidence record](close-evidence-g.md). The existing async pipeline
+body is exposed as an internal task-returning method so cancellation tests can
+observe its finally completion. Its caller retains parser/control projection and
+Rx subscription semantics. A default-preserving internal scheduler injection
+lets periodic-ping disposal be tested through actual virtual ticks.
+
+Noncancelled source completion awaits the fallback close before observer
+completion. Cancelled subscription teardown leaves close ownership to disposal
+and does not explicitly complete the observer. Source error records read failure,
+then emits Aborted and the original observer error before fallback close when the
+subscription remains active. Rx can suppress a second terminal; tests distinguish
+the internal explicit callback contract from outer automatic completion.
+
+Both disposal methods stop periodic pings before closure; this does not promise
+that cancellation forcibly stops arbitrary I/O. DisposeAsync must finish without
+pumping its caller's synchronization context once the injected write and peer
+conditions have completed. Other context/callback progress remains assumed.
+No intended runtime change, expanded native trust or unconditional liveness claim
+is approved by these tests. Human semantic acceptance is still revision-specific
+PR review, separate from passing machine gates.

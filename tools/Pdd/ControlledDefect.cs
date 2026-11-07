@@ -20,7 +20,7 @@ public sealed partial class Evidence
         try
         {
             // Copy only repository inputs. Never mutate the user's production checkout.
-            var paths = (await ContractReport.Git(root, "ls-files", "-z", "--cached", "--others", "--exclude-standard" )).Split('\0', StringSplitOptions.RemoveEmptyEntries);
+            var paths = (await ContractReport.Git(root, "ls-files", "-z", "--cached", "--others", "--exclude-standard", "src", "verification", "tools", "scripts", ".config", "global.json", "Directory.Build.props", "Directory.Build.targets", "NuGet.config" )).Split('\0', StringSplitOptions.RemoveEmptyEntries);
             foreach (var path in paths)
             {
                 if (!File.Exists(Path.Combine(root, path))) continue;
