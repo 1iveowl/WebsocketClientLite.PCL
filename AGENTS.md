@@ -53,5 +53,10 @@ interrupted turn or check. Verify task state before continuing.
 
 ## Project-specific guidance
 
-<!-- Add this repository's own conventions here: build and test commands, layout,
-     coding standards, and anything an agent would otherwise have to guess. -->
+- Build: `dotnet build src/main/WebsocketClientLite.sln`. The .NET 10 SDK builds every
+  target framework (`netstandard2.0`, `netstandard2.1`, `net8.0`, `net9.0`, `net10.0`).
+- Test: `./test-all-tfms.sh` runs the unit tests against each library build; CI runs it in
+  Release and requires at least 70 % line coverage (`scripts/check-coverage.sh`).
+- Keep changes compatible with every target framework; conditional code uses `#if`.
+- The README documents the public API and a "New in Version" section per release.
+- Layout, the dev container, remote hosts and Herdr: [docs/development.md](docs/development.md).

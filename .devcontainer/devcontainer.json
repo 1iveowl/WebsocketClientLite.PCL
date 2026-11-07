@@ -13,6 +13,10 @@
 			"version": "lts"
 		}
 	},
+	// Runs on the host before the container is created. Docker refuses to bind-mount a folder that does
+	// not exist, so make the optional shared-skills folder (see the ai-skill mount below) when it is
+	// missing. Empty is fine: post-create then skips the skills installer.
+	"initializeCommand": "mkdir -p \"${localEnv:HOME}/GitHub/ai-skill\"",
 	// Do not persist .vscode-server: a new named volume is root-owned before VS Code starts.
 	"mounts": [
 		"source=codex-home-${localWorkspaceFolderBasename},target=/home/vscode/.codex,type=volume",
@@ -24,8 +28,8 @@
 		"source=gh-config-${localWorkspaceFolderBasename},target=/home/vscode/.config/gh,type=volume",
 		// Azure CLI login (az login); without the volume a rebuild signs az out.
 		"source=azure-config-${localWorkspaceFolderBasename},target=/home/vscode/.azure,type=volume",
-		// Keep a single host checkout as the source of truth for assistant skills.
-		// Clone ai-skill to ~/GitHub/ai-skill before creating the container.
+		// Optional: a host folder of shared assistant skills, linked into the agent homes by post-create.
+		// initializeCommand creates it empty when missing. See docs/development.md.
 		"source=${localEnv:HOME}/GitHub/ai-skill,target=/opt/ai-skill,type=bind,consistency=cached"
 	],
 	"containerEnv": {

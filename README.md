@@ -356,29 +356,16 @@ This library was developed using the following reference documentation:
 
 ## Building and Contributing
 
-This library targets .NET Standard 2.0, .NET Standard 2.1, .NET 8, .NET 9, and .NET 10. The CI/CD pipeline uses GitHub Actions to build, test, and publish packages.
+This library targets .NET Standard 2.0, .NET Standard 2.1, .NET 8, .NET 9, and .NET 10. Please keep changes compatible with all of them. GitHub Actions builds, tests, and publishes the packages.
 
-To build locally you need the matching .NET SDKs installed. The .NET 10 SDK can build every target framework; with an older SDK only the target frameworks it supports will build.
-
-For contributors and developers, please ensure your changes maintain compatibility with these target frameworks.
-
-### Running the tests across target frameworks
-
-The test project links one library build at a time via the `LibTfm` property, so
-every build — including `netstandard2.0` and `netstandard2.1` — can be exercised
-on a single modern .NET runtime (a netstandard assembly runs fine on .NET 10).
-Run the whole matrix with:
+With the [.NET 10 SDK](https://dotnet.microsoft.com/download/dotnet/10.0), which builds every target framework:
 
 ```bash
-./test-all-tfms.sh            # Debug
-./test-all-tfms.sh Release    # Release
+dotnet build src/main/WebsocketClientLite.sln
+./test-all-tfms.sh    # the tests against every target framework build
 ```
 
-Or test a single build directly:
-
-```bash
-dotnet test src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj -p:LibTfm=netstandard2.0
-```
+The repository also ships a ready-to-use **dev container** (the .NET SDK, GitHub CLI, Claude Code, Codex and Herdr already installed). It runs locally or on a remote Linux host over SSH, and its agents can run side by side in [Herdr](https://herdr.dev/). See **[docs/development.md](docs/development.md)** for setup, testing details, and these options.
 
 ## Thank You
 
