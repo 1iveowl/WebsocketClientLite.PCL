@@ -7,6 +7,15 @@ namespace Pdd.Tests;
 
 public class EmpiricalEvidenceTests
 {
+    [Theory]
+    [InlineData("Version: 5.0.0\n", true)]
+    [InlineData("Version: \u001b[38;5;2m5.0.0\u001b[0m\r\n", true)]
+    [InlineData("Version: 5.0.0-preview", false)]
+    [InlineData("Version: 5.0.1", false)]
+    [InlineData("Tool 'dotnet-stryker' (version '5.0.0') was restored.", false)]
+    public void VersionProbeAcceptsCiColorButRejectsWrongOrMissingVersion(string log, bool expected) =>
+        Assert.Equal(expected, Evidence.HasPinnedStrykerVersion(log));
+
     static (JsonNode Report, JsonNode Dispositions, string Hash) Fixture()
     {
         var hash = Data.Hash(Encoding.UTF8.GetBytes("source"));

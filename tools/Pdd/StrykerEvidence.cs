@@ -55,6 +55,12 @@ public sealed partial class Evidence
             ["scope"] = "Connection handler only; accepted gaps are not detected defects. Critical ordering experiment gates separately." };
     }
 
+    public static bool HasPinnedStrykerVersion(string log)
+    {
+        var plain = System.Text.RegularExpressions.Regex.Replace(log, @"\x1B\[[0-?]*[ -/]*[@-~]", "");
+        return System.Text.RegularExpressions.Regex.IsMatch(plain, @"(?m)^Version:[ \t]*5\.0\.0[ \t\r]*$");
+    }
+
     JsonObject StrykerEvidence(string directory, SourceIdentity expected)
     {
         var reports = Directory.GetFiles(Path.Combine(directory, "reports"), "mutation-report.json", SearchOption.AllDirectories);
@@ -62,7 +68,7 @@ public sealed partial class Evidence
         var raw = Read(reports[0]);
         var result = TriageStryker(raw, Read(Path.Combine(root, "verification/stryker-close-dispositions.json")), expected.SourceHashes[CloseSource]!);
         var log = Text(Path.Combine(directory, "stryker.log"));
-        Require(log.Contains("Version: 5.0.0"), "Missing pinned Stryker tool version");
+        Require(HasPinnedStrykerVersion(log), "Missing pinned Stryker tool version");
         XNamespace ns = "http://microsoft.com/schemas/VisualStudio/TeamTest/2010";
         var trx = XDocument.Load(Path.Combine(directory, "runtime/runtime.trx"));
         var runtimeResult = trx.Descendants(ns + "UnitTestResult").Single();
