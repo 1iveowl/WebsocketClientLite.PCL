@@ -1,41 +1,10 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "title": "Close requirements v1",
+  "title": "Close requirements v2",
   "type": "object",
   "properties": {
     "schema_version": {
-      "const": 1
-    },
-    "boundary_seeds": {
-      "type": "array",
-      "items": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "minLength": 1,
-            "pattern": "\\S"
-          },
-          "assumption": {
-            "type": "string",
-            "minLength": 1,
-            "pattern": "\\S"
-          },
-          "review_anchor": {
-            "type": "string",
-            "minLength": 1,
-            "pattern": "\\S"
-          }
-        },
-        "required": [
-          "id",
-          "assumption",
-          "review_anchor"
-        ],
-        "additionalProperties": false
-      },
-      "minItems": 1,
-      "uniqueItems": true
+      "const": 2
     },
     "requirements": {
       "type": "array",
@@ -241,11 +210,14 @@
       },
       "minItems": 1,
       "uniqueItems": true
+    },
+    "boundaries_file": {
+      "const": "verification/boundaries.json"
     }
   },
   "required": [
     "schema_version",
-    "boundary_seeds",
+    "boundaries_file",
     "requirements"
   ],
   "additionalProperties": false

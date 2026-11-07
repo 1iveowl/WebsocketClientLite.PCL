@@ -1,32 +1,5 @@
 {
-  "schema_version": 1,
-  "boundary_seeds": [
-    {
-      "id": "CLOSE-LOCK",
-      "assumption": "All CloseStep calls serialize access to the same sender state under _stateLock; initial state is zero and events are 0..2.",
-      "review_anchor": "boundary-lock"
-    },
-    {
-      "id": "CLOSE-WRITE",
-      "assumption": "Reservation is distinct from write completion; the frame gate serializes writes and the write delegate faithfully reports completion or failure.",
-      "review_anchor": "boundary-write"
-    },
-    {
-      "id": "CLOSE-FAILURE",
-      "assumption": "Write/read failures may abort closure; a failed or partial write is never retried as a fresh Close.",
-      "review_anchor": "boundary-failure"
-    },
-    {
-      "id": "CLOSE-TIMER",
-      "assumption": "Task.Delay, Rx Timeout and continuations eventually run; configured durations are not wall-clock completion guarantees.",
-      "review_anchor": "boundary-timer"
-    },
-    {
-      "id": "CLOSE-OBSERVER",
-      "assumption": "Callbacks and resource disposal return; no concurrent synchronous Dispose, unsubscribe teardown or external transport disposal aborts the graceful path.",
-      "review_anchor": "boundary-observer"
-    }
-  ],
+  "schema_version": 2,
   "requirements": [
     {
       "id": "CLOSE-001",
@@ -412,5 +385,6 @@
         "No promise that a timeout completes or cancels an outstanding stream write."
       ]
     }
-  ]
+  ],
+  "boundaries_file": "verification/boundaries.json"
 }

@@ -1,11 +1,9 @@
 [
-  {"name":"unknown version","path":["schema_version"],"value":2,"error":"unsupported value/version"},
+  {"name":"unknown version","path":["schema_version"],"value":99,"error":"unsupported value/version"},
   {"name":"boolean version","path":["schema_version"],"value":true,"error":"unsupported value/version"},
   {"name":"duplicate requirement ID","path":["requirements",1,"id"],"value":"CLOSE-001","error":"duplicate requirement ID"},
-  {"name":"duplicate boundary ID","path":["boundary_seeds",1,"id"],"value":"CLOSE-LOCK","error":"duplicate boundary ID"},
   {"name":"duplicate obligation ID","path":["requirements",1,"obligations",0,"id"],"value":"CLOSE-001-PROOF","error":"duplicate obligation ID"},
   {"name":"dangling assumption","path":["requirements",0,"assumptions"],"value":["MISSING"],"error":"dangling boundary reference"},
-  {"name":"missing boundary anchor","path":["boundary_seeds",0,"review_anchor"],"value":"absent","error":"unresolved boundary anchor"},
   {"name":"missing intent","path":["requirements",0,"intent"],"remove":true,"error":"missing required fields"},
   {"name":"blank intent","path":["requirements",0,"intent"],"value":"  ","error":"invalid string"},
   {"name":"missing file","path":["requirements",0,"contracts",0,"file"],"value":"verification/Absent.dfy","error":"missing file"},

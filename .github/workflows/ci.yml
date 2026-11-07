@@ -36,6 +36,30 @@ jobs:
             artifacts/dafny/
             artifacts/close-mutations/
 
+  contract-change-report:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-22.04
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.sha }}
+      - name: Compare actual PR target merge base with source head
+        env:
+          PR_BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          git fetch --no-tags origin "$PR_BASE_SHA"
+          python3 scripts/report-contract-changes.py --target "$PR_BASE_SHA" --head "$PR_HEAD_SHA" --output artifacts/pdd/contract-changes.md
+          echo 'Contract changes require semantic review; see the contract-change-report artifact for revisions and full source diff.' >> "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: contract-change-report
+          path: artifacts/pdd/contract-changes.md
+          if-no-files-found: error
+
   build-and-test:
     runs-on: ubuntu-latest
     steps:

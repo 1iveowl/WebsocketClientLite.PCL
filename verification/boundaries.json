@@ -1,0 +1,184 @@
+{
+  "schema_version": 1,
+  "boundaries": [
+    {
+      "id": "CLOSE-LOCK",
+      "assumption": "All CloseStep calls serialize access to the same sender state under _stateLock; initial state is zero and events are 0..2.",
+      "review_anchor": "boundary-lock",
+      "owners": [
+        {
+          "file": "src/main/WebsocketClientLite/Service/WebsocketSenderHandler.cs",
+          "symbol": "WebsocketClientLite.Service.WebsocketSenderHandler.AdvanceClose"
+        },
+        {
+          "file": "src/main/WebsocketClientLite/Service/WebsocketSenderHandler.cs",
+          "symbol": "WebsocketClientLite.Service.WebsocketSenderHandler.WriteFrameSerializedAsync"
+        },
+        {
+          "file": "src/main/WebsocketClientLite/Service/WebsocketSenderHandler.cs",
+          "symbol": "WebsocketClientLite.Service.WebsocketSenderHandler.NotifyPeerClose"
+        },
+        {
+          "file": "src/main/WebsocketClientLite/Service/WebsocketSenderHandler.cs",
+          "symbol": "WebsocketClientLite.Service.WebsocketSenderHandler.NotifyReadFailure"
+        },
+        {
+          "file": "src/main/WebsocketClientLite/Service/WebsocketSenderHandler.cs",
+          "symbol": "WebsocketClientLite.Service.WebsocketSenderHandler.WaitForPeerCloseAsync"
+        }
+      ],
+      "requirements": [
+        "CLOSE-001",
+        "CLOSE-002",
+        "CLOSE-003"
+      ],
+      "test_obligations": [
+        "CLOSE-001-TEST",
+        "CLOSE-002-TEST",
+        "CLOSE-003-TEST"
+      ],
+      "exclusions": [
+        "No proof of C# locking, state persistence or exhaustive interleavings."
+      ]
+    },
+    {
+      "id": "CLOSE-WRITE",
+      "assumption": "Reservation is distinct from write completion; the frame gate serializes writes and the write delegate faithfully reports completion or failure.",
+      "review_anchor": "boundary-write",
+      "owners": [
+        {
+          "file": "src/main/WebsocketClientLite/Service/WebsocketSenderHandler.cs",
+          "symbol": "WebsocketClientLite.Service.WebsocketSenderHandler.WriteFrameSerializedAsync"
+        },
+        {
+          "file": "src/main/WebsocketClientLite/Service/TcpConnectionService.cs",
+          "symbol": "WebsocketClientLite.Service.TcpConnectionService.WriteSerializedAsync"
+        },
+        {
+          "file": "src/main/WebsocketClientLite/Service/WebsocketConnectionHandler.cs",
+          "symbol": "WebsocketClientLite.Service.WebsocketConnectionHandler.DisconnectWebsocket"
+        },
+        {
+          "file": "src/main/WebsocketClientLite/Service/WebsocketConnectionHandler.cs",
+          "symbol": "WebsocketClientLite.Service.WebsocketConnectionHandler.DisposeAsync"
+        }
+      ],
+      "requirements": [
+        "CLOSE-001",
+        "CLOSE-003",
+        "CLOSE-004",
+        "CLOSE-005"
+      ],
+      "test_obligations": [
+        "CLOSE-001-TEST",
+        "CLOSE-003-TEST",
+        "CLOSE-004-TEST",
+        "CLOSE-004-CONTROLLED",
+        "CLOSE-005-TEST",
+        "CLOSE-005-CONTROLLED"
+      ],
+      "exclusions": [
+        "Reservation/readiness is not write completion; stream completion is not peer receipt.",
+        "Send timeout/failure and concurrent abort teardown are excluded from graceful ordering."
+      ]
+    },
+    {
+      "id": "CLOSE-FAILURE",
+      "assumption": "Write/read failures may abort closure; a failed or partial write is never retried as a fresh Close.",
+      "review_anchor": "boundary-failure",
+      "owners": [
+        {
+          "file": "src/main/WebsocketClientLite/Service/WebsocketSenderHandler.cs",
+          "symbol": "WebsocketClientLite.Service.WebsocketSenderHandler.NotifyReadFailure"
+        },
+        {
+          "file": "src/main/WebsocketClientLite/Service/WebsocketSenderHandler.cs",
+          "symbol": "WebsocketClientLite.Service.WebsocketSenderHandler.WriteFrameSerializedAsync"
+        },
+        {
+          "file": "src/main/WebsocketClientLite/Service/WebsocketConnectionHandler.cs",
+          "symbol": "WebsocketClientLite.Service.WebsocketConnectionHandler.DisconnectWebsocket"
+        }
+      ],
+      "requirements": [
+        "CLOSE-001",
+        "CLOSE-004",
+        "CLOSE-005"
+      ],
+      "test_obligations": [
+        "CLOSE-001-TEST",
+        "CLOSE-004-TEST",
+        "CLOSE-004-CONTROLLED",
+        "CLOSE-005-TEST",
+        "CLOSE-005-CONTROLLED"
+      ],
+      "exclusions": [
+        "No graceful delivery guarantee after partial writes or transport failure.",
+        "Send timeout need not record a CloseStep terminal event or cancel the original write."
+      ]
+    },
+    {
+      "id": "CLOSE-TIMER",
+      "assumption": "Task.Delay, Rx Timeout and continuations eventually run; configured durations are not wall-clock completion guarantees.",
+      "review_anchor": "boundary-timer",
+      "owners": [
+        {
+          "file": "src/main/WebsocketClientLite/Service/WebsocketSenderHandler.cs",
+          "symbol": "WebsocketClientLite.Service.WebsocketSenderHandler.WaitForPeerCloseAsync"
+        },
+        {
+          "file": "src/main/WebsocketClientLite/Service/WebsocketConnectionHandler.cs",
+          "symbol": "WebsocketClientLite.Service.WebsocketConnectionHandler.DisconnectWebsocket"
+        }
+      ],
+      "requirements": [
+        "CLOSE-003",
+        "CLOSE-004",
+        "CLOSE-005"
+      ],
+      "test_obligations": [
+        "CLOSE-003-TEST",
+        "CLOSE-004-TEST",
+        "CLOSE-004-CONTROLLED",
+        "CLOSE-005-TEST",
+        "CLOSE-005-CONTROLLED"
+      ],
+      "exclusions": [
+        "No unconditional liveness, exact wall-clock deadline or cancellation of outstanding I/O."
+      ]
+    },
+    {
+      "id": "CLOSE-OBSERVER",
+      "assumption": "Callbacks and resource disposal return; no concurrent synchronous Dispose, unsubscribe teardown or external transport disposal aborts the graceful path.",
+      "review_anchor": "boundary-observer",
+      "owners": [
+        {
+          "file": "src/main/WebsocketClientLite/Service/WebsocketConnectionHandler.cs",
+          "symbol": "WebsocketClientLite.Service.WebsocketConnectionHandler.DisconnectWebsocket"
+        },
+        {
+          "file": "src/main/WebsocketClientLite/Service/WebsocketConnectionHandler.cs",
+          "symbol": "WebsocketClientLite.Service.WebsocketConnectionHandler.DisposeAsync"
+        },
+        {
+          "file": "src/main/WebsocketClientLite/Service/WebsocketConnectionHandler.cs",
+          "symbol": "WebsocketClientLite.Service.WebsocketConnectionHandler.Dispose"
+        }
+      ],
+      "requirements": [
+        "CLOSE-004",
+        "CLOSE-005"
+      ],
+      "test_obligations": [
+        "CLOSE-004-TEST",
+        "CLOSE-004-CONTROLLED",
+        "CLOSE-005-TEST",
+        "CLOSE-005-CONTROLLED"
+      ],
+      "exclusions": [
+        "Concurrent synchronous Dispose, unsubscribe or external transport disposal may abort graceful closure.",
+        "Blocking callbacks or resource cleanup may prevent completion."
+      ]
+    }
+  ]
+}

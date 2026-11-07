@@ -8,7 +8,7 @@ The proposed [PDD phase 2 plan for 10.2.0.0](../docs/pdd-phase-2-plan.md) adds r
 
 ## Close requirement map (phase 2, increment A)
 
-The [manifest](requirements.json), [v1 JSON Schema](requirements.schema.json) and
+The [manifest](requirements.json), [v2 JSON Schema](requirements.schema.json) and
 [intent review](close-intent-review.md) separate sequential Close decisions from
 asynchronous caller responsibilities. Validate them with Python 3.9 or later
 (standard library only):
@@ -53,10 +53,9 @@ Existing proof/test obligations must resolve to declarations; future tests and
 mutations have descriptions and stable obligation IDs without invented file or
 test references. Review obligations point to the matching requirement section in
 the intent review. CLOSE-004/005 are tested-only and have empty contract lists.
-The inline boundary seeds allow real assumption references now; C will expand
-them into the full boundary register. No validator success means a requirement
-is satisfied: B mutations, C boundary work, E controlled schedules and PR review
-remain separate obligations. Receipts and their aggregation belong to D.
+The v2 manifest references the separate boundary register described below.
+Validator success does not mean a requirement is satisfied: mutation runs,
+E controlled schedules and PR review remain separate obligations. Receipts and their aggregation belong to D.
 
 ## Close mutation checks (phase 2, increment B)
 
@@ -79,6 +78,68 @@ these alongside the existing verification evidence, including on failure.
 This is mutation evidence, not the aggregated requirement receipt planned for
 increment D, and it does not establish specification completeness or the
 asynchronous guarantees of CLOSE-004/CLOSE-005.
+
+## Boundary register and contract changes (phase 2, increment C)
+
+[boundaries.json](boundaries.json) replaces A's inline seeds, preserving their IDs
+and assumption wording. The [v1 boundary schema](boundaries.schema.json) requires
+an assumption, implementation owners by file/qualified method, dependent requirement
+IDs, test obligation IDs, exclusions and an intent-review anchor. The requirements
+schema is now v2 and names the register through `boundaries_file`; v1 manifests
+must be migrated rather than silently accepted. The existing validation command
+checks both files. Owners resolve using the same C# mechanism described above;
+dependencies must exactly match the requirements' assumption references, and test
+IDs must match all test obligations of those dependent requirements. Test details
+and delivery stages remain in the requirement manifest, so E's controlled schedules
+are visible obligations, not invented passing tests.
+
+The initial register covers state-lock ownership, reservation versus completed
+writes, failure/abort paths, timer delivery, and observer/disposal progress.
+Buffer ownership, native-copy implementation, retained-fragment totals, UTF-8 and
+handshake parsing remain future register work. The generated
+[trusted-boundaries.md](trusted-boundaries.md) is still exclusively the
+machine-compared Dafny external-contract audit; the existing `--check` gate is
+unchanged. A handwritten boundary entry cannot authorize a new external contract.
+
+For a committed topic branch, fetch its actual PR target and run:
+
+```bash
+git fetch origin releases/10.2.0.0
+python3 scripts/report-contract-changes.py --target origin/releases/10.2.0.0 --head HEAD --output artifacts/pdd/contract-changes.md
+```
+
+`--target` is mandatory; substitute the actual target if the PR is retargeted.
+The report records target, head and merge-base SHAs. It summarizes requirement
+intent and boundary/audit changes, includes complete diffs for every changed
+Dafny file (including `requires`, `ensures`, supporting definitions and external
+contracts), and includes the full repository source diff so changes outside these
+summaries remain reviewable. Added and deleted files are included. Missing refs,
+missing history, ambiguous merge bases and malformed intent data fail the command.
+
+CI's PR-only `contract-change-report` job checks out the PR source head, fetches
+the event's actual base SHA with full history, and uploads the Markdown report.
+It compares the source head rather than GitHub's synthetic test merge commit.
+Other verification/build jobs retain their existing checkout and gates. The job
+summary points to the artifact; a successful job means the report was produced,
+not that guarantees were accepted. Rerun on the current PR revision/target before
+accepting changes if either has advanced.
+
+This is conservative textual review: any committed difference requires semantic
+review, including formatting changes. It does not parse Dafny, classify logical
+strength, resolve helper dependencies, establish equivalence, or detect every
+weakening. Full Dafny diffs deliberately preserve multiline clauses and helper
+bodies instead of relying on a keyword-only extraction. Only committed trees are
+compared; local edits and untracked files are excluded. Binary changes are Git
+binary patches, not a semantic summary. This tool runs no proof or test and
+provides no approval or receipt. Reviewers must record the accepted decision and
+reviewed head revision through normal PR review; `approved: true` in a file is
+not acceptance evidence. The boundary schema rejects such fields.
+
+Tooling tests use temporary Git histories to exercise target divergence,
+precondition/postcondition and helper changes, trust expansion, caller changes,
+file addition/deletion, missing/unrelated refs and malformed registers. Run them
+with the same unittest command above. Increment D will add run receipts; this
+report does not aggregate evidence or close E's asynchronous testing gaps.
 
 ## Reading the proof boundary
 
