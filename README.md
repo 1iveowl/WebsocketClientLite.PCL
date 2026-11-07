@@ -26,6 +26,23 @@ The library provides developers with additional flexibility, including the abili
 
 The library utilizes [ReactiveX](http://reactivex.io/) (aka Rx or Reactive Extensions). While this dependency introduces a small learning curve, it's worthwhile for the context.
 
+## What “Dafny verified core” means
+
+Dafny proves the algorithms and mathematical lemmas written in our `.dfy` files against their contracts, under stated preconditions. The executable algorithms are then compiled into C# used by this library. **Dafny does not verify our handwritten C# or test harnesses.**
+
+```mermaid
+flowchart LR
+    D["Dafny algorithms + contracts"] --> V["Dafny verification"]
+    L["Proof-only Dafny lemmas"] -->|Support proofs| V
+    V -->|Compiler translates executable algorithms| G["Generated C#"]
+    H["Handwritten C# integration"] -->|Calls| G
+    T["Tests and review"] -->|Check selected behavior| H
+```
+
+The compiler and runtime are trusted. Proof-only lemmas support the Dafny proofs and are omitted from executable code; they do not prove equivalence with handwritten C#. Production concatenation also relies on an explicit, tested contract for `.NET Buffer.BlockCopy`, whose implementation is not verified by Dafny.
+
+Some tests compare production behavior with a verified scalar reference. Passing those tests provides evidence for the selected inputs; it does not prove the test harness or establish equivalence for every input. The [proof and testing boundaries](docs/protocol-verification.md#what-is-proved-assumed-and-tested) explain this distinction, and the [verification guide](verification/README.md) maps the contracts to their callers.
+
 ## New in Version 10.1.0
 
 Version 10.1.0 extends the Dafny core with receive admission that includes fragmentation state, outgoing message transitions, closing transitions, exact segment concatenation, and a length-header round-trip theorem.

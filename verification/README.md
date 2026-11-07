@@ -4,6 +4,18 @@ The library calls C# generated from Dafny for synchronous protocol decisions and
 
 This work implements the five stages in the [adoption plan](../docs/dafny-pdd-plan.md): header validation, fragmentation, outgoing framing/masking, handshake/Close predicates, and integration checks. It does not establish full RFC conformance or prove the asynchronous client.
 
+## Reading the proof boundary
+
+Dafny verifies the implementations and mathematical lemmas in our `.dfy` source. The compiler translates executable implementations into C#; it omits proof-only lemmas. Dafny does not separately verify the generated C# text, and it does not verify any of our handwritten C# implementations or test harnesses. We trust the verifier, solver, compiler and runtimes, and test the compiled integration.
+
+A lemma supports a proof of the Dafny implementation. It is not a proof that handwritten C# is logically equivalent to that implementation. The C# callers remain responsible for establishing preconditions, preserving buffer ownership and applying the generated decisions correctly.
+
+`NativeCopy.CopySlice` is the one explicit external implementation contract. Its handwritten C# adapter calls `.NET Buffer.BlockCopy`; Dafny assumes the contract rather than proving that implementation. Production `Merge` has a concatenation proof conditional on that assumption. `MergeScalar` proves the scalar algorithm without the external copy contract.
+
+The merge comparison tests use the generated `MergeScalar` as a verified reference, alongside independent expected bytes. Passing comparisons establish agreement for the tested inputs only. They do not prove the C# test harness, prove the native copy implementation or transfer the reference algorithm's proof to other code. Tests that directly call generated protocol methods likewise check integration behavior; the tests themselves are not formally verified.
+
+See the [proof-boundary diagram and assurance table](../docs/protocol-verification.md#what-is-proved-assumed-and-tested) and the [verified-reference testing diagram](../docs/protocol-verification.md#testing-against-a-verified-reference) for the distinction between **proved**, **assumed** and **tested** behavior.
+
 ## Contracts used by production
 
 | Area | Dafny symbol and guarantee | C# caller and remaining boundary |
@@ -59,7 +71,7 @@ The generated file is checked in; ordinary builds and package consumers do not n
 
 `DafnyRuntime` 4.11.0 is a new package dependency. Its netstandard2.0 DLL is approximately 172 KiB and declares System.Collections.Immutable and System.Runtime.Numerics dependencies. Generated support types require it even where hot loops use only native integer/byte operations. Runtime preconditions are not automatically enforced by compiled Dafny; adapters establish them explicitly or rely on documented .NET contracts such as array length and ArrayPool.Rent capacity.
 
-There are no `assume` statements, `{:axiom}` attributes or verification-disabled implementations in the Dafny sources. There is one explicitly trusted external contract, `NativeCopy.CopySlice`, backed by the .NET `Buffer.BlockCopy` adapter. The generator audits both Dafny source roots and compares the findings with [trusted-boundaries.md](trusted-boundaries.md), so a newly introduced assumption or external contract fails the check until the report is explicitly reviewed and updated. It deliberately uses `--allow-external-contracts` for this boundary; this flag does not prove the adapter. All other algorithms retain verified bodies. Pure acceptance functions are executable specifications: their verification is not an independent proof that the RFC was interpreted correctly. Review the specification and adapters along with the proofs.
+There are no `assume` statements, `{:axiom}` attributes or verification-disabled implementations in the Dafny sources. There is one explicitly trusted external contract, `NativeCopy.CopySlice`, backed by the .NET `Buffer.BlockCopy` adapter. The generator audits both Dafny source roots and compares the findings with [trusted-boundaries.md](trusted-boundaries.md), so a newly introduced assumption or external contract fails the check until the report is explicitly reviewed and updated. It deliberately uses `--allow-external-contracts` for this boundary; this flag does not prove the adapter. The remaining Dafny algorithms have bodies checked by the verifier; this statement does not include handwritten C#. Pure acceptance functions are executable specifications: their verification is not an independent proof that the RFC was interpreted correctly. Review the specification and adapters along with the proofs.
 
 ## Checks
 
@@ -97,7 +109,7 @@ The benchmark command above reports the reassembly tradeoff as well as the exist
 | 1024 | 42.58 | 43.30 | 330.72 |
 | 65536 | 1149.09 | 1147.02 | 15806.92 |
 
-These measurements support retaining the bulk-copy primitive in production; they are not portable timing guarantees. No package has been published and `GitVersion.yml` remains unchanged.
+These measurements support retaining the bulk-copy primitive in production; they are not portable timing guarantees. They were recorded before publication. Version 10.1.0 was subsequently published to NuGet.org and GitHub Packages, and [release 10.1.0.0](https://github.com/1iveowl/WebsocketClientLite.PCL/releases/tag/10.1.0.0) was merged into `main` through [PR #103](https://github.com/1iveowl/WebsocketClientLite.PCL/pull/103). Release and [post-merge CI](https://github.com/1iveowl/WebsocketClientLite.PCL/actions/runs/42379096343) passed. `GitVersion.yml` was updated to 10.1.0 for that release.
 
 ## Historical 10.0.0 local results
 

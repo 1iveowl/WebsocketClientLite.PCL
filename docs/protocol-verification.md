@@ -1,5 +1,56 @@
 # Protocol verification
 
+## What is proved, assumed and tested
+
+**Dafny verifies our `.dfy` implementations and lemmas, not our handwritten C# or test harnesses.** Verification establishes that an implementation satisfies its written contract for every input allowed by its preconditions. It does not establish that the contract captures every RFC requirement.
+
+Executable Dafny algorithms are compiled into C# so the library runs the implementation whose source was verified. This avoids manually rewriting a proved algorithm in C#. The compiler and runtime remain trusted; Dafny does not separately verify the emitted C# text.
+
+```mermaid
+flowchart TD
+    L["PROVED: proof-only Dafny lemmas"] -->|Support proofs| V["Dafny verification"]
+    D["Dafny implementations + contracts"] --> V
+    A["ASSUMED: .NET bulk-copy contract"] -.->|Used by the Merge proof| V
+    V -->|Compiler translates executable algorithms| G["Generated C# used by the library"]
+    H["Handwritten C# networking and integration"] -->|Calls| G
+    T["TESTED: selected inputs and schedules"] -->|Exercise| H
+    T -->|Exercise compiled integration| G
+```
+
+**The diagram does not imply that the handwritten C#, test harness or .NET bulk-copy implementation is formally verified.** The compiler, verifier and runtimes are also trusted components.
+
+| Assurance | Applies to | Limit |
+| --- | --- | --- |
+| **Proved** | Dafny algorithms and proof-only lemmas | Their written contracts, preconditions and explicit assumptions; not complete RFC conformance |
+| **Assumed** | The `NativeCopy.CopySlice` contract describing `.NET Buffer.BlockCopy` | Dafny does not inspect or prove the C# adapter or .NET implementation |
+| **Assumed** | Correct operation of the verifier, solver, compiler and runtimes | These tools are not verified by this project's proofs |
+| **Tested and reviewed** | Handwritten C# integration, precondition checks, locking, networking and test harnesses | Evidence for selected inputs and schedules; not a proof of all possible behavior |
+
+Proof-only lemmas establish mathematical facts used by the implementation proofs. For example, `XorTwice` proves that applying XOR with the same key twice restores the original byte. It does not prove that a handwritten C# loop chooses the correct key or processes every byte. `PartsPrefix` and `NetworkWord` support the concatenation and length proofs in the same way. These lemmas are omitted from executable code, and we have not proved equivalence between them and our handwritten C# implementations.
+
+The C# callers must establish generated methods' preconditions, such as valid buffer ranges and no concurrent mutation. Those caller obligations remain reviewed and tested. Calling a verified method does not make its caller verified.
+
+## Testing against a verified reference
+
+Tests use generated code both as the implementation under test and as a reference for comparison. Tests of generated protocol methods exercise the compiled C# integration; they do not replace the source proof or prove the surrounding test harness.
+
+For reassembly, tests compare production `Merge` with the fully verified `MergeScalar` reference and with independently calculated expected bytes. This is **testing against a verified reference**, sometimes called a verified test oracle.
+
+```mermaid
+flowchart LR
+    I["Selected test input"] --> P["Production Merge with native bulk copy"]
+    I --> R["Verified MergeScalar reference"]
+    P --> A["Actual result"]
+    R --> E["Reference result"]
+    A --> C["C# test compares results"]
+    E --> C
+    C --> O["TESTED: agreement for this input"]
+```
+
+**The reference algorithm is proved against its contract. The comparison test is not proved, and passing it does not establish equivalence for every input.** The production `Merge` algorithm also has its own concatenation proof, conditional on the bulk-copy contract. The comparison tests provide additional evidence; they do not remove that assumption or prove `Buffer.BlockCopy`.
+
+The project therefore uses a formally verified protocol core with tested C# integration. Neither test counts nor line coverage measure the proportion of the client that is formally verified.
+
 ## Version 10.1.0 additions
 
 The verified core now includes combined header/message admission before payload reads, transmit-state and closing-state decisions, exact segment concatenation, and a theorem composing the length encoder with the decoder. List sends retain exclusive data-message ownership across fragments while allowing controls; invalid list items fail before transmission. Failed partial sends cannot silently resume normal data traffic. Asynchronous disposal waits for the peer's Close response or a bounded timeout.
@@ -16,7 +67,7 @@ This work also corrects protocol behavior: malformed server frames are rejected 
 
 ## What proof driven development means here
 
-Tests check selected examples. Dafny checks whether an implementation satisfies its written contract for every input allowed by that contract. For example, the masking contract states which XOR result every output byte must contain, which bytes must remain unchanged, and which array bounds must hold.
+Tests check selected examples. Dafny checks whether an implementation written in Dafny satisfies its contract for every input allowed by its preconditions, assuming any declared external contracts. For example, the masking contract states which XOR result every output byte must contain, which bytes must remain unchanged, and which array bounds must hold.
 
 The process is to state the intended behavior, prove the implementation against it, generate C#, and test the integration. A proof of a separate model would leave a gap between the model and the running code; using generated code connects the verified algorithm to the library.
 
@@ -49,11 +100,11 @@ Encoding and decoding are tested together against independent byte expectations.
 
 **Outgoing framing and Close handling are stricter.** Size arithmetic is checked before renting a frame buffer. Outgoing control frames must satisfy their size and fragmentation constraints, and an explicit final continuation now sets FIN correctly. Close payloads reject one-byte bodies, forbidden status codes and invalid UTF-8 reasons. String encoding rejects invalid UTF-16 input instead of silently replacing it.
 
-**Future changes have a repeatable check.** CI is configured to run the pinned verifier and compare regenerated C# with the checked-in output. A code change that violates a contract fails verification; stale generated code fails the comparison. The existing build, tests and coverage gate remain in place.
+**Future changes have a repeatable check.** CI is configured to run the pinned verifier and compare regenerated C# with the checked-in output. A change to a verified Dafny implementation that violates its contract fails verification; stale generated code fails the comparison. Handwritten C# changes are checked by the build, analyzers, tests and review, not by Dafny. The trust audit detects changes to the reported assumptions and external contracts; it does not prove their implementations. The existing build, tests and coverage gate remain in place.
 
 ## What remains outside the proofs
 
-Dafny does not directly verify the client's C# async/await code. The following remain reviewed or tested boundaries:
+Dafny does not verify any of this project's handwritten C# implementations, including synchronous adapters, async/await code and test harnesses. The following remain reviewed or tested boundaries:
 
 - Socket reads and writes, cancellation, scheduling, Rx delivery and disposal races.
 - Applying state transitions from C#, retaining the right fragments and delivering the completed message. Concatenation of supplied arrays is now proved by `Merge`, conditional on the documented .NET bulk-copy contract.
@@ -63,16 +114,16 @@ Dafny does not directly verify the client's C# async/await code. The following r
 
 The optional legacy single-byte empty-Pong behavior remains outside standard framing guarantees. The work is not a proof of the entire client or a claim of complete RFC conformance. The verifier, compiler, runtime, .NET and the adapters that establish preconditions remain trusted components.
 
-## Validation and performance
+## Historical 10.0.0 validation and performance
 
-Local validation of this implementation produced:
+The following results describe local validation before the 10.0.0 release. For 10.1.0 results and release status, see the [current validation record](../verification/README.md#1010-local-validation). The 10.0.0 validation produced:
 
 - **23 successful Dafny verification results**, with no errors, followed by a successful generated-source consistency check. This number includes specification well-formedness checks; it is not a count of independently proved RFC rules.
 - **161 passing tests per library target**, across all five targets, using a .NET 10 test host.
 - **79.9% line coverage**, above the existing 70% requirement, with generated source included.
 - Successful Release builds and independent package-consumer builds for every target framework.
 
-A deliberately incorrect XOR-to-OR change in copy-and-mask failed its output contract, confirming that the proof detects that implementation error. Remote CI still needs to run when the changes are pushed.
+A deliberately incorrect XOR-to-OR change in copy-and-mask failed its output contract, confirming that the proof detects that implementation error.
 
 Local .NET 10.0.14 microbenchmarks measured zero allocations in the active masking loops. Fused copy-and-mask was approximately 10–12% faster than the comparable scalar loop; in-place masking was approximately 6% faster, for the measured 125-byte, 1 KiB and 64 KiB payloads. These are kernel measurements on one environment, not end-to-end network speed guarantees.
 
