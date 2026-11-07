@@ -1,0 +1,416 @@
+{
+  "schema_version": 1,
+  "boundary_seeds": [
+    {
+      "id": "CLOSE-LOCK",
+      "assumption": "All CloseStep calls serialize access to the same sender state under _stateLock; initial state is zero and events are 0..2.",
+      "review_anchor": "boundary-lock"
+    },
+    {
+      "id": "CLOSE-WRITE",
+      "assumption": "Reservation is distinct from write completion; the frame gate serializes writes and the write delegate faithfully reports completion or failure.",
+      "review_anchor": "boundary-write"
+    },
+    {
+      "id": "CLOSE-FAILURE",
+      "assumption": "Write/read failures may abort closure; a failed or partial write is never retried as a fresh Close.",
+      "review_anchor": "boundary-failure"
+    },
+    {
+      "id": "CLOSE-TIMER",
+      "assumption": "Task.Delay, Rx Timeout and continuations eventually run; configured durations are not wall-clock completion guarantees.",
+      "review_anchor": "boundary-timer"
+    },
+    {
+      "id": "CLOSE-OBSERVER",
+      "assumption": "Callbacks and resource disposal return; no concurrent synchronous Dispose, unsubscribe teardown or external transport disposal aborts the graceful path.",
+      "review_anchor": "boundary-observer"
+    }
+  ],
+  "requirements": [
+    {
+      "id": "CLOSE-001",
+      "intent": "Reserve at most one Close send attempt over serialized transitions from zero; return send exactly for event 0 when neither the reservation nor terminal bit is set.",
+      "origin": [
+        "Library policy: sequential Close state model",
+        "https://www.rfc-editor.org/rfc/rfc6455.html#section-5.5.1"
+      ],
+      "contracts": [
+        {
+          "file": "verification/Protocol.dfy",
+          "symbol": "ProtocolCore.Protocol.CloseStep",
+          "clauses": [
+            "requires state <= 7 && event <= 2",
+            "ensures send <==> event == 0 && (state & 5) == 0",
+            "ensures send ==> (next & 1) == 1",
+            "ensures (state & 1) != 0 ==> !send"
+          ]
+        }
+      ],
+      "production_paths": [
+        {
+          "reference": {
+            "file": "src/main/WebsocketClientLite/Service/WebsocketSenderHandler.cs",
+            "symbol": "WebsocketClientLite.Service.WebsocketSenderHandler.AdvanceClose"
+          },
+          "responsibility": "Apply the transition under _stateLock and persist next state."
+        },
+        {
+          "reference": {
+            "file": "src/main/WebsocketClientLite/Service/WebsocketSenderHandler.cs",
+            "symbol": "WebsocketClientLite.Service.WebsocketSenderHandler.WriteFrameSerializedAsync"
+          },
+          "responsibility": "Reserve inside the frame gate before invoking the write delegate."
+        }
+      ],
+      "assumptions": [
+        "CLOSE-LOCK",
+        "CLOSE-WRITE",
+        "CLOSE-FAILURE"
+      ],
+      "obligations": [
+        {
+          "id": "CLOSE-001-PROOF",
+          "kind": "proof",
+          "delivery": "existing",
+          "description": "Verify CloseStep preconditions and the listed postconditions with scripts/dafny-masking.sh --check.",
+          "references": [
+            {
+              "file": "verification/Protocol.dfy",
+              "symbol": "ProtocolCore.Protocol.CloseStep"
+            }
+          ]
+        },
+        {
+          "id": "CLOSE-001-TEST",
+          "kind": "test",
+          "delivery": "existing",
+          "description": "Exercise compiled Close decisions; selected cases, not exhaustive exploration.",
+          "references": [
+            {
+              "file": "src/main/WebsocketClientLiteTest/ProtocolStateTests.cs",
+              "symbol": "WebsocketClientLiteTest.ProtocolStateTests.ClosingRequiresBothDirectionsOrTerminalEvent"
+            }
+          ]
+        },
+        {
+          "id": "CLOSE-001-MUTATION",
+          "kind": "mutation",
+          "delivery": "B",
+          "description": "Reject duplicate send and suppressed eligible send decisions.",
+          "references": []
+        },
+        {
+          "id": "CLOSE-001-REVIEW",
+          "kind": "review",
+          "delivery": "existing",
+          "description": "Review intent decision CLOSE-001 and its boundary assumptions in verification/close-intent-review.md; acceptance is recorded in PR review, not this manifest.",
+          "references": []
+        }
+      ],
+      "exclusions": [
+        "Reservation does not prove a completed wire write or peer receipt.",
+        "No proof of C# synchronization or generated C#."
+      ]
+    },
+    {
+      "id": "CLOSE-002",
+      "intent": "Preserve every previously set Close state bit on each valid transition.",
+      "origin": [
+        "Library policy: sequential Close state model",
+        "https://www.rfc-editor.org/rfc/rfc6455.html#section-7.1.2"
+      ],
+      "contracts": [
+        {
+          "file": "verification/Protocol.dfy",
+          "symbol": "ProtocolCore.Protocol.CloseStep",
+          "clauses": [
+            "requires state <= 7 && event <= 2",
+            "ensures next <= 7 && (next & state) == state"
+          ]
+        }
+      ],
+      "production_paths": [
+        {
+          "reference": {
+            "file": "src/main/WebsocketClientLite/Service/WebsocketSenderHandler.cs",
+            "symbol": "WebsocketClientLite.Service.WebsocketSenderHandler.AdvanceClose"
+          },
+          "responsibility": "Persist next state without resetting previously set bits."
+        }
+      ],
+      "assumptions": [
+        "CLOSE-LOCK"
+      ],
+      "obligations": [
+        {
+          "id": "CLOSE-002-PROOF",
+          "kind": "proof",
+          "delivery": "existing",
+          "description": "Verify CloseStep preconditions and the listed postconditions with scripts/dafny-masking.sh --check.",
+          "references": [
+            {
+              "file": "verification/Protocol.dfy",
+              "symbol": "ProtocolCore.Protocol.CloseStep"
+            }
+          ]
+        },
+        {
+          "id": "CLOSE-002-TEST",
+          "kind": "test",
+          "delivery": "existing",
+          "description": "Exercise compiled Close decisions; selected cases, not exhaustive exploration.",
+          "references": [
+            {
+              "file": "src/main/WebsocketClientLiteTest/ProtocolStateTests.cs",
+              "symbol": "WebsocketClientLiteTest.ProtocolStateTests.ClosingRequiresBothDirectionsOrTerminalEvent"
+            }
+          ]
+        },
+        {
+          "id": "CLOSE-002-MUTATION",
+          "kind": "mutation",
+          "delivery": "B",
+          "description": "Reject loss of a previously set state bit.",
+          "references": []
+        },
+        {
+          "id": "CLOSE-002-REVIEW",
+          "kind": "review",
+          "delivery": "existing",
+          "description": "Review intent decision CLOSE-002 and its boundary assumptions in verification/close-intent-review.md; acceptance is recorded in PR review, not this manifest.",
+          "references": []
+        }
+      ],
+      "exclusions": [
+        "No asynchronous interleaving proof or successful write guarantee."
+      ]
+    },
+    {
+      "id": "CLOSE-003",
+      "intent": "Return the release decision exactly when the next modeled state has both reservation and receive bits, or its terminal timeout/failure bit.",
+      "origin": [
+        "Library policy: sequential Close state model",
+        "https://www.rfc-editor.org/rfc/rfc6455.html#section-7.1.2"
+      ],
+      "contracts": [
+        {
+          "file": "verification/Protocol.dfy",
+          "symbol": "ProtocolCore.Protocol.CloseStep",
+          "clauses": [
+            "requires state <= 7 && event <= 2",
+            "ensures release <==> (next & 4) != 0 || (next & 3) == 3"
+          ]
+        }
+      ],
+      "production_paths": [
+        {
+          "reference": {
+            "file": "src/main/WebsocketClientLite/Service/WebsocketSenderHandler.cs",
+            "symbol": "WebsocketClientLite.Service.WebsocketSenderHandler.AdvanceClose"
+          },
+          "responsibility": "Complete _closeReady on release; this signal alone does not authorize transport disposal."
+        },
+        {
+          "reference": {
+            "file": "src/main/WebsocketClientLite/Service/WebsocketSenderHandler.cs",
+            "symbol": "WebsocketClientLite.Service.WebsocketSenderHandler.WaitForPeerCloseAsync"
+          },
+          "responsibility": "Translate peer-wait expiry to event 2."
+        }
+      ],
+      "assumptions": [
+        "CLOSE-LOCK",
+        "CLOSE-WRITE",
+        "CLOSE-TIMER"
+      ],
+      "obligations": [
+        {
+          "id": "CLOSE-003-PROOF",
+          "kind": "proof",
+          "delivery": "existing",
+          "description": "Verify CloseStep preconditions and the listed postconditions with scripts/dafny-masking.sh --check.",
+          "references": [
+            {
+              "file": "verification/Protocol.dfy",
+              "symbol": "ProtocolCore.Protocol.CloseStep"
+            }
+          ]
+        },
+        {
+          "id": "CLOSE-003-TEST",
+          "kind": "test",
+          "delivery": "existing",
+          "description": "Exercise compiled Close decisions; selected cases, not exhaustive exploration.",
+          "references": [
+            {
+              "file": "src/main/WebsocketClientLiteTest/ProtocolStateTests.cs",
+              "symbol": "WebsocketClientLiteTest.ProtocolStateTests.ClosingRequiresBothDirectionsOrTerminalEvent"
+            }
+          ]
+        },
+        {
+          "id": "CLOSE-003-MUTATION",
+          "kind": "mutation",
+          "delivery": "B",
+          "description": "Reject premature release and suppressed eligible release.",
+          "references": []
+        },
+        {
+          "id": "CLOSE-003-REVIEW",
+          "kind": "review",
+          "delivery": "existing",
+          "description": "Review intent decision CLOSE-003 and its boundary assumptions in verification/close-intent-review.md; acceptance is recorded in PR review, not this manifest.",
+          "references": []
+        }
+      ],
+      "exclusions": [
+        "Release is a readiness signal, not a completed handshake or direct transport release."
+      ]
+    },
+    {
+      "id": "CLOSE-004",
+      "intent": "On an established graceful DisposeAsync path, await successful Close write completion before releasing the transport, subject to the write and observer assumptions.",
+      "origin": [
+        "Library policy: bounded best-effort asynchronous teardown",
+        "https://www.rfc-editor.org/rfc/rfc6455.html#section-7.1.2"
+      ],
+      "contracts": [],
+      "production_paths": [
+        {
+          "reference": {
+            "file": "src/main/WebsocketClientLite/Service/WebsocketConnectionHandler.cs",
+            "symbol": "WebsocketClientLite.Service.WebsocketConnectionHandler.DisconnectWebsocket"
+          },
+          "responsibility": "Await Close send before waiting for the peer; catch send timeout/failure."
+        },
+        {
+          "reference": {
+            "file": "src/main/WebsocketClientLite/Service/WebsocketConnectionHandler.cs",
+            "symbol": "WebsocketClientLite.Service.WebsocketConnectionHandler.DisposeAsync"
+          },
+          "responsibility": "Await the shared close task before disposing parser and transport."
+        },
+        {
+          "reference": {
+            "file": "src/main/WebsocketClientLite/Service/WebsocketSenderHandler.cs",
+            "symbol": "WebsocketClientLite.Service.WebsocketSenderHandler.WriteFrameSerializedAsync"
+          },
+          "responsibility": "Await the serialized delegate write."
+        }
+      ],
+      "assumptions": [
+        "CLOSE-WRITE",
+        "CLOSE-FAILURE",
+        "CLOSE-TIMER",
+        "CLOSE-OBSERVER"
+      ],
+      "obligations": [
+        {
+          "id": "CLOSE-004-TEST",
+          "kind": "test",
+          "delivery": "existing",
+          "description": "Existing loopback coverage observes a Close frame before disposal returns; does not pause an in-flight write.",
+          "references": [
+            {
+              "file": "src/main/WebsocketClientLiteTest/TeardownTests.cs",
+              "symbol": "WebsocketClientLiteTest.TeardownTests.DisposeAsync_AwaitsCloseHandshake_AndCompletesSubscriber"
+            }
+          ]
+        },
+        {
+          "id": "CLOSE-004-CONTROLLED",
+          "kind": "test",
+          "delivery": "E",
+          "description": "Pause Close write and prove graceful disposal waits; detect an isolated ordering defect.",
+          "references": []
+        },
+        {
+          "id": "CLOSE-004-REVIEW",
+          "kind": "review",
+          "delivery": "existing",
+          "description": "Review intent decision CLOSE-004 and its boundary assumptions in verification/close-intent-review.md; acceptance is recorded in PR review, not this manifest.",
+          "references": []
+        }
+      ],
+      "exclusions": [
+        "Send timeout/failure, partial writes and synchronous Dispose are abort exceptions.",
+        "Concurrent unsubscribe or external disposal may interrupt a pending write."
+      ]
+    },
+    {
+      "id": "CLOSE-005",
+      "intent": "After a successful Close send, peer Close or expiry of the peer-wait timeout permits asynchronous disposal to finish, provided scheduling, callbacks and resource disposal progress; send failure or send timeout takes the best-effort terminal path.",
+      "origin": [
+        "Library policy: bounded best-effort asynchronous teardown",
+        "https://www.rfc-editor.org/rfc/rfc6455.html#section-7.1.2"
+      ],
+      "contracts": [],
+      "production_paths": [
+        {
+          "reference": {
+            "file": "src/main/WebsocketClientLite/Service/WebsocketConnectionHandler.cs",
+            "symbol": "WebsocketClientLite.Service.WebsocketConnectionHandler.DisconnectWebsocket"
+          },
+          "responsibility": "Use separate five-second send and peer-response waits; publish Disconnected afterward."
+        },
+        {
+          "reference": {
+            "file": "src/main/WebsocketClientLite/Service/WebsocketConnectionHandler.cs",
+            "symbol": "WebsocketClientLite.Service.WebsocketConnectionHandler.DisposeAsync"
+          },
+          "responsibility": "Await shared close task and release resources."
+        },
+        {
+          "reference": {
+            "file": "src/main/WebsocketClientLite/Service/WebsocketSenderHandler.cs",
+            "symbol": "WebsocketClientLite.Service.WebsocketSenderHandler.WaitForPeerCloseAsync"
+          },
+          "responsibility": "Allow readiness or timer expiry to finish peer waiting."
+        }
+      ],
+      "assumptions": [
+        "CLOSE-WRITE",
+        "CLOSE-FAILURE",
+        "CLOSE-TIMER",
+        "CLOSE-OBSERVER"
+      ],
+      "obligations": [
+        {
+          "id": "CLOSE-005-TEST",
+          "kind": "test",
+          "delivery": "existing",
+          "description": "Existing tests cover delayed peer reply and sender-level timeout separately.",
+          "references": [
+            {
+              "file": "src/main/WebsocketClientLiteTest/TeardownTests.cs",
+              "symbol": "WebsocketClientLiteTest.TeardownTests.DisposeAsyncKeepsTransportOpenUntilDelayedPeerClose"
+            },
+            {
+              "file": "src/main/WebsocketClientLiteTest/ProtocolStateTests.cs",
+              "symbol": "WebsocketClientLiteTest.ProtocolStateTests.CloseResponseTimeoutMakesTheTransportTerminal"
+            }
+          ]
+        },
+        {
+          "id": "CLOSE-005-CONTROLLED",
+          "kind": "test",
+          "delivery": "E",
+          "description": "Control peer wait timeout and transport failure through disposal, with diagnostic bounded waits.",
+          "references": []
+        },
+        {
+          "id": "CLOSE-005-REVIEW",
+          "kind": "review",
+          "delivery": "existing",
+          "description": "Review intent decision CLOSE-005 and its boundary assumptions in verification/close-intent-review.md; acceptance is recorded in PR review, not this manifest.",
+          "references": []
+        }
+      ],
+      "exclusions": [
+        "No unconditional liveness, exact total disposal deadline, or exhaustive concurrency guarantee.",
+        "No promise that a timeout completes or cancels an outstanding stream write."
+      ]
+    }
+  ]
+}

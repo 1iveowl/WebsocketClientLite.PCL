@@ -16,6 +16,10 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4
+      - name: Validate Close requirement map and validator failure modes
+        run: |
+          python3 scripts/validate-requirements.py
+          python3 -m unittest discover -s verification/tests -v
       - name: Verify protocol core and check generated C#
         run: |
           set -o pipefail
