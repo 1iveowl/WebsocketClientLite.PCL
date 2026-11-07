@@ -1,0 +1,85 @@
+{
+  "schema_version": 1,
+  "job": "protocol",
+  "source": {
+    "tested_commit": "merge",
+    "pr_source_head": "head",
+    "dirty_worktree": false,
+    "source_hashes": {
+      "verification/Protocol.dfy": "a",
+      "verification/Masking.dfy": "b"
+    }
+  },
+  "source_after": {
+    "tested_commit": "merge",
+    "pr_source_head": "head",
+    "dirty_worktree": false,
+    "source_hashes": {
+      "verification/Protocol.dfy": "a",
+      "verification/Masking.dfy": "b"
+    }
+  },
+  "ci": {
+    "GITHUB_SERVER_URL": null,
+    "GITHUB_REPOSITORY": null,
+    "GITHUB_RUN_ID": null,
+    "GITHUB_RUN_ATTEMPT": null,
+    "GITHUB_EVENT_NAME": null,
+    "GITHUB_JOB": null,
+    "GITHUB_SHA": null
+  },
+  "runs": {
+    "manifest": {
+      "status": "passed",
+      "exit_code": 0,
+      "command": [
+        "python3",
+        "scripts/validate-requirements.py"
+      ],
+      "started_at": "2026-11-07T16:23:16.113066+00:00",
+      "finished_at": "2026-11-07T16:23:16.113077+00:00",
+      "log": "manifest.log"
+    },
+    "fixtures": {
+      "status": "passed",
+      "exit_code": 0,
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "verification/tests",
+        "-v"
+      ],
+      "started_at": "2026-11-07T16:23:16.113110+00:00",
+      "finished_at": "2026-11-07T16:23:16.113112+00:00",
+      "log": "fixtures.log"
+    },
+    "proof": {
+      "status": "passed",
+      "exit_code": 0,
+      "command": [
+        "./scripts/dafny-masking.sh",
+        "--check"
+      ],
+      "started_at": "2026-11-07T16:23:16.113139+00:00",
+      "finished_at": "2026-11-07T16:23:16.113141+00:00",
+      "log": "proof.log"
+    },
+    "mutations": {
+      "status": "passed",
+      "exit_code": 0,
+      "command": [
+        "python3",
+        "scripts/run-close-mutations.py",
+        "--output",
+        "/tmp/tmppyew1tum/protocol/mutations"
+      ],
+      "started_at": "2026-11-07T16:23:16.113166+00:00",
+      "finished_at": "2026-11-07T16:23:16.113167+00:00",
+      "log": "mutations.log"
+    }
+  },
+  "tools": {}
+}

@@ -1,6 +1,6 @@
 # Close negative proof checks
 
-Run `python3 scripts/run-close-mutations.py` from any directory. Python 3.9+,
+Run `./scripts/pdd.sh mutations` using its absolute path from any directory. The .NET 10 SDK,
 Linux x64, curl and unzip are required. `scripts/dafny-toolchain.sh` shares the
 existing checksum-pinned Dafny 4.11.0 / Z3 4.12.1 bootstrap with generation; the
 runner checks versions and explicitly selects that solver. It does not use a

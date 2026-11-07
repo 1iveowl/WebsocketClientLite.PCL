@@ -1,0 +1,253 @@
+using System.Text.Json.Nodes;
+using System.Text.RegularExpressions;
+using System.Xml.Linq;
+using static Pdd.Data;
+
+namespace Pdd;
+
+public sealed partial class Evidence
+{
+    static string S(JsonNode? node, string key, string fallback = "") => node is JsonObject obj ? obj[key]?.ToString() ?? fallback : fallback;
+    static bool Passed(JsonNode? run) => S(run, "status") == "passed" && run?["exit_code"]?.ToString() == "0" && S(run, "started_at").Length > 0 && S(run, "finished_at").Length > 0;
+    static bool Equal(JsonNode? a, JsonNode? b) => JsonNode.DeepEquals(a, b);
+    static string LocalFile(string root, string name)
+    {
+        var path = Path.GetFullPath(Path.Combine(root, name));
+        Require(!Path.IsPathRooted(name) && path.StartsWith(Path.GetFullPath(root) + Path.DirectorySeparatorChar, StringComparison.Ordinal), "evidence path outside directory");
+        // Also reject symlink escapes as for source references.
+        Requirements.Source(root, name);
+        return path;
+    }
+    public static JsonObject TestResults(string directory)
+    {
+        XNamespace ns = "http://microsoft.com/schemas/VisualStudio/TeamTest/2010";
+        var matrix = new JsonObject();
+        foreach (var tfm in Tfms)
+        {
+            var path = Path.Combine(directory, "tests", tfm);
+            var files = Directory.Exists(path) ? Directory.GetFiles(path, "*.trx") : [];
+            if (files.Length != 1)
+            {
+                matrix[tfm] = new JsonObject { ["status"] = "not-run", ["tests"] = new JsonObject(), ["host_runtime"] = null };
+                continue;
+            }
+            var tree = XDocument.Load(files[0]);
+            var definitions = tree.Descendants(ns + "UnitTest").ToDictionary(e => (string)e.Attribute("id")!, e => e.Element(ns + "TestMethod"));
+            var tests = new Dictionary<string, string>();
+            string? runtime = null;
+            Dictionary<string, int> severity = new()
+            {
+                ["passed"] = 0,
+                ["skipped"] = 1,
+                ["not-run"] = 2,
+                ["failed"] = 3
+            };
+            foreach (var item in tree.Descendants(ns + "UnitTestResult"))
+            {
+                Require(definitions.TryGetValue((string)item.Attribute("testId")!, out var method) && method is not null, "TRX result has no test definition");
+                var name = ((string)method!.Attribute("className")!).Split(',')[0] + "." + (string)method.Attribute("name")!;
+                var status = (string?)item.Attribute("outcome") switch
+                {
+                    "Passed" => "passed",
+                    "NotExecuted" => "skipped",
+                    _ => "failed"
+                };
+                if (!tests.TryGetValue(name, out var prior) || severity[status] > severity[prior])
+                    tests[name] = status;
+                if (name == "WebsocketClientLiteTest.RuntimeEvidenceTests.RecordHostRuntime" && status == "passed")
+                {
+                    var match = Regex.Match(item.Value, @"PDD_HOST_RUNTIME=(.+)");
+                    runtime = match.Success ? match.Groups[1].Value.Trim() : null;
+                }
+            }
+            var run = Read(Path.Combine(path, "run.json"));
+            var valid = Passed(run) && (run["command"]?.AsArray() ?? []).Any(c => c?.ToString() == "-p:LibTfm=" + tfm) && File.Exists(Path.Combine(path, "output.log"));
+            matrix[tfm] = new JsonObject { ["status"] = valid && tests.Count > 0 && tests.Values.All(x => x == "passed") && !string.IsNullOrEmpty(runtime) ? "passed" : "failed", ["execution"] = run, ["tests"] = Node(tests), ["host_runtime"] = runtime, ["trx"] = Path.GetRelativePath(directory, files[0]) };
+        }
+        return matrix;
+    }
+    public JsonObject Aggregate(string directory, SourceIdentity expected)
+    {
+        var errors = new JsonArray();
+        var jobs = new JsonObject();
+        var rejected = new JsonObject();
+        var requirements = new JsonArray();
+        var reviews = new JsonArray();
+        var ci = Node(CiIdentity());
+        var receipt = new JsonObject { ["schema_version"] = 1, ["created_at"] = Now(), ["source"] = Node(expected), ["ci"] = ci, ["jobs"] = jobs, ["rejected_jobs"] = rejected, ["errors"] = errors, ["requirements"] = requirements, ["review_evidence"] = reviews, ["stryker"] = new JsonObject { ["status"] = "not-run", ["delivery"] = "E", ["reason"] = "Separate C# mutation evidence pending increment E" } };
+        foreach (var job in new[] { "protocol", "tests" })
+        {
+            var path = Path.Combine(directory, job, "job.json");
+            if (!File.Exists(path))
+            {
+                errors.Add($"Missing {job} job evidence");
+                continue;
+            }
+            JsonNode? data = null;
+            try
+            {
+                data = Read(path);
+                Require(data["schema_version"]?.ToString() == "1" && S(data, "job") == job && Equal(data["source"], Node(expected)) && Equal(data["source_after"], Node(expected)), "source identity mismatch or incomplete run");
+                foreach (var key in new[] { "GITHUB_RUN_ID", "GITHUB_RUN_ATTEMPT", "GITHUB_REPOSITORY", "GITHUB_EVENT_NAME", "GITHUB_SHA" })
+                    Require(Equal(data["ci"]![key], ci[key]), "CI identity mismatch");
+                jobs[job] = data;
+                foreach (var (name, _) in Commands(job, Path.Combine(directory, job)))
+                {
+                    var run = data["runs"]?[name];
+                    var valid = Passed(run);
+                    try
+                    {
+                        LocalFile(Path.Combine(directory, job), S(run, "log", "missing"));
+                    }
+                    catch { valid = false; }
+                    if (!valid)
+                    {
+                        errors.Add($"{job}/{name}: missing or unsuccessful command evidence");
+                        // A claimed pass with incomplete execution evidence is not a proof pass.
+                        if (run is JsonObject && S(run, "status") == "passed")
+                            run["status"] = "failed";
+                    }
+                }
+            }
+            catch (Exception error) when (error is not OutOfMemoryException)
+            {
+                jobs.Remove(job);
+                rejected[job] = new JsonObject { ["reason"] = error.Message, ["partial_evidence"] = data?.DeepClone() };
+                errors.Add($"{job}: {error.Message}");
+            }
+        }
+        var proof = jobs["protocol"]?["runs"]?["proof"];
+        if (S(proof, "status") == "passed")
+        {
+            var log = Path.Combine(directory, "protocol/proof.log");
+            var text = File.Exists(log) ? Text(log) : "";
+            var summaries = Regex.Matches(text, @"Dafny program verifier finished with (\d+) verified, (\d+) errors?");
+            if (summaries.Count == 0 || summaries.Any(m => int.Parse(m.Groups[1].Value) == 0 || int.Parse(m.Groups[2].Value) != 0) || Regex.IsMatch(text, @"Error:|timed out|time out|timeout|resource limit|inconclusive", RegexOptions.IgnoreCase))
+            {
+                proof!["status"] = "failed";
+                errors.Add("Missing or failed verifier summary");
+            }
+        }
+        var matrix = new JsonObject();
+        JsonObject mutations = new();
+        try
+        {
+            if (jobs.ContainsKey("tests"))
+            {
+                matrix = TestResults(Path.Combine(directory, "tests"));
+                if (matrix.Any(p => S(p.Value, "status") != "passed"))
+                    errors.Add("Incomplete or unsuccessful framework matrix/runtime evidence");
+            }
+            if (jobs.ContainsKey("protocol"))
+            {
+                mutations = Read(Path.Combine(directory, "protocol/mutations/results.json")).AsObject();
+                var versions = Read(Path.Combine(directory, "protocol/mutations/tool-versions.json"));
+                foreach (var (name, version) in new[] { ("dafny", "4.11.0"), ("z3", "4.12.1") })
+                {
+                    var probe = versions[name];
+                    Require(probe is JsonObject && S(probe, "stdout").Contains(version), "missing or mismatched verifier version evidence");
+                    if (probe!["exit_code"] is { } exit)
+                        Require(exit.ToString() == "0", "failed verifier version probe");
+                    Require(probe["timed_out"]?.GetValue<bool>() != true && probe["interrupted"]?.GetValue<bool>() != true && probe["launch_error"] is null, "incomplete verifier version probe");
+                }
+                jobs["protocol"]!["tools"]!["verifier"] = versions;
+                var hashes = mutations["source_hashes"]!.AsObject();
+                Require(hashes.Select(p => p.Key).ToHashSet().SetEquals(["verification/Masking.dfy", "verification/Protocol.dfy"]), "missing mutation source hashes");
+                Require(hashes.All(p => expected.SourceHashes.TryGetValue(p.Key, out var hash) && p.Value?.ToString() == hash), "mutation source hashes mismatch");
+                Require(mutations["experiments"] is JsonArray, "missing experiments");
+                foreach (var experiment in mutations["experiments"]!.AsArray())
+                {
+                    Require(experiment is JsonObject, "invalid mutation experiment");
+                    Require(experiment!["timed_out"]?.GetValue<bool>() != true && experiment["interrupted"]?.GetValue<bool>() != true && experiment["launch_error"] is null, "incomplete mutation execution");
+                    if (experiment!["matched_clauses"] is { } clauses)
+                        Require(clauses is JsonArray list && list.All(c => c is JsonValue value && value.TryGetValue<string>(out _)), "invalid matched clauses");
+                }
+                var ids = mutations["experiments"]!.AsArray().Select(e => e!["id"]!.ToString()).ToArray();
+                Require(ids.Distinct().Count() == ids.Length, "duplicate mutation experiment");
+                if (S(mutations, "status") != "passed")
+                    errors.Add("Mutation suite failed");
+            }
+        }
+        catch (Exception error) when (error is not OutOfMemoryException) { errors.Add($"Invalid raw evidence: {error.Message}"); mutations = new(); }
+        var coverage = new JsonObject { ["status"] = "not-run", ["reports"] = new JsonArray() };
+        receipt["coverage"] = coverage;
+        if (jobs.ContainsKey("tests"))
+        {
+            try
+            {
+                var path = Path.Combine(directory, "tests/coverage");
+                var reports = Directory.Exists(path) ? Directory.GetFiles(path, "coverage.cobertura.xml", SearchOption.AllDirectories) : [];
+                Require(reports.Length > 0, "missing coverage report");
+                foreach (var file in reports)
+                {
+                    var rate = double.Parse((string)XDocument.Load(file).Root!.Attribute("line-rate")!, System.Globalization.CultureInfo.InvariantCulture);
+                    Require(rate >= .70 && rate <= 1, "coverage below 70% or invalid rate");
+                    coverage["reports"]!.AsArray().Add(new JsonObject { ["path"] = Path.GetRelativePath(directory, file), ["line_rate"] = rate });
+                }
+                coverage["status"] = "passed";
+            }
+            catch (Exception error) when (error is not OutOfMemoryException) { coverage["status"] = "failed"; errors.Add($"Coverage: {error.Message}"); }
+        }
+        receipt["framework_matrix"] = matrix;
+        receipt["dafny_mutations"] = mutations;
+        var manifest = Model<RequirementManifest>(Read(Path.Combine(root, "verification/requirements.json")));
+        var catalog = Model<MutationCatalog>(Read(Path.Combine(root, "verification/mutations/close.json"))).Mutants;
+        foreach (var requirement in manifest.Requirements)
+        {
+            var obligations = new List<JsonObject>();
+            foreach (var o in requirement.Obligations)
+            {
+                var item = Node(o).AsObject();
+                item["status"] = "not-run";
+                item["evidence"] = new JsonArray();
+                if (o.Kind == "review")
+                {
+                    item["reason"] = "Acceptance must be recorded against the revision in PR review; textual reports are not approval.";
+                    reviews.Add(item.DeepClone());
+                }
+                else if (o.Delivery == "E")
+                    item["reason"] = "Pending controlled tests in increment E";
+                else if (o.Kind == "proof")
+                {
+                    item["status"] = S(proof, "status", "not-run");
+                    item["evidence"] = Node(new[] { "protocol/proof.log" });
+                }
+                else if (o.Kind == "mutation")
+                {
+                    var required = catalog.Where(m => m.Obligation == o.Id).ToArray();
+                    var experiments = (mutations["experiments"] as JsonArray ?? []).ToDictionary(e => e!["id"]!.ToString(), e => e!);
+                    experiments.TryGetValue("baseline", out var baseline);
+                    var ok = S(baseline, "status") == "passed" && baseline?["exit_code"]?.ToString() == "0";
+                    ok &= required.All(m => experiments.TryGetValue(m.Id, out var e) && S(e, "status") == "detected" && e["exit_code"]?.ToString() == "4" && (e["matched_clauses"]?.AsArray() ?? []).Any(c => c?.ToString() == m.TargetClause));
+                    item["status"] = required.Length > 0 && ok ? "passed" : mutations.Count > 0 ? "failed" : "not-run";
+                    item["evidence"] = Node(new[] { "protocol/mutations/results.json" });
+                }
+                else if (o.Kind == "test")
+                {
+                    var statuses = Tfms.SelectMany(t => o.References.Select(r => S(matrix[t]?["tests"], r.Symbol, "not-run"))).ToArray();
+                    item["status"] = statuses.Contains("failed") ? "failed" : statuses.Length == 0 || statuses.Contains("not-run") ? "not-run" : statuses.Contains("skipped") ? "skipped" : "passed";
+                    item["evidence"] = Node(Tfms.Select(t => $"tests/tests/{t}/results.trx").ToArray());
+                }
+                if (o.Kind != "review" && o.Delivery != "E" && S(item, "status") != "passed")
+                    errors.Add($"{o.Id}: {item["status"]}");
+                obligations.Add(item);
+            }
+            requirements.Add(new JsonObject { ["id"] = requirement.Id, ["satisfied"] = obligations.All(o => S(o, "status") == "passed"), ["machine_evidence"] = new JsonArray(obligations.Where(o => S(o, "kind") != "review").Select(o => (JsonNode)o).ToArray()) });
+        }
+        receipt["gate"] = new JsonObject { ["status"] = errors.Count > 0 ? "failed" : "passed", ["scope"] = "Existing machine obligations and CI gates; excludes pending E and PR review, which remain unsatisfied." };
+        return receipt;
+    }
+    public static string Summary(JsonObject receipt)
+    {
+        var lines = new List<string> { "# PDD verification receipt", "", $"Machine evidence gate: **{receipt["gate"]!["status"]}**", "", receipt["gate"]!["scope"]!.ToString(), "", $"Tested commit: `{receipt["source"]!["tested_commit"]}`", $"PR source head: `{receipt["source"]!["pr_source_head"]}`", "", "Five library builds use the actual hosts recorded below; they are not five independently tested runtimes.", "" };
+        foreach (var (tfm, result) in receipt["framework_matrix"]!.AsObject())
+            lines.Add($"- {tfm}: {result!["status"]}; host: {result["host_runtime"]}");
+        lines.AddRange(["", "| Obligation | Status |", "| --- | --- |"]);
+        foreach (var req in receipt["requirements"]!.AsArray())
+            foreach (var item in req!["machine_evidence"]!.AsArray())
+                lines.Add($"| {item!["id"]} | {item["status"]} {string.Join(", ", item["evidence"]!.AsArray().Select(p => $"[{p}]({p})"))} |");
+        lines.AddRange(["", "Review evidence is separate and not-run; no requirement is claimed satisfied without it.", "Stryker and controlled schedule evidence: not-run (increment E).", "", "Receipts are traceability records, not signed attestations.", ""]);
+        lines.AddRange(receipt["errors"]!.AsArray().Select(e => $"- {e}"));
+        return string.Join('\n', lines) + "\n";
+    }
+}
