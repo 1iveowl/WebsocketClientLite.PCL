@@ -1,82 +1,44 @@
-﻿using HttpMachine;
+using HttpMachine;
 using System;
 using System.Linq;
-using System.Diagnostics;
 using System.Collections.Generic;
 using WebsocketClientLite.CustomException;
 using IWebsocketClientLite;
+using Protocol = WebsocketClientLite.VerifiedProtocol.Protocol;
 
 namespace WebsocketClientLite.Parser;
 
-internal class HandshakeParser(
-    HttpCombinedParser parserHandler,
-    HandshakeParserDelegate parserDelegate,
-    Action<ConnectionStatus, Exception> connectionStatusAction)
+internal class HandshakeParser(HttpCombinedParser parserHandler, HandshakeParserDelegate parserDelegate,
+    Action<ConnectionStatus, Exception> connectionStatusAction, string expectedAccept)
 {
-    private readonly Action<ConnectionStatus, Exception> _connectionStatusAction = connectionStatusAction;
-    private readonly HttpCombinedParser _parserHandler = parserHandler;
-    private readonly HandshakeParserDelegate _parserDelegate = parserDelegate;
-
     internal IEnumerable<string>? SubprotocolAcceptedNames { get; private set; }
+    private bool _done;
 
-    internal bool Parse(
-        ReadOnlySpan<byte> bytes,
-        IEnumerable<string>? subProtocols)
+    internal bool Parse(ReadOnlySpan<byte> bytes, IEnumerable<string>? subProtocols)
     {
-        _parserHandler.Execute(bytes);
+        if (_done) return true;
+        parserHandler.Execute(bytes);
+        if (!parserDelegate.HeadersComplete) return false;
+        _done = true;
 
-        if (_parserDelegate.HttpRequestResponse is not null
-            && _parserDelegate.HttpRequestResponse.IsEndOfMessage)
-        {
-            if (_parserDelegate.HttpRequestResponse.StatusCode == 101)
-            {
-                if (subProtocols is not null 
-                    && _parserDelegate?.HttpRequestResponse?.Headers is not null)
-                {
-                    // Natural casing: header lookups are case-insensitive as of
-                    // HttpMachine 6.0, so no dependency on the parser's header
-                    // name normalization remains.
-                    if (_parserDelegate
-                        .HttpRequestResponse
-                        .Headers
-                        .TryGetValue("Sec-WebSocket-Protocol", out var subprotocolAcceptedNames))
-                    {
-                        // Materialize: evaluated once, and consumers (the public
-                        // NegotiatedSubprotocols property) get a stable snapshot.
-                        SubprotocolAcceptedNames = subprotocolAcceptedNames
-                            .Where(spn => subProtocols.Contains(spn))
-                            .ToList();
+        string[] Values(string name) => parserDelegate.HeaderValues.TryGetValue(name, out var values)
+            ? values.ToArray() : Array.Empty<string>();
+        bool Token(string name, string token) => Values(name).SelectMany(v => v.Split(','))
+            .Any(v => string.Equals(v.Trim(), token, StringComparison.OrdinalIgnoreCase));
 
-                        if (!SubprotocolAcceptedNames?.Any() ?? true)
-                        {
-                            _connectionStatusAction(
-                                ConnectionStatus.Aborted,
-                                new WebsocketClientLiteException("Server responded only with subprotocols not known by client."));
-                        }
-                    }
-                    else
-                    {
-                        _connectionStatusAction(
-                            ConnectionStatus.Aborted,
-                            new WebsocketClientLiteException("Server responded with blank Sub Protocol name")
-                            );
-                    }
-                }
-
-                Debug.WriteLine("HandShake completed");
-                return true;
-            }
-            else
-            {
-                // Non-101 response: the HTTP message is complete, so parsing is
-                // done. The failure itself is reported by HandshakeParserDelegate
-                // (HandshakeFailed + exception), which the connect path awaits —
-                // no side-channel Abort needed, and no further bytes to read.
-                Debug.WriteLine($"Handshake rejected: {_parserDelegate.HttpRequestResponse.StatusCode}");
-                return true;
-            }
-        }
-
-        return false;
+        var accept = Values("Sec-WebSocket-Accept");
+        var selected = Values("Sec-WebSocket-Protocol");
+        bool protocolValid = selected.Length == 0 || (selected.Length == 1 &&
+            !selected[0].Any(c => c == ',') && (subProtocols?.Contains(selected[0].Trim(), StringComparer.Ordinal) ?? false));
+        bool accepted = Protocol.HandshakeValid(parserDelegate.StatusCode == 101 && parserHandler.MajorVersion == 1 && parserHandler.MinorVersion == 1,
+            Token("Upgrade", "websocket"), Token("Connection", "Upgrade"),
+            accept.Length == 1 && string.Equals(accept[0].Trim(), expectedAccept, StringComparison.Ordinal),
+            protocolValid, Values("Sec-WebSocket-Extensions").Length == 0);
+        if (accepted && selected.Length == 1) SubprotocolAcceptedNames = new[] { selected[0].Trim() };
+        string reason = $"Invalid WebSocket handshake response (HTTP {parserDelegate.StatusCode}): required upgrade, accept, or negotiation checks failed.";
+        // Report failure through the handshake result; retain the existing status notification.
+        parserDelegate.Report(accepted, reason);
+        if (!accepted) connectionStatusAction(ConnectionStatus.Aborted, new WebsocketClientLiteException(reason));
+        return true;
     }
 }

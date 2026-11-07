@@ -1,4 +1,5 @@
 using System;
+using Protocol = WebsocketClientLite.VerifiedProtocol.Protocol;
 using System.Threading;
 using System.Threading.Tasks;
 using IWebsocketClientLite;
@@ -12,9 +13,8 @@ internal static class DataframeParsing
 {
     /// <summary>
     /// Reads a single WebSocket frame from the connection. The payload is read
-    /// once into a byte array and unmasked in place (no intermediate MemoryStream
-    /// and no per-step record copies). Returns <see langword="null"/> if the
-    /// stream ends before a complete frame is available.
+    /// once into a byte array after validating the server header. Cancellation
+    /// returns null; truncated input fails through the connection reader.
     /// </summary>
     internal static async Task<Dataframe?> ReadDataframeAsync(
         this TcpConnectionService tcpConnection,
@@ -36,75 +36,18 @@ internal static class DataframeParsing
         var opcode = (OpcodeKind)(b0 & 0x0F);
 
         bool mask = (b1 & 0x80) != 0;
-        byte lengthMarker = (byte)(b1 & 0x7F);
-
-        ulong length;
-        if (lengthMarker <= 125)
+        Protocol.DecodeHeader(b0, b1, Array.Empty<byte>(), 0, (ulong)tcpConnection.MaxFrameSize,
+            out byte status, out ulong length, out uint headerSize);
+        if (status == 0)
         {
-            length = lengthMarker;
+            int count = (int)headerSize - 2;
+            var ext = await tcpConnection.ReadHeaderBytesAsync(count, ct).ConfigureAwait(false);
+            if (ext is null) return null;
+            Protocol.DecodeHeader(b0, b1, ext, (uint)count, (ulong)tcpConnection.MaxFrameSize,
+                out status, out length, out _);
         }
-        else if (lengthMarker == 126)
-        {
-            var ext = await tcpConnection.ReadHeaderBytesAsync(2, ct).ConfigureAwait(false);
-            if (ext is null)
-            {
-                return null;
-            }
-            length = (ulong)((ext[0] << 8) | ext[1]);
-        }
-        else
-        {
-            var ext = await tcpConnection.ReadHeaderBytesAsync(8, ct).ConfigureAwait(false);
-            if (ext is null)
-            {
-                return null;
-            }
-            length = ((ulong)ext[0] << 56)
-                   | ((ulong)ext[1] << 48)
-                   | ((ulong)ext[2] << 40)
-                   | ((ulong)ext[3] << 32)
-                   | ((ulong)ext[4] << 24)
-                   | ((ulong)ext[5] << 16)
-                   | ((ulong)ext[6] << 8)
-                   | ext[7];
-        }
-
-        // RFC 6455 §5.5: control frames must not be fragmented and must carry a
-        // payload of 125 bytes or fewer.
-        if (opcode is OpcodeKind.Close or OpcodeKind.Ping or OpcodeKind.Pong)
-        {
-            if (!fin)
-            {
-                throw new WebsocketClientLiteException(
-                    $"Protocol error: received a fragmented control frame ({opcode}).");
-            }
-
-            if (length > 125)
-            {
-                throw new WebsocketClientLiteException(
-                    $"Protocol error: control frame ({opcode}) payload length {length} exceeds 125 bytes.");
-            }
-        }
-
-        // Guard against memory exhaustion before allocating a payload-sized buffer.
-        if (length > (ulong)tcpConnection.MaxFrameSize)
-        {
-            throw new WebsocketClientLiteException(
-                $"Incoming frame payload length ({length} bytes) exceeds the configured maximum of {tcpConnection.MaxFrameSize} bytes.");
-        }
-
-        byte[]? maskKey = null;
-        if (mask)
-        {
-            // For masked frames the masking key precedes the payload per RFC 6455.
-            // The scratch buffer stays valid through the payload read below (which
-            // fills its own array) and is consumed by Decode before the next read.
-            maskKey = await tcpConnection.ReadHeaderBytesAsync(4, ct).ConfigureAwait(false);
-            if (maskKey is null)
-            {
-                return null;
-            }
-        }
+        if (status != 2)
+            throw new WebsocketClientLiteException("Protocol error: invalid server frame header or payload exceeds the configured maximum.");
 
         byte[] payload;
         if (length == 0)
@@ -119,13 +62,9 @@ internal static class DataframeParsing
                 return null;
             }
 
-            payload = read;
+            payload = read;        }
 
-            if (mask)
-            {
-                WebsocketMasking.Decode(payload, maskKey!); // unmask in place
-            }
-        }
+        if (opcode == OpcodeKind.Close) ProtocolPayload.ValidateClose(payload);
 
         var fragment = (fin, opcode) switch
         {

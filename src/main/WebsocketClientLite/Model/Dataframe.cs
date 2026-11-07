@@ -1,4 +1,4 @@
-using System.Text;
+using WebsocketClientLite.Helper;
 using IWebsocketClientLite;
 
 namespace WebsocketClientLite.Model;
@@ -26,6 +26,6 @@ internal record Dataframe : IDataframe
     // and could go stale relative to the new payload.
     public string? Message =>
         Payload is not null && Opcode is OpcodeKind.Text
-            ? Encoding.UTF8.GetString(Payload, 0, Payload.Length)
+            ? ProtocolPayload.StrictUtf8.GetString(Payload, 0, Payload.Length)
             : null;
 }
