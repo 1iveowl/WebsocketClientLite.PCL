@@ -93,6 +93,8 @@ Exit gate: successful and deliberately failed fixture runs produce accurate rece
 
 ## 5. Exercise asynchronous boundaries with controlled schedules
 
+Use the [Stryker.NET Close boundary pilot](../verification/stryker-close-pilot.md) to challenge the handwritten C# tests in this increment. Record its JSON results separately from Dafny mutations in the D/E receipts, triage relevant surviving and uncovered mutants, and set a CI budget and gate from the measured results. A recorded run and dispositions for those mutants are part of this increment's exit gate; Stryker does not replace the controlled schedules below.
+
 Extend the test harness with explicit stream pause/resume points and, where needed, a controllable timeout source. Prefer existing injected delegates and internal seams; avoid changing the public API just for tests. Keep real loopback tests alongside controlled tests.
 
 Specify each schedule before implementing its test:
