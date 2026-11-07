@@ -333,3 +333,12 @@ Receipt fixtures cover successful runs, actual failing commands, skipped and
 interrupted results, absent jobs/logs/targets/runtime data, failed or skipped named
 tests, missing mutations, malformed records, revision/hash and CI-attempt
 mismatches. Run them with `dotnet test tools/Pdd.Tests/Pdd.Tests.csproj -c Release`.
+
+### Controlled Close evidence
+
+[Increment E schedules](controlled-close.md) add deterministic barriers alongside
+the real loopback tests. Capture `controlled` and `stryker` into separate job
+folders beside `protocol` and `tests`, then run `./scripts/pdd.sh aggregate`.
+All four captures must use the same unchanged source identity. The aggregate
+gate requires the ordering-defect experiment independently of Stryker outcomes;
+review acceptance is never inferred from either experiment.

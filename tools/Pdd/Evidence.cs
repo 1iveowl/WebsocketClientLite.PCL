@@ -18,7 +18,9 @@ public sealed partial class Evidence(string root)
             hashes[p] = File.Exists(Path.Combine(root, p)) ? Hash(File.ReadAllBytes(Path.Combine(root, p))) : null;
         return new(await Git("rev-parse", "HEAD"), Environment.GetEnvironmentVariable("PDD_PR_HEAD") is { Length: > 0 } head ? head : null, (await Git("status", "--porcelain")).Length > 0, hashes);
     }
-    public static List<(string Name, string[] Command)> Commands(string job, string output) => job == "protocol" ?
+    public static List<(string Name, string[] Command)> Commands(string job, string output) => job == "stryker" ?
+        [("runtime", ["dotnet", "test", Project, "-c", "Release", "-p:LibTfm=net10.0", "--filter", "FullyQualifiedName=" + RuntimeTest, "--logger", "trx;LogFileName=runtime.trx", "--results-directory", Path.Combine(output, "runtime")]), ("stryker", ["./scripts/stryker-close.sh"])] : job == "controlled" ?
+        [("defect", ["./scripts/pdd.sh", "controlled-defect", "--output", Path.Combine(output, "defect")])] : job == "protocol" ?
         [("manifest", ["./scripts/pdd.sh", "validate"]), ("fixtures", ["dotnet", "test", "tools/Pdd.Tests/Pdd.Tests.csproj", "-c", "Release", "--nologo"]), ("proof", ["./scripts/dafny-masking.sh", "--check"]), ("mutations", ["./scripts/pdd.sh", "mutations", "--output", Path.Combine(output, "mutations")])] :
         [("restore", ["dotnet", "restore", "src/main/WebsocketClientLite.sln"]), ("build", ["dotnet", "build", "src/main/WebsocketClientLite.sln", "--configuration", "Release", "--no-restore"]), ("matrix", ["./test-all-tfms.sh", "Release"]), ("coverage-run", ["dotnet", "test", Project, "--configuration", "Release", "--collect:XPlat Code Coverage", "--results-directory", Path.Combine(output, "coverage")]), ("coverage-gate", ["./scripts/check-coverage.sh", Path.Combine(output, "coverage"), "70"])];
     public async Task<CommandReceipt> Execute(string[] command, string output, double budget = 1800, CancellationToken cancellation = default)
@@ -44,7 +46,7 @@ public sealed partial class Evidence(string root)
     }
     public async Task<int> Capture(string job, string output, double budget, CancellationToken cancellation = default, List<(string Name, string[] Command)>? commands = null)
     {
-        Require(job is "protocol" or "tests", "unsupported job");
+        Require(job is "protocol" or "tests" or "controlled" or "stryker", "unsupported job");
         Fresh(output);
         commands ??= Commands(job, output);
         var report = new JobReceipt { Job = job, Source = await Identity() };
@@ -79,7 +81,7 @@ public sealed partial class Evidence(string root)
                 {
                     run.StartedAt = Now();
                     SaveJob();
-                    var result = await Processes.Run(command, root, Path.Combine(output, "commands", name), budget, cancellation, new Dictionary<string, string> { ["PDD_TEST_RESULTS"] = Path.Combine(output, "tests") }, Path.Combine(output, run.Log));
+                    var result = await Processes.Run(command, root, Path.Combine(output, "commands", name), budget, cancellation, new Dictionary<string, string> { ["PDD_TEST_RESULTS"] = Path.Combine(output, "tests"), ["PDD_STRYKER_OUTPUT"] = Path.Combine(output, "reports") }, Path.Combine(output, run.Log));
                     Save(Path.Combine(output, "commands", name, "execution.json"), result);
                     run.ExitCode = result.ExitCode;
                     run.Status = result.Success ? "passed" : "failed";

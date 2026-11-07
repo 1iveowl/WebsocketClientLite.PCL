@@ -48,13 +48,14 @@ public class ReceiptTests
     }
     public static IEnumerable<object[]> Cases() => Data.Read(Path.Combine(Fixtures, "receipt-cases.json")).AsArray().Select(c => new object[] { c!.ToJsonString() });
     [Fact]
-    public void PythonSuccessFixtureMatchesAndKeepsReviewAndEPending()
+    public void LegacySuccessFixtureNowRequiresEEvidence()
     {
         using var tree = new TemporaryTree();
         CopyTree(Path.Combine(Fixtures, "evidence"), tree.Path);
         BindCi(tree.Path);
         var actual = Projection(new Evidence(RequirementsTests.Root).Aggregate(tree.Path, Identity));
         var expected = Data.Read(Path.Combine(Fixtures, "receipt-success.expected.json"));
+        expected["gate"] = "failed"; // E evidence is now mandatory; preserve the D fixture.
         Assert.True(JsonNode.DeepEquals(expected, actual), actual.ToJsonString());
     }
     [Theory, MemberData(nameof(Cases))]

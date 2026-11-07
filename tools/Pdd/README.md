@@ -138,3 +138,10 @@ most of the increase. There are exactly two projects and no new console package
 dependencies. Test references are the existing Microsoft.NET.Test.Sdk 18.11.0,
 xUnit 2.9.3 and xunit.runner.visualstudio 4.0.1 versions; no new package family or
 architectural framework was introduced.
+
+Increment E adds `controlled-defect --output <fresh-directory>` and capture jobs
+`controlled` and `stryker`. Aggregate now requires all four jobs (`protocol`,
+`tests`, `controlled`, `stryker`) with matching source and CI identities. See
+[controlled schedules](../../verification/controlled-close.md) and the
+[Stryker pilot](../../verification/stryker-close-pilot.md). Stryker dispositions
+are source-bound; an untriaged outcome fails the gate, independent of its score.

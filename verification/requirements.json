@@ -70,7 +70,7 @@
           "id": "CLOSE-001-MUTATION",
           "kind": "mutation",
           "delivery": "existing",
-          "description": "Reject duplicate send and suppressed eligible send decisions. Run scripts/run-close-mutations.py; verification/mutations/close.json maps this obligation to exact edits and target clauses.",
+          "description": "Reject duplicate send and suppressed eligible send decisions. Run scripts/pdd.sh mutations; verification/mutations/close.json maps this obligation to exact edits and target clauses.",
           "references": []
         },
         {
@@ -144,7 +144,7 @@
           "id": "CLOSE-002-MUTATION",
           "kind": "mutation",
           "delivery": "existing",
-          "description": "Reject loss of a previously set state bit. Run scripts/run-close-mutations.py; verification/mutations/close.json maps this obligation to exact edits and target clauses.",
+          "description": "Reject loss of a previously set state bit. Run scripts/pdd.sh mutations; verification/mutations/close.json maps this obligation to exact edits and target clauses.",
           "references": []
         },
         {
@@ -226,7 +226,7 @@
           "id": "CLOSE-003-MUTATION",
           "kind": "mutation",
           "delivery": "existing",
-          "description": "Reject premature release and suppressed eligible release. Run scripts/run-close-mutations.py; verification/mutations/close.json maps this obligation to exact edits and target clauses.",
+          "description": "Reject premature release and suppressed eligible release. Run scripts/pdd.sh mutations; verification/mutations/close.json maps this obligation to exact edits and target clauses.",
           "references": []
         },
         {
@@ -294,9 +294,22 @@
         {
           "id": "CLOSE-004-CONTROLLED",
           "kind": "test",
-          "delivery": "E",
+          "delivery": "existing",
           "description": "Pause Close write and prove graceful disposal waits; detect an isolated ordering defect.",
-          "references": []
+          "references": [
+            {
+              "file": "src/main/WebsocketClientLiteTest/ControlledCloseTests.cs",
+              "symbol": "WebsocketClientLiteTest.ControlledCloseTests.PausedCloseWriteBlocksDisposalAndPeerRaceSendsOnce"
+            },
+            {
+              "file": "src/main/WebsocketClientLiteTest/ControlledCloseTests.cs",
+              "symbol": "WebsocketClientLiteTest.ControlledCloseTests.FailedCloseWriteDisposesWithoutRetryOrPeerWait"
+            },
+            {
+              "file": "src/main/WebsocketClientLiteTest/ControlledCloseTests.cs",
+              "symbol": "WebsocketClientLiteTest.ControlledCloseTests.QueuedPongIsSuppressedAfterPeerClose"
+            }
+          ]
         },
         {
           "id": "CLOSE-004-REVIEW",
@@ -368,9 +381,26 @@
         {
           "id": "CLOSE-005-CONTROLLED",
           "kind": "test",
-          "delivery": "E",
+          "delivery": "existing",
           "description": "Control peer wait timeout and transport failure through disposal, with diagnostic bounded waits.",
-          "references": []
+          "references": [
+            {
+              "file": "src/main/WebsocketClientLiteTest/ControlledCloseTests.cs",
+              "symbol": "WebsocketClientLiteTest.ControlledCloseTests.PeerWaitEndsByControlledTimeoutOrReadFailure"
+            },
+            {
+              "file": "src/main/WebsocketClientLiteTest/ControlledCloseTests.cs",
+              "symbol": "WebsocketClientLiteTest.ControlledCloseTests.CancellationBetweenFragmentsAllowsOnlyClose"
+            },
+            {
+              "file": "src/main/WebsocketClientLiteTest/ControlledCloseTests.cs",
+              "symbol": "WebsocketClientLiteTest.ControlledCloseTests.PostWriteFailureRejectsQueuedAndLaterDataAndSuppressesClose"
+            },
+            {
+              "file": "src/main/WebsocketClientLiteTest/ControlledCloseTests.cs",
+              "symbol": "WebsocketClientLiteTest.ControlledCloseTests.ParserSignalsPeerCloseOrReadFailureBeforeTimerExpiry"
+            }
+          ]
         },
         {
           "id": "CLOSE-005-REVIEW",

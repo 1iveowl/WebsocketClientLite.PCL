@@ -26,6 +26,7 @@ internal class WebsocketSenderHandler : ISender
     private readonly Func<Stream, byte[], int, CancellationToken, Task> _writeFunc;
     private readonly Action<ConnectionStatus, Exception?> _connectionStatusAction;
     private readonly bool _isExcludingZeroApplicationDataInPong;
+    private readonly Func<TimeSpan, CancellationToken, Task> _peerDelay;
 
     // Data-message ownership spans an entire list; control frames bypass this
     // gate and still serialize at the connection's frame-write gate.
@@ -61,7 +62,7 @@ internal class WebsocketSenderHandler : ISender
     internal async Task WaitForPeerCloseAsync(TimeSpan timeout)
     {
         using var timer = new CancellationTokenSource();
-        var delay = Task.Delay(timeout, timer.Token);
+        var delay = _peerDelay(timeout, timer.Token);
         if (await Task.WhenAny(_closeReady.Task, delay).ConfigureAwait(false) == delay)
         {
             lock (_stateLock) AdvanceClose(2);
@@ -80,12 +81,14 @@ internal class WebsocketSenderHandler : ISender
         TcpConnectionService tcpConnectionService,
         Action<ConnectionStatus, Exception?> connectionStatusAction,
         Func<Stream, byte[], int, CancellationToken, Task> writeFunc,
-        bool isExcludingZeroApplicationDataInPong)
+        bool isExcludingZeroApplicationDataInPong,
+        Func<TimeSpan, CancellationToken, Task>? peerDelay = null)
     {
         _tcpConnectionService = tcpConnectionService;
         _connectionStatusAction = connectionStatusAction;
         _writeFunc = writeFunc;
         _isExcludingZeroApplicationDataInPong = isExcludingZeroApplicationDataInPong;
+        _peerDelay = peerDelay ?? Task.Delay;
     }
 
     internal string? ExpectedAccept { get; private set; }
