@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Validate the v1 Close manifest and resolve local evidence references (stdlib only)."""
+"""Validate the Close manifest and boundary register and resolve local evidence references (stdlib only)."""
 import argparse
 import json
 from pathlib import Path
@@ -32,7 +32,7 @@ def read_json(path):
 
 
 def shape(value, schema, where='$'):
-    """Implement only the JSON Schema keywords used by our checked-in v1 schema.
+    """Implement only the JSON Schema keywords used by our checked-in schemas.
 
     Unknown keywords fail closed; this is not a general JSON Schema engine.
     """
@@ -131,11 +131,14 @@ def resolve(root, ref, test=False):
     return scope[declaration.start():scope.find('{', declaration.end())]
 
 
-def validate(manifest, root=ROOT):
+def validate(manifest, root=ROOT, register=None):
     shape(manifest, read_json(SCHEMA))
+    if register is None:
+        register = json.loads(source(root, manifest['boundaries_file']), object_pairs_hook=unique_object)
+    shape(register, read_json(ROOT / 'verification/boundaries.schema.json'))
     boundaries = {}
     review = source(root, 'verification/close-intent-review.md')
-    for entry in manifest['boundary_seeds']:
+    for entry in register['boundaries']:
         require(entry['id'] not in boundaries, f'duplicate boundary ID: {entry["id"]}')
         boundaries[entry['id']] = entry
         require(review.count(f'<a id="{entry["review_anchor"]}"></a>') == 1,
@@ -173,6 +176,16 @@ def validate(manifest, root=ROOT):
                 resolve(root, ref, test=kind == 'test')
         require('review' in kinds and ('proof' in kinds or 'test' in kinds), f'{id}: incomplete evidence obligations')
         require(not req['contracts'] or 'proof' in kinds, f'{id}: contract without proof obligation')
+    for bid, boundary in boundaries.items():
+        dependents = {r['id'] for r in manifest['requirements'] if bid in r['assumptions']}
+        require(set(boundary['requirements']) == dependents,
+                f'{bid}: dependent requirements must match assumption references')
+        tests = {o['id'] for r in manifest['requirements'] if r['id'] in dependents
+                 for o in r['obligations'] if o['kind'] == 'test'}
+        require(set(boundary['test_obligations']) == tests,
+                f'{bid}: test obligations must match dependent requirements')
+        for owner in boundary['owners']:
+            resolve(root, owner)
     return len(ids)
 
 

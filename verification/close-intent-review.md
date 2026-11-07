@@ -96,12 +96,13 @@ they do not prove end-to-end disposal under controlled timeout/failure schedules
 Those tests belong to E. No unconditional termination or exhaustive concurrency
 claim follows from this map.
 
-## Boundary seeds for increment C
+## Boundary register (increment C)
 
-Increment A keeps a small `boundary_seeds` register **inside requirements.json**
-so assumption references already resolve. Increment C will move and expand these
-stable IDs into `boundaries.json` with owners, dependent requirements and test
-obligations. Do not modify the generated `trusted-boundaries.md` audit format.
+Increment A introduced inline boundary seeds. Increment C moves those stable IDs
+and assumption wording into [boundaries.json](boundaries.json), with code owners,
+dependent requirements, test obligations and exclusions. The anchors below remain
+the review discussion for each entry. The generated `trusted-boundaries.md` audit
+format remains separate and unchanged.
 
 <a id="boundary-lock"></a>
 ### CLOSE-LOCK
