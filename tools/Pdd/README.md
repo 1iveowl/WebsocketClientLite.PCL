@@ -173,3 +173,9 @@ P3-B adds `lease-defects --output <fresh-directory>` to controlled capture and
 isolated early-return, missing-return and wrong-count edits must fail their named
 assertions; aggregate checks exact edits/source, all cases, execution and runtime.
 See [sender leases](../../verification/payload-lease-ownership.md).
+
+P3-C adds `retention-defects --output <fresh-directory>` to controlled capture.
+Two isolated control-total and late-scratch edits must fail named assertions;
+aggregation checks Release configuration, exact source/edit, cases, execution and
+runtime. The existing REASSEMBLY-001-TEST adapter obligation includes the new
+five-target tests without expanding its proof. See [parser retention](../../verification/parser-retention.md).

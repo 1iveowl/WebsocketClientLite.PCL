@@ -77,6 +77,11 @@ public sealed partial class Evidence
                 var fullName = "WebsocketClientLiteTest.PayloadLeaseTests." + name;
                 if (caseCounts.TryGetValue(fullName, out var actualCount) && actualCount != count) tests[fullName] = "failed";
             }
+            foreach (var (name, count) in RetentionCaseCounts)
+            {
+                var fullName = "WebsocketClientLiteTest.ParserRetentionTests." + name;
+                if (caseCounts.TryGetValue(fullName, out var actualCount) && actualCount != count) tests[fullName] = "failed";
+            }
             var run = Read(Path.Combine(path, "run.json"));
             var valid = Passed(run) && (run["command"]?.AsArray() ?? []).Any(c => c?.ToString() == "-p:LibTfm=" + tfm) && File.Exists(Path.Combine(path, "output.log"));
             matrix[tfm] = new JsonObject { ["status"] = valid && tests.Count > 0 && tests.Values.All(x => x == "passed") && !string.IsNullOrEmpty(runtime) ? "passed" : "failed", ["execution"] = run, ["tests"] = Node(tests), ["host_runtime"] = runtime, ["trx"] = Path.GetRelativePath(directory, files[0]) };
@@ -193,6 +198,22 @@ public sealed partial class Evidence
                 leases["status"] = "passed"; leases["evidence"] = report;
             }
             catch (Exception e) when (e is not OutOfMemoryException) { leases["status"] = "failed"; errors.Add("Lease experiment: " + e.Message); }
+        }
+        var retention = new JsonObject { ["status"] = "not-run" };
+        receipt["retention_experiment"] = retention;
+        if (jobs.ContainsKey("controlled"))
+        {
+            try
+            {
+                Require(Passed(jobs["controlled"]?["runs"]?["retention"]), "unsuccessful retention command");
+                var directoryPath = Path.Combine(directory, "controlled/retention");
+                var report = Read(Path.Combine(directoryPath, "results.json"));
+                Require(Equal(report["source"], Node(expected)) && Equal(report["source_after"], Node(expected)) && Equal(report["ci"], jobs["controlled"]?["ci"]), "retention source/CI mismatch");
+                Require(S(report, "status") == "passed", "Incomplete lease report");
+                ValidateRetentionReport(directoryPath, report, expected.SourceHashes);
+                retention["status"] = "passed"; retention["evidence"] = report;
+            }
+            catch (Exception e) when (e is not OutOfMemoryException) { retention["status"] = "failed"; errors.Add("Retention experiment: " + e.Message); }
         }
         if (jobs.ContainsKey("stryker"))
         {
@@ -322,6 +343,11 @@ public sealed partial class Evidence
                 {
                     item["evidence"]!.AsArray().Add("controlled/leases/results.json");
                     if (S(leases, "status") != "passed") item["status"] = S(leases, "status");
+                }
+                if (o.Id == "REASSEMBLY-001-TEST")
+                {
+                    item["evidence"]!.AsArray().Add("controlled/retention/results.json");
+                    if (S(retention, "status") != "passed") item["status"] = S(retention, "status");
                 }
                 if (o.Id == "CLOSE-004-CONTROLLED")
                 {
