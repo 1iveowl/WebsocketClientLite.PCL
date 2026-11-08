@@ -1,0 +1,83 @@
+[
+  {
+    "log": "build.log",
+    "command": [
+      "dotnet",
+      "build",
+      "verification/exploration/Exploration.csproj",
+      "-c",
+      "Release"
+    ],
+    "exit": 0,
+    "seconds": 0.8898189449682832
+  },
+  {
+    "log": "baseline-1.jsonl",
+    "command": [
+      "dotnet",
+      "verification/exploration/bin/Release/net10.0/WebsocketClientLiteTest.dll"
+    ],
+    "exit": 0,
+    "seconds": 0.12131401302758604
+  },
+  {
+    "log": "baseline-2.jsonl",
+    "command": [
+      "dotnet",
+      "verification/exploration/bin/Release/net10.0/WebsocketClientLiteTest.dll"
+    ],
+    "exit": 0,
+    "seconds": 0.10986832797061652
+  },
+  {
+    "log": "baseline-3.jsonl",
+    "command": [
+      "dotnet",
+      "verification/exploration/bin/Release/net10.0/WebsocketClientLiteTest.dll"
+    ],
+    "exit": 0,
+    "seconds": 0.12162908900063485
+  },
+  {
+    "log": "defect-build.log",
+    "command": [
+      "dotnet",
+      "build",
+      "verification/exploration/Exploration.csproj",
+      "-c",
+      "Release"
+    ],
+    "exit": 0,
+    "seconds": 1.3790378080448136
+  },
+  {
+    "log": "defect-1.log",
+    "command": [
+      "dotnet",
+      "verification/exploration/bin/Release/net10.0/WebsocketClientLiteTest.dll",
+      "DCPRHXA"
+    ],
+    "exit": -6,
+    "seconds": 0.10267170902807266
+  },
+  {
+    "log": "defect-2.log",
+    "command": [
+      "dotnet",
+      "verification/exploration/bin/Release/net10.0/WebsocketClientLiteTest.dll",
+      "DCPRHXA"
+    ],
+    "exit": -6,
+    "seconds": 0.12190133205149323
+  },
+  {
+    "log": "defect-3.log",
+    "command": [
+      "dotnet",
+      "verification/exploration/bin/Release/net10.0/WebsocketClientLiteTest.dll",
+      "DCPRHXA"
+    ],
+    "exit": -6,
+    "seconds": 0.1077541820704937
+  }
+]
