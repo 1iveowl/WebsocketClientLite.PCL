@@ -48,7 +48,7 @@ unchanged into a success claim.
 
 ## Final local machine evidence
 
-Checked commit: `bfb779e8238d0c5123a3c73104e78919bbdf9cfd`, clean worktree.
+Checked commit: `6dfa910759ac8272dd52f65abf7667389c75c13b`, clean worktree.
 The protocol, tests, controlled and manual probe records have identical relevant
 source hashes before and after. Subsequent documentation/archive commits do not
 relabel this checked commit; PR CI captures its own final source revision.
@@ -62,20 +62,20 @@ billing and runner-minute deltas were not measured; no pricing claim is made.
 
 | Check | Result | Measured seconds |
 | --- | --- | ---: |
-| 50-process queued smoke probe | 50/50 pass, 15 cases each (13 new + inherited fragment + runtime) | 67.44 |
-| Release solution build | pass, zero warnings/errors | 1.68 |
-| Five-target Release matrix | 233 tests per target, all pass | 134.28 |
-| Coverage run and unchanged 70% gate | 82.3% lines, 76.5% branches | 27.10 |
-| Tooling fixtures | 173 pass | 9.28 |
-| Pinned proof, trust audit, generated-source comparison | pass | 10.30 |
-| Dafny baseline plus all 15 mutations | baseline passes, all detected | 144.41 |
-| Inherited ordering defect | named assertion detected after baseline | 4.33 |
-| All 13 inherited G boundary experiments | named assertions detected | 23.23 |
+| 50-process queued smoke probe | 50/50 pass, 15 cases each (13 new + inherited fragment + runtime) | 68.29 |
+| Release solution build | pass, zero warnings/errors | 0.94 |
+| Five-target Release matrix | 233 tests per target, all pass | 134.44 |
+| Coverage run and unchanged 70% gate | 82.2% lines, 76.3% branches | 26.99 |
+| Tooling fixtures | 173 pass | 9.36 |
+| Pinned proof, trust audit, generated-source comparison | pass | 11.22 |
+| Dafny baseline plus all 15 mutations | baseline passes, all detected | 144.43 |
+| Inherited ordering defect | named assertion detected after baseline | 4.30 |
+| All 13 inherited G boundary experiments | named assertions detected | 22.72 |
 | New frame-overlap defect | named assertion detected after baseline | 4.07 |
 
-The new cases' summed TRX durations across the five targets total 0.2303 seconds;
-the longest single new case is 0.0201 seconds. These are case timings, not a
-controlled before/after estimate of incremental matrix wall time. The 134.28-second
+The new cases' summed TRX durations across the five targets total 0.2234 seconds;
+the longest single new case is 0.0194 seconds. These are case timings, not a
+controlled before/after estimate of incremental matrix wall time. The 134.44-second
 matrix and G's 149.49-second CI baseline ran in different environments and cannot
 establish a performance improvement. The new 4.07-second isolated command fits
 the provisional 120-second incremental allowance; no existing command/job limit
@@ -87,12 +87,53 @@ does not claim a fresh full Stryker run or a complete four-job aggregate; those
 are provided by final PR CI. Human review remains separate from machine results.
 
 [Complete local capture](evidence/p3-a/local-validation.zip), SHA-256
-`ad398cecd936c12dda606bf05c6325cf6a06d4be5001baf2fae3fdf2783c7b8a`.
+`977d0a1c79683ce4e763e26c65a13f4d7dfde73918ec7bb78454168ff1aa0222`.
 It retains raw TRX, command/execution records, source hashes, per-case durations,
 actual runtime probes, coverage and proof/mutation results. The new isolated
 experiment rejects wrong source/edit/runtime, missing cases, baseline failure,
 unrelated assertions, compile failure, process timeout and cancellation. A stuck
 owner is a diagnostic failure, not an accepted overlap detection.
+
+## Final scope review and inherited CI timeout
+
+The initial complete local capture at `bfb779e` passed and is retained as
+[initial-local-validation.zip](evidence/p3-a/initial-local-validation.zip)
+(SHA-256 `ad398cecd936c12dda606bf05c6325cf6a06d4be5001baf2fae3fdf2783c7b8a`).
+Final review changed the successful post-cancellation probe to Ping when the two
+data slots were already used, keeping each scenario within two data sends and
+one control contender. A second review corrected pre-cancelled trace labels so
+they no longer imply gate ownership or queueing after rejected admission.
+
+Only this session's second validation processes were explicitly interrupted to
+make that trace correction. The probe records failure at repetition 37 (zero-based,
+38 command records); protocol mutation work records interruption. Those are not
+passing evidence. The fresh final capture above reran all 50 repetitions, the
+Release five-target/coverage checks, all controlled experiments and the entire
+protocol suite on clean source.
+
+The first PR [CI run 42427106321](https://github.com/1iveowl/WebsocketClientLite.PCL/actions/runs/42427106321)
+(at source head `b39ff04`, synthetic merge `34c6f61`) failed the inherited protocol
+mutation gate. `MASK-002-tail-xor-to-or` emitted its expected loop-invariant failure,
+but `HeaderRoundTrip` also timed out at its unchanged 60-second obligation limit;
+the command ended in 65.533 seconds. The gate correctly classified it **inconclusive**
+and left the following four mutants not-run. No protocol or proof source changed
+in P3-A. This failure is retained, not relabeled by later runs.
+
+A bounded local diagnostic ran the existing payload suite with
+`DOTNET_PROCESSOR_COUNT=2`, the same pinned tools, two verifier cores and unchanged
+60/90-second obligation/process limits. Its baseline and all ten payload mutations
+passed; the implicated mutant was detected in 8.659 seconds. Together with the two
+complete local captures this does not reproduce the CI timeout. It does not prove
+that runner load caused it, nor establish that the inherited proof timing is
+stable. No proof, gate or timeout was changed to obtain a pass. Final PR CI must
+independently pass all existing gates before merge; continued proof instability
+must block acceptance and be handled separately from P3-A ownership semantics.
+
+Retained additional records:
+
+- [interrupted-validation.zip](evidence/p3-a/interrupted-validation.zip), SHA-256 `496d41ec2b7b509708da6d2f28bd971fdbd83c998d713c12a9bcebc37e8a3d14`.
+- [proof-diagnostic.zip](evidence/p3-a/proof-diagnostic.zip), SHA-256 `ec7f59c58162fd3b27991a3b3c99c7edd9f98019c491643cc5211db0d726b3e4`.
+- [first-ci-protocol.zip](evidence/p3-a/first-ci-protocol.zip), SHA-256 `f820a4aa9fc78ae86a1a35acce2b14c56c909331b544e832f28e0fe06d2f03ae`.
 
 ## Review and follow-up limits
 
