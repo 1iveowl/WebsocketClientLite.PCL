@@ -166,8 +166,8 @@ Terminals and agents in that Space run inside the container as `vscode`. Some de
 
 - Machine names allow only lower-case letters, digits, `-`, `_` and `.`, up to 32 characters.
 - The helper's paths cannot contain spaces, because `hc` splits the `--via` command on them.
-- The helper starts a stopped container when the Docker host has the devcontainer CLI.
-- A rebuild removes `hc` from the container. Run `hc machine update wscl` afterwards. The Spaces and the core's identity are kept in the `herdr-core-state-<folder>` volume, so the app reconnects to the same machine. Terminals that ran in the old container are gone.
+- The helper starts a stopped container when the Docker host has the devcontainer CLI. It never builds one, so the machine stays unreachable while VS Code rebuilds the container instead of getting a second container on the same checkout.
+- A rebuild removes `hc` from the container. Run `hc machine update wscl` once the rebuild has finished. The Spaces and the core's identity are kept in the `herdr-core-state-<folder>` volume, so the app reconnects to the same machine. Terminals that ran in the old container are gone.
 
 ## Troubleshooting
 

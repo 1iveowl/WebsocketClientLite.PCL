@@ -9,7 +9,9 @@
 #
 # <checkout path> is the absolute path of the checkout on the Docker host, the
 # folder the dev container was opened from. A stopped container is started with
-# the devcontainer CLI when the Docker host has it.
+# the devcontainer CLI when the Docker host has it. The helper never builds a
+# container: hc runs it on its own when it reconnects, and a build then, during
+# a rebuild in VS Code, would leave two containers on one checkout.
 #
 # Example (see docs/development.md):
 #   hc machine add --name wscl --install \
@@ -41,12 +43,17 @@ q() { printf "'%s'" "$(printf '%s' "$1" | sed "s/'/'\\\\''/g")"; }
 # each terminal with $SHELL and would otherwise fall back to /bin/sh.
 remote="dir=$(q "$dir") line=$(q "$line")"'
 [ -d "$dir" ] || { echo "no checkout at $dir" >&2; exit 1; }
-find_c() { docker ps -q --filter "label=devcontainer.local_folder=$dir"; }
+find_c() { docker ps -q "$@" --filter "label=devcontainer.local_folder=$dir"; }
 c=$(find_c)
 if [ -z "$c" ]; then
-    if command -v devcontainer >/dev/null 2>&1; then
+    # Start a stopped container, never build one: hc runs this helper on its own
+    # whenever it reconnects, and a build while VS Code rebuilds the container
+    # would leave two containers on one checkout.
+    if [ -z "$(find_c -a)" ]; then
+        echo "no dev container for $dir (being rebuilt, or never built); open it in VS Code first" >&2; exit 1
+    elif command -v devcontainer >/dev/null 2>&1; then
         log=${TMPDIR:-/tmp}/devcontainer-up-$(basename "$dir").log
-        devcontainer up --workspace-folder "$dir" >"$log" 2>&1 \
+        devcontainer up --workspace-folder "$dir" --expect-existing-container >"$log" 2>&1 \
             || { echo "starting the dev container failed; see $log" >&2; exit 1; }
         c=$(find_c)
     else
