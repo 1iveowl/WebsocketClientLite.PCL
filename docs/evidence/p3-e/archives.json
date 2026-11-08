@@ -1,0 +1,17 @@
+[
+  {
+    "archive": "docs/evidence/p3-e/diagnostics.zip",
+    "sha256": "07f5620e3c1438a91c2eb44603da7af56566a633134de7ad8a7687117ba126d5",
+    "bytes": 6448871
+  },
+  {
+    "archive": "docs/evidence/p3-e/host-qualification.zip",
+    "sha256": "b8ef2caa1e79d5ab0bb481ee5294b1f0bc8ada956424f65e2d2b9ec304660f6e",
+    "bytes": 5723254
+  },
+  {
+    "archive": "docs/evidence/p3-e/local-validation.zip",
+    "sha256": "40a2835027eb6e6442018e027c715f66d47af0279ba9ee2348567611fde849ec",
+    "bytes": 973755
+  }
+]

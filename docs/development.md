@@ -173,3 +173,26 @@ The [protocol verification guide](../verification/README.md) records the contrac
 C# trust boundaries, pinned toolchain, regeneration commands, tests and performance
 methodology. Run `./scripts/dafny-masking.sh --check` after changing either Dafny
 source or the generated code; the historical script name now covers the full core.
+
+## Actual runtime and OS qualification
+
+`LibTfm` selects a library build. It does not change the test process runtime.
+The existing test project also accepts `TestHostTfm`, defaulting to `net10.0`:
+
+```bash
+dotnet test src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj -c Release \
+  -p:TestHostTfm=net8.0 -p:LibTfm=net8.0
+```
+
+Install the matching runtime; major roll-forward cannot count as qualification.
+The [P3-E record](p3-e-validation.md) lists the manually qualified OS/runtime
+cells, exact source and assembly identities, negative fixtures, costs and
+reproduction commands. `test-host` and `aggregate --host-cells` use the existing
+PDD tool to capture and check those cells. The focused host receipt does not
+replace the full local four-job aggregate.
+
+The CI workflow's manual `host_qualification=true` input runs two fresh jobs per
+selected .NET 10 OS without repeating proof or mutation tools. The default remains
+full release validation. Windows mandatory promotion and macOS weekly scheduling
+are deferred under the release-only CI policy; .NET 8/9 checks are transitional,
+not an ongoing support promise. Every published library target is retained.
