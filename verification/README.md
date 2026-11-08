@@ -280,8 +280,12 @@ CI captures the existing protocol and build/test jobs independently, then runs
 `evidence-gate` even when a dependency fails. Download the `pdd-receipt` artifact
 for `receipt.json`, `summary.md` and the linked raw logs, TRX, coverage and Dafny
 mutation results. The contract-change report remains a separate review aid;
-it is never treated as approval. Configure `evidence-gate` as a required check
-alongside the existing verification and build/test checks in branch protection.
+it is never treated as approval. GitHub CI runs only when `GitVersion.yml` changes in a push or pull request
+to `releases/**`, or when manually dispatched for release validation. Ordinary
+changes must pass the local commands below before merging. Do not require these
+release-only GitHub checks for ordinary pull requests: filtered workflows do not
+report a passing check. Release CI and package publishing are separate workflows;
+the evidence gate does not block the publish workflow.
 
 To reproduce locally, use a **new** output directory (capture refuses reuse):
 
