@@ -294,6 +294,8 @@ To reproduce locally, use a **new** output directory (capture refuses reuse):
 ./scripts/pdd.sh capture --job tests --output artifacts/pdd/tests
 ./scripts/pdd.sh capture --job controlled --output artifacts/pdd/controlled
 ./scripts/pdd.sh capture --job stryker --output artifacts/pdd/stryker
+# Qualified 32-logical-CPU development host: use this instead of the preceding command.
+# ./scripts/pdd.sh capture --job stryker --stryker-concurrency 8 --output artifacts/pdd/stryker
 ./scripts/pdd.sh aggregate --output artifacts/pdd
 ```
 
