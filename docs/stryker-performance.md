@@ -30,7 +30,7 @@ The existing script forwards Stryker options:
 
 ```bash
 PDD_STRYKER_OUTPUT="$PWD/artifacts/stryker-local-8-unique" \
-  ./scripts/stryker-close.sh --concurrency 8
+  ./scripts/stryker-close.sh
 ```
 
 Use a fresh output directory and avoid competing builds/tests while measuring. This is a raw local run, not by itself a complete PDD receipt. The benchmark driver archived below uses the existing `Evidence.Capture` seam and records the actual command override in `job.json`; it does not conceal an environment-only setting. Use the supported receipt capture for local acceptance:
@@ -78,3 +78,7 @@ Commit `7e002a12f0f0ef9eba87da3b71dfa5c28974c94d` adds `capture --job stryker --
 The fresh full aggregate passed using the supported override and the ordinary matrix, with no cleanup workaround: 244 tooling tests, 269 tests per library target with correct loaded identities, 83.08% line coverage, all proof/trust/generated-code checks, 15 Dafny mutations, and all controlled defect checks. Stryker took 286.931 seconds (4m 47s); all 105 selected outcomes matched E, all 16 critical fingerprints were killed, and there were zero timeouts. This is one implementation validation run, not a replacement for the three-run qualification range above. The equal-size/equal-timestamp wrong-DLL fixture also passed on this commit.
 
 `implementation.zip` retains the receipt, command logs, comparison, and fixture. Earlier failed reports remain archived unchanged. The final archive/documentation commit follows this tested implementation commit; no execution is attributed to the later documentation-only commit.
+
+## Automatic local default validation
+
+Commit `bbbfbe1c74695de2ee3f8d6749fba5cb99427c19` sets the shared configuration to eight workers and explicitly selects two in GitHub Actions. The ordinary local `capture --job stryker` command, without a worker override, reported eight parallel test sessions and completed Stryker in 329.368 seconds (5m 29s). All 105 selected outcomes matched E, all 16 critical fingerprints were killed, and there were zero timeouts. The full aggregate passed: 244 tooling tests, 269 tests per library target with actual loaded identities, 83.08% line coverage, proofs, all 15 Dafny mutations, and controlled checks. `local-default.zip` retains the source-bound validation. The subsequent archive/documentation commit is not relabeled as the tested commit.
