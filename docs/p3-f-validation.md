@@ -232,3 +232,27 @@ the unchanged 70% line gate. Raw build, matrix and coverage logs are retained be
 the exploration records. Python syntax, local document links, source-hash equality
 and `git diff --check` passed. No proof/mutation/aggregate success is claimed for
 this revision. Those existing checks and requirements are preserved.
+
+## Authorized pre-merge validation
+
+After the owner requested the expanded rationale and merge to the release branch,
+the complete local four-job capture and aggregate passed on clean commit
+`38e55fcca1e032a67ce652dfb2de797d1146b899`. All jobs have matching before/after
+source identities. The release base remained `3abb948` at the final fetch.
+
+Results: 244 tooling fixtures; pinned proofs, audit and generated-source checks;
+all 15 Dafny mutations; 269 tests on each of five library targets; 83.08% line
+coverage; all controlled G/A/B/C/D experiments; and the unchanged Stryker gate.
+Selected Stryker outcomes: 42 Killed, 27 Survived, 7 NoCoverage, 0 Timeout,
+3 CompileError and 26 Ignored, with all 16 critical fingerprints Killed.
+Stryker engine elapsed time was 278.83 seconds with the existing local default
+of eight workers. No failure was retried or gate weakened in this capture.
+
+[Pre-merge evidence archive](evidence/p3-f/pre-merge-validation.zip), SHA-256
+`271c9f332578a1a6b6cd13f53a4b3c4bffffc02255db283e0d7e3a26bad358e4`, contains the receipt, source identities, command records,
+raw logs, TRX and machine reports; build/tool binaries and redundant HTML are
+omitted. Receipt SHA-256: `6b75037307e22b07a35a18be6db8343b5676655a21e1ebd8c9f56c8b0ac80857`.
+This subsequent documentation/archive commit does not relabel the tested commit.
+The machine receipt correctly leaves human-review obligations separate; the owner
+explicitly authorized merging this P3-F deliverable, without adopting tools or
+publishing a release.
