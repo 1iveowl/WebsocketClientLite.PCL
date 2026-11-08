@@ -22,7 +22,23 @@ fi
 
 # Docker creates named volumes as root. Make persistent tool state available to
 # the non-root account required for Claude's bypass-permissions mode.
-sudo chown -R "$(id -u):$(id -g)" "${CLAUDE_CONFIG_DIR}" "${CODEX_HOME}" "${COPILOT_HOME}" "${HOME}/.config/herdr" "${HOME}/.config/gh" "${HOME}/.azure" "${HOME}/.tokeneconomizer"
+sudo chown -R "$(id -u):$(id -g)" "${CLAUDE_CONFIG_DIR}" "${CODEX_HOME}" "${COPILOT_HOME}" "${HOME}/.config/herdr" "${HOME}/.config/gh" "${HOME}/.azure" "${HOME}/.tokeneconomizer" "${HOME}/.herdr-core-state"
+
+# herdr-core, which the Herdr desktop app copies into the container, keeps its Spaces, terminal records and identity in
+# ~/.local/state/herdr-core. Link that to its volume, so after a rebuild the app finds the same machine and Spaces.
+# The volume is mounted outside ~/.local because the image has no ~/.local and Docker would create it as root.
+link_herdr_core_state() {
+	local state="${HOME}/.local/state/herdr-core" volume="${HOME}/.herdr-core-state"
+	mkdir -p "${HOME}/.local/state" || return 1
+	if [[ -d "${state}" && ! -L "${state}" ]]; then
+		# A core reached this container before post-create ran: set its files aside instead of mixing two cores.
+		mv "${state}" "${state}.before-volume.$(date +%s)" || return 1
+	fi
+	ln -sfn "${volume}" "${state}"
+}
+if ! link_herdr_core_state; then
+	echo "Could not link herdr-core's state to its volume; the Herdr app will not recognise this container after a rebuild." >&2
+fi
 
 skills_installer="/opt/ai-skill/scripts/install-macos.sh"
 if [[ -f "${skills_installer}" ]]; then
