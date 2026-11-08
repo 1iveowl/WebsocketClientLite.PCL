@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Reflection;
 using System.Threading;
 using WebsocketClientLite.Service;
+using WebsocketClientLite.CustomException;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 using IWebsocketClientLite;
@@ -53,7 +54,7 @@ public class ReconnectTests
         var firstReady = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
         var secondReady = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
         var oldTerminalReturned = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
-        var echo = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        var echo = new TaskCompletionSource<string?>(TaskCreationOptions.RunContinuationsAsynchronously);
         bool connected = false;
         using var status = client.IsConnectedObservable.Subscribe(value => Volatile.Write(ref connected, value));
         IDisposable? successor = null;
@@ -65,7 +66,7 @@ public class ReconnectTests
                 successor = client.WebsocketConnectWithStatusObservable(second.Uri).Subscribe(value =>
                 {
                     if (value.state == ConnectionStatus.WebsocketConnected) secondReady.TrySetResult();
-                    if (value.state == ConnectionStatus.DataframeReceived) echo.TrySetResult();
+                    if (value.state == ConnectionStatus.DataframeReceived) echo.TrySetResult(value.dataframe?.Message);
                 }, ex => echo.TrySetException(ex));
                 // Hold the old terminal callback until the successor handshake finishes.
                 if (!secondReady.Task.Wait(Limit)) oldTerminalReturned.TrySetException(new TimeoutException());
@@ -87,9 +88,9 @@ public class ReconnectTests
             Assert.Single(Active(client));
             Assert.NotSame(oldSender, client.Sender);
             Assert.True(Volatile.Read(ref connected), "Old cleanup reset successor connectivity");
-            await Assert.ThrowsAnyAsync<Exception>(() => oldSender.SendText("old"));
+            await Assert.ThrowsAsync<WebsocketClientLiteException>(() => oldSender.SendText("old"));
             await client.Sender!.SendText("new");
-            await echo.Task.WaitAsync(Limit);
+            Assert.Equal("new", await echo.Task.WaitAsync(Limit));
         }
         finally { successor?.Dispose(); }
         Assert.Empty(Active(client));
@@ -149,7 +150,7 @@ public class ReconnectTests
         using var client = new ClientWebSocketRx();
         var firstReady = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
         var secondReady = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
-        var echo = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        var echo = new TaskCompletionSource<string?>(TaskCreationOptions.RunContinuationsAsynchronously);
         int attempts = 0;
         var source = Observable.Defer(() => client.WebsocketConnectWithStatusObservable(
             Interlocked.Increment(ref attempts) == 1 ? first.Uri : second.Uri));
@@ -160,7 +161,7 @@ public class ReconnectTests
                 if (Volatile.Read(ref attempts) == 1) firstReady.TrySetResult();
                 else secondReady.TrySetResult();
             }
-            if (value.state == ConnectionStatus.DataframeReceived) echo.TrySetResult();
+            if (value.state == ConnectionStatus.DataframeReceived) echo.TrySetResult(value.dataframe?.Message);
         }, ex => { secondReady.TrySetException(ex); echo.TrySetException(ex); });
         await firstReady.Task.WaitAsync(Limit);
         var oldSender = client.Sender!;
@@ -171,7 +172,7 @@ public class ReconnectTests
         Assert.NotSame(oldSender, client.Sender);
         Assert.True(!Active(client).ContainsKey(oldService), "Old service retained registration");
         await client.Sender!.SendText("successor");
-        await echo.Task.WaitAsync(Limit);
+        Assert.Equal("successor", await echo.Task.WaitAsync(Limit));
     }
 
     [Fact]
