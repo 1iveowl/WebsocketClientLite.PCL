@@ -27,6 +27,7 @@ internal class WebsocketSenderHandler : ISender
     private readonly Action<ConnectionStatus, Exception?> _connectionStatusAction;
     private readonly bool _isExcludingZeroApplicationDataInPong;
     private readonly Func<TimeSpan, CancellationToken, Task> _peerDelay;
+    private readonly ArrayPool<byte> _framePool;
 
     // Data-message ownership spans an entire list; control frames bypass this
     // gate and still serialize at the connection's frame-write gate.
@@ -82,13 +83,15 @@ internal class WebsocketSenderHandler : ISender
         Action<ConnectionStatus, Exception?> connectionStatusAction,
         Func<Stream, byte[], int, CancellationToken, Task> writeFunc,
         bool isExcludingZeroApplicationDataInPong,
-        Func<TimeSpan, CancellationToken, Task>? peerDelay = null)
+        Func<TimeSpan, CancellationToken, Task>? peerDelay = null,
+        ArrayPool<byte>? framePool = null)
     {
         _tcpConnectionService = tcpConnectionService;
         _connectionStatusAction = connectionStatusAction;
         _writeFunc = writeFunc;
         _isExcludingZeroApplicationDataInPong = isExcludingZeroApplicationDataInPong;
         _peerDelay = peerDelay ?? Task.Delay;
+        _framePool = framePool ?? ArrayPool<byte>.Shared;
     }
 
     internal string? ExpectedAccept { get; private set; }
@@ -358,7 +361,7 @@ internal class WebsocketSenderHandler : ISender
         if (opcode == OpcodeKind.Close)
             ProtocolPayload.ValidateClose(content ?? ProtocolPayload.StrictUtf8.GetBytes(text ?? string.Empty));
 
-        byte[] buffer = ArrayPool<byte>.Shared.Rent(totalSize);
+        byte[] buffer = _framePool.Rent(totalSize);
         int written = 0;
         try
         {
@@ -401,9 +404,9 @@ internal class WebsocketSenderHandler : ISender
         }
         finally
         {
-            // Clear before returning: the buffer held the (masked) outgoing
-            // payload and mask key. Defense-in-depth so a later renter can't read it.
-            ArrayPool<byte>.Shared.Return(buffer, clearArray: true);
+            // Request clearing on return; the pool contract only promises clearing
+            // when it retains the array. The write Task must have relinquished it.
+            _framePool.Return(buffer, clearArray: true);
         }
 
     }

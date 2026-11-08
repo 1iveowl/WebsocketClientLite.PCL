@@ -187,7 +187,7 @@
     },
     {
       "id": "PAYLOAD-OWNERSHIP",
-      "assumption": "Input arrays and retained segments stay stable during each operation; destination ownership is exclusive and required source/destination non-aliasing holds.",
+      "assumption": "Input arrays and retained segments stay stable during each operation; destination ownership is exclusive and required source/destination non-aliasing holds. SendBinary and binary-list callers keep all borrowed arrays stable until the send Task settles; list snapshotting copies references only. Write delegates relinquish the frame on Task completion; ArrayPool honors rent/return ownership and conditional clearing.",
       "review_anchor": "boundary-payload-ownership",
       "owners": [
         {
@@ -213,7 +213,8 @@
         "REASSEMBLY-003",
         "MASK-001",
         "MASK-002",
-        "MASK-003"
+        "MASK-003",
+        "LEASE-001"
       ],
       "test_obligations": [
         "REASSEMBLY-001-TEST",
@@ -221,7 +222,8 @@
         "REASSEMBLY-003-TEST",
         "MASK-001-TEST",
         "MASK-002-TEST",
-        "MASK-003-TEST"
+        "MASK-003-TEST",
+        "LEASE-001-TEST"
       ],
       "exclusions": [
         "No concurrent caller mutation or proof of C# ownership; aliased retained segments are allowed when stable, but destination aliasing is not."
@@ -296,12 +298,14 @@
       "requirements": [
         "MASK-001",
         "MASK-002",
-        "MASK-003"
+        "MASK-003",
+        "LEASE-001"
       ],
       "test_obligations": [
         "MASK-001-TEST",
         "MASK-002-TEST",
-        "MASK-003-TEST"
+        "MASK-003-TEST",
+        "LEASE-001-TEST"
       ],
       "exclusions": [
         "No proof of the C# adapter, pool lifetime, entropy, encoding or I/O completion."
@@ -318,10 +322,12 @@
         }
       ],
       "requirements": [
-        "WRITE-001"
+        "WRITE-001",
+        "LEASE-001"
       ],
       "test_obligations": [
-        "WRITE-001-TEST"
+        "WRITE-001-TEST",
+        "LEASE-001-TEST"
       ],
       "exclusions": [
         "Abort does not cancel arbitrary in-flight delegates or guarantee delivery. Tests establish selected finite schedules, not unconditional liveness."

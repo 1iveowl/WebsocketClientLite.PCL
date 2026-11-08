@@ -279,3 +279,13 @@ An in-flight stream operation must settle or be explicitly released in a test.
 After abort, the semaphore remains alive for queued tasks to acquire and reject;
 its managed state is reclaimed by GC. No AvailableWaitHandle is requested. No FIFO
 or unconditional completion is asserted. Human semantic review remains not-run.
+
+### LEASE-001
+
+Review the finite schedules and trusted contracts in [payload lease ownership](payload-lease-ownership.md).
+The internal pool defaults to Shared; no public copying or caller-mutation policy
+changes. Safety requires the lease through delegate completion, exactly one return
+with clearing requested, and initialized count. Observation timeout does not end
+write ownership. Pool compliance, relinquishment on Task completion, stable caller
+inputs and external progress remain assumptions. Machine receipts cannot record
+human acceptance; review the PR source revision separately.

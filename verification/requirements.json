@@ -1036,6 +1036,81 @@
         "No FIFO, starvation-freedom, arbitrary interleaving, network delivery or wall-clock completion guarantee.",
         "In-flight delegates and callbacks must settle; synchronous abort can interrupt a write already admitted. Buffer lease instrumentation belongs to P3-B."
       ]
+    },
+    {
+      "id": "LEASE-001",
+      "intent": "Selected sender paths retain each rented frame until its write Task settles and return it exactly once with clearing requested; only initialized bytes reach the delegate. Tested C# ownership, not a Dafny proof.",
+      "origin": [
+        "Library policy: P3-B sender buffer lifetime"
+      ],
+      "contracts": [],
+      "production_paths": [
+        {
+          "reference": {
+            "file": "src/main/WebsocketClientLite/Service/WebsocketSenderHandler.cs",
+            "symbol": "WebsocketClientLite.Service.WebsocketSenderHandler.ComposeFrameAndSendCoreAsync"
+          },
+          "responsibility": "Own rented frame through queued or in-flight send and return in finally."
+        }
+      ],
+      "assumptions": [
+        "PAYLOAD-OWNERSHIP",
+        "MASK-ADAPTER",
+        "WRITE-PROGRESS"
+      ],
+      "obligations": [
+        {
+          "id": "LEASE-001-TEST",
+          "kind": "test",
+          "delivery": "existing",
+          "description": "Require named schedules on five targets and three isolated assertion detections; pool identity/count/clearing and independent wire bytes are tested.",
+          "references": [
+            {
+              "file": "src/main/WebsocketClientLiteTest/PayloadLeaseTests.cs",
+              "symbol": "WebsocketClientLiteTest.PayloadLeaseTests.PausedWriteRetainsLeaseUntilCompletion"
+            },
+            {
+              "file": "src/main/WebsocketClientLiteTest/PayloadLeaseTests.cs",
+              "symbol": "WebsocketClientLiteTest.PayloadLeaseTests.InitializedCountMatchesIndependentWireBytes"
+            },
+            {
+              "file": "src/main/WebsocketClientLiteTest/PayloadLeaseTests.cs",
+              "symbol": "WebsocketClientLiteTest.PayloadLeaseTests.StableAliasedListInputsRemainUnchanged"
+            },
+            {
+              "file": "src/main/WebsocketClientLiteTest/PayloadLeaseTests.cs",
+              "symbol": "WebsocketClientLiteTest.PayloadLeaseTests.GateCancellationReturnsOnlyAcquiredLeases"
+            },
+            {
+              "file": "src/main/WebsocketClientLiteTest/PayloadLeaseTests.cs",
+              "symbol": "WebsocketClientLiteTest.PayloadLeaseTests.FailedOrPartialWriteReturnsAfterSettlement"
+            },
+            {
+              "file": "src/main/WebsocketClientLiteTest/PayloadLeaseTests.cs",
+              "symbol": "WebsocketClientLiteTest.PayloadLeaseTests.InvalidTextIsRejectedBeforeRent"
+            },
+            {
+              "file": "src/main/WebsocketClientLiteTest/PayloadLeaseTests.cs",
+              "symbol": "WebsocketClientLiteTest.PayloadLeaseTests.SuppressedQueuedPongReturnsWithoutDelegateUse"
+            },
+            {
+              "file": "src/main/WebsocketClientLiteTest/PayloadLeaseTests.cs",
+              "symbol": "WebsocketClientLiteTest.PayloadLeaseTests.SendObservationTimeoutRetainsPendingLease"
+            }
+          ]
+        },
+        {
+          "id": "LEASE-001-REVIEW",
+          "kind": "review",
+          "delivery": "existing",
+          "description": "Review ownership, default-preserving pool seam, caller borrowing and trusted delegate completion against the PR revision. Machine evidence is not acceptance.",
+          "references": []
+        }
+      ],
+      "exclusions": [
+        "No concurrent caller mutation safety, universal zeroization, delivery or arbitrary schedule claim.",
+        "Pool and stream contracts, scheduling progress and finite callbacks remain trusted; delegates must not use buffers after Task completion."
+      ]
     }
   ],
   "boundaries_file": "verification/boundaries.json"
