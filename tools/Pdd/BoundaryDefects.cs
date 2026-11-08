@@ -75,6 +75,7 @@ public sealed partial class Evidence
     {
         Require(S(report, "status") == "passed" && S(report, "library_target") == "net10.0" && Passed(report["baseline"]), "Incomplete boundary baseline/report");
         XNamespace ns = "http://microsoft.com/schemas/VisualStudio/TeamTest/2010";
+        ValidateAssertionExecution(Path.Combine(directory, "baseline"), 0);
         var baseline = XDocument.Load(Path.Combine(directory, "baseline/results.trx")).Descendants(ns + "UnitTestResult").ToArray();
         Require(baseline.Length == 10 && baseline.All(r => (string?)r.Attribute("outcome") == "Passed"), "Incomplete boundary baseline cases");
         foreach (var test in BoundaryCases.Select(c => c.Test).Distinct())
@@ -100,6 +101,7 @@ public sealed partial class Evidence
     {
         Require(S(run, "status") == "failed" && run["exit_code"]?.ToString() == "1", "Boundary mutant must fail assertions, not timeout or compilation");
         XNamespace ns = "http://microsoft.com/schemas/VisualStudio/TeamTest/2010";
+        ValidateAssertionExecution(Path.GetDirectoryName(trxPath)!, 1);
         var tree = XDocument.Load(trxPath);
         var results = tree.Descendants(ns + "UnitTestResult").ToArray();
         Require(results.Length == (test == "DisposalStopsActivePeriodicPingsBeforeClose" ? 3 : 2), "Missing boundary result rows");

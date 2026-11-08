@@ -40,13 +40,15 @@ public sealed class ExecutionResult
     {
         get; set;
     }
+    public bool CleanupIncomplete { get; set; }
+    public double CleanupSeconds { get; set; }
     public double ElapsedSeconds
     {
         get; set;
     }
     public string Stdout { get; set; } = "";
     public string Stderr { get; set; } = "";
-    [JsonIgnore] public bool Success => ExitCode == 0 && !TimedOut && !Interrupted && LaunchError is null;
+    [JsonIgnore] public bool Success => ExitCode == 0 && !TimedOut && !Interrupted && LaunchError is null && !CleanupIncomplete;
 }
 public record SourceIdentity(string TestedCommit, string? PrSourceHead, bool DirtyWorktree, SortedDictionary<string, string?> SourceHashes);
 public sealed class CommandReceipt

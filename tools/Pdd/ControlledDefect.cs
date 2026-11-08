@@ -53,6 +53,15 @@ public sealed partial class Evidence
         }
         return S(report, "status") == "passed" ? 0 : 1;
     }
+    private static void ValidateAssertionExecution(string directory, int exitCode)
+    {
+        var execution = Read(Path.Combine(directory, "execution.json"));
+        Require(execution["timed_out"]?.GetValue<bool>() == false &&
+            execution["interrupted"]?.GetValue<bool>() == false &&
+            execution["cleanup_incomplete"]?.GetValue<bool>() != true &&
+            execution["launch_error"] is null && execution["exit_code"]?.ToString() == exitCode.ToString(),
+            "Assertion execution was incomplete, interrupted, timed out or failed to launch");
+    }
     public static string ValidateDefect(string directory, System.Text.Json.Nodes.JsonNode baseline, System.Text.Json.Nodes.JsonNode mutant)
     {
         Require(Passed(baseline), "Ordering baseline failed");
@@ -61,6 +70,7 @@ public sealed partial class Evidence
         string? host = null;
         foreach (var phase in new[] { "baseline", "mutant" })
         {
+            ValidateAssertionExecution(Path.Combine(directory, phase), phase == "baseline" ? 0 : 1);
             var tree = XDocument.Load(Path.Combine(directory, phase, "results.trx"));
             var definitions = tree.Descendants(ns + "UnitTest").ToDictionary(e => (string)e.Attribute("id")!, e => e.Element(ns + "TestMethod")!);
             var results = tree.Descendants(ns + "UnitTestResult").ToArray();

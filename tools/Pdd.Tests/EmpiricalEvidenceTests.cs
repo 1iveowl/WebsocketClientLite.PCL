@@ -90,6 +90,41 @@ public class EmpiricalEvidenceTests
         var matrix = Evidence.TestResults(tree.Path);
         Assert.Equal("failed", matrix["net10.0"]!["tests"]![Evidence.CriticalTest]!.ToString());
     }
+    [Theory]
+    [InlineData("none")]
+    [InlineData("timed_out")]
+    [InlineData("interrupted")]
+    [InlineData("cleanup_incomplete")]
+    [InlineData("launch_error")]
+    [InlineData("missing")]
+    public void OrderingDetectionRequiresCompleteExecution(string field)
+    {
+        using var tree = new TemporaryTree();
+        System.Xml.Linq.XNamespace ns = "http://microsoft.com/schemas/VisualStudio/TeamTest/2010";
+        foreach (var phase in new[] { "baseline", "mutant" })
+        {
+            var path = Path.Combine(tree.Path, phase); Directory.CreateDirectory(path);
+            var names = new[] { Evidence.CriticalTest.Split('.').Last(), Evidence.CriticalTest.Split('.').Last(), "RecordHostRuntime" };
+            new System.Xml.Linq.XDocument(new System.Xml.Linq.XElement(ns + "TestRun",
+                new System.Xml.Linq.XElement(ns + "TestDefinitions", names.Select((n, i) => new System.Xml.Linq.XElement(ns + "UnitTest", new System.Xml.Linq.XAttribute("id", i), new System.Xml.Linq.XElement(ns + "TestMethod", new System.Xml.Linq.XAttribute("name", n))))),
+                new System.Xml.Linq.XElement(ns + "Results", names.Select((n, i) => new System.Xml.Linq.XElement(ns + "UnitTestResult", new System.Xml.Linq.XAttribute("testId", i),
+                    new System.Xml.Linq.XAttribute("outcome", phase == "mutant" && i < 2 ? "Failed" : "Passed"),
+                    new System.Xml.Linq.XElement(ns + "Output", i < 2 ? "Disposal overtook paused work" : "PDD_HOST_RUNTIME=.NET 10 fixture")))))).Save(Path.Combine(path, "results.trx"));
+            Data.Save(Path.Combine(path, "execution.json"), new { exit_code = phase == "baseline" ? 0 : 1, timed_out = false, interrupted = false });
+        }
+        var file = Path.Combine(tree.Path, "mutant/execution.json");
+        if (field == "missing") File.Delete(file);
+        else if (field != "none")
+        {
+            var execution = Data.Read(file);
+            execution[field] = field == "launch_error" ? JsonValue.Create("launch failed") : JsonValue.Create(true);
+            Data.Save(file, execution);
+        }
+        var baseline = Data.Node(new CommandReceipt { Status = "passed", ExitCode = 0, StartedAt = Data.Now(), FinishedAt = Data.Now() });
+        var mutant = Data.Node(new CommandReceipt { Status = "failed", ExitCode = 1, StartedAt = Data.Now(), FinishedAt = Data.Now() });
+        if (field == "none") Assert.Equal(".NET 10 fixture", Evidence.ValidateDefect(tree.Path, baseline, mutant));
+        else Assert.ThrowsAny<Exception>(() => Evidence.ValidateDefect(tree.Path, baseline, mutant));
+    }
     [Fact]
     public void InfrastructureFailureIsNotAnOrderingDetection()
     {

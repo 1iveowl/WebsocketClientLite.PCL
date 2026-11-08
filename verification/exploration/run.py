@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 """Manual bounded baseline and isolated capacity-two replay; no CI integration."""
+import argparse
+import atexit
 import hashlib
 import json
 from pathlib import Path
@@ -10,16 +12,28 @@ import tempfile
 import time
 
 root = Path(__file__).resolve().parents[2]
-out = root / 'docs/evidence/p3-f'
-out.mkdir(parents=True, exist_ok=True)
+parser = argparse.ArgumentParser()
+parser.add_argument('--output', type=Path, default=root / 'artifacts/exploration')
+out = parser.parse_args().output.resolve()
+out.mkdir(parents=True, exist_ok=False)
 resource.setrlimit(resource.RLIMIT_CORE, (0, 0))
 records = []
 
 def run(name, command, cwd=root, expected=0):
     start = time.monotonic()
-    result = subprocess.run(command, cwd=cwd, capture_output=True, text=True, timeout=300)
+    record = dict(log=name, command=command, cwd=str(cwd), status='started', startedAt=time.time())
+    records.append(record)
+    (out / 'commands.json').write_text(json.dumps(records, indent=2) + '\n')
+    try:
+        result = subprocess.run(command, cwd=cwd, capture_output=True, text=True, timeout=300)
+    except (subprocess.TimeoutExpired, OSError, KeyboardInterrupt) as error:
+        record.update(status=type(error).__name__, seconds=time.monotonic()-start, error=str(error))
+        if isinstance(error, subprocess.TimeoutExpired):
+            (out / name).write_bytes((error.stdout or b'') + (error.stderr or b''))
+        (out / 'commands.json').write_text(json.dumps(records, indent=2) + '\n')
+        raise
     (out / name).write_text(result.stdout + result.stderr)
-    records.append(dict(log=name, command=command, exit=result.returncode, seconds=time.monotonic()-start))
+    record.update(status='completed', exit=result.returncode, seconds=time.monotonic()-start)
     (out / 'commands.json').write_text(json.dumps(records, indent=2) + '\n')
     if expected == 0:
         assert result.returncode == 0, name
@@ -44,6 +58,11 @@ def hashes():
 before = hashes()
 identity = dict(base=subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=root, text=True).strip(),
                 sourceBefore=before, sdk=subprocess.check_output(['dotnet', '--version'], text=True).strip())
+def save_identity():
+    identity['sourceAfter'] = hashes()
+    (out / 'identity.json').write_text(json.dumps(identity, indent=2) + '\n')
+atexit.register(save_identity)
+save_identity()
 run('build.log', ['dotnet', 'build', 'verification/exploration/Exploration.csproj', '-c', 'Release'])
 for i in range(1, 4):
     run(f'baseline-{i}.jsonl', ['dotnet', 'verification/exploration/bin/Release/net10.0/WebsocketClientLiteTest.dll'])
