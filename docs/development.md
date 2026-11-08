@@ -78,7 +78,7 @@ devcontainer exec --workspace-folder . ./test-all-tfms.sh
 
 ### What stays across rebuilds
 
-Named Docker volumes keep the agents' logins and history, Herdr's layout, what TokenEconomizer has learned, and the `gh` and `az` logins: `claude-home-<folder>`, `codex-home-<folder>`, `copilot-home-<folder>`, `herdr-config-<folder>`, `gh-config-<folder>`, `azure-config-<folder>` and `tokeneconomizer-<folder>`, where `<folder>` is the checkout's folder name. Two checkouts with the same folder name share them. Remove the volumes to start from scratch.
+Named Docker volumes keep the agents' logins and history, Herdr's layout, the Herdr desktop app's Spaces, what TokenEconomizer has learned, and the `gh` and `az` logins: `claude-home-<folder>`, `codex-home-<folder>`, `copilot-home-<folder>`, `herdr-config-<folder>`, `herdr-core-state-<folder>`, `gh-config-<folder>`, `azure-config-<folder>` and `tokeneconomizer-<folder>`, where `<folder>` is the checkout's folder name. Two checkouts with the same folder name share them. Remove the volumes to start from scratch.
 
 ### Coding agents run without permission prompts
 
@@ -167,7 +167,7 @@ Terminals and agents in that Space run inside the container as `vscode`. Some de
 - Machine names allow only lower-case letters, digits, `-`, `_` and `.`, up to 32 characters.
 - The helper's paths cannot contain spaces, because `hc` splits the `--via` command on them.
 - The helper starts a stopped container when the Docker host has the devcontainer CLI.
-- A rebuild removes `hc` from the container. Run `hc machine update wscl` afterwards.
+- A rebuild removes `hc` from the container. Run `hc machine update wscl` afterwards. The Spaces and the core's identity are kept in the `herdr-core-state-<folder>` volume, so the app reconnects to the same machine. Terminals that ran in the old container are gone.
 
 ## Troubleshooting
 
