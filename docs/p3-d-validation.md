@@ -129,3 +129,70 @@ started on b297a44 before that update was read. Its results remain separate,
 not a substitute for the updated branch's required local aggregate. The release
 change is preserved without altering its policy. A fresh complete local capture
 will identify the combined revision and run Stryker in an isolated owned worktree.
+
+## Final combined-revision acceptance evidence
+
+Checked clean commit: `3d47d5c79e1be2b7e9e34f2b41908f10acfce1f6`, incorporating
+release `931db08`. The complete **local four-job aggregate passed**, with identical
+before/after source hashes and matching identities across all four jobs. All 14
+human-review obligations remain separately not-run. The final evidence-only commit
+changes documentation/archives; it does not relabel the checked revision.
+
+All five targets passed 269 tests each; coverage is 83.08% lines. The 214 tooling
+cases, pinned proofs/audit/generated comparison, all 15 Dafny mutations, inherited
+ordering/G/A/B/C experiments and EPOCH-001 passed. Ten isolated reconnect processes
+passed again (100.25 seconds), and three fresh identity-defect experiments passed.
+Stryker 5.0.0 reports 42 Killed, 27 Survived, 7 NoCoverage, 0 Timeout,
+3 CompileError and 26 Ignored in the selected scope. All 16 critical fingerprints
+are Killed. No disposition, critical requirement or timeout was weakened.
+
+| Final local command | Seconds |
+| --- | ---: |
+| Release build | 1.36 |
+| Five-target matrix | 134.70 |
+| Coverage / unchanged gate | 27.06 / 0.01 |
+| Tooling fixtures | 9.44 |
+| Pinned proof/audit/generated checks | 10.78 |
+| Dafny mutations | 145.37 |
+| Ordering / G boundaries | 4.54 / 23.45 |
+| A / B / C experiments | 4.17 / 12.43 / 5.57 |
+| Reconnect experiment | 16.51 |
+| Stryker | 987.70 |
+| Aggregate | less than 1 |
+
+[Complete final local archive](evidence/p3-d/local-validation.zip), SHA-256
+`991b152cb76973038356a2afc4b940dd88a39fffb06782792bd3658c027d16ff`,
+contains the full receipt, raw evidence and repetitions; only redundant Stryker
+HTML is omitted. Receipt SHA-256:
+`4d5724cc4799e3ef9112e3aa44091a5176172966142757e5e330ec466a917197`.
+The aggregate was run while the source checkout was clean, before adding these
+archives. Stryker used its own worktree at the same commit, avoiding shared build
+outputs. The final contract-change report compares against release `931db08`.
+
+### Earlier manual GitHub run and cost limitation
+
+[Manual run 42455442198](https://github.com/1iveowl/WebsocketClientLite.PCL/actions/runs/42455442198),
+attempt 1, completed successfully at b297a44; its aggregate also passed with all
+16 critical fingerprints Killed and zero Timeout. It was a workflow_dispatch,
+not automatic PR or post-merge evidence. The PR-only contract-report job was
+skipped; the local contract report is retained. This extra run was started before
+the release-policy update was fetched, and no further remote CI was dispatched.
+
+[Retained pdd-receipt artifact 13607648430](evidence/p3-d/manual-ci.zip), SHA-256
+`f8f67e1e64a59456cb6cd127ee6affcf26f8eb2ce1a22fcc943f0eddb7d56c09`.
+Its matrix took 151.47 seconds, coverage 30.04, proof/audit 19.92, Dafny mutations
+247.78, G boundaries 70.83, reconnect experiment 22.21, and Stryker 1,077.36.
+Its actual test host was .NET 10.0.14. It remains evidence for its own revision,
+not a replacement for the final local aggregate.
+
+Stryker cost is a material limitation: the local 987.70-second command exceeds
+C's recorded 605.52-second local sample by 382.18 seconds; the manual CI sample
+exceeds G's 564-second CI reference by 513.36 seconds. Those raw differences are
+above the plan's provisional five-minute critical-path increment target. They
+are not controlled causal benchmarks, and no recurring percentile or billing
+estimate is claimed. The absolute 1,800-second command and 40-minute job limits
+remain satisfied. Under the new release policy there is no routine PR runner
+charge, but full local validation still incurs this latency. Maintainers should
+review Close mutation-test scope and measured cost before expanding it further;
+this increment does not silently exclude the new tests or weaken existing gates
+to improve timing. No P3-E or other scope expansion follows this result.
