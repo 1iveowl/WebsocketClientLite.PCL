@@ -184,3 +184,15 @@ P3-D adds `reconnect-defect --output <fresh-directory>` to controlled capture.
 The missing-removal edit must fail the old service identity assertion after all
 nine reconnect cases pass. EPOCH-001-TEST requires five-target tests and this
 source-bound experiment. Concurrent active subscription policy remains deferred.
+
+P3-G bounds post-kill process/output draining at two seconds. If an escaped orphan
+retains a pipe, cancellable reads stop and `cleanup_incomplete` is recorded with
+`cleanup_seconds`; the timed-out/interrupted execution remains failed. Linux
+session/tree cleanup cannot discover a reparented descendant that created its own
+session. Other OSes retain best-effort process-tree cleanup, without a Linux group
+claim. These bounds assume the OS services process operations and local log I/O;
+a stopped machine or killed runner cannot guarantee return or upload.
+
+The manual exploration runner accepts `--output <fresh-directory>` and refuses
+overwrite. It saves command attempts before launch and retains timeout, launch and
+interrupt failures and before/after source identity, including unsuccessful runs.

@@ -57,6 +57,41 @@ public class ProcessTests
         Assert.True(File.Exists(marker));
         Assert.False(IsRunning(int.Parse(File.ReadAllText(marker))));
     }
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task EscapedOrphanPipeCannotHoldCleanupOpen(bool cancel)
+    {
+        if (!OperatingSystem.IsLinux()) return;
+        using var tree = new TemporaryTree();
+        using var cancellation = new CancellationTokenSource();
+        var marker = Path.Combine(tree.Path, "pid");
+        // The parent exits after the child escapes its session. Tree/group kill
+        // cannot discover this orphan, but its inherited output pipe stays open.
+        var command = new[] { "bash", "-c", "setsid bash -c 'echo $$ > \"$1\"; exec sleep 60' orphan \"$1\" & while [ ! -s \"$1\" ]; do sleep .01; done; echo ready; exit 0", "probe", marker };
+        Task<ExecutionResult>? running = null;
+        try
+        {
+            if (cancel) cancellation.CancelAfter(500);
+            running = Processes.Run(command, tree.Path, Path.Combine(tree.Path, "logs"), cancel ? 20 : .5, cancellation.Token);
+            var result = await running.WaitAsync(TimeSpan.FromSeconds(8));
+            Assert.Equal(cancel, result.Interrupted);
+            Assert.Equal(!cancel, result.TimedOut);
+            Assert.False(result.Success);
+            Assert.Contains("ready", result.Stdout);
+            Assert.True(result.CleanupIncomplete);
+            Assert.InRange(result.CleanupSeconds, 1.8, 4);
+        }
+        finally
+        {
+            if (File.Exists(marker))
+            {
+                using var child = Process.GetProcessById(int.Parse(File.ReadAllText(marker)));
+                if (!child.HasExited) child.Kill(true);
+            }
+            if (running is not null) await running.WaitAsync(TimeSpan.FromSeconds(5));
+        }
+    }
     static bool IsRunning(int pid)
     {
         var stat = $"/proc/{pid}/stat";

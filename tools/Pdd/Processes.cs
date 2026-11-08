@@ -18,12 +18,13 @@ public static class Processes
         using var stdout = new StreamWriter(Path.Combine(directory, "stdout.log"));
         using var stderr = new StreamWriter(Path.Combine(directory, "stderr.log"));
         using var combined = combinedLog is null ? null : new StreamWriter(combinedLog);
-        var gate = new SemaphoreSlim(1);
+        using var gate = new SemaphoreSlim(1);
+        using var drain = new CancellationTokenSource();
         async Task Pump(StreamReader input, StreamWriter output)
         {
             var buffer = new char[4096];
             int count;
-            while ((count = await input.ReadAsync(buffer)) > 0)
+            while ((count = await input.ReadAsync(buffer.AsMemory(), drain.Token)) > 0)
             {
                 await output.WriteAsync(buffer.AsMemory(0, count));
                 await output.FlushAsync();
@@ -69,10 +70,24 @@ public static class Processes
                 catch (InvalidOperationException) { }
                 if (grouped)
                     KillProcessGroup(-process.Id, 9);
-                await process.WaitForExitAsync();
+                var cleanup = Stopwatch.StartNew();
+                try
+                {
+                    await Task.WhenAll(process.WaitForExitAsync(), output, error)
+                        .WaitAsync(TimeSpan.FromSeconds(2));
+                }
+                catch (TimeoutException)
+                {
+                    // An escaped orphan may retain a pipe after its parent exits.
+                    // Stop reading rather than waiting for an undiscoverable child.
+                    record.CleanupIncomplete = true;
+                    drain.Cancel();
+                }
+                record.CleanupSeconds = Math.Round(cleanup.Elapsed.TotalSeconds, 3);
             }
-            record.ExitCode = process.ExitCode;
-            await Task.WhenAll(output, error);
+            record.ExitCode = process.HasExited ? process.ExitCode : null;
+            try { await Task.WhenAll(output, error); }
+            catch (OperationCanceledException) when (drain.IsCancellationRequested) { }
         }
         catch (OperationCanceledException) { record.Interrupted = true; }
         catch (System.ComponentModel.Win32Exception error) { record.LaunchError = error.Message; await stderr.WriteAsync(error.Message); if (combined is not null) await combined.WriteAsync(error.Message); }
