@@ -50,7 +50,7 @@ public class HostEvidenceTests
         }
         foreach (var (prefix, cases) in new[] { ("QueuedWriteTests.", Evidence.QueuedCaseCounts), ("PayloadLeaseTests.", Evidence.LeaseCaseCounts), ("ParserRetentionTests.", Evidence.RetentionCaseCounts), ("ReconnectTests.", Evidence.ReconnectCaseCounts) })
             foreach (var (name, count) in cases) Add("WebsocketClientLiteTest." + prefix + name, count);
-        Add("WebsocketClientLiteTest.RuntimeEvidenceTests.RecordHostRuntime", 1, "PDD_HOST_RUNTIME=.NET 10.0.14\nPDD_HOST_IDENTITY=" + host.ToJsonString());
+        Add("WebsocketClientLiteTest.RuntimeEvidenceTests.RecordHostRuntime", 1, "PDD_HOST_RUNTIME=" + host["runtime"] + "\nPDD_HOST_IDENTITY=" + host.ToJsonString());
         Add("Fixture.OtherSuite", 269 - results.Elements().Count());
         new XDocument(new XElement(ns + "TestRun", definitions, results)).Save(Path.Combine(target, "results.trx"));
     }
@@ -135,6 +135,18 @@ public class HostEvidenceTests
         Assert.Equal("failed", receipt["gate"]!["status"]!.ToString());
         Assert.Contains(Cell.Id, receipt["errors"]!.ToString());
         Assert.Contains(reason, receipt["errors"]!.ToString());
+    }
+    [Fact]
+    public void ConsistentWrongMajorHostCannotSatisfyCell()
+    {
+        using var tree = new TemporaryTree();
+        var host = Host;
+        host["runtime"] = ".NET 9.0.22"; host["runtime_version"] = "9.0.22";
+        host["test_framework"] = ".NETCoreApp,Version=v9.0";
+        Fixture(tree.Path, host);
+        var receipt = Evidence.HostResults(tree.Path, Source, Data.Node(Evidence.CiIdentity()), [Cell]);
+        Assert.Equal("failed", receipt["gate"]!["status"]!.ToString());
+        Assert.Contains(Cell.Id + ": wrong host runtime", receipt["errors"]!.ToString());
     }
     [Fact]
     public void MissingMandatoryLinuxCellFailsFullAggregate()

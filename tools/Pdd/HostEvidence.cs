@@ -12,8 +12,8 @@ public sealed partial class Evidence
     public static readonly HostCell[] HostCells =
     [
         .. Tfms.Select(t => new HostCell("linux-10-" + t, "net10.0", t, "linux", "X64", "mandatory")),
-        .. new[] { "net10.0", "netstandard2.0" }.Select(t => new HostCell("windows-10-" + t, "net10.0", t, "windows", "X64", "manual-not-qualified")),
-        .. new[] { "net10.0", "netstandard2.0" }.Select(t => new HostCell("macos-10-" + t, "net10.0", t, "macos", "Arm64", "scheduled-not-qualified")),
+        .. new[] { "net10.0", "netstandard2.0" }.Select(t => new HostCell("windows-10-" + t, "net10.0", t, "windows", "X64", "manual-candidate")),
+        .. new[] { "net10.0", "netstandard2.0" }.Select(t => new HostCell("macos-10-" + t, "net10.0", t, "macos", "Arm64", "scheduled-candidate")),
         new("linux-8-net8.0", "net8.0", "net8.0", "linux", "X64", "manual-transitional"),
         new("linux-9-net9.0", "net9.0", "net9.0", "linux", "X64", "manual-transitional")
     ];
@@ -88,7 +88,7 @@ public sealed partial class Evidence
         foreach (var key in new[] { "GITHUB_RUN_ID", "GITHUB_RUN_ATTEMPT", "GITHUB_REPOSITORY", "GITHUB_EVENT_NAME", "GITHUB_SHA" })
             Require(Equal(report["ci"]?[key], ci[key]), "source run/attempt mismatch: " + key);
         foreach (var name in new[] { "sdk", "restore", "build", "test" })
-            {
+        {
             Require(Passed(report["runs"]?[name]), name + " did not pass (compatibility/infrastructure is not a library assertion failure)");
             var commandDirectory = name == "test" ? Path.Combine(directory, "tests", cell.LibraryTfm) : Path.Combine(directory, name);
             var execution = Model<ExecutionResult>(Read(Path.Combine(commandDirectory, "execution.json")));
