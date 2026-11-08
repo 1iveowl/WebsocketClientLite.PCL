@@ -1,5 +1,20 @@
 # Protocol verification
 
+## Layers of proof driven development
+
+PDD starts with an explicit requirement and connects it to its implementation, assumptions and evidence. The library uses complementary layers; passing one layer does not establish the guarantees of another.
+
+| Layer | What it checks | Practical benefit and limit |
+| --- | --- | --- |
+| Contracts and proofs | Dafny algorithms for bytes, bounds and protocol transitions satisfy their contracts for every permitted input. Generated C# puts those algorithms into the library. | Covers boundary values and state combinations beyond example tests. Contracts, caller preconditions, compiler and runtime remain trusted or reviewed. |
+| Integration and controlled schedules | Independent byte expectations, loopback tests and selected event orders exercise actual C# paths for sends, buffer leases, parser retention, Close and sequential reconnect. | Tests the ownership and lifecycle behavior around the core. These are finite examples, not proofs of arbitrary scheduling or network progress. |
+| Deliberate defects | Dafny mutations, targeted C# mutations and isolated defects challenge the proofs and assertions. | Checks whether evidence detects specific regressions. A timeout, compile failure or missing result is not assertion detection; surviving mutations need an explicit disposition. |
+| Traceable evidence and review | Receipts record source hashes, tool/runtime identities, commands and outcomes; aggregation rejects incomplete or mismatched evidence. | Makes results reproducible and failures diagnosable. Machine results do not substitute for human review of intent, assumptions and remaining gaps. |
+
+The improvements span three releases: 10.0 introduced verified framing, masking and admission; 10.1 extended state transitions, fragmented sends, reassembly and Close; 10.2 strengthened queued-write cancellation, payload-lifetime and parser evidence, sequential reconnect cleanup, and the reliability of the evidence tooling. The [requirement map](../verification/requirements.json), [boundary register](../verification/boundaries.json) and [Phase 3 validation record](p3-g-validation.md) retain the detailed scope and outstanding limits.
+
+The sections below explain the proof layer and its C# integration in more detail. The [verification guide](../verification/README.md) covers the broader checks and reproduction commands.
+
 ## What is proved, assumed and tested
 
 **Dafny verifies our `.dfy` implementations and lemmas, not our handwritten C# or test harnesses.** Verification establishes that an implementation satisfies its written contract for every input allowed by its preconditions. It does not establish that the contract captures every RFC requirement.
