@@ -9,7 +9,7 @@
 [![.NET](https://img.shields.io/badge/.NET-8.0%20%7C%209.0%20%7C%2010.0-512BD4?logo=dotnet&logoColor=white)](https://dotnet.microsoft.com/)
 [![.NET Standard](https://img.shields.io/badge/.NET%20Standard-2.0%20%7C%202.1-red.svg)](https://learn.microsoft.com/dotnet/standard/net-standard)
 [![System.Reactive](https://img.shields.io/badge/Rx-7.0-ff69b4.svg)](https://reactivex.io/)
-[![PDD: Dafny verified core](https://img.shields.io/badge/PDD-Dafny_verified_core-blue)](verification/README.md)
+[![PDD Proof Driven Development](https://img.shields.io/badge/PDD-Proof_Driven_Development-blue)](verification/README.md)
 [![RFC 6455](https://img.shields.io/badge/WebSocket-RFC%206455-2563EB.svg)](https://tools.ietf.org/html/rfc6455)
 
 *Please star this project if you find it useful. Thank you.*
