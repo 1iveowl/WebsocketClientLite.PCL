@@ -1147,6 +1147,67 @@
         "No concurrent caller mutation safety, universal zeroization, delivery or arbitrary schedule claim.",
         "Pool and stream contracts, scheduling progress and finite callbacks remain trusted; delegates must not use buffers after Task completion."
       ]
+    },
+    {
+      "id": "EPOCH-001",
+      "intent": "Sequential reconnect uses distinct owned services and sockets; old cleanup cannot reset successor connectivity or dispose its transport. Permanent disposal rejects new admission. Selected C# schedules, tested-only.",
+      "origin": [
+        "Library policy: P3-D reconnect intent"
+      ],
+      "contracts": [],
+      "production_paths": [
+        {
+          "reference": {
+            "file": "src/main/WebsocketClientLite/ClientWebSocketRx.cs",
+            "symbol": "WebsocketClientLite.ClientWebSocketRx.DisposeAsync"
+          },
+          "responsibility": "Permanently close admission before draining registered services; the connection observable registers and owns setup/cleanup by service identity."
+        }
+      ],
+      "assumptions": [
+        "EPOCH-PROGRESS"
+      ],
+      "obligations": [
+        {
+          "id": "EPOCH-001-TEST",
+          "kind": "test",
+          "delivery": "existing",
+          "description": "Five-target reconnect, setup disposal/cancellation and failure cases plus reachable missing-removal experiment.",
+          "references": [
+            {
+              "file": "src/main/WebsocketClientLiteTest/ReconnectTests.cs",
+              "symbol": "WebsocketClientLiteTest.ReconnectTests.DisposedClientRejectsAdmission"
+            },
+            {
+              "file": "src/main/WebsocketClientLiteTest/ReconnectTests.cs",
+              "symbol": "WebsocketClientLiteTest.ReconnectTests.TerminalCallbackSuccessorSurvivesOldCleanup"
+            },
+            {
+              "file": "src/main/WebsocketClientLiteTest/ReconnectTests.cs",
+              "symbol": "WebsocketClientLiteTest.ReconnectTests.SetupAdmissionIsOwnedUntilTeardown"
+            },
+            {
+              "file": "src/main/WebsocketClientLiteTest/ReconnectTests.cs",
+              "symbol": "WebsocketClientLiteTest.ReconnectTests.SequentialRepeatOrRetryUsesFreshServices"
+            },
+            {
+              "file": "src/main/WebsocketClientLiteTest/ReconnectTests.cs",
+              "symbol": "WebsocketClientLiteTest.ReconnectTests.FailedConnectTerminatesAndRemovesRegistration"
+            }
+          ]
+        },
+        {
+          "id": "EPOCH-001-REVIEW",
+          "kind": "review",
+          "delivery": "existing",
+          "description": "Review reduced admission/status counterexamples, scoped resource ownership and generation guards against the PR revision; concurrent active subscription policy is deferred.",
+          "references": []
+        }
+      ],
+      "exclusions": [
+        "No aggregate policy for simultaneous active subscriptions, arbitrary interleaving proof or unconditional connection progress.",
+        "Caller-supplied sockets cannot reconnect. External connection work and finite callbacks remain trusted."
+      ]
     }
   ],
   "boundaries_file": "verification/boundaries.json"
