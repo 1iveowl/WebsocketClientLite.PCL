@@ -28,6 +28,8 @@
 		"source=gh-config-${localWorkspaceFolderBasename},target=/home/vscode/.config/gh,type=volume",
 		// Azure CLI login (az login); without the volume a rebuild signs az out.
 		"source=azure-config-${localWorkspaceFolderBasename},target=/home/vscode/.azure,type=volume",
+		// What TokenEconomizer has learned about this repository; without the volume a rebuild starts it over.
+		"source=tokeneconomizer-${localWorkspaceFolderBasename},target=/home/vscode/.tokeneconomizer,type=volume",
 		// Optional: a host folder of shared assistant skills, linked into the agent homes by post-create.
 		// initializeCommand creates it empty when missing. See docs/development.md.
 		"source=${localEnv:HOME}/GitHub/ai-skill,target=/opt/ai-skill,type=bind,consistency=cached"
