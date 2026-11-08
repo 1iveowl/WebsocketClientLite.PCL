@@ -102,15 +102,20 @@ public static class Program
                 case "controlled-defect":
                     Allow("--output");
                     return await evidence.ControlledDefect(output, cancellation.Token);
+                case "test-host":
+                    Allow("--cell", "--output", "--command-budget");
+                    return await evidence.TestHost(Get("--cell"), output, Number("--command-budget", "600"), cancellation.Token);
                 case "test-target":
                     Allow("--tfm", "--output", "--command-budget");
                     return await evidence.TestTarget(Choice("--tfm", Evidence.Tfms), output, Number("--command-budget", "1800"), cancellation.Token);
                 case "aggregate":
-                    Allow("--output");
+                    Allow("--output", "--host-cells");
                     Directory.CreateDirectory(output);
-                    var receipt = evidence.Aggregate(output, await evidence.Identity());
+                    var receipt = options.ContainsKey("--host-cells")
+                        ? Evidence.HostResults(output, await evidence.Identity(), Data.Node(Evidence.CiIdentity()), Get("--host-cells").Split(',').Select(Evidence.FindHostCell))
+                        : evidence.Aggregate(output, await evidence.Identity());
                     Data.Save(Path.Combine(output, "receipt.json"), receipt);
-                    var summary = Evidence.Summary(receipt);
+                    var summary = options.ContainsKey("--host-cells") ? receipt.ToJsonString(Data.Options) : Evidence.Summary(receipt);
                     File.WriteAllText(Path.Combine(output, "summary.md"), summary);
                     if (Environment.GetEnvironmentVariable("GITHUB_STEP_SUMMARY") is { Length: > 0 } summaryPath)
                         File.AppendAllText(summaryPath, summary);
