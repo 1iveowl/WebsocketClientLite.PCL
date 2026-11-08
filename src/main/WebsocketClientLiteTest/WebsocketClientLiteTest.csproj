@@ -38,4 +38,14 @@
                       Condition="'$(LibTfm)' != ''" />
   </ItemGroup>
 
+  <!-- Different library targets can have identical sizes and timestamps. Always
+       copy the resolved library so incremental builds cannot retain another TFM. -->
+  <Target Name="CopyResolvedLibrary" AfterTargets="CopyFilesToOutputDirectory">
+    <ItemGroup>
+      <_ResolvedLibrary Include="@(ReferenceCopyLocalPaths)"
+                        Condition="'%(Filename)%(Extension)' == 'WebsocketClientLite.dll'" />
+    </ItemGroup>
+    <Copy SourceFiles="@(_ResolvedLibrary)" DestinationFolder="$(OutDir)"
+          SkipUnchangedFiles="false" />
+  </Target>
 </Project>

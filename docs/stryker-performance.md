@@ -2,7 +2,7 @@
 
 On this 32-logical-CPU development host, eight Stryker workers reduced the median full Close mutation run from a single fresh two-worker control of **12m 35s** to **5m 41s** (55% less elapsed time). Three eight-worker runs passed the existing critical-mutant gate with zero timeouts. Keep the checked-in concurrency of two for now: this is local qualification, not evidence for four-CPU hosted runners.
 
-P3-E was completed and merged through [PR 119](https://github.com/1iveowl/WebsocketClientLite.PCL/pull/119) before these experiments. This branch records measurements only; no library targets, production code, tests, Stryker settings, receipt gates or release settings change.
+P3-E was completed and merged through [PR 119](https://github.com/1iveowl/WebsocketClientLite.PCL/pull/119) before these experiments. The measurements below precede the implementation. The branch now adds an explicit captured concurrency override and forces the test project to copy its resolved library DLL, preventing equal-size/equal-timestamp reuse. Default/CI concurrency, test assertions, mutation scope and acceptance gates remain unchanged.
 
 ## Measurements
 
@@ -33,7 +33,13 @@ PDD_STRYKER_OUTPUT="$PWD/artifacts/stryker-local-8-unique" \
   ./scripts/stryker-close.sh --concurrency 8
 ```
 
-Use a fresh output directory and avoid competing builds/tests while measuring. This is a raw local run, not by itself a complete PDD receipt. The benchmark driver archived below uses the existing `Evidence.Capture` seam and records the actual command override in `job.json`; it does not conceal an environment-only setting. The ordinary capture command and hosted CI retain concurrency two.
+Use a fresh output directory and avoid competing builds/tests while measuring. This is a raw local run, not by itself a complete PDD receipt. The benchmark driver archived below uses the existing `Evidence.Capture` seam and records the actual command override in `job.json`; it does not conceal an environment-only setting. Use the supported receipt capture for local acceptance:
+
+```bash
+./scripts/pdd.sh capture --job stryker --stryker-concurrency 8 --output artifacts/pdd/stryker
+```
+
+The option accepts positive integer worker counts only for the Stryker job and records the exact command in the receipt. Omitting it preserves the configured concurrency of two. The ordinary capture command and hosted CI retain concurrency two.
 
 ## Changed-file experiment: not qualified for linked worktrees
 
@@ -55,7 +61,7 @@ A separate follow-up can investigate peer Close echoes and incidental cleanup wa
 
 The first full aggregate rejected the `netstandard2.1` matrix cell: its runtime evidence reported the loaded library as `.NETStandard,Version=v2.0`. All ordinary test commands had exited successfully, demonstrating why the loaded-assembly check matters. The two library outputs had the same size (136,704 bytes) and exactly the same modification timestamp (`2026-11-08 11:13:56.681510210 UTC`); this is consistent with incremental copying treating the existing DLL as unchanged.
 
-The original failed receipt remains in the benchmark archive. The explicit validation retry clears only this worktree's test-project `bin` and `obj` directories before each library target, through an archived external matrix driver recorded in the command receipt. It preserves all tests and expected library identities. This is a validation workaround, not a checked-in fix or a claim that the ordinary warm-output matrix passed. A permanent fix for shared test-output reuse is deferred to a separate change.
+The original failed receipt remains in the benchmark archive. The explicit validation retry clears only this worktree's test-project `bin` and `obj` directories before each library target, through an archived external matrix driver recorded in the command receipt. It preserves all tests and expected library identities. This is a validation workaround, not a checked-in fix or a claim that the ordinary warm-output matrix passed. The implementation now forces a copy of the resolved library DLL after the normal test-project build, irrespective of matching file size and timestamp. The original workaround and failure are retained as historical evidence.
 
 ## Validation and evidence
 

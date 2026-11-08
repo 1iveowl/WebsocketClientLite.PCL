@@ -71,8 +71,20 @@ public static class Program
                     Allow("--output", "--baseline-budget", "--mutant-budget", "--verification-time-limit", "--scope");
                     return await new Mutations(root).Run(Path.GetFullPath(Get("--output", Path.Combine(root, "artifacts/close-mutations", DateTime.UtcNow.ToString("yyyyMMddTHHmmss.fffffffZ")))), Number("--baseline-budget", "180"), Number("--mutant-budget", "90"), Integer("--verification-time-limit", "60"), cancellation.Token, Get("--scope", "all"));
                 case "capture":
-                    Allow("--job", "--output", "--command-budget");
-                    return await evidence.Capture(Choice("--job", ["protocol", "tests", "controlled", "stryker"]), output, Number("--command-budget", "1800"), cancellation.Token);
+                    Allow("--job", "--output", "--command-budget", "--stryker-concurrency");
+                    var captureJob = Choice("--job", ["protocol", "tests", "controlled", "stryker"]);
+                    var captureCommands = Evidence.Commands(captureJob, output);
+                    if (options.ContainsKey("--stryker-concurrency"))
+                    {
+                        if (captureJob != "stryker")
+                            throw new ArgumentException("--stryker-concurrency requires --job stryker");
+                        var workers = Integer("--stryker-concurrency", "2");
+                        if (workers < 1)
+                            throw new ArgumentException("--stryker-concurrency must be a positive integer");
+                        // Keep the override in the command receipt, not an unrecorded environment variable.
+                        captureCommands[1] = ("stryker", ["./scripts/stryker-close.sh", "--concurrency", workers.ToString(CultureInfo.InvariantCulture)]);
+                    }
+                    return await evidence.Capture(captureJob, output, Number("--command-budget", "1800"), cancellation.Token, captureCommands);
                 case "stryker-triage":
                     Allow("--report", "--output");
                     var triage = Evidence.TriageStryker(Data.Read(Get("--report")), Data.Read(Path.Combine(root, "verification/stryker-close-dispositions.json")), Data.Hash(File.ReadAllBytes(Path.Combine(root, Evidence.CloseSource))));
