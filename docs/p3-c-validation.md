@@ -22,14 +22,16 @@ human semantic review is still distinct from a machine receipt.
 
 ## Final local evidence
 
-Checked clean commit: `03c2519`. All three captures have identical relevant source
+Checked clean commit: `03c2519`. All four captures have identical relevant source
 hashes before/after and identify that commit. Later documentation/archive commits
-do not relabel it; final PR CI binds its own source and merge revision.
+do not relabel it; the final documentation changes do not alter the tested code. CI was manually
+disabled in the repository when PR #116 was opened; no PR CI run exists.
 
 Host: Linux x86-64 Debian container, kernel 7.2.11+deb13-amd64, SDK 10.0.403,
 actual test runtime .NET 10.0.14. The five library TFMs are not five runtime hosts.
 Package/tool caches were warm; isolated defect copies were fresh. Protocol, tests
-and controlled jobs overlapped. No other session was controlled. Contention,
+and controlled jobs overlapped. Stryker ran afterward in an owned detached worktree at the same commit.
+No other session was controlled. Contention,
 peak RSS, allocation benchmarks and monetary billing were not measured.
 
 | Check | Result | Seconds |
@@ -46,6 +48,8 @@ peak RSS, allocation benchmarks and monetary billing were not measured.
 | Inherited A queued overlap | detected | 4.13 |
 | Inherited B lease/count experiments | all three detected | 12.30 |
 | New control-total and late-scratch experiments | both named assertions detected | 5.58 |
+| Stryker 5.0.0 | all 16 critical fingerprints Killed, zero Timeout | 605.52 |
+| Complete four-job aggregate | pass | <1 |
 
 The 65 new matrix case executions sum to 0.1825 seconds; maximum 0.0252 seconds.
 One case enumerates 54 fragment combinations; this is bounded enumeration, not
@@ -57,15 +61,25 @@ code is 229 test lines, 121 runner lines and 80 fixture lines, plus small existi
 manifest/aggregate hooks. No new package, project or proof model was introduced.
 Review future normal CI samples before claiming recurring medians or tail cost.
 
-The unchanged Stryker gate and complete four-job aggregate are required in PR CI;
-this local capture does not claim a fresh Stryker run or complete aggregate.
-All 16 critical fingerprints remain required. Human-review obligations remain
-unsatisfied by machine results.
+The complete local four-job aggregate passes, including the new parser obligation
+and unchanged Stryker gate. Selected Stryker outcomes: 41 Killed, 28 Survived,
+7 NoCoverage, 0 Timeout, 3 CompileError, 26 Ignored; all 16 critical fingerprints
+are Killed. The command is within the unchanged 1,800-second limit. All human
+review obligations remain not-run; the receipt does not claim semantic approval.
+
+GitHub reports CI workflow 290315375 as `disabled_manually`. The latest release
+push run 42453088270 was cancelled before this PR. This session did not enable,
+disable or rerun workflows or alter repository settings. The complete local gate
+was run instead; it is not represented as a PR or post-merge CI success. PR #116
+remains the human-review surface, with owner-authorized merge after completion.
 
 [Local capture](evidence/p3-c/local-validation.zip), SHA-256
-`08baaefc13c2987796e5da29f978fa2fc29488073b3a15577cc782f3183cf9aa`,
+`081b958dab4d308b1b16c84b4c0e52d90e74eb945e025318f411cd5174ac493b`,
 contains raw TRX/logs, source/runtime identities, execution records, coverage and
-proof/mutation evidence. Both new experiments first pass all 13 adapter cases
+proof/mutation evidence, the contract-change report and full aggregate. Only the
+redundant Stryker HTML is omitted. Receipt SHA-256:
+`4d10b75e889566f7a93869f91699b0b9b2c81f3dcf621df2126a0710de39350c`.
+Both new experiments first pass all 13 adapter cases
 plus the runtime probe; mutations then fail exactly their named assertions.
 The aggregate requires them under REASSEMBLY-001-TEST without changing its proof.
 
