@@ -134,7 +134,7 @@ jobs:
         with:
           dotnet-version: 10.0.x
       - name: Capture separate Close mutation evidence
-        run: ./scripts/pdd.sh capture --job stryker --output artifacts/pdd/stryker --command-budget 1800
+        run: ./scripts/pdd.sh capture --job stryker --stryker-concurrency 2 --output artifacts/pdd/stryker --command-budget 1800
       - uses: actions/upload-artifact@v4
         if: always()
         with:
