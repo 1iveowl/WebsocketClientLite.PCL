@@ -1,5 +1,6 @@
-﻿using System;
+using System;
 using System.Collections.Concurrent;
+using System.Diagnostics.CodeAnalysis;
 using System.Collections.Generic;
 using System.Net.Security;
 using System.Reactive;
@@ -20,11 +21,14 @@ namespace WebsocketClientLite;
 public class ClientWebSocketRx : IWebSocketClientRx, IDisposable, IAsyncDisposable
 {
     private readonly CompositeDisposable _disposables = [];
+    private readonly object _lifecycleGate = new();
+    private bool _disposed;
+    private object? _generation;
     private readonly IObserver<bool> _observerIsConnected;
 
     // Connections created by active subscriptions. Tracked so DisposeAsync can
     // give each one a graceful, awaited close handshake (and Dispose an abrupt
-    // bounded one). Entries remove themselves on normal teardown (the Finally
+    // bounded one). Entries remove themselves on normal teardown (the Using
     // around each connection).
     private readonly ConcurrentDictionary<WebsocketService, byte> _activeConnections = new();
 
@@ -223,6 +227,10 @@ public class ClientWebSocketRx : IWebSocketClientRx, IDisposable, IAsyncDisposab
     /// <param name="clientPingMessage">Specific client message. Default none. Will stay constant and can only be a <see langword="string"/>. For more advanced scenarios use <see cref="ISender.SendPing"/></param>
     /// <param name="handshaketimeout">Specific time out for client trying to connect (aka handshake). Default is 30 seconds.</param>
     /// <returns></returns>
+    [SuppressMessage("Maintainability", "CA1513:Use ObjectDisposedException.ThrowIf",
+        Justification = "The same code supports netstandard2.0 and netstandard2.1.")]
+    [SuppressMessage("Reliability", "CA2025:Do not pass disposable instances into unawaited tasks",
+        Justification = "Rx Using owns the service through asynchronous setup and observation; unsubscribe intentionally aborts pending I/O.")]
     public IObservable<(IDataframe? dataframe, ConnectionStatus state)>
         WebsocketConnectWithStatusObservable(
             Uri uri,
@@ -237,44 +245,68 @@ public class ClientWebSocketRx : IWebSocketClientRx, IDisposable, IAsyncDisposab
             handshaketimeout = TimeSpan.FromSeconds(30);
         }
 
-        void initSender(ISender sender, IEnumerable<string>? negotiatedSubprotocols)
-        {
-            Sender = sender;
-            NegotiatedSubprotocols = negotiatedSubprotocols;
-            SetIsConnected(true);
-        }
-
         return Observable.Create<(IDataframe? dataframe, ConnectionStatus state)>(obsTuple =>
-            Observable.Create<ConnectionStatus>(async obsStatus =>
+        {
+            var generation = new object();
+            lock (_lifecycleGate)
+            {
+                if (_disposed)
+                {
+                    obsTuple.OnError(new ObjectDisposedException(nameof(ClientWebSocketRx)));
+                    return Disposable.Empty;
+                }
+                _generation = generation;
+            }
+
+            void InitSender(ISender sender, IEnumerable<string>? negotiatedSubprotocols)
+            {
+                lock (_lifecycleGate)
+                {
+                    if (_disposed) throw new ObjectDisposedException(nameof(ClientWebSocketRx));
+                    Sender = sender;
+                    NegotiatedSubprotocols = negotiatedSubprotocols;
+                    SetIsConnected(true);
+                }
+            }
+
+            return Observable.Create<ConnectionStatus>(obsStatus =>
             {
                 obsStatus.OnNext(ConnectionStatus.Initialized);
-
-                return await Observable.FromAsync<WebsocketService>(_ => WebsocketClientFactory.Create(
-                            () => IsSecureConnectionScheme(uri),
-                            ValidateServerCertificate,
-                            obsStatus,
-                            this))
-                        .Do(ws => _activeConnections.TryAdd(ws, 0))
-                        .Select(ws => Observable.FromAsync<IObservable<IDataframe?>>(ct => ConnectWebsocket(ws, ct))
-                            .Concat()
-                            .Finally(() =>
-                            {
-                                _activeConnections.TryRemove(ws, out _);
-                                ws.Dispose();
-                            })
-                            .Subscribe(
-                                dataframe => { obsTuple.OnNext((dataframe, ConnectionStatus.DataframeReceived)); },
-                                ex => { obsTuple.OnError(ex); },
-                                () => { obsTuple.OnCompleted(); }));
+                WebsocketService? service = null;
+                return Observable.Using(
+                    () =>
+                    {
+                        lock (_lifecycleGate)
+                        {
+                            if (_disposed) throw new ObjectDisposedException(nameof(ClientWebSocketRx));
+                            service = WebsocketClientFactory.Create(
+                                () => IsSecureConnectionScheme(uri), ValidateServerCertificate, obsStatus, this);
+                            _activeConnections.TryAdd(service, 0);
+                        }
+                        // Using owns cleanup before it starts asynchronous setup.
+                        var owned = service;
+                        return Disposable.Create(() =>
+                        {
+                            _activeConnections.TryRemove(owned, out _);
+                            owned.Dispose();
+                        });
+                    },
+                    _ => Observable.FromAsync<IObservable<IDataframe?>>(ct => ConnectWebsocket(service!, ct, InitSender)).Concat())
+                    .Subscribe(
+                        dataframe => obsTuple.OnNext((dataframe, ConnectionStatus.DataframeReceived)),
+                        obsTuple.OnError, obsTuple.OnCompleted);
             })
-            .Finally(() => SetIsConnected(false))
-            .Subscribe(
-                state => { obsTuple.OnNext((null, state)); },
-                ex => { obsTuple.OnError(ex); },
-                () => { obsTuple.OnCompleted(); })
-            );
+            .Finally(() =>
+            {
+                lock (_lifecycleGate)
+                {
+                    if (ReferenceEquals(_generation, generation)) SetIsConnected(false);
+                }
+            })
+            .Subscribe(state => obsTuple.OnNext((null, state)), obsTuple.OnError, obsTuple.OnCompleted);
+        });
 
-        async Task<IObservable<IDataframe?>> ConnectWebsocket(WebsocketService ws, CancellationToken ct) =>
+        async Task<IObservable<IDataframe?>> ConnectWebsocket(WebsocketService ws, CancellationToken ct, Action<ISender, IEnumerable<string>?> initSender) =>
             await ws.WebsocketConnectionHandler.ConnectWebsocket(
                 uri,
                 X509CertCollection,
@@ -296,6 +328,7 @@ public class ClientWebSocketRx : IWebSocketClientRx, IDisposable, IAsyncDisposab
     {
         if (disposing)
         {
+            lock (_lifecycleGate) _disposed = true;
             // Abrupt teardown of any still-active connection: the close
             // handshake is attempted best-effort within a bound (see
             // WebsocketConnectionHandler.Dispose). Prefer DisposeAsync /
@@ -332,6 +365,7 @@ public class ClientWebSocketRx : IWebSocketClientRx, IDisposable, IAsyncDisposab
     /// </summary>
     public async ValueTask DisposeAsync()
     {
+        lock (_lifecycleGate) _disposed = true;
         foreach (var ws in _activeConnections.Keys)
         {
             if (_activeConnections.TryRemove(ws, out _))

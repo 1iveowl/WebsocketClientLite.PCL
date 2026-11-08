@@ -340,6 +340,26 @@
       "exclusions": [
         "Abort does not cancel arbitrary in-flight delegates or guarantee delivery. Tests establish selected finite schedules, not unconditional liveness."
       ]
+    },
+    {
+      "id": "EPOCH-PROGRESS",
+      "assumption": "Callbacks return and external connect/handshake/I/O settle; finite retry and internal sockets are used. Rx disposal and terminal routing remain trusted.",
+      "review_anchor": "boundary-epoch-progress",
+      "owners": [
+        {
+          "file": "src/main/WebsocketClientLite/ClientWebSocketRx.cs",
+          "symbol": "WebsocketClientLite.ClientWebSocketRx.DisposeAsync"
+        }
+      ],
+      "requirements": [
+        "EPOCH-001"
+      ],
+      "test_obligations": [
+        "EPOCH-001-TEST"
+      ],
+      "exclusions": [
+        "Finite loopback schedules do not establish arbitrary concurrency, a wall-clock deadline or simultaneous-subscription public semantics."
+      ]
     }
   ]
 }

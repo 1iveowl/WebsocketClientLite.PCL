@@ -293,3 +293,16 @@ with clearing requested, and initialized count. Observation timeout does not end
 write ownership. Pool compliance, relinquishment on Task completion, stable caller
 inputs and external progress remain assumptions. Machine receipts cannot record
 human acceptance; review the PR source revision separately.
+
+### EPOCH-001
+
+Review [reconnect intent and counterexamples](reconnect-intent.md). The admission
+lock covers permanent disposal and registration only; cleanup waits outside it.
+The generation identity suppresses an old final false notification after a new
+subscription. The factory remains synchronous construction, now expressed directly;
+Rx Using installs ownership before setup. No new scheduler or public seam is added.
+
+<a id="boundary-epoch-progress"></a>
+**EPOCH-PROGRESS:** finite callbacks, external connect/handshake settlement and Rx
+resource disposal remain trusted. Simultaneous active subscription policy is
+explicitly deferred. Human semantic acceptance remains a revision-specific review.

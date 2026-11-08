@@ -215,6 +215,22 @@ public sealed partial class Evidence
             }
             catch (Exception e) when (e is not OutOfMemoryException) { retention["status"] = "failed"; errors.Add("Retention experiment: " + e.Message); }
         }
+        var reconnect = new JsonObject { ["status"] = "not-run" };
+        receipt["reconnect_experiment"] = reconnect;
+        if (jobs.ContainsKey("controlled"))
+        {
+            try
+            {
+                Require(Passed(jobs["controlled"]?["runs"]?["reconnect"]), "unsuccessful reconnect command");
+                var directoryPath = Path.Combine(directory, "controlled/reconnect");
+                var report = Read(Path.Combine(directoryPath, "results.json"));
+                Require(Equal(report["source"], Node(expected)) && Equal(report["source_after"], Node(expected)) && Equal(report["ci"], jobs["controlled"]?["ci"]), "reconnect source/CI mismatch");
+                Require(S(report, "status") == "passed", "Incomplete reconnect report");
+                ValidateReconnectReport(directoryPath, report, expected.SourceHashes);
+                reconnect["status"] = "passed"; reconnect["evidence"] = report;
+            }
+            catch (Exception e) when (e is not OutOfMemoryException) { reconnect["status"] = "failed"; errors.Add("Reconnect experiment: " + e.Message); }
+        }
         if (jobs.ContainsKey("stryker"))
         {
             try
@@ -348,6 +364,11 @@ public sealed partial class Evidence
                 {
                     item["evidence"]!.AsArray().Add("controlled/retention/results.json");
                     if (S(retention, "status") != "passed") item["status"] = S(retention, "status");
+                }
+                if (o.Id == "EPOCH-001-TEST")
+                {
+                    item["evidence"]!.AsArray().Add("controlled/reconnect/results.json");
+                    if (S(reconnect, "status") != "passed") item["status"] = S(reconnect, "status");
                 }
                 if (o.Id == "CLOSE-004-CONTROLLED")
                 {

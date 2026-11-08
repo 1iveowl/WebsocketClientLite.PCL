@@ -34,7 +34,7 @@ internal sealed class LoopbackWebSocketServer : IDisposable
     public Uri Uri => new($"ws://127.0.0.1:{Port}");
 
     /// <summary>Accept one client, complete the handshake, then run <paramref name="afterHandshake"/>.</summary>
-    public void Start(Func<Stream, CancellationToken, Task> afterHandshake)
+    public void Start(Func<Stream, CancellationToken, Task> afterHandshake, Func<Stream, CancellationToken, Task>? beforeHandshakeResponse = null)
     {
         _serverLoop = Task.Run(async () =>
         {
@@ -42,7 +42,7 @@ internal sealed class LoopbackWebSocketServer : IDisposable
             {
                 using var tcp = await _listener.AcceptTcpClientAsync(_cts.Token).ConfigureAwait(false);
                 using var stream = tcp.GetStream();
-                await PerformHandshakeAsync(stream, _cts.Token).ConfigureAwait(false);
+                await PerformHandshakeAsync(stream, _cts.Token, beforeHandshakeResponse).ConfigureAwait(false);
                 await afterHandshake(stream, _cts.Token).ConfigureAwait(false);
             }
             catch (OperationCanceledException) { /* shutting down */ }
@@ -219,9 +219,10 @@ internal sealed class LoopbackWebSocketServer : IDisposable
         return sb.ToString();
     }
 
-    private static async Task PerformHandshakeAsync(Stream stream, CancellationToken ct)
+    private static async Task PerformHandshakeAsync(Stream stream, CancellationToken ct, Func<Stream, CancellationToken, Task>? beforeResponse = null)
     {
         var request = await ReadRequestHeadersAsync(stream, ct).ConfigureAwait(false);
+        if (beforeResponse is not null) await beforeResponse(stream, ct).ConfigureAwait(false);
 
         var key = TryExtractHeader(request, "Sec-WebSocket-Key")
             ?? throw new IOException("Missing header: Sec-WebSocket-Key");

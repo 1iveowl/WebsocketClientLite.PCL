@@ -81,6 +81,9 @@ public static class Program
                 case "boundary-defects":
                     Allow("--output");
                     return await evidence.BoundaryDefects(output, cancellation.Token);
+                case "reconnect-defect":
+                    Allow("--output");
+                    return await evidence.ReconnectDefects(output, cancellation.Token);
                 case "retention-defects":
                     Allow("--output");
                     return await evidence.RetentionDefects(output, cancellation.Token);

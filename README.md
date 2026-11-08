@@ -247,6 +247,17 @@ var client = new ClientWebSocketRx { TcpClient = tcpClient, HasTransferSocketLif
 > - The TcpClient will not be disposed automatically when passed in using the constructor unless `HasTransferSocketLifeCycleOwnership = true` is set.
 > - **A supplied `TcpClient` can only serve one connection.** Its socket is closed when the connection tears down, and .NET sockets cannot be reconnected. If you use reconnect patterns such as `Retry()`/`Repeat()`, leave `TcpClient` unset so every attempt gets a fresh socket.
 
+Sequential reconnect with `Retry`/`Repeat` creates a new internal socket and Sender
+for each attempt. A cached old `Sender` remains tied to its old connection and
+fails sends after teardown; obtain `client.Sender` again after reconnecting.
+`Sender` can remain non-null while disconnected. Cleanup from a terminated attempt
+does not reset the successor's connected status or dispose its transport.
+Disposing the client permanently ends admission: later subscriptions fail with
+`ObjectDisposedException`. Unsubscribe to end one attempt while keeping the client
+available. Use a finite retry policy that stops when you dispose the client.
+The shared Sender/status policy for simultaneous active subscriptions on one
+client is unspecified; use separate clients for independent connections.
+
 ### Connecting to a WebSocket Server
 
 To connect and observe WebSocket communication:
