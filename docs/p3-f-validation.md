@@ -16,6 +16,44 @@ fresh evidence from this experiment. In particular G's historical Timeout remain
 inconclusive, A's abort fix remains intact, and D's generation policy is not
 broadened. No GitVersion, protocol core, other-session, production or gate change.
 
+## Why no adoption now
+
+The decision criterion is additional assurance per unit of maintained machinery.
+The existing production seams were sufficient for this bounded question: the
+small event table passed 210 orders and detected/replayed the selected overlap
+fault in three fresh processes. It therefore did not reach the plan's trigger
+for trying Coyote: a specific combinatorial gap that makes the table unwieldy.
+
+This is a conservative investment decision, not a comparative benchmark win.
+Coyote was not executed, so the experiment cannot show that it would find no
+additional bugs, run slower, or fail on this runtime. No new defect was found,
+and the injected fault already belongs to A's assertion challenges. Its value
+here is checking the table's detector and causal replay, not demonstrating novel
+bug discovery. The 210 orders cover only the declared graph; uncontrolled
+continuations and excluded external orders remain gaps.
+
+Coyote could add internal scheduling choices. To justify adopting it, a follow-up
+should identify a concrete race or missed ordering and demonstrate better
+repeatable detection than the table on the same production paths. In exchange,
+the repository would maintain a qualified package/runtime pairing, isolated
+assembly rewriting, an audit of uncontrolled operations and replay artifacts.
+The published-package/current-documentation discrepancy is an unresolved setup
+question, not proof of incompatibility. Those costs are concrete obligations;
+the additional assurance benefit has not yet been measured.
+
+TLC addresses a different problem: exploring an abstract design, including
+conditional progress. This spike exposed no temporal-design question requiring
+that abstraction. A second state machine would require reviewed C# correspondence
+and negative checks before its results could inform implementation assurance.
+A green model by itself would not validate the production await/gate behavior.
+
+Retain the bounded manual experiment without a recurring gate. Reconsider Coyote
+for a specific internal race, luck-dependent replay or unmanageable event graph;
+reconsider TLC for a concrete temporal-design question. Require a measurable
+benefit and the original budgets before adoption. This conclusion does not
+remove existing tests, narrow their obligations, or claim general concurrency
+correctness.
+
 ## Event graph and production correspondence
 
 [Program.cs](../verification/exploration/Program.cs) calls the actual sender and
@@ -182,8 +220,8 @@ an additional check, not called Release evidence. The subsequent explicit
 used separate build outputs; the isolated defect copy used its own temporary tree.
 No shared test output from another session was used.
 
-This review PR is not a merge or release request. Full proof, mutation and four-job
-aggregate checks are not rerun for these standalone experiment/document files;
+At initial PR creation, merge was not requested. Full proof, mutation and four-job
+aggregate checks were not rerun for these standalone experiment/document files;
 no source selected by those obligations or gate configuration changes. The
 repository's full-local-evidence requirement before merging remains in force.
 
