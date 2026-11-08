@@ -1,0 +1,27 @@
+{
+  "stryker-config": {
+    "project": "WebsocketClientLite.csproj",
+    "target-framework": "net10.0",
+    "configuration": "Release",
+    "test-runner": "vstest",
+    "mutate": [
+      "**/Service/WebsocketConnectionHandler.cs",
+      "!**/*.g.cs"
+    ],
+    "mutation-level": "Standard",
+    "concurrency": 8,
+    "reporters": [
+      "dots",
+      "html",
+      "json"
+    ],
+    "thresholds": {
+      "high": 80,
+      "low": 60,
+      "break": 0
+    },
+    "break-on-initial-test-failure": true,
+    "additional-timeout": 30000,
+    "disable-mix-mutants": true
+  }
+}

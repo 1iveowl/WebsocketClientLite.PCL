@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Reactive.Linq;
 using System.Reactive.Threading.Tasks;
+using System.Reactive.Concurrency;
 using System.Security.Cryptography.X509Certificates;
 using System.Security.Authentication;
 using IWebsocketClientLite;
@@ -22,6 +23,7 @@ internal class WebsocketConnectionHandler : IDisposable, IAsyncDisposable
     private readonly WebsocketParserHandler _websocketParserHandler;
     private readonly Action<ConnectionStatus, Exception?> _connectionStatusAction;
     private readonly Func<Stream, Action<ConnectionStatus, Exception?>, WebsocketSenderHandler> _createWebsocketSenderFunc;
+    private readonly IScheduler _pingScheduler;
 
     private IDisposable? _clientPingDisposable;
 
@@ -38,12 +40,14 @@ internal class WebsocketConnectionHandler : IDisposable, IAsyncDisposable
         TcpConnectionService tcpConnectionService,
         WebsocketParserHandler websocketParserHandler,
         Action<ConnectionStatus, Exception?> connectionStatusAction,
-        Func<Stream, Action<ConnectionStatus, Exception?>, WebsocketSenderHandler> createWebsocketSenderFunc)
+        Func<Stream, Action<ConnectionStatus, Exception?>, WebsocketSenderHandler> createWebsocketSenderFunc,
+        IScheduler? pingScheduler = null)
     {
         _tcpConnectionService = tcpConnectionService;            
         _websocketParserHandler = websocketParserHandler;
         _connectionStatusAction = connectionStatusAction;
         _createWebsocketSenderFunc = createWebsocketSenderFunc;
+        _pingScheduler = pingScheduler ?? Scheduler.Default;
 
         _clientPingDisposable = default;
     }
@@ -145,69 +149,13 @@ internal class WebsocketConnectionHandler : IDisposable, IAsyncDisposable
         // close handshake runs before the terminal event reaches the downstream
         // teardown (ws.Dispose) on the completion path, while the disposal paths
         // are ordered by Dispose/DisposeAsync waiting on the same shared task.
-        return Observable.Create<IDataframe?>(async (dataframeObserver, ct) =>
-        {
-            Exception? sourceError = null;
-
-            try
-            {
-                var terminated = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
-                using var cancellationRegistration = ct.Register(() => terminated.TrySetResult(true));
-
-                // DataframeObservable emits every message from a single
-                // subscription, so no .Repeat() (and its per-message
-                // re-subscription) is needed.
-                using var subscription = _websocketParserHandler.DataframeObservable()
-                    .SelectMany(async dataframe =>
-                        // Process control frames and return data frames
-                        await IncomingControlFrameHandler(dataframe, cancellationToken).ConfigureAwait(false))
-                    .Where(dataframe => dataframe is not null)
-                    .Subscribe(
-                        dataframeObserver.OnNext,
-                        ex => { sourceError = ex; terminated.TrySetResult(true); },
-                        () => terminated.TrySetResult(true));
-
-                await terminated.Task.ConfigureAwait(false);
-
-                // Surface the error BEFORE the close handshake, and through the
-                // STATUS channel (Aborted -> OnError): the subscriber's stream
-                // is fed by two independent branches (status and dataframes)
-                // with no ordering between them, so an error forwarded only on
-                // the dataframe branch races the status stream's completion
-                // (Disconnected -> OnCompleted, emitted inside the close) and
-                // can be swallowed. Routing it via the status observer makes
-                // the error causally precede anything the close produces. The
-                // dataframe-branch OnError below is belt-and-braces; a second
-                // terminal on the subscriber is suppressed by Rx.
-                if (sourceError is not null)
-                {
-                    sender.NotifyReadFailure();
-                    _connectionStatusAction(ConnectionStatus.Aborted, sourceError);
-                    dataframeObserver.OnError(sourceError);
-                }
-            }
-            finally
-            {
-                // Completion/error paths: run (or await) the close here, before
-                // the terminal event reaches the downstream teardown. On the
-                // unsubscribe path (token cancelled) the disposal cascade owns
-                // the close instead — Dispose/DisposeAsync start it and wait
-                // before touching the socket — so starting it here as well
-                // would only race that cascade.
-                if (!ct.IsCancellationRequested)
-                {
-                    await CloseOnceAsync().ConfigureAwait(false);
-                }
-            }
-
-            if (sourceError is null && !ct.IsCancellationRequested)
-            {
-                dataframeObserver.OnCompleted();
-            }
-        });
+        return Observable.Create<IDataframe?>((observer, token) => ObserveFrames(
+            _websocketParserHandler.DataframeObservable()
+                .SelectMany(async dataframe => await IncomingControlFrameHandler(dataframe, cancellationToken).ConfigureAwait(false))
+                .Where(dataframe => dataframe is not null), observer, sender, CloseOnceAsync, token));
 
         IObservable<Unit> SendClientPing(string? message) =>
-            Observable.Interval(clientPingTimeSpan)
+            Observable.Interval(clientPingTimeSpan, _pingScheduler)
             .Select(_ => Observable.FromAsync(ct => sender.SendPing(message, ct)))
             .Concat();
 
@@ -266,6 +214,66 @@ internal class WebsocketConnectionHandler : IDisposable, IAsyncDisposable
                 _connectionStatusAction(ConnectionStatus.Close, null);
                 return null;
             }
+        }
+    }
+
+    // The task is an internal lifecycle seam: cancellation tests can observe the
+    // finally path ending without polling or depending on outer client disposal.
+    internal async Task ObserveFrames(IObservable<Dataframe?> source, IObserver<IDataframe?> dataframeObserver,
+        WebsocketSenderHandler sender, Func<Task> closeOnceAsync, CancellationToken ct)
+    {
+        Exception? sourceError = null;
+
+        try
+        {
+            var terminated = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+            using var cancellationRegistration = ct.Register(() => terminated.TrySetResult(true));
+
+            // DataframeObservable emits every message from a single
+            // subscription, so no .Repeat() (and its per-message
+            // re-subscription) is needed.
+            using var subscription = source
+                .Subscribe(
+                    dataframeObserver.OnNext,
+                    ex => { sourceError = ex; terminated.TrySetResult(true); },
+                    () => terminated.TrySetResult(true));
+
+            await terminated.Task.ConfigureAwait(false);
+
+            // Surface the error BEFORE the close handshake, and through the
+            // STATUS channel (Aborted -> OnError): the subscriber's stream
+            // is fed by two independent branches (status and dataframes)
+            // with no ordering between them, so an error forwarded only on
+            // the dataframe branch races the status stream's completion
+            // (Disconnected -> OnCompleted, emitted inside the close) and
+            // can be swallowed. Routing it via the status observer makes
+            // the error causally precede anything the close produces. The
+            // dataframe-branch OnError below is belt-and-braces; a second
+            // terminal on the subscriber is suppressed by Rx.
+            if (sourceError is not null)
+            {
+                sender.NotifyReadFailure();
+                _connectionStatusAction(ConnectionStatus.Aborted, sourceError);
+                dataframeObserver.OnError(sourceError);
+            }
+        }
+        finally
+        {
+            // Completion/error paths: run (or await) the close here, before
+            // the terminal event reaches the downstream teardown. On the
+            // unsubscribe path (token cancelled) the disposal cascade owns
+            // the close instead — Dispose/DisposeAsync start it and wait
+            // before touching the socket — so starting it here as well
+            // would only race that cascade.
+            if (!ct.IsCancellationRequested)
+            {
+                await closeOnceAsync().ConfigureAwait(false);
+            }
+        }
+
+        if (sourceError is null && !ct.IsCancellationRequested)
+        {
+            dataframeObserver.OnCompleted();
         }
     }
 

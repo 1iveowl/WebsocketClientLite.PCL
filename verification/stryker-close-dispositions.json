@@ -1,0 +1,565 @@
+{
+  "source_hash": "fab51b416150ff9b5658ce37c94c70cefbce6c40dc779f3dc36445d3a30dda9e",
+  "required_killed": [
+    "470e8be90a751190ad9649d8a36e13f13e4d1b2440f3eed830d9d9ea200146b1",
+    "96731c36c7b612a2289182617070fa62fee3e182e153c17519fb441bd25803d0",
+    "57ee883fa1a2ff538ad27c9b0a455e42c0a3ac7cdd0de66268cf7f90487532f4",
+    "f17accba915f8a124823de00308741fc1efe73ae52d81bd7eb01a52bef3c6601",
+    "45a45c22c5517606cf582abcd060401e774556aec473b2f3ab45caebd8739607",
+    "5e405a1484b6c6ed6a12b6ca00e8681eab1b0f09fec6e584352cd290f033e754",
+    "461a2df724c91cb37b14d2047e42b1bd45845f9ee5d24deb2bff257acae7626f",
+    "b487f91b238a38c3bf555870fd8037e89873a4027a2c47da35dac16d9289a394",
+    "ca031f4e5237ce7a6521d56bbd7ec5c33ff22f19d2505b9e90044f95f129789c",
+    "f24b663187e4c0a31e331520a889b3380c4fc6c228f46cf927d46947d42691bd",
+    "10d9a7f4ad32913bcc2792a8d4230d1bab32f9fda04da4c0f6dab59a63426b6d",
+    "d36619baf15dcf9a3ce2eaebda3ab8ebddc2a2fbba04974cbc5f719e27d08a27",
+    "63296ee884a6697a46fec3955977b2f7d7d1efc1d0f281e8c3e46203362a4fb6",
+    "3d9b5e4d742c3309185e53a023410ce4ecf7a6463f5452de5f649440baea35b3",
+    "31f983eadc5061edd7629034c25daabcca3b88b94f93db93195507ddee0bbc25",
+    "84ab49e022039eeed37fbf2b7793d1f691db19fbf251cb9f5334bd0cc56c866f"
+  ],
+  "mutants": [
+    {
+      "key": "af474fad8ab7a38df3bafff7e976012218242054f4bfcdb45f94f50908032b61",
+      "pilot_id": "558",
+      "line": 71,
+      "pilot_outcome": "Killed",
+      "classification": "out-of-scope",
+      "requirements": [],
+      "reason": "Client-ping default interval selection is outside Close disposal obligations; no test currently distinguishes its default/explicit branch."
+    },
+    {
+      "key": "314facd64fc3f33ccd080b19e7b7ed52d51169a76f32c03507849d2b4d349bb7",
+      "pilot_id": "559",
+      "line": 71,
+      "pilot_outcome": "Killed",
+      "classification": "out-of-scope",
+      "requirements": [],
+      "reason": "Client-ping default interval selection is outside Close disposal obligations; no test currently distinguishes its default/explicit branch."
+    },
+    {
+      "key": "a2772982a3be3340166d2da349576c395f3aa02d90babd4a9357dccdf6c6433e",
+      "pilot_id": "560",
+      "line": 71,
+      "pilot_outcome": "Killed",
+      "classification": "out-of-scope",
+      "requirements": [],
+      "reason": "Client-ping default interval selection is outside Close disposal obligations; no test currently distinguishes its default/explicit branch."
+    },
+    {
+      "key": "4f3dfd3654a9352b53e47913b269ee29b1c2d1358d7a341b40f42c0f855b093d",
+      "pilot_id": "561",
+      "line": 72,
+      "pilot_outcome": "NoCoverage",
+      "classification": "out-of-scope",
+      "requirements": [],
+      "reason": "Client-ping default interval selection is outside Close disposal obligations; no test currently distinguishes its default/explicit branch."
+    },
+    {
+      "key": "06b963ee3f40e128973df92c43df473fb765c0ec5689e3743c233c172336534a",
+      "pilot_id": "563",
+      "line": 80,
+      "pilot_outcome": "Survived",
+      "classification": "out-of-scope",
+      "requirements": [],
+      "reason": "Connection setup or handshake diagnostics, outside CLOSE-004/CLOSE-005. Existing handshake success/error tests do not distinguish this statement or scheduler context."
+    },
+    {
+      "key": "b0b3581ae9b5edc715f27733b23dd0b219cd949f7a59407630aaf6c7d39c864a",
+      "pilot_id": "566",
+      "line": 95,
+      "pilot_outcome": "Survived",
+      "classification": "out-of-scope",
+      "requirements": [],
+      "reason": "Connection setup or handshake diagnostics, outside CLOSE-004/CLOSE-005. Existing handshake success/error tests do not distinguish this statement or scheduler context."
+    },
+    {
+      "key": "05e1533b2a73b6a49a192020a28786e43624e6bd8ca910ae944ab939d747e52c",
+      "pilot_id": "569",
+      "line": 99,
+      "pilot_outcome": "Survived",
+      "classification": "out-of-scope",
+      "requirements": [],
+      "reason": "Connection setup or handshake diagnostics, outside CLOSE-004/CLOSE-005. Existing handshake success/error tests do not distinguish this statement or scheduler context."
+    },
+    {
+      "key": "e06cf343e93039a39aa0449da1af7997aa3101558a1eef853ba1a1e552bd1cc5",
+      "pilot_id": "571",
+      "line": 103,
+      "pilot_outcome": "NoCoverage",
+      "classification": "out-of-scope",
+      "requirements": [],
+      "reason": "Connection setup or handshake diagnostics, outside CLOSE-004/CLOSE-005. Existing handshake success/error tests do not distinguish this statement or scheduler context."
+    },
+    {
+      "key": "33383a20f04c48f32b1919be96a297306d3277c5604ec3a9f270bf2a70e6a68b",
+      "pilot_id": "572",
+      "line": 103,
+      "pilot_outcome": "NoCoverage",
+      "classification": "out-of-scope",
+      "requirements": [],
+      "reason": "Connection setup or handshake diagnostics, outside CLOSE-004/CLOSE-005. Existing handshake success/error tests do not distinguish this statement or scheduler context."
+    },
+    {
+      "key": "6ec91d3b582fb88c639e14fb0ccbd21915f29683dd2088b0f4564c544c042b7c",
+      "pilot_id": "576",
+      "line": 118,
+      "pilot_outcome": "NoCoverage",
+      "classification": "out-of-scope",
+      "requirements": [],
+      "reason": "Client-ping error message text is outside Close disposal obligations; this error-string branch is uncovered."
+    },
+    {
+      "key": "d0106c53807bfd7d595c1f0e84b3f291b23a4540eac4de05cbef99f72970b250",
+      "pilot_id": "607",
+      "line": 230,
+      "pilot_outcome": "Survived",
+      "classification": "equivalent",
+      "requirements": [],
+      "reason": "The bool result of the terminated TaskCompletionSource is never read; only task completion is used. Changing true to false preserves this signal."
+    },
+    {
+      "key": "605553259f8e0d4f15d39b987415cfc133baf7496eb7d832290d6823acdeb054",
+      "pilot_id": "578",
+      "line": 154,
+      "pilot_outcome": "Survived",
+      "classification": "accepted-gap",
+      "requirements": [],
+      "reason": "G tests DisposeAsync under a non-pumping calling SynchronizationContext. This separate continuation capture site remains untested with a custom context; arbitrary handshake/control-frame/parser callback scheduling remains an explicit boundary."
+    },
+    {
+      "key": "7d0131feedfe0f8c549b22003489ab7913fbdb6e286ac9197f6babd6aab91478",
+      "pilot_id": "610",
+      "line": 238,
+      "pilot_outcome": "Survived",
+      "classification": "equivalent",
+      "requirements": [],
+      "reason": "The bool result of the terminated TaskCompletionSource is never read; only task completion is used. Changing true to false preserves this signal."
+    },
+    {
+      "key": "a9ecc9916db3ba01f7346aa900171c6731343939ccaf68d9b1d13b2f785b0f18",
+      "pilot_id": "611",
+      "line": 239,
+      "pilot_outcome": "Survived",
+      "classification": "equivalent",
+      "requirements": [],
+      "reason": "The bool result of the terminated TaskCompletionSource is never read; only task completion is used. Changing true to false preserves this signal."
+    },
+    {
+      "key": "34a22b6cb84113ea88eda5fb461990da011a608ad884b32ca672395d5a2674f2",
+      "pilot_id": "584",
+      "line": 174,
+      "pilot_outcome": "Survived",
+      "classification": "accepted-gap",
+      "requirements": [
+        "CLOSE-004",
+        "CLOSE-005"
+      ],
+      "reason": "G tests DisposeAsync under a non-pumping calling SynchronizationContext. This separate continuation capture site remains untested with a custom context; arbitrary handshake/control-frame/parser callback scheduling remains an explicit boundary."
+    },
+    {
+      "key": "b487f91b238a38c3bf555870fd8037e89873a4027a2c47da35dac16d9289a394",
+      "pilot_id": "617",
+      "line": 256,
+      "pilot_outcome": "Killed",
+      "classification": "accepted-gap",
+      "requirements": [
+        "CLOSE-004",
+        "CLOSE-005"
+      ],
+      "reason": "G now detects this defect with a controlled lifecycle/periodic/context assertion and requires Killed independently. This retained historical disposition cannot waive the critical gate; any survivor, uncovered or timeout fails."
+    },
+    {
+      "key": "ca031f4e5237ce7a6521d56bbd7ec5c33ff22f19d2505b9e90044f95f129789c",
+      "pilot_id": "618",
+      "line": 257,
+      "pilot_outcome": "Killed",
+      "classification": "accepted-gap",
+      "requirements": [
+        "CLOSE-004",
+        "CLOSE-005"
+      ],
+      "reason": "G now detects this defect with a controlled lifecycle/periodic/context assertion and requires Killed independently. This retained historical disposition cannot waive the critical gate; any survivor, uncovered or timeout fails."
+    },
+    {
+      "key": "f24b663187e4c0a31e331520a889b3380c4fc6c228f46cf927d46947d42691bd",
+      "pilot_id": "620",
+      "line": 268,
+      "pilot_outcome": "Killed",
+      "classification": "accepted-gap",
+      "requirements": [
+        "CLOSE-004",
+        "CLOSE-005"
+      ],
+      "reason": "G now detects this defect with a controlled lifecycle/periodic/context assertion and requires Killed independently. This retained historical disposition cannot waive the critical gate; any survivor, uncovered or timeout fails."
+    },
+    {
+      "key": "10d9a7f4ad32913bcc2792a8d4230d1bab32f9fda04da4c0f6dab59a63426b6d",
+      "pilot_id": "622",
+      "line": 270,
+      "pilot_outcome": "Killed",
+      "classification": "accepted-gap",
+      "requirements": [
+        "CLOSE-004",
+        "CLOSE-005"
+      ],
+      "reason": "G now detects this defect with a controlled lifecycle/periodic/context assertion and requires Killed independently. This retained historical disposition cannot waive the critical gate; any survivor, uncovered or timeout fails."
+    },
+    {
+      "key": "10db9eeb5018644ebfc925b225271f7d05c660be5ad0275ee2d25108a6d12897",
+      "pilot_id": "599",
+      "line": 198,
+      "pilot_outcome": "Survived",
+      "classification": "accepted-gap",
+      "requirements": [
+        "CLOSE-004",
+        "CLOSE-005"
+      ],
+      "reason": "G tests DisposeAsync under a non-pumping calling SynchronizationContext. This separate continuation capture site remains untested with a custom context; arbitrary handshake/control-frame/parser callback scheduling remains an explicit boundary."
+    },
+    {
+      "key": "0371379b0bf01c7ab745b91bc1addd92d00954c1869b06a658e45df539a5ce4d",
+      "pilot_id": "624",
+      "line": 274,
+      "pilot_outcome": "Killed",
+      "classification": "accepted-gap",
+      "requirements": [
+        "CLOSE-005"
+      ],
+      "reason": "Post-teardown observer completion is redundant for the outer client status stream; direct parser-observable terminal delivery after teardown is not independently asserted. No liveness or callback-progress guarantee is inferred."
+    },
+    {
+      "key": "8be9fecfb9abd494ab7460dd426ef62cd97e40eb7d966118a9b5e92e8af57fa6",
+      "pilot_id": "625",
+      "line": 274,
+      "pilot_outcome": "Killed",
+      "classification": "accepted-gap",
+      "requirements": [
+        "CLOSE-005"
+      ],
+      "reason": "Post-teardown observer completion is redundant for the outer client status stream; direct parser-observable terminal delivery after teardown is not independently asserted. No liveness or callback-progress guarantee is inferred."
+    },
+    {
+      "key": "3bfcc190a0664d60231ed7032c1b4929de5eed4d787da5d6df7dcaf35fb6d7bc",
+      "pilot_id": "626",
+      "line": 274,
+      "pilot_outcome": "Killed",
+      "classification": "accepted-gap",
+      "requirements": [
+        "CLOSE-005"
+      ],
+      "reason": "Post-teardown observer completion is redundant for the outer client status stream; direct parser-observable terminal delivery after teardown is not independently asserted. No liveness or callback-progress guarantee is inferred."
+    },
+    {
+      "key": "b27d08dd1eca7d1de9b6bf790461253180cc8964318663224a8a391223a6fce8",
+      "pilot_id": "627",
+      "line": 274,
+      "pilot_outcome": "Killed",
+      "classification": "accepted-gap",
+      "requirements": [
+        "CLOSE-005"
+      ],
+      "reason": "Post-teardown observer completion is redundant for the outer client status stream; direct parser-observable terminal delivery after teardown is not independently asserted. No liveness or callback-progress guarantee is inferred."
+    },
+    {
+      "key": "d36619baf15dcf9a3ce2eaebda3ab8ebddc2a2fbba04974cbc5f719e27d08a27",
+      "pilot_id": "629",
+      "line": 276,
+      "pilot_outcome": "Killed",
+      "classification": "accepted-gap",
+      "requirements": [
+        "CLOSE-004",
+        "CLOSE-005"
+      ],
+      "reason": "G now detects this defect with a controlled lifecycle/periodic/context assertion and requires Killed independently. This retained historical disposition cannot waive the critical gate; any survivor, uncovered or timeout fails."
+    },
+    {
+      "key": "8a8fbc6d0395c740e00cd379d01c90f72c82b83a9fb3c2427072681c51f73685",
+      "pilot_id": "613",
+      "line": 241,
+      "pilot_outcome": "Survived",
+      "classification": "accepted-gap",
+      "requirements": [],
+      "reason": "G tests DisposeAsync under a non-pumping calling SynchronizationContext. This separate continuation capture site remains untested with a custom context; arbitrary handshake/control-frame/parser callback scheduling remains an explicit boundary."
+    },
+    {
+      "key": "6cb7a6ac69f16041c5a407ddddd7fe6d9c903dbce304b5208616487fef343327",
+      "pilot_id": "586",
+      "line": 179,
+      "pilot_outcome": "Survived",
+      "classification": "out-of-scope",
+      "requirements": [],
+      "reason": "Reserved/null opcode dispatch diagnostics are outside Close. Parser admission rejects reserved wire opcodes before these defensive branches, and the exact diagnostic string is not asserted."
+    },
+    {
+      "key": "fe42ed87f8699e999fefbc22031fff34017b6aa972938911c3ae4710bd3bbab1",
+      "pilot_id": "587",
+      "line": 179,
+      "pilot_outcome": "Survived",
+      "classification": "out-of-scope",
+      "requirements": [],
+      "reason": "Reserved/null opcode dispatch diagnostics are outside Close. Parser admission rejects reserved wire opcodes before these defensive branches, and the exact diagnostic string is not asserted."
+    },
+    {
+      "key": "5bca28a9dc058c47f56c6a58d48adec0a91c7e0d37101bc4d2519dadb3f2d181",
+      "pilot_id": "588",
+      "line": 179,
+      "pilot_outcome": "Survived",
+      "classification": "out-of-scope",
+      "requirements": [],
+      "reason": "Reserved/null opcode dispatch diagnostics are outside Close. Parser admission rejects reserved wire opcodes before these defensive branches, and the exact diagnostic string is not asserted."
+    },
+    {
+      "key": "14d43d563788304580525f45418c698c8989e1fa5b592e002ff103929eb46e37",
+      "pilot_id": "589",
+      "line": 179,
+      "pilot_outcome": "Survived",
+      "classification": "out-of-scope",
+      "requirements": [],
+      "reason": "Reserved/null opcode dispatch diagnostics are outside Close. Parser admission rejects reserved wire opcodes before these defensive branches, and the exact diagnostic string is not asserted."
+    },
+    {
+      "key": "5a060641a9eb1cee380be2193916b413809f4e683daf16cb730ff4a303b2f212",
+      "pilot_id": "590",
+      "line": 179,
+      "pilot_outcome": "Survived",
+      "classification": "out-of-scope",
+      "requirements": [],
+      "reason": "Reserved/null opcode dispatch diagnostics are outside Close. Parser admission rejects reserved wire opcodes before these defensive branches, and the exact diagnostic string is not asserted."
+    },
+    {
+      "key": "9f51ca60dfbe41c99672bd9f8ae91376b6380902581fe6d1cadc01a6a25cb402",
+      "pilot_id": "591",
+      "line": 179,
+      "pilot_outcome": "Survived",
+      "classification": "out-of-scope",
+      "requirements": [],
+      "reason": "Reserved/null opcode dispatch diagnostics are outside Close. Parser admission rejects reserved wire opcodes before these defensive branches, and the exact diagnostic string is not asserted."
+    },
+    {
+      "key": "5973c178e7c45d4bbd7ed51d94c327bc60bd4961f1cb233f22fa5e86e1b6ed5e",
+      "pilot_id": "592",
+      "line": 179,
+      "pilot_outcome": "Survived",
+      "classification": "out-of-scope",
+      "requirements": [],
+      "reason": "Reserved/null opcode dispatch diagnostics are outside Close. Parser admission rejects reserved wire opcodes before these defensive branches, and the exact diagnostic string is not asserted."
+    },
+    {
+      "key": "c092f0d0d8ef11255ac5192d49216c0539dc135e36e5c18a360508ce2f251ade",
+      "pilot_id": "593",
+      "line": 179,
+      "pilot_outcome": "Survived",
+      "classification": "out-of-scope",
+      "requirements": [],
+      "reason": "Reserved/null opcode dispatch diagnostics are outside Close. Parser admission rejects reserved wire opcodes before these defensive branches, and the exact diagnostic string is not asserted."
+    },
+    {
+      "key": "8bfdb4be366199e57c03439a26a801ba9ab18423629293366cd2d8361a487492",
+      "pilot_id": "594",
+      "line": 188,
+      "pilot_outcome": "NoCoverage",
+      "classification": "out-of-scope",
+      "requirements": [],
+      "reason": "Reserved/null opcode dispatch diagnostics are outside Close. Parser admission rejects reserved wire opcodes before these defensive branches, and the exact diagnostic string is not asserted."
+    },
+    {
+      "key": "70c231780a1e2366185b0957543c78e7e611faac9ed3976d96c5c5427243c083",
+      "pilot_id": "595",
+      "line": 191,
+      "pilot_outcome": "NoCoverage",
+      "classification": "out-of-scope",
+      "requirements": [],
+      "reason": "Reserved/null opcode dispatch diagnostics are outside Close. Parser admission rejects reserved wire opcodes before these defensive branches, and the exact diagnostic string is not asserted."
+    },
+    {
+      "key": "ca6779d80e0b86f0f2850d6bfdc2ff996a10f231502952cdbe11d4d6059c0958",
+      "pilot_id": "597",
+      "line": 197,
+      "pilot_outcome": "Survived",
+      "classification": "out-of-scope",
+      "requirements": [],
+      "reason": "Ping/Pong status notification observability is outside Close disposal and is not independently asserted by this pilot."
+    },
+    {
+      "key": "7b0295440301a51cc5cb65f1a6d961a9b97e77d4041a131ce7189cb5856ef04c",
+      "pilot_id": "598",
+      "line": 198,
+      "pilot_outcome": "Killed",
+      "classification": "out-of-scope",
+      "requirements": [],
+      "reason": "Removing automatic Pong caused a test timeout. This is an out-of-scope Ping response experiment, not behavioral assertion detection and not counted as killed."
+    },
+    {
+      "key": "d77e985d71f3ceacfc297df468a599346f3a774cfdd448ed3c108e29e92f8733",
+      "pilot_id": "623",
+      "line": 270,
+      "pilot_outcome": "Survived",
+      "classification": "accepted-gap",
+      "requirements": [],
+      "reason": "G tests DisposeAsync under a non-pumping calling SynchronizationContext. This separate continuation capture site remains untested with a custom context; arbitrary handshake/control-frame/parser callback scheduling remains an explicit boundary."
+    },
+    {
+      "key": "8959623f74c76bbc3a3dffe6a6c29d2dcfb99696b21fc377c1e8c79915c4ff29",
+      "pilot_id": "601",
+      "line": 204,
+      "pilot_outcome": "Survived",
+      "classification": "out-of-scope",
+      "requirements": [],
+      "reason": "Ping/Pong status notification observability is outside Close disposal and is not independently asserted by this pilot."
+    },
+    {
+      "key": "a17e1e0a272ddd819677f30e59bc7358218db4a976f0706fcc826ee30ff4d714",
+      "pilot_id": "604",
+      "line": 214,
+      "pilot_outcome": "Timeout",
+      "classification": "accepted-gap",
+      "requirements": [
+        "CLOSE-005"
+      ],
+      "reason": "Removing the incoming Close status callback exhausted the diagnostic notification barrier in the exploratory G run. Raw Timeout is not behavioral assertion detection. Status notification remains a gap outside the readiness critical fingerprint, which is required Killed."
+    },
+    {
+      "key": "02555b172b7afef634540acc48ba9408d64cde98e5d5078b23124c0bbd4670d9",
+      "pilot_id": "634",
+      "line": 292,
+      "pilot_outcome": "Survived",
+      "classification": "accepted-gap",
+      "requirements": [
+        "CLOSE-004",
+        "CLOSE-005"
+      ],
+      "reason": "G tests DisposeAsync under a non-pumping calling SynchronizationContext. This separate continuation capture site remains untested with a custom context; arbitrary handshake/control-frame/parser callback scheduling remains an explicit boundary."
+    },
+    {
+      "key": "51f829ad7c6ae8eb95b5b8d9210b22de36b71b4cbf1810a4e6338c702f5c4264",
+      "pilot_id": "636",
+      "line": 299,
+      "pilot_outcome": "Survived",
+      "classification": "equivalent",
+      "requirements": [
+        "CLOSE-004",
+        "CLOSE-005"
+      ],
+      "reason": "Debug.WriteLine is conditional on DEBUG and omitted from the Release assembly. Removing its call or changing its interpolated message has no Release behavior."
+    },
+    {
+      "key": "63900f2243b5eda9d52a9c8e4db9406e9c12ab623994a6054bbc999772c9f04c",
+      "pilot_id": "637",
+      "line": 299,
+      "pilot_outcome": "NoCoverage",
+      "classification": "equivalent",
+      "requirements": [
+        "CLOSE-004",
+        "CLOSE-005"
+      ],
+      "reason": "Debug.WriteLine is conditional on DEBUG and omitted from the Release assembly. Removing its call or changing its interpolated message has no Release behavior."
+    },
+    {
+      "key": "63296ee884a6697a46fec3955977b2f7d7d1efc1d0f281e8c3e46203362a4fb6",
+      "pilot_id": "641",
+      "line": 317,
+      "pilot_outcome": "Killed",
+      "classification": "accepted-gap",
+      "requirements": [
+        "CLOSE-004",
+        "CLOSE-005"
+      ],
+      "reason": "G now detects this defect with a controlled lifecycle/periodic/context assertion and requires Killed independently. This retained historical disposition cannot waive the critical gate; any survivor, uncovered or timeout fails."
+    },
+    {
+      "key": "3d9b5e4d742c3309185e53a023410ce4ecf7a6463f5452de5f649440baea35b3",
+      "pilot_id": "645",
+      "line": 322,
+      "pilot_outcome": "Killed",
+      "classification": "accepted-gap",
+      "requirements": [
+        "CLOSE-004",
+        "CLOSE-005"
+      ],
+      "reason": "G now detects this defect with a controlled lifecycle/periodic/context assertion and requires Killed independently. This retained historical disposition cannot waive the critical gate; any survivor, uncovered or timeout fails."
+    },
+    {
+      "key": "887f41b0fa32b28c05c90d7aa0476d9f27f0f0f510a4aa7378ba15f96055a6b8",
+      "pilot_id": "646",
+      "line": 325,
+      "pilot_outcome": "Survived",
+      "classification": "equivalent",
+      "requirements": [
+        "CLOSE-004"
+      ],
+      "reason": "WebsocketParserHandler.Dispose currently has an empty body. Removing this call has no observable resource effect with the current implementation."
+    },
+    {
+      "key": "31f983eadc5061edd7629034c25daabcca3b88b94f93db93195507ddee0bbc25",
+      "pilot_id": "649",
+      "line": 335,
+      "pilot_outcome": "Killed",
+      "classification": "accepted-gap",
+      "requirements": [
+        "CLOSE-004",
+        "CLOSE-005"
+      ],
+      "reason": "G now detects this defect with a controlled lifecycle/periodic/context assertion and requires Killed independently. This retained historical disposition cannot waive the critical gate; any survivor, uncovered or timeout fails."
+    },
+    {
+      "key": "1619fc9dce83e151e59a34cc7c8da40f6ecda6ef8afc4e286fa34a25e5abd275",
+      "pilot_id": "650",
+      "line": 353,
+      "pilot_outcome": "Survived",
+      "classification": "out-of-scope",
+      "requirements": [],
+      "reason": "Synchronous Dispose is explicitly an abort exception to CLOSE-004/CLOSE-005. Reentrant wait/fault-observation and redundant synchronous transport cleanup need separate tests; async transport disposal is independently required to be killed."
+    },
+    {
+      "key": "16e3f5f00507a1f0460d00bb6c3eed0bf08328b41df07d1261b6e07a9d82a736",
+      "pilot_id": "656",
+      "line": 361,
+      "pilot_outcome": "Survived",
+      "classification": "out-of-scope",
+      "requirements": [],
+      "reason": "Synchronous Dispose is explicitly an abort exception to CLOSE-004/CLOSE-005. Reentrant wait/fault-observation and redundant synchronous transport cleanup need separate tests; async transport disposal is independently required to be killed."
+    },
+    {
+      "key": "4906b1596babd05e56090581d85d9bf85d3aa14e1206efbca6190ab2bf3b314b",
+      "pilot_id": "657",
+      "line": 362,
+      "pilot_outcome": "Survived",
+      "classification": "out-of-scope",
+      "requirements": [],
+      "reason": "Synchronous Dispose is explicitly an abort exception to CLOSE-004/CLOSE-005. Reentrant wait/fault-observation and redundant synchronous transport cleanup need separate tests; async transport disposal is independently required to be killed."
+    },
+    {
+      "key": "f550f821cd8c9fff8a71e6a4e486749820aea0f1f00b47741c3a7d7355f05e96",
+      "pilot_id": "658",
+      "line": 372,
+      "pilot_outcome": "Survived",
+      "classification": "equivalent",
+      "requirements": [
+        "CLOSE-004"
+      ],
+      "reason": "WebsocketParserHandler.Dispose currently has an empty body. Removing this call has no observable resource effect with the current implementation."
+    },
+    {
+      "key": "6ca67f8d8d88c3d06c24dd61f8f2ab1eea4d321d3e74403cc83a19fb3e6d264a",
+      "pilot_id": "659",
+      "line": 373,
+      "pilot_outcome": "Survived",
+      "classification": "out-of-scope",
+      "requirements": [],
+      "reason": "Synchronous Dispose is explicitly an abort exception to CLOSE-004/CLOSE-005. Reentrant wait/fault-observation and redundant synchronous transport cleanup need separate tests; async transport disposal is independently required to be killed."
+    },
+    {
+      "key": "84ab49e022039eeed37fbf2b7793d1f691db19fbf251cb9f5334bd0cc56c866f",
+      "pilot_id": "556",
+      "line": 50,
+      "pilot_outcome": "Survived",
+      "classification": "accepted-gap",
+      "requirements": [
+        "CLOSE-004",
+        "CLOSE-005"
+      ],
+      "reason": "The exploratory test awaited a Ping after advancing virtual time and could accidentally accept a real timer. G now asserts write entry synchronously at the virtual tick; this seam substitution must be Killed. The retained survivor cannot waive the critical gate."
+    }
+  ]
+}

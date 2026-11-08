@@ -1,0 +1,101 @@
+{
+  "schema_version": 1,
+  "job": "tests",
+  "source": {
+    "tested_commit": "merge",
+    "pr_source_head": "head",
+    "dirty_worktree": false,
+    "source_hashes": {
+      "verification/Protocol.dfy": "a",
+      "verification/Masking.dfy": "b"
+    }
+  },
+  "source_after": {
+    "tested_commit": "merge",
+    "pr_source_head": "head",
+    "dirty_worktree": false,
+    "source_hashes": {
+      "verification/Protocol.dfy": "a",
+      "verification/Masking.dfy": "b"
+    }
+  },
+  "ci": {
+    "GITHUB_SERVER_URL": null,
+    "GITHUB_REPOSITORY": null,
+    "GITHUB_RUN_ID": null,
+    "GITHUB_RUN_ATTEMPT": null,
+    "GITHUB_EVENT_NAME": null,
+    "GITHUB_JOB": null,
+    "GITHUB_SHA": null
+  },
+  "runs": {
+    "restore": {
+      "status": "passed",
+      "exit_code": 0,
+      "command": [
+        "dotnet",
+        "restore",
+        "src/main/WebsocketClientLite.sln"
+      ],
+      "started_at": "2026-11-07T16:23:16.113354+00:00",
+      "finished_at": "2026-11-07T16:23:16.113357+00:00",
+      "log": "restore.log"
+    },
+    "build": {
+      "status": "passed",
+      "exit_code": 0,
+      "command": [
+        "dotnet",
+        "build",
+        "src/main/WebsocketClientLite.sln",
+        "--configuration",
+        "Release",
+        "--no-restore"
+      ],
+      "started_at": "2026-11-07T16:23:16.113382+00:00",
+      "finished_at": "2026-11-07T16:23:16.113383+00:00",
+      "log": "build.log"
+    },
+    "matrix": {
+      "status": "passed",
+      "exit_code": 0,
+      "command": [
+        "./test-all-tfms.sh",
+        "Release"
+      ],
+      "started_at": "2026-11-07T16:23:16.113406+00:00",
+      "finished_at": "2026-11-07T16:23:16.113407+00:00",
+      "log": "matrix.log"
+    },
+    "coverage-run": {
+      "status": "passed",
+      "exit_code": 0,
+      "command": [
+        "dotnet",
+        "test",
+        "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+        "--configuration",
+        "Release",
+        "--collect:XPlat Code Coverage",
+        "--results-directory",
+        "/tmp/tmppyew1tum/tests/coverage"
+      ],
+      "started_at": "2026-11-07T16:23:16.113432+00:00",
+      "finished_at": "2026-11-07T16:23:16.113433+00:00",
+      "log": "coverage-run.log"
+    },
+    "coverage-gate": {
+      "status": "passed",
+      "exit_code": 0,
+      "command": [
+        "./scripts/check-coverage.sh",
+        "/tmp/tmppyew1tum/tests/coverage",
+        "70"
+      ],
+      "started_at": "2026-11-07T16:23:16.113457+00:00",
+      "finished_at": "2026-11-07T16:23:16.113458+00:00",
+      "log": "coverage-gate.log"
+    }
+  },
+  "tools": {}
+}

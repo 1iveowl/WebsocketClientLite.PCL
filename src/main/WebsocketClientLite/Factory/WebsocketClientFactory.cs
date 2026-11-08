@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Net.Security;
 using System.Net.Sockets;
@@ -13,7 +13,7 @@ namespace WebsocketClientLite.Factory;
 
 internal static class WebsocketClientFactory
 {
-    internal static Task<WebsocketService> Create(
+    internal static WebsocketService Create(
         Func<bool> isSecureConnectionSchemeFunc,
         Func<object, X509Certificate, X509Chain, SslPolicyErrors, bool> validateServerCertificateFunc,
         IObserver<ConnectionStatus> observerConnectionStatus,
@@ -49,7 +49,7 @@ internal static class WebsocketClientFactory
             parserHandler,
             connectionHandler);
 
-        return Task.FromResult(service);
+        return service;
 
         void ConnectionStatusAction(ConnectionStatus status, Exception? ex)
         {

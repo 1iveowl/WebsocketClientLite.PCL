@@ -20,6 +20,8 @@ dotnet build src/main/WebsocketClientLite.sln
 ./test-all-tfms.sh Release    # the same in Release, as CI runs it
 ```
 
+Run the [full local evidence checks](../verification/README.md#ci-verification-receipts-phase-2-increment-d) before merging routine changes. GitHub CI is reserved for releases, with manual dispatch available for release validation.
+
 The scripts need bash: macOS, Linux, WSL or Git Bash.
 
 The test project targets `net10.0` and links one library build at a time through the `LibTfm` property, so a single runtime exercises each build's `#if` code paths. To test one build:
@@ -42,7 +44,7 @@ dotnet test src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj -c R
 | `src/interface/IWebsocketClientLite` | Its interfaces, published as the separate `IWebsocketClientLite` package |
 | `src/main/WebsocketClientLiteTest` | Unit tests |
 | `src/test/NETCore.Console.Test` | A console sample that connects to public echo servers |
-| `.github/workflows` | `ci.yml` builds, tests and checks coverage for pushes and pull requests to `main`; `build.yml` publishes the packages when `GitVersion.yml` changes on a `releases/**` branch |
+| `.github/workflows` | `ci.yml` runs release checks and `build.yml` publishes packages when `GitVersion.yml` changes in a push or pull request to `releases/**`; ordinary changes are validated locally |
 
 ## Dev container
 
@@ -171,3 +173,26 @@ The [protocol verification guide](../verification/README.md) records the contrac
 C# trust boundaries, pinned toolchain, regeneration commands, tests and performance
 methodology. Run `./scripts/dafny-masking.sh --check` after changing either Dafny
 source or the generated code; the historical script name now covers the full core.
+
+## Actual runtime and OS qualification
+
+`LibTfm` selects a library build. It does not change the test process runtime.
+The existing test project also accepts `TestHostTfm`, defaulting to `net10.0`:
+
+```bash
+dotnet test src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj -c Release \
+  -p:TestHostTfm=net8.0 -p:LibTfm=net8.0
+```
+
+Install the matching runtime; major roll-forward cannot count as qualification.
+The [P3-E record](p3-e-validation.md) lists the manually qualified OS/runtime
+cells, exact source and assembly identities, negative fixtures, costs and
+reproduction commands. `test-host` and `aggregate --host-cells` use the existing
+PDD tool to capture and check those cells. The focused host receipt does not
+replace the full local four-job aggregate.
+
+The CI workflow's manual `host_qualification=true` input runs two fresh jobs per
+selected .NET 10 OS without repeating proof or mutation tools. The default remains
+full release validation. Windows mandatory promotion and macOS weekly scheduling
+are deferred under the release-only CI policy; .NET 8/9 checks are transitional,
+not an ongoing support promise. Every published library target is retained.

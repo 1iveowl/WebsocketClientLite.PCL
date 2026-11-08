@@ -4,6 +4,145 @@ The library calls C# generated from Dafny for synchronous protocol decisions and
 
 This work implements the five stages in the [adoption plan](../docs/dafny-pdd-plan.md): header validation, fragmentation, outgoing framing/masking, handshake/Close predicates, and integration checks. It does not establish full RFC conformance or prove the asynchronous client.
 
+The proposed [PDD phase 2 plan for 10.2.0.0](../docs/pdd-phase-2-plan.md) adds requirement traceability, repeatable mutation checks, boundary review, CI receipts and controlled asynchronous tests, starting with Close handling.
+
+## Requirement maps (phase 2, increments A and F)
+
+The [manifest](requirements.json), [v2 JSON Schema](requirements.schema.json) and
+[intent review](close-intent-review.md) separate sequential Close decisions from
+asynchronous caller responsibilities. Validate them with the .NET 10 SDK (standard library only):
+
+```bash
+./scripts/pdd.sh validate
+dotnet test tools/Pdd.Tests/Pdd.Tests.csproj -c Release
+```
+
+The validator also accepts a manifest filename; source paths always resolve from
+the repository root, independent of the working directory. It rejects unknown
+fields (including run results), duplicate IDs/JSON keys, missing obligations,
+dangling assumptions, missing files, paths outside the repository and unresolved
+symbols, clauses or test identities. The malformed-manifest fixtures are in
+[tests/invalid-requirements.json](tests/invalid-requirements.json).
+
+Reference resolution is deliberately narrow and fails on ambiguous declarations:
+
+- Dafny identities use `module.class.method`, not the generated C# namespace.
+  The resolver finds the named module/class and a unique static method declaration
+  in that class, then matches each complete `requires`/`ensures`/`modifies` clause in that
+  method's header after folding indented continuation lines and normalizing whitespace. The known `{:isolate_assertions}` method attribute is supported. Clauses in other methods do not
+  count. No source line number is an identity.
+- C# identities use `namespace.class.method` in the named file. The resolver
+  supports expression-bodied methods, file-scoped namespaces and uniquely named methods in the declared
+  class. A test must additionally have an adjacent `[Fact]` or `[Theory]` attribute
+  (with optional data attributes). Theory rows share the method identity.
+- Comments and ordinary/verbatim strings are masked before declaration searches.
+  This is a source locator, not a Dafny/C# parser or compiler: overloads, partial
+  classes across files, raw strings, block namespaces and more complex declaration
+  syntax require an explicit resolver extension. It does not resolve call graphs,
+  preprocess conditional compilation or establish semantic coverage.
+
+The [standalone .NET tooling](../tools/Pdd/README.md) replaces the original
+Python implementations in phase 2 increment D2. It builds independently of the
+production solution, with one console project and one test project.
+
+The small schema evaluator supports only the keywords used by the checked-in
+schema and rejects unsupported keywords. The schema is also usable by JSON Schema
+2020-12 tooling; cross-reference checks require this validator. Changing the
+manifest shape requires a deliberate schema/version and validator update.
+
+All listed obligations are required, including deferred ones. `delivery` records
+where an obligation is implemented (`existing`, B, C or E), **not a pass status**.
+Existing proof/test obligations must resolve to declarations; future tests and
+mutations have descriptions and stable obligation IDs without invented file or
+test references. Review obligations point to the matching requirement section in
+the intent review. CLOSE-004/005 are tested-only and have empty contract lists.
+The v2 manifest references the separate boundary register described below.
+Validator success does not mean a requirement is satisfied: mutation runs,
+E controlled schedules and PR review remain separate obligations. Receipts and their aggregation belong to D.
+
+## Close mutation checks (phase 2, increment B)
+
+```bash
+./scripts/pdd.sh mutations --scope close
+dotnet test tools/Pdd.Tests/Pdd.Tests.csproj -c Release
+```
+
+The [Close catalog and runner guide](mutations/README.md) describes five exact
+body edits covering duplicate/suppressed send, state-bit loss and
+premature/suppressed release. The runner verifies both unchanged Dafny modules
+first, then each mutant in a separate temporary tree with the same pinned
+Dafny/Z3 toolchain as generation. Only rejection at the mapped postcondition
+counts as detection. Surviving mutants and inconclusive experiments fail the PR
+gate. Generated C# and production sources are never edited by the runner.
+
+Each run writes fresh logs, source snapshots/hashes, versions, commands, budgets,
+exit codes and matched clauses under `artifacts/close-mutations/`. CI uploads
+these alongside the existing verification evidence, including on failure.
+This is mutation evidence, not the aggregated requirement receipt planned for
+increment D, and it does not establish specification completeness or the
+asynchronous guarantees of CLOSE-004/CLOSE-005.
+
+## Boundary register and contract changes (phase 2, increment C)
+
+[boundaries.json](boundaries.json) replaces A's inline seeds, preserving their IDs
+and assumption wording. The [v1 boundary schema](boundaries.schema.json) requires
+an assumption, implementation owners by file/qualified method, dependent requirement
+IDs, test obligation IDs, exclusions and an intent-review anchor. The requirements
+schema is now v2 and names the register through `boundaries_file`; v1 manifests
+must be migrated rather than silently accepted. The existing validation command
+checks both files. Owners resolve using the same C# mechanism described above;
+dependencies must exactly match the requirements' assumption references, and test
+IDs must match all test obligations of those dependent requirements. Test details
+and delivery stages remain in the requirement manifest, so E's controlled schedules
+are visible obligations, not invented passing tests.
+
+The initial register covers state-lock ownership, reservation versus completed
+writes, failure/abort paths, timer delivery, and observer/disposal progress.
+F adds buffer ownership, native-copy implementation, retained-fragment totals and masking adapter obligations. UTF-8 and handshake parsing remain outside this register expansion. The generated
+[trusted-boundaries.md](trusted-boundaries.md) is still exclusively the
+machine-compared Dafny external-contract audit; the existing `--check` gate is
+unchanged. A handwritten boundary entry cannot authorize a new external contract.
+
+For a committed topic branch, fetch its actual PR target and run:
+
+```bash
+git fetch origin releases/10.2.0.0
+./scripts/pdd.sh contract-report --target origin/releases/10.2.0.0 --head HEAD --output artifacts/pdd/contract-changes.md
+```
+
+`--target` is mandatory; substitute the actual target if the PR is retargeted.
+The report records target, head and merge-base SHAs. It summarizes requirement
+intent and boundary/audit changes, includes complete diffs for every changed
+Dafny file (including `requires`, `ensures`, supporting definitions and external
+contracts), and includes the full repository source diff so changes outside these
+summaries remain reviewable. Added and deleted files are included. Missing refs,
+missing history, ambiguous merge bases and malformed intent data fail the command.
+
+CI's PR-only `contract-change-report` job checks out the PR source head, fetches
+the event's actual base SHA with full history, and uploads the Markdown report.
+It compares the source head rather than GitHub's synthetic test merge commit.
+Other verification/build jobs retain their existing checkout and gates. The job
+summary points to the artifact; a successful job means the report was produced,
+not that guarantees were accepted. Rerun on the current PR revision/target before
+accepting changes if either has advanced.
+
+This is conservative textual review: any committed difference requires semantic
+review, including formatting changes. It does not parse Dafny, classify logical
+strength, resolve helper dependencies, establish equivalence, or detect every
+weakening. Full Dafny diffs deliberately preserve multiline clauses and helper
+bodies instead of relying on a keyword-only extraction. Only committed trees are
+compared; local edits and untracked files are excluded. Binary changes are Git
+binary patches, not a semantic summary. This tool runs no proof or test and
+provides no approval or receipt. Reviewers must record the accepted decision and
+reviewed head revision through normal PR review; `approved: true` in a file is
+not acceptance evidence. The boundary schema rejects such fields.
+
+Tooling tests use temporary Git histories to exercise target divergence,
+precondition/postcondition and helper changes, trust expansion, caller changes,
+file addition/deletion, missing/unrelated refs and malformed registers. Run them
+with the same tooling test command above. Increment D will add run receipts; this
+report does not aggregate evidence or close E's asynchronous testing gaps.
+
 ## Reading the proof boundary
 
 Dafny verifies the implementations and mathematical lemmas in our `.dfy` source. The compiler translates executable implementations into C#; it omits proof-only lemmas. Dafny does not separately verify the generated C# text, and it does not verify any of our handwritten C# implementations or test harnesses. We trust the verifier, solver, compiler and runtimes, and test the compiled integration.
@@ -65,7 +204,7 @@ Run from the repository root in the Linux x64 dev container:
 ./scripts/dafny-masking.sh --check
 ```
 
-The script retains its pilot name but verifies both modules, including included files. It downloads the checksum-pinned official Dafny 4.11.0 archive and uses its Z3 4.12.1 solver explicitly. Python 3, curl and unzip are required. Verification errors and assertion timeouts fail the command. The tool cache is outside the repository.
+The script retains its pilot name but verifies both modules, including included files. It downloads the checksum-pinned official Dafny 4.11.0 archive and uses its Z3 4.12.1 solver explicitly. The .NET 10 SDK, curl and unzip are required. Verification errors and assertion timeouts fail the command. The tool cache is outside the repository.
 
 The generated file is checked in; ordinary builds and package consumers do not need Dafny or Z3. Never edit generated methods. Postprocessing only normalizes the machine-specific solver path in embedded metadata, marks generated partial classes internal, and adds generated-code/nullable headers. CI compares regenerated output byte-for-byte and uploads logs and artifacts. Dafny's compiler, solver, runtime and this limited postprocessing are trusted.
 
@@ -134,3 +273,120 @@ Final sender measurements on .NET 10.0.14 compare equivalent scalar loops with r
 The active sender kernels meet the local budget. Copy-and-mask uses four-byte batches plus a short tail; in-place masking reads the preserved key region directly. Neither uses a variable-shift runtime helper in its hot loop.
 
 The retained, unused receive-side pilot helper measured approximately 45–50% slower than its original scalar comparison in this final build, despite meeting its earlier pilot measurements. It is no longer on the production receive path because masked server frames are rejected. The benchmark continues to report it; the original pilot result is not a portable performance guarantee. Do not reintroduce that helper into a hot path without remeasuring.
+
+## CI verification receipts (phase 2, increment D)
+
+CI captures the existing protocol and build/test jobs independently, then runs
+`evidence-gate` even when a dependency fails. Download the `pdd-receipt` artifact
+for `receipt.json`, `summary.md` and the linked raw logs, TRX, coverage and Dafny
+mutation results. The contract-change report remains a separate review aid;
+it is never treated as approval. GitHub CI runs only when `GitVersion.yml` changes in a push or pull request
+to `releases/**`, or when manually dispatched for release validation. Ordinary
+changes must pass the local commands below before merging. Do not require these
+release-only GitHub checks for ordinary pull requests: filtered workflows do not
+report a passing check. Release CI and package publishing are separate workflows;
+the evidence gate does not block the publish workflow.
+
+To reproduce locally, use a **new** output directory (capture refuses reuse):
+
+```bash
+./scripts/pdd.sh capture --job protocol --output artifacts/pdd/protocol
+./scripts/pdd.sh capture --job tests --output artifacts/pdd/tests
+./scripts/pdd.sh capture --job controlled --output artifacts/pdd/controlled
+./scripts/pdd.sh capture --job stryker --output artifacts/pdd/stryker
+# Local Stryker defaults to eight workers. GitHub Actions explicitly selects two.
+# Optional override: --stryker-concurrency <positive integer>
+./scripts/pdd.sh aggregate --output artifacts/pdd
+```
+
+Run these against an unchanged checkout. The receipt records the tested commit,
+PR source head (`PDD_PR_HEAD`, null for local/push runs), worktree dirtiness,
+SHA-256 hashes of tracked and unignored source, manifest, tooling (including `tools/`) and workflow
+files, command arrays, exit codes, UTC timestamps, tool/SDK versions and CI run
+identity. Source snapshots are checked before and after each job and compared
+with the aggregator's checkout. CI run/attempt identities must also match.
+Mismatches are retained as rejected evidence, never combined with valid results.
+These are traceability artifacts, not signed attestations or tamper-proof records.
+
+Every target has a fresh result directory and a recorded test command. TRX test
+identities are resolved through `TestDefinitions/TestMethod`, including every
+case of a named parameterized test. The host runtime comes from
+`RuntimeInformation.FrameworkDescription` emitted **inside the test process**.
+All five library targets currently use a .NET 10 test project; this is not a
+five-runtime test matrix. The ordinary `./test-all-tfms.sh Release` command still
+works; CI capture sets `PDD_TEST_RESULTS` to collect per-target evidence.
+
+The machine gate requires successful manifest/fixture checks, proof plus audit
+and generated-code drift checks, every catalogued targeted Dafny mutation,
+Release build, the complete library-target matrix, named test obligations and
+the existing 70% coverage gate. A zero verifier exit without a verification
+summary is insufficient. Missing, malformed, failed, skipped and interrupted
+results cannot pass. Commands not reached after a failure are `skipped`; commands
+with no completed output are `not-run`. Partial job records are saved before
+commands start; always-run uploads and aggregation preserve available evidence
+on failure/cancellation where GitHub permits remaining steps/jobs to run. A
+cancelled runner cannot guarantee artifact delivery; missing evidence fails.
+
+A passing **machine gate does not mean all Close requirements are satisfied**.
+Review obligations are recorded separately as `not-run`, pending revision-specific
+acceptance through normal PR review. Increment E's controlled tests and separate
+Stryker evidence are consumed from their separate jobs; missing results remain `not-run` and cannot satisfy those obligations. CLOSE-004 and CLOSE-005 still require revision-specific human review. This
+increment does not consume approval booleans or infer review acceptance from
+contract diffs. Future review ingestion must bind actual review decisions to the
+reviewed source revision.
+
+Receipt fixtures cover successful runs, actual failing commands, skipped and
+interrupted results, absent jobs/logs/targets/runtime data, failed or skipped named
+tests, missing mutations, malformed records, revision/hash and CI-attempt
+mismatches. Run them with `dotnet test tools/Pdd.Tests/Pdd.Tests.csproj -c Release`.
+
+### Controlled Close evidence
+
+[Increment E schedules](controlled-close.md) add deterministic barriers alongside
+the real loopback tests. Capture `controlled` and `stryker` into separate job
+folders beside `protocol` and `tests`, then run `./scripts/pdd.sh aggregate`.
+All four captures must use the same unchanged source identity. The aggregate
+gate requires the ordering-defect experiment independently of Stryker outcomes;
+review acceptance is never inferred from either experiment.
+
+## Reassembly and masking evidence (phase 2, increment F)
+
+The manifest separately maps production `Merge` (REASSEMBLY-001), scalar reference
+`MergeScalar` (REASSEMBLY-002), and the tested-only native copy implementation
+(REASSEMBLY-003). Production concatenation relies on `NativeCopy.CopySlice`'s
+external contract. Scalar concatenation does not; it is a reference path, not
+production integration evidence. The native copy implementation has an explicit
+proof/mutation exception, with its guard/source preservation test retained.
+
+MASK-001 maps the original whole-array `Apply` helper; MASK-002 and MASK-003 map
+the sender's `CopyMasked` and `MaskSlice`. Independent expected-byte tests cover
+XOR, zero-length/prefix/tail/bulk cases, key/source preservation and the entire
+outside destination slice. Aliased reassembly segments are checked against literal
+concatenation bytes, fresh output and unchanged inputs for both variants. Existing
+loopback, adapter, RFC-vector and integration tests remain in place.
+
+Run `./scripts/pdd.sh mutations` for all 15 experiments or select `--scope close`
+(five) / `--scope payload` (ten) for investigation. Only the full suite satisfies
+the protocol receipt. See the [catalog guide](mutations/README.md) for exact
+postcondition, loop-invariant and frame diagnostics and their contract mappings.
+The four capture jobs above and aggregation use identical source identities; old
+Close-only receipts cannot satisfy the new obligations. JSON records preserve
+actual library target and host runtime separately.
+
+This completes the planned implementation sequence A–F, not human acceptance of
+Phase 2. The [intent review](close-intent-review.md) includes F's requirement and
+boundary decisions but does not record reviewer approval. Review remains separate
+and `not-run` in machine receipts. Native-copy correctness, toolchain trust,
+concurrent caller ownership and the documented [Close pilot gaps](stryker-close-pilot.md)
+remain explicit limits. No exhaustive schedule exploration or full RFC proof is claimed.
+
+## Increment G Close evidence
+
+The [G record](close-evidence-g.md) retains the failed post-F receipt and maps
+parser/cancellation, observer, periodic-ping and synchronization-context schedules
+to CLOSE-004/CLOSE-005. The controlled job now requires both the existing ordering
+experiment and `./scripts/pdd.sh boundary-defects --output <fresh-directory>`.
+Five independent process repetitions challenge read-failure notification. Every
+experiment must fail its named behavioral assertion; timeouts and infrastructure
+errors remain inconclusive. Source-matched aggregate evidence and revision-specific
+human review remain distinct.

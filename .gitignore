@@ -321,3 +321,6 @@ __blobstorage__/*
 # planning
 /plan/
 
+# Python verification tooling
+__pycache__/
+

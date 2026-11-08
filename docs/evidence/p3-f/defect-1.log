@@ -1,0 +1,7 @@
+{"runtime":".NET 10.0.14","os":"Ubuntu 24.04.5 LTS","architecture":"X64","candidates":5040,"legal":1,"discarded":4830}
+{"order":"DCPRHXA","result":"fail","error":"Overlapping frame delegates","trace":["F","write:1:enter","D","C","single:OperationCanceledException","P","write:9:enter","R","write:1:exit","write:9:exit","write:0:enter","write:0:exit","ping:ok","fragmented:ok","H","write:8:enter","write:8:exit","close:ok","X","A"]}
+Unhandled exception. System.InvalidOperationException: Overlapping frame delegates
+   at Program.<<Main>$>g__Run|0_4(String order) in /tmp/p3-f-defect-adhbz1yv/verification/exploration/Program.cs:line 83
+   at Program.<<Main>$>g__Run|0_4(String order) in /tmp/p3-f-defect-adhbz1yv/verification/exploration/Program.cs:line 98
+   at Program.<Main>$(String[] args) in /tmp/p3-f-defect-adhbz1yv/verification/exploration/Program.cs:line 27
+   at Program.<Main>(String[] args)

@@ -2,6 +2,7 @@ using System;
 using System.Threading.Tasks;
 using IWebsocketClientLite;
 using WebsocketClientLite;
+using WebsocketClientLite.Service;
 using Xunit;
 
 namespace WebsocketClientLiteTest;
@@ -48,12 +49,23 @@ public class ErrorDeliveryStressTests
                     ex => terminal.TrySetResult($"error: {ex.Message}"),
                     () => terminal.TrySetResult("completed"));
 
-            await connected.Task.WaitAsync(Timeout);
-            var kind = await terminal.Task.WaitAsync(Timeout);
+            try
+            {
+                await connected.Task.WaitAsync(Timeout);
+                var kind = await terminal.Task.WaitAsync(Timeout);
 
-            Assert.True(
-                kind.StartsWith("error", StringComparison.Ordinal),
-                $"iteration {i}: stream terminated with '{kind}' instead of the read-loop error");
+                Assert.True(
+                    kind.StartsWith("error", StringComparison.Ordinal),
+                    $"iteration {i}: stream terminated with '{kind}' instead of the read-loop error");
+            }
+            finally
+            {
+                // The assertion above tests error routing. Release any mutated peer
+                // wait only afterward, then drain teardown before the next iteration.
+                // Otherwise 200 iterations can leave background Close tasks behind.
+                (client.Sender as WebsocketSenderHandler)?.NotifyReadFailure();
+                await client.DisposeAsync().AsTask().WaitAsync(Timeout);
+            }
         }
     }
 }

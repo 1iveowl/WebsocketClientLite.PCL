@@ -15,12 +15,23 @@ TFMS=(netstandard2.0 netstandard2.1 net8.0 net9.0 net10.0)
 PROJECT="src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj"
 CONFIG="${1:-Debug}"
 
+# CI supplies a fresh parent; each target gets a distinct TRX file.
+if [[ -n "${PDD_TEST_RESULTS:-}" ]]; then
+  mkdir -p "$PDD_TEST_RESULTS"
+fi
 fail=0
 for tfm in "${TFMS[@]}"; do
   echo "=================================================================="
   echo "  Testing against library build: ${tfm} (config: ${CONFIG})"
   echo "=================================================================="
-  if ! dotnet test "${PROJECT}" -c "${CONFIG}" -p:LibTfm="${tfm}" --nologo; then
+  if [[ -n "${PDD_TEST_RESULTS:-}" ]]; then
+    PDD_TEST_CONFIG="$CONFIG" ./scripts/pdd.sh test-target --tfm "$tfm" --output "$PDD_TEST_RESULTS/$tfm"
+    result=$?
+  else
+    dotnet test "${PROJECT}" -c "${CONFIG}" -p:LibTfm="${tfm}" --nologo
+    result=$?
+  fi
+  if [[ "$result" -ne 0 ]]; then
     echo "FAILED: ${tfm}"
     fail=1
   fi

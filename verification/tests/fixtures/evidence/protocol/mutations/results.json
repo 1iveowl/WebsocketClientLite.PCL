@@ -1,0 +1,54 @@
+{
+  "status": "passed",
+  "source_hashes": {
+    "verification/Protocol.dfy": "a",
+    "verification/Masking.dfy": "b"
+  },
+  "experiments": [
+    {
+      "id": "baseline",
+      "status": "passed",
+      "exit_code": 0
+    },
+    {
+      "id": "CLOSE-001-duplicate-send",
+      "status": "detected",
+      "exit_code": 4,
+      "matched_clauses": [
+        "ensures send <==> event == 0 && (state & 5) == 0"
+      ]
+    },
+    {
+      "id": "CLOSE-001-suppressed-send",
+      "status": "detected",
+      "exit_code": 4,
+      "matched_clauses": [
+        "ensures send <==> event == 0 && (state & 5) == 0"
+      ]
+    },
+    {
+      "id": "CLOSE-002-state-bit-loss",
+      "status": "detected",
+      "exit_code": 4,
+      "matched_clauses": [
+        "ensures next <= 7 && (next & state) == state"
+      ]
+    },
+    {
+      "id": "CLOSE-003-premature-release",
+      "status": "detected",
+      "exit_code": 4,
+      "matched_clauses": [
+        "ensures release <==> (next & 4) != 0 || (next & 3) == 3"
+      ]
+    },
+    {
+      "id": "CLOSE-003-suppressed-release",
+      "status": "detected",
+      "exit_code": 4,
+      "matched_clauses": [
+        "ensures release <==> (next & 4) != 0 || (next & 3) == 3"
+      ]
+    }
+  ]
+}
