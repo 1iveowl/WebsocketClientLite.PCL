@@ -1,4 +1,4 @@
-﻿using IWebsocketClientLite;
+using IWebsocketClientLite;
 using System;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
@@ -15,6 +15,8 @@ using WebsocketClientLite.CustomException;
 
 namespace WebsocketClientLite.Service;
 
+[SuppressMessage("Design", "CA2213:Disposable fields should be disposed",
+    Justification = "The async-only write gate never exposes AvailableWaitHandle; GC owns its managed state so queued writers can drain after abort.")]
 internal class TcpConnectionService(
     Func<bool> isSecureConnectionSchemeFunc,
     Func<object, X509Certificate, X509Chain, SslPolicyErrors, bool> validateServerCertificateFunc,
@@ -29,6 +31,7 @@ internal class TcpConnectionService(
     private bool _ownsCreatedTcpClient;
     private Stream? _stream;
     private readonly SemaphoreSlim _writeGate = new(1, 1);
+    private int _disposed;
 
     // Effective per-frame / per-message payload cap. A value <= 0 means "no
     // explicit limit" (bounded only by the int.MaxValue array-size limit).
@@ -42,19 +45,19 @@ internal class TcpConnectionService(
     // several sources at once (user sends, periodic client pings, and automatic
     // pong replies). Without serialization their bytes interleave on the wire,
     // producing malformed frames that cause the server to drop the connection.
+    [SuppressMessage("Maintainability", "CA1513:Use ObjectDisposedException.ThrowIf",
+        Justification = "The same code supports netstandard2.0 and netstandard2.1.")]
     internal async Task WriteSerializedAsync(Func<Stream, CancellationToken, Task> writeAsync, CancellationToken ct)
     {
         await _writeGate.WaitAsync(ct).ConfigureAwait(false);
         try
         {
+            if (Volatile.Read(ref _disposed) != 0) throw new ObjectDisposedException(nameof(TcpConnectionService));
             await writeAsync(ConnectionStream, ct).ConfigureAwait(false);
         }
         finally
         {
-            // The gate may already be disposed if the connection was torn down
-            // while this write was in flight.
-            try { _writeGate.Release(); }
-            catch (ObjectDisposedException) { }
+            _writeGate.Release();
         }
     }
 
@@ -251,8 +254,10 @@ internal class TcpConnectionService(
 
     public void Dispose()
     {
+        Interlocked.Exchange(ref _disposed, 1);
         _stream?.Dispose();
-        _writeGate.Dispose();
+        // Do not dispose the semaphore under an owner or pending WaitAsync.
+        // Once the owner settles, queued writers acquire and reject above.
 
         if (!_keepTcpClientAlive || _ownsCreatedTcpClient)
         {

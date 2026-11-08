@@ -306,6 +306,26 @@
       "exclusions": [
         "No proof of the C# adapter, pool lifetime, entropy, encoding or I/O completion."
       ]
+    },
+    {
+      "id": "WRITE-PROGRESS",
+      "assumption": "Runnable continuations are scheduled, callbacks and cleanup return, and the current frame owner settles. Queued work then needs admission or cancellation waking its wait; no FIFO guarantee. A retained async semaphore is managed state and never exposes AvailableWaitHandle.",
+      "review_anchor": "boundary-write-progress",
+      "owners": [
+        {
+          "file": "src/main/WebsocketClientLite/Service/TcpConnectionService.cs",
+          "symbol": "WebsocketClientLite.Service.TcpConnectionService.WriteSerializedAsync"
+        }
+      ],
+      "requirements": [
+        "WRITE-001"
+      ],
+      "test_obligations": [
+        "WRITE-001-TEST"
+      ],
+      "exclusions": [
+        "Abort does not cancel arbitrary in-flight delegates or guarantee delivery. Tests establish selected finite schedules, not unconditional liveness."
+      ]
     }
   ]
 }

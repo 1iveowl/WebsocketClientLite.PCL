@@ -263,3 +263,19 @@ conditions have completed. Other context/callback progress remains assumed.
 No intended runtime change, expanded native trust or unconditional liveness claim
 is approved by these tests. Human semantic acceptance is still revision-specific
 PR review, separate from passing machine gates.
+
+### WRITE-001
+
+P3-A adds tested-only single-connection ownership evidence. Message-wait cancellation
+has no frame reservation; frame-wait cancellation may own composed storage but has
+not reserved a protocol transition. An in-flight delegate owns frame serialization
+until it settles. A terminal notification rejects subsequent data admission;
+already admitted I/O may settle after notification or abort. See
+[the detailed ownership and review record](queued-write-ownership.md).
+
+<a id="boundary-write-progress"></a>
+**WRITE-PROGRESS:** finite callbacks/cleanup and eventual scheduling remain trusted.
+An in-flight stream operation must settle or be explicitly released in a test.
+After abort, the semaphore remains alive for queued tasks to acquire and reject;
+its managed state is reclaimed by GC. No AvailableWaitHandle is requested. No FIFO
+or unconditional completion is asserted. Human semantic review remains not-run.

@@ -960,6 +960,82 @@
         "No proof of encoding, header construction, array-pool ownership or completed wire writes.",
         "No proof of generated C#, compiler/runtime correctness, successful allocation, concurrent buffer access or complete RFC conformance."
       ]
+    },
+    {
+      "id": "WRITE-001",
+      "intent": "Selected single-connection schedules serialize frame delegates, reject queued data after terminal notification and settle queued cancellation/abort after controlled owners settle. This is tested C# ownership, not a Dafny proof.",
+      "origin": [
+        "Library policy: P3-A queued admission, cancellation and abort"
+      ],
+      "contracts": [],
+      "production_paths": [
+        {
+          "reference": {
+            "file": "src/main/WebsocketClientLite/Service/TcpConnectionService.cs",
+            "symbol": "WebsocketClientLite.Service.TcpConnectionService.WriteSerializedAsync"
+          },
+          "responsibility": "Retain frame ownership until the delegate settles; release to queued waiters and reject admission after abort."
+        },
+        {
+          "reference": {
+            "file": "src/main/WebsocketClientLite/Service/WebsocketSenderHandler.cs",
+            "symbol": "WebsocketClientLite.Service.WebsocketSenderHandler.WriteFrameSerializedAsync"
+          },
+          "responsibility": "Check terminal sender state under the state lock after frame admission."
+        }
+      ],
+      "assumptions": [
+        "WRITE-PROGRESS"
+      ],
+      "obligations": [
+        {
+          "id": "WRITE-001-TEST",
+          "kind": "test",
+          "delivery": "existing",
+          "description": "Require all named schedules and theory rows on five library targets plus the isolated frame-overlap assertion experiment. Reuse the existing between-fragments detector.",
+          "references": [
+            {
+              "file": "src/main/WebsocketClientLiteTest/QueuedWriteTests.cs",
+              "symbol": "WebsocketClientLiteTest.QueuedWriteTests.AbortDrainsNonCancelableFrameWaiterAfterOwnerSettles"
+            },
+            {
+              "file": "src/main/WebsocketClientLiteTest/QueuedWriteTests.cs",
+              "symbol": "WebsocketClientLiteTest.QueuedWriteTests.CancellationBeforeOrWhileQueuedPreservesAdmission"
+            },
+            {
+              "file": "src/main/WebsocketClientLiteTest/QueuedWriteTests.cs",
+              "symbol": "WebsocketClientLiteTest.QueuedWriteTests.PreCancelledControlNeverAcquiresFrameOwnership"
+            },
+            {
+              "file": "src/main/WebsocketClientLiteTest/QueuedWriteTests.cs",
+              "symbol": "WebsocketClientLiteTest.QueuedWriteTests.FrameSerializationAdmitsTwoDataSendsAndOneControlWithoutOverlap"
+            },
+            {
+              "file": "src/main/WebsocketClientLiteTest/QueuedWriteTests.cs",
+              "symbol": "WebsocketClientLiteTest.QueuedWriteTests.TerminalNotificationRejectsDataWaitingAtEitherGate"
+            },
+            {
+              "file": "src/main/WebsocketClientLiteTest/QueuedWriteTests.cs",
+              "symbol": "WebsocketClientLiteTest.QueuedWriteTests.AbortAllowsQueuedCancellationWhileOwnerRemainsInFlight"
+            },
+            {
+              "file": "src/main/WebsocketClientLiteTest/ControlledCloseTests.cs",
+              "symbol": "WebsocketClientLiteTest.ControlledCloseTests.CancellationBetweenFragmentsAllowsOnlyClose"
+            }
+          ]
+        },
+        {
+          "id": "WRITE-001-REVIEW",
+          "kind": "review",
+          "delivery": "existing",
+          "description": "Review phase ownership, conditional progress and scoped abort correction against the PR source revision; machine success is not semantic approval.",
+          "references": []
+        }
+      ],
+      "exclusions": [
+        "No FIFO, starvation-freedom, arbitrary interleaving, network delivery or wall-clock completion guarantee.",
+        "In-flight delegates and callbacks must settle; synchronous abort can interrupt a write already admitted. Buffer lease instrumentation belongs to P3-B."
+      ]
     }
   ],
   "boundaries_file": "verification/boundaries.json"
