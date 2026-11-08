@@ -72,6 +72,11 @@ public sealed partial class Evidence
                 var fullName = "WebsocketClientLiteTest.QueuedWriteTests." + name;
                 if (caseCounts.TryGetValue(fullName, out var actualCount) && actualCount != count) tests[fullName] = "failed";
             }
+            foreach (var (name, count) in LeaseCaseCounts)
+            {
+                var fullName = "WebsocketClientLiteTest.PayloadLeaseTests." + name;
+                if (caseCounts.TryGetValue(fullName, out var actualCount) && actualCount != count) tests[fullName] = "failed";
+            }
             var run = Read(Path.Combine(path, "run.json"));
             var valid = Passed(run) && (run["command"]?.AsArray() ?? []).Any(c => c?.ToString() == "-p:LibTfm=" + tfm) && File.Exists(Path.Combine(path, "output.log"));
             matrix[tfm] = new JsonObject { ["status"] = valid && tests.Count > 0 && tests.Values.All(x => x == "passed") && !string.IsNullOrEmpty(runtime) ? "passed" : "failed", ["execution"] = run, ["tests"] = Node(tests), ["host_runtime"] = runtime, ["trx"] = Path.GetRelativePath(directory, files[0]) };
@@ -172,6 +177,22 @@ public sealed partial class Evidence
                 queued["status"] = "passed"; queued["evidence"] = report;
             }
             catch (Exception e) when (e is not OutOfMemoryException) { queued["status"] = "failed"; errors.Add("Queued experiment: " + e.Message); }
+        }
+        var leases = new JsonObject { ["status"] = "not-run" };
+        receipt["leases_experiment"] = leases;
+        if (jobs.ContainsKey("controlled"))
+        {
+            try
+            {
+                Require(Passed(jobs["controlled"]?["runs"]?["leases"]), "unsuccessful leases command");
+                var directoryPath = Path.Combine(directory, "controlled/leases");
+                var report = Read(Path.Combine(directoryPath, "results.json"));
+                Require(Equal(report["source"], Node(expected)) && Equal(report["source_after"], Node(expected)) && Equal(report["ci"], jobs["controlled"]?["ci"]), "leases source/CI mismatch");
+                Require(S(report, "status") == "passed", "Incomplete lease report");
+                ValidateLeaseReport(directoryPath, report, expected.SourceHashes[LeaseSource]!);
+                leases["status"] = "passed"; leases["evidence"] = report;
+            }
+            catch (Exception e) when (e is not OutOfMemoryException) { leases["status"] = "failed"; errors.Add("Lease experiment: " + e.Message); }
         }
         if (jobs.ContainsKey("stryker"))
         {
@@ -296,6 +317,11 @@ public sealed partial class Evidence
                 {
                     item["evidence"]!.AsArray().Add("controlled/queued/results.json");
                     if (S(queued, "status") != "passed") item["status"] = S(queued, "status");
+                }
+                if (o.Id == "LEASE-001-TEST")
+                {
+                    item["evidence"]!.AsArray().Add("controlled/leases/results.json");
+                    if (S(leases, "status") != "passed") item["status"] = S(leases, "status");
                 }
                 if (o.Id == "CLOSE-004-CONTROLLED")
                 {

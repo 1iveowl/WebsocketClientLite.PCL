@@ -13,7 +13,7 @@
         "properties": {
           "id": {
             "type": "string",
-            "pattern": "^(CLOSE|REASSEMBLY|MASK|WRITE)-[0-9]{3}$"
+            "pattern": "^(CLOSE|REASSEMBLY|MASK|WRITE|LEASE)-[0-9]{3}$"
           },
           "intent": {
             "type": "string",

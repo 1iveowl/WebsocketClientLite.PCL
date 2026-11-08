@@ -319,6 +319,10 @@ await sender.SendText("End", OpcodeKind.Text, FragmentKind.Last);
 ```
 
 
+`SendBinary` borrows the supplied array until its returned task completes. For a
+binary list send, keep every array unchanged until the whole send completes; the
+list snapshot copies references, not payload bytes. Repeated references to a stable
+array are supported. Concurrent caller mutation is unsupported.
 
 ### TLS/SSL Certificate Validation
 

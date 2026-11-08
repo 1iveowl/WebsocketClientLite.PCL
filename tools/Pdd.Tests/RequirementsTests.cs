@@ -42,7 +42,7 @@ public class RequirementsTests
     public void ValidManifestAndTestedOnlyRequirements()
     {
         var manifest = new Requirements(Root).Validate();
-        Assert.Equal(12, manifest.Requirements.Length);
+        Assert.Equal(13, manifest.Requirements.Length);
         Assert.Empty(manifest.Requirements.Single(r => r.Id == "REASSEMBLY-003").Contracts);
         Assert.Empty(manifest.Requirements[3].Contracts);
         Assert.Empty(manifest.Requirements[4].Contracts);

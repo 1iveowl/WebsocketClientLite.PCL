@@ -167,3 +167,9 @@ P3-A adds `queued-defect --output <fresh-directory>` to controlled capture and
 The isolated capacity-two frame gate must trigger the named overlap assertion;
 source/CI identities, exact edit, runtime and execution/TRX are checked. No G gate
 or budget changes. See [queued ownership](../../verification/queued-write-ownership.md).
+
+P3-B adds `lease-defects --output <fresh-directory>` to controlled capture and
+`lease-probe --output <fresh-directory>` for 50 manual repetitions. The three
+isolated early-return, missing-return and wrong-count edits must fail their named
+assertions; aggregate checks exact edits/source, all cases, execution and runtime.
+See [sender leases](../../verification/payload-lease-ownership.md).
