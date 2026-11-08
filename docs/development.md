@@ -56,6 +56,7 @@ The repository has a [dev container](https://containers.dev/) with everything al
 | Node.js LTS, GitHub CLI, Azure CLI | `gh` and `az` logins survive a rebuild |
 | Claude Code, Codex | CLIs and VS Code extensions, plus GitHub Copilot and Copilot Chat extensions |
 | [Herdr](#herdr) | A terminal workspace for running several agents side by side |
+| [TokenEconomizer](#tokeneconomizer) | A Claude Code and Codex plugin that lowers what agent sessions cost |
 | C# Dev Kit | For VS Code |
 
 ### Open it
@@ -77,7 +78,7 @@ devcontainer exec --workspace-folder . ./test-all-tfms.sh
 
 ### What stays across rebuilds
 
-Named Docker volumes keep the agents' logins and history, Herdr's layout, and the `gh` and `az` logins: `claude-home-<folder>`, `codex-home-<folder>`, `copilot-home-<folder>`, `herdr-config-<folder>`, `gh-config-<folder>` and `azure-config-<folder>`, where `<folder>` is the checkout's folder name. Two checkouts with the same folder name share them. Remove the volumes to start from scratch.
+Named Docker volumes keep the agents' logins and history, Herdr's layout, what TokenEconomizer has learned, and the `gh` and `az` logins: `claude-home-<folder>`, `codex-home-<folder>`, `copilot-home-<folder>`, `herdr-config-<folder>`, `gh-config-<folder>`, `azure-config-<folder>` and `tokeneconomizer-<folder>`, where `<folder>` is the checkout's folder name. Two checkouts with the same folder name share them. Remove the volumes to start from scratch.
 
 ### Coding agents run without permission prompts
 
@@ -86,6 +87,17 @@ The container is set up as a trusted sandbox. Claude Code starts in `bypassPermi
 In a terminal, `yolo` starts Claude Code and `yolo-codex` starts Codex without permission prompts. They are shell aliases that the setup script adds to `~/.bashrc`, for `claude --dangerously-skip-permissions` and `codex --dangerously-bypass-approvals-and-sandbox`.
 
 `ANTHROPIC_API_KEY` and `OPENAI_API_KEY` are passed into the container when they are set on the host. Otherwise sign in inside the container. [AGENTS.md](../AGENTS.md) holds the rules every agent follows in this repository.
+
+### TokenEconomizer
+
+The setup script installs [TokenEconomizer](https://github.com/microsoft/TokenEconomizer) as a Claude Code and a Codex plugin. It learns from earlier sessions in this repository: it gives new sessions the repository facts they kept looking up, leaves out tools that go unused, and redirects a turn that is stuck repeating a failure. It needs no API key. The clone it runs from is in `~/.local/share/TokenEconomizer`, pinned to a commit in `.devcontainer/post-create.sh`; to update it, review the upstream changes and move the pin.
+
+Two steps are left to you after the first build:
+
+- **Claude Code:** in a session, run `/tokeneconomizer:toolprune refresh-catalog` once, and again after Claude Code updates. Without it, tool pruning sees only the deferred tools. `/tokeneconomizer:status` shows that the plugin is loaded.
+- **Codex:** start `codex`, choose **Trust all and continue** when it shows **Hooks need review** (or approve them later with `/hooks`), and start it again; the hooks run from the next session. Check it with `$tokeneconomizer:status`.
+
+When it leaves tools out, it writes deny rules to `.claude/settings.local.json` and keeps that file out of git; `/tokeneconomizer:toolprune restore` gives them back. Set `TE_DISABLE=1` to turn it off for one session. The rest of its commands and settings are in its [plugin README](https://github.com/microsoft/TokenEconomizer/blob/main/plugin/README.md).
 
 ### Optional shared skills folder
 
