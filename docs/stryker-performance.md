@@ -1,8 +1,8 @@
 # Stryker performance experiments
 
-On this 32-logical-CPU development host, eight Stryker workers reduced the median full Close mutation run from a single fresh two-worker control of **12m 35s** to **5m 41s** (55% less elapsed time). Three eight-worker runs passed the existing critical-mutant gate with zero timeouts. Keep the checked-in concurrency of two for now: this is local qualification, not evidence for four-CPU hosted runners.
+On this 32-logical-CPU development host, eight Stryker workers reduced the median full Close mutation run from a single fresh two-worker control of **12m 35s** to **5m 41s** (55% less elapsed time). Three eight-worker runs passed the existing critical-mutant gate with zero timeouts. Local runs now default to eight workers. GitHub Actions explicitly selects two because the measurements qualify this development host, not the smaller hosted runners.
 
-P3-E was completed and merged through [PR 119](https://github.com/1iveowl/WebsocketClientLite.PCL/pull/119) before these experiments. The measurements below precede the implementation. The branch now adds an explicit captured concurrency override and forces the test project to copy its resolved library DLL, preventing equal-size/equal-timestamp reuse. Default/CI concurrency, test assertions, mutation scope and acceptance gates remain unchanged.
+P3-E was completed and merged through [PR 119](https://github.com/1iveowl/WebsocketClientLite.PCL/pull/119) before these experiments. The measurements below precede the implementation. The branch now adds an explicit captured concurrency override and forces the test project to copy its resolved library DLL, preventing equal-size/equal-timestamp reuse. Local default concurrency is eight; hosted CI explicitly retains two. Test assertions, mutation scope and acceptance gates remain unchanged.
 
 ## Measurements
 
@@ -36,10 +36,10 @@ PDD_STRYKER_OUTPUT="$PWD/artifacts/stryker-local-8-unique" \
 Use a fresh output directory and avoid competing builds/tests while measuring. This is a raw local run, not by itself a complete PDD receipt. The benchmark driver archived below uses the existing `Evidence.Capture` seam and records the actual command override in `job.json`; it does not conceal an environment-only setting. Use the supported receipt capture for local acceptance:
 
 ```bash
-./scripts/pdd.sh capture --job stryker --stryker-concurrency 8 --output artifacts/pdd/stryker
+./scripts/pdd.sh capture --job stryker --output artifacts/pdd/stryker
 ```
 
-The option accepts positive integer worker counts only for the Stryker job and records the exact command in the receipt. Omitting it preserves the configured concurrency of two. The ordinary capture command and hosted CI retain concurrency two.
+The ordinary local capture and direct script default to eight workers through the source-hashed Stryker configuration. The optional `--stryker-concurrency` override accepts positive integer worker counts only for the Stryker job and records the exact command in the receipt. GitHub Actions explicitly passes `--stryker-concurrency 2`.
 
 ## Changed-file experiment: not qualified for linked worktrees
 
@@ -73,7 +73,7 @@ The archives retain all original trial records, command receipts/logs, mutation 
 
 ## Implemented changes and merge validation
 
-Commit `7e002a12f0f0ef9eba87da3b71dfa5c28974c94d` adds `capture --job stryker --stryker-concurrency 8` and forces the test project to copy the resolved library DLL even when size and timestamp match an existing DLL. The configured default remains two; no changed-file filtering or baseline reuse is enabled.
+Commit `7e002a12f0f0ef9eba87da3b71dfa5c28974c94d` adds `capture --job stryker --stryker-concurrency 8` and forces the test project to copy the resolved library DLL even when size and timestamp match an existing DLL. At that implementation commit the default remained two. The subsequent local-default change sets eight in the shared configuration and explicitly preserves two in GitHub Actions. No changed-file filtering or baseline reuse is enabled.
 
 The fresh full aggregate passed using the supported override and the ordinary matrix, with no cleanup workaround: 244 tooling tests, 269 tests per library target with correct loaded identities, 83.08% line coverage, all proof/trust/generated-code checks, 15 Dafny mutations, and all controlled defect checks. Stryker took 286.931 seconds (4m 47s); all 105 selected outcomes matched E, all 16 critical fingerprints were killed, and there were zero timeouts. This is one implementation validation run, not a replacement for the three-run qualification range above. The equal-size/equal-timestamp wrong-DLL fixture also passed on this commit.
 

@@ -9,7 +9,7 @@
       "!**/*.g.cs"
     ],
     "mutation-level": "Standard",
-    "concurrency": 2,
+    "concurrency": 8,
     "reporters": [
       "dots",
       "html",
