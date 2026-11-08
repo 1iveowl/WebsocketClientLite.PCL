@@ -70,3 +70,11 @@ The full aggregate passed on the measured clean source after the explicitly reco
 The archives retain all original trial records, command receipts/logs, mutation JSON reports, runtime TRX, host inventory, comparison driver and the source identity. They include the failed exact control comparison and rejected changed-file probe. The documentation commit is later than the measured commit; these records are not relabeled as execution against the documentation commit.
 
 [Archive checksums and contents](evidence/stryker-performance/archives.json).
+
+## Implemented changes and merge validation
+
+Commit `7e002a12f0f0ef9eba87da3b71dfa5c28974c94d` adds `capture --job stryker --stryker-concurrency 8` and forces the test project to copy the resolved library DLL even when size and timestamp match an existing DLL. The configured default remains two; no changed-file filtering or baseline reuse is enabled.
+
+The fresh full aggregate passed using the supported override and the ordinary matrix, with no cleanup workaround: 244 tooling tests, 269 tests per library target with correct loaded identities, 83.08% line coverage, all proof/trust/generated-code checks, 15 Dafny mutations, and all controlled defect checks. Stryker took 286.931 seconds (4m 47s); all 105 selected outcomes matched E, all 16 critical fingerprints were killed, and there were zero timeouts. This is one implementation validation run, not a replacement for the three-run qualification range above. The equal-size/equal-timestamp wrong-DLL fixture also passed on this commit.
+
+`implementation.zip` retains the receipt, command logs, comparison, and fixture. Earlier failed reports remain archived unchanged. The final archive/documentation commit follows this tested implementation commit; no execution is attributed to the later documentation-only commit.
