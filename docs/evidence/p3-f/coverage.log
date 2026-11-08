@@ -1,0 +1,16 @@
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  IWebsocketClientLite -> /tmp/ws-p3-f/src/interface/IWebsocketClientLite/bin/Release/netstandard2.0/IWebsocketClientLite.dll
+  WebsocketClientLite -> /tmp/ws-p3-f/src/main/WebsocketClientLite/bin/Release/net10.0/WebsocketClientLite.dll
+  WebsocketClientLiteTest -> /tmp/ws-p3-f/src/main/WebsocketClientLiteTest/bin/Release/net10.0/WebsocketClientLiteTest.dll
+Test run for /tmp/ws-p3-f/src/main/WebsocketClientLiteTest/bin/Release/net10.0/WebsocketClientLiteTest.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+
+Passed!  - Failed:     0, Passed:   269, Skipped:     0, Total:   269, Duration: 24 s - WebsocketClientLiteTest.dll (net10.0)
+
+Attachments:
+  /tmp/p3-f-coverage/028eabb6-b938-46f2-9949-7f6d1e901407/coverage.cobertura.xml
+Line coverage:   83.1%
+Branch coverage: 77.6%
+Minimum line:    70%
+Line coverage 83.1% meets the 70% minimum.

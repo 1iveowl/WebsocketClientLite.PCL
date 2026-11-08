@@ -1,0 +1,18 @@
+  Determining projects to restore...
+  Restored /tmp/ws-p3-f/src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj (in 106 ms).
+  Restored /tmp/ws-p3-f/src/test/NETCore.Console.Test/NETCore.Console.Test.csproj (in 106 ms).
+  2 of 4 projects are up-to-date for restore.
+  IWebsocketClientLite -> /tmp/ws-p3-f/src/interface/IWebsocketClientLite/bin/Release/netstandard2.0/IWebsocketClientLite.dll
+  WebsocketClientLite -> /tmp/ws-p3-f/src/main/WebsocketClientLite/bin/Release/netstandard2.0/WebsocketClientLite.dll
+  WebsocketClientLite -> /tmp/ws-p3-f/src/main/WebsocketClientLite/bin/Release/netstandard2.1/WebsocketClientLite.dll
+  WebsocketClientLite -> /tmp/ws-p3-f/src/main/WebsocketClientLite/bin/Release/net10.0/WebsocketClientLite.dll
+  WebsocketClientLite -> /tmp/ws-p3-f/src/main/WebsocketClientLite/bin/Release/net8.0/WebsocketClientLite.dll
+  WebsocketClientLite -> /tmp/ws-p3-f/src/main/WebsocketClientLite/bin/Release/net9.0/WebsocketClientLite.dll
+  NETCore.Console.Test -> /tmp/ws-p3-f/src/test/NETCore.Console.Test/bin/Release/net10.0/NETCore.Console.Test.dll
+  WebsocketClientLiteTest -> /tmp/ws-p3-f/src/main/WebsocketClientLiteTest/bin/Release/net10.0/WebsocketClientLiteTest.dll
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:02.04

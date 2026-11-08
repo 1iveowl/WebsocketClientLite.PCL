@@ -1,0 +1,13 @@
+  Determining projects to restore...
+  Restored /tmp/p3-f-defect-adhbz1yv/src/interface/IWebsocketClientLite/IWebsocketClientLite.csproj (in 150 ms).
+  Restored /tmp/p3-f-defect-adhbz1yv/verification/exploration/Exploration.csproj (in 150 ms).
+  Restored /tmp/p3-f-defect-adhbz1yv/src/main/WebsocketClientLite/WebsocketClientLite.csproj (in 163 ms).
+  IWebsocketClientLite -> /tmp/p3-f-defect-adhbz1yv/src/interface/IWebsocketClientLite/bin/Release/netstandard2.0/IWebsocketClientLite.dll
+  WebsocketClientLite -> /tmp/p3-f-defect-adhbz1yv/src/main/WebsocketClientLite/bin/Release/net10.0/WebsocketClientLite.dll
+  Exploration -> /tmp/p3-f-defect-adhbz1yv/verification/exploration/bin/Release/net10.0/WebsocketClientLiteTest.dll
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:01.22

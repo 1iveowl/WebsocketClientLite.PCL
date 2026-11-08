@@ -1,0 +1,11 @@
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  IWebsocketClientLite -> /tmp/ws-p3-f/src/interface/IWebsocketClientLite/bin/Release/netstandard2.0/IWebsocketClientLite.dll
+  WebsocketClientLite -> /tmp/ws-p3-f/src/main/WebsocketClientLite/bin/Release/net10.0/WebsocketClientLite.dll
+  Exploration -> /tmp/ws-p3-f/verification/exploration/bin/Release/net10.0/WebsocketClientLiteTest.dll
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:00.74
