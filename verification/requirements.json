@@ -535,7 +535,7 @@
           "id": "REASSEMBLY-001-TEST",
           "kind": "test",
           "delivery": "existing",
-          "description": "Require these independent byte, adapter or loopback tests on every supported library target; tests do not prove all inputs.",
+          "description": "Require these independent byte, adapter or loopback tests on every supported library target; tests do not prove all inputs. P3-C also requires tested-only parser retention/scratch adapters and two isolated C# defects; this does not expand the Merge proof.",
           "references": [
             {
               "file": "src/main/WebsocketClientLiteTest/ProtocolStateTests.cs",
@@ -552,6 +552,42 @@
             {
               "file": "src/main/WebsocketClientLiteTest/IntegrationTests.cs",
               "symbol": "WebsocketClientLiteTest.IntegrationTests.Reassembles_ServerFragmentedMessage_EndToEnd"
+            },
+            {
+              "file": "src/main/WebsocketClientLiteTest/ParserRetentionTests.cs",
+              "symbol": "WebsocketClientLiteTest.ParserRetentionTests.SmallSequencesPreserveBytesMetadataAndReset"
+            },
+            {
+              "file": "src/main/WebsocketClientLiteTest/ParserRetentionTests.cs",
+              "symbol": "WebsocketClientLiteTest.ParserRetentionTests.AccumulatedLimitRejectsBeforePayloadRead"
+            },
+            {
+              "file": "src/main/WebsocketClientLiteTest/ParserRetentionTests.cs",
+              "symbol": "WebsocketClientLiteTest.ParserRetentionTests.ControlPayloadDoesNotChangeRetainedTotal"
+            },
+            {
+              "file": "src/main/WebsocketClientLiteTest/ParserRetentionTests.cs",
+              "symbol": "WebsocketClientLiteTest.ParserRetentionTests.ExtendedHeaderCapturesScratchBeforeReuse"
+            },
+            {
+              "file": "src/main/WebsocketClientLiteTest/ParserRetentionTests.cs",
+              "symbol": "WebsocketClientLiteTest.ParserRetentionTests.HugeLengthsRejectOnHeaderOnly"
+            },
+            {
+              "file": "src/main/WebsocketClientLiteTest/ParserRetentionTests.cs",
+              "symbol": "WebsocketClientLiteTest.ParserRetentionTests.IncompleteMessageTerminatesWithoutEmission"
+            },
+            {
+              "file": "src/main/WebsocketClientLiteTest/ParserRetentionTests.cs",
+              "symbol": "WebsocketClientLiteTest.ParserRetentionTests.CloseAndInvalidContinuationDoNotLeakRetainedData"
+            },
+            {
+              "file": "src/main/WebsocketClientLiteTest/ParserRetentionTests.cs",
+              "symbol": "WebsocketClientLiteTest.ParserRetentionTests.SplitUtf8IsValidatedOnlyWhenComplete"
+            },
+            {
+              "file": "src/main/WebsocketClientLiteTest/ParserRetentionTests.cs",
+              "symbol": "WebsocketClientLiteTest.ParserRetentionTests.HandshakeConsumesScratchImmediatelyAndStopsBeforeFrame"
             }
           ]
         },

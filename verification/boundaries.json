@@ -205,6 +205,10 @@
         {
           "file": "src/main/WebsocketClientLite/Helper/VerifiedNativeCopy.cs",
           "symbol": "WebsocketClientLite.VerifiedProtocol.NativeCopy.CopySlice"
+        },
+        {
+          "file": "src/main/WebsocketClientLiteTest/ParserRetentionTests.cs",
+          "symbol": "WebsocketClientLiteTest.ParserRetentionTests.SmallSequencesPreserveBytesMetadataAndReset"
         }
       ],
       "requirements": [
@@ -241,6 +245,10 @@
         {
           "file": "src/main/WebsocketClientLiteTest/PayloadBoundaryTests.cs",
           "symbol": "WebsocketClientLiteTest.PayloadBoundaryTests.MergeVariantsPreserveAliasedSegmentsAndReturnFreshStorage"
+        },
+        {
+          "file": "src/main/WebsocketClientLiteTest/ParserRetentionTests.cs",
+          "symbol": "WebsocketClientLiteTest.ParserRetentionTests.SmallSequencesPreserveBytesMetadataAndReset"
         }
       ],
       "requirements": [

@@ -23,7 +23,7 @@ public static class Program
         try
         {
             if (args.Length == 0)
-                throw new ArgumentException("Usage: pdd <validate|contract-report|mutations|capture|test-target|aggregate|controlled-defect|boundary-defects|queued-defect|queued-probe|lease-defects|lease-probe|stryker-triage|normalize-generated> [options]");
+                throw new ArgumentException("Usage: pdd <validate|contract-report|mutations|capture|test-target|aggregate|controlled-defect|boundary-defects|queued-defect|queued-probe|lease-defects|lease-probe|retention-defects|stryker-triage|normalize-generated> [options]");
             var root = FindRoot();
             var options = new Dictionary<string, string>();
             var positionals = new List<string>();
@@ -81,6 +81,9 @@ public static class Program
                 case "boundary-defects":
                     Allow("--output");
                     return await evidence.BoundaryDefects(output, cancellation.Token);
+                case "retention-defects":
+                    Allow("--output");
+                    return await evidence.RetentionDefects(output, cancellation.Token);
                 case "lease-defects":
                     Allow("--output");
                     return await evidence.LeaseDefects(output, cancellation.Token);

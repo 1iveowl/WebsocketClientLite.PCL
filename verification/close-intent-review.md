@@ -225,6 +225,10 @@ No concurrent caller mutation or proof of C# ownership; aliased retained segment
 Callers provide the exact retained-byte total within Size bounds; empty payload segments do not change that sum.
 
 The parser total and retained segment list are C# bookkeeping, not verified by the Merge proof.
+P3-C adds [production adapter evidence](parser-retention.md) for finite retained
+sequences, byte limits and sequential handshake/header scratch consumption. It
+keeps the single-reader and stable-input assumptions; machine tests do not
+constitute human acceptance of those boundaries.
 
 <a id="boundary-native-copy"></a>
 ### NATIVE-COPY
