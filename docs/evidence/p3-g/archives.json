@@ -1,0 +1,9 @@
+{
+  "archive": "study.zip",
+  "sha256": "6b9919e2368cf7853bd5cbb4c24f4033adc03d6dc355ae1cf85508957247e93d",
+  "bytes": 3855106,
+  "receipt_sha256": "14683bf455e60d0282df0783006aadcf4bc86ab090bd3dca02636d1baae1578f",
+  "excluded_redundant_html": [
+    "full/stryker/reports/reports/mutation-report.html"
+  ]
+}
