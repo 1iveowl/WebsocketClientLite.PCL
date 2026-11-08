@@ -23,6 +23,7 @@ public class BoundaryEvidenceTests
         baseline.Add(Result("DisposalStopsActivePeriodicPingsBeforeClose", true, ""));
         baseline.Add(Result("RecordHostRuntime", true, "PDD_HOST_RUNTIME=.NET 10 fixture"));
         Trx(Path.Combine(directory, "baseline"), baseline);
+        Data.Save(Path.Combine(directory, "baseline/execution.json"), new { exit_code = 0, timed_out = false, interrupted = false });
         var entries = new JsonArray();
         foreach (var c in Evidence.BoundaryCases)
             for (int repeat = 0; repeat < (c.Id == "read-failure" ? 5 : 1); repeat++)
@@ -31,6 +32,7 @@ public class BoundaryEvidenceTests
                 var rows = new List<XElement> { Result(c.Test, false, c.Assertion), Result("RecordHostRuntime", true, "PDD_HOST_RUNTIME=.NET 10 fixture") };
                 if (c.Test == "DisposalStopsActivePeriodicPingsBeforeClose") rows.Add(Result(c.Test, true, ""));
                 Trx(Path.Combine(directory, name), rows);
+                Data.Save(Path.Combine(directory, name, "execution.json"), new { exit_code = 1, timed_out = false, interrupted = false });
                 entries.Add(new JsonObject { ["id"] = name, ["status"] = "passed", ["source_hash"] = Hash, ["mutant_hash"] = new string('b', 64),
                     ["test"] = c.Test, ["assertion"] = c.Assertion, ["before"] = c.Before, ["after"] = c.After, ["run"] = Run(false), ["host_runtime"] = ".NET 10 fixture" });
             }
@@ -41,6 +43,27 @@ public class BoundaryEvidenceTests
     {
         using var tree = new TemporaryTree();
         Evidence.ValidateBoundaryReport(tree.Path, Fixture(tree.Path), Hash);
+    }
+    [Theory]
+    [InlineData("baseline", "timed_out")]
+    [InlineData("read-failure-0", "timed_out")]
+    [InlineData("read-failure-0", "interrupted")]
+    [InlineData("read-failure-0", "cleanup_incomplete")]
+    [InlineData("read-failure-0", "launch_error")]
+    [InlineData("read-failure-0", "missing")]
+    public void AssertionAndExitOneCannotHideIncompleteExecution(string phase, string field)
+    {
+        using var tree = new TemporaryTree();
+        var report = Fixture(tree.Path);
+        var path = Path.Combine(tree.Path, phase, "execution.json");
+        var execution = Data.Read(path);
+        if (field == "missing") File.Delete(path);
+        else
+        {
+            execution[field] = field == "launch_error" ? JsonValue.Create("launch failed") : JsonValue.Create(true);
+            Data.Save(path, execution);
+        }
+        Assert.ThrowsAny<Exception>(() => Evidence.ValidateBoundaryReport(tree.Path, report, Hash));
     }
     [Theory]
     [InlineData("missing-repeat")]

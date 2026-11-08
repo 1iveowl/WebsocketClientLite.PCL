@@ -196,3 +196,7 @@ a stopped machine or killed runner cannot guarantee return or upload.
 The manual exploration runner accepts `--output <fresh-directory>` and refuses
 overwrite. It saves command attempts before launch and retains timeout, launch and
 interrupt failures and before/after source identity, including unsuccessful runs.
+
+Ordering and G boundary assertion validation also requires raw execution records.
+Exit 1 plus a matching assertion cannot hide timeout, interruption, launch failure
+or incomplete cleanup; missing execution records fail closed.
