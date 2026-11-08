@@ -54,6 +54,17 @@ The compiler and runtime are trusted. Proof-only lemmas support the Dafny proofs
 
 Some tests compare production behavior with a verified scalar reference. Passing those tests provides evidence for the selected inputs; it does not prove the test harness or establish equivalence for every input. The [proof and testing boundaries](docs/protocol-verification.md#what-is-proved-assumed-and-tested) explain this distinction, and the [verification guide](verification/README.md) maps the contracts to their callers.
 
+## New in Version 10.2.0
+
+Version 10.2.0 strengthens cancellation, teardown and sequential reconnect behavior, and expands the evidence for the C# boundaries around the verified protocol core.
+
+- Transport abort wakes queued writers so they can settle instead of remaining blocked behind a disposed gate. Controlled tests cover cancellation before admission, queued writes and in-flight ownership.
+- Sequential reconnect cleanup respects connection ownership. Late cleanup from an old connection cannot clear the current sender, and disposal prevents new connection admission.
+- Tests cover payload buffer lifetime and once-only return, parser retention and metadata, scratch-buffer ownership, Close ordering, observer terminal signals and periodic Ping cleanup.
+- Verification receipts bind tests, proof checks and mutation results to their source and runtime. Missing, stale, interrupted or timed-out evidence fails acceptance; bounded process cleanup retains diagnostic output.
+
+All five library targets remain supported. These changes add no public API or new production dependency. The Dafny proofs retain their existing scope; asynchronous ownership and lifecycle behavior are tested C# boundaries, not proofs of arbitrary schedules or network progress. See the [Phase 3 validation record](docs/p3-g-validation.md) for repeatability, costs and remaining platform qualification limits.
+
 ## New in Version 10.1.0
 
 Version 10.1.0 extends the Dafny core with receive admission that includes fragmentation state, outgoing message transitions, closing transitions, exact segment concatenation, and a length-header round-trip theorem.

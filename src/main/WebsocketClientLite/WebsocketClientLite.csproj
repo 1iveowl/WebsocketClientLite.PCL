@@ -8,18 +8,18 @@
     <LangVersion>14.0</LangVersion>
     <PackageIcon>images\1iveowl-logo.png</PackageIcon>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <Version>10.1.0</Version>
+    <Version>10.2.0</Version>
     <Authors>Jasper Hedegaard Bojsen</Authors>
     <Copyright>1iveowl Development 2025</Copyright>
     <PackageProjectUrl>https://github.com/1iveowl/WebsocketClientLite.PCL</PackageProjectUrl>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <RepositoryUrl>https://github.com/1iveowl/WebsocketClientLite.PCL</RepositoryUrl>
-    <AssemblyVersion>10.1.0</AssemblyVersion>
-    <FileVersion>10.1.0</FileVersion>
+    <AssemblyVersion>10.2.0</AssemblyVersion>
+    <FileVersion>10.2.0</FileVersion>
     <Description>A simple and light WebSocket client.
 Can be set to ignore SSL/TLS server certificate issues (use with care!).
 Easily and effectively observe incoming message using Reactive Extensions (Rx)</Description>
-    <PackageReleaseNotes>v10.1.0: Extends the Dafny-verified protocol core with receive admission, transmit and closing transitions, exact concatenation and length-header composition. Prevents interleaved list sends and unsafe reuse after partial sends, rejects invalid sequences before payload reads, and awaits peer Close during asynchronous disposal. Adds an audited .NET bulk-copy contract and a fully verified scalar reference. See docs/protocol-verification.md for proof scope and trusted boundaries.</PackageReleaseNotes>
+    <PackageReleaseNotes>v10.2.0: Drains queued writers during transport abort and isolates sequential reconnect cleanup and disposal admission. Expands controlled tests for payload leases, parser retention, Close ordering and periodic Ping cleanup. Adds source/runtime-bound evidence and bounded diagnostic cleanup. Dafny proof scope is unchanged; asynchronous lifecycle behavior remains tested C# evidence. See README.md and docs/p3-g-validation.md.</PackageReleaseNotes>
     <EnableNETAnalyzers>true</EnableNETAnalyzers>
     <AnalysisMode>AllEnabledByDefault</AnalysisMode>
   </PropertyGroup>
