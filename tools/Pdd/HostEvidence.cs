@@ -32,7 +32,7 @@ public sealed partial class Evidence
         {
             "linux" => Regex.IsMatch(S(host, "os_release"), "(?m)^ID=ubuntu\\r?$") && Regex.IsMatch(S(host, "os_release"), "(?m)^VERSION_ID=\"24\\.04\"\\r?$"),
             "windows" => S(host, "os_version").Contains("10.0.20348", StringComparison.Ordinal),
-            "macos" => Regex.IsMatch(S(host, "os_description"), @"Darwin .*\b24\."),
+            "macos" => Regex.IsMatch(S(host, "os_description"), @"^macOS 15\.\d+(\.\d+)?$"),
             _ => false
         }, "wrong OS release (requires Ubuntu 24.04 / Server 2022 / macOS 15)");
         Require(S(host, "library_framework") == FrameworkName(cell.LibraryTfm), "wrong loaded library target");
@@ -101,6 +101,7 @@ public sealed partial class Evidence
         var command = result["execution"]!["command"]!.AsArray().Select(x => x!.ToString()).ToArray();
         Require(command.Contains("-p:TestHostTfm=" + cell.HostTfm) && command.Contains("Release") && !command.Contains("--filter"), "wrong host command/configuration/scope");
         Require(Equal(result["execution"], report["runs"]!["test"]), "test execution mismatch");
+        Require(result["case_counts"]?[RuntimeTest]?.GetValue<int>() == 1, "duplicate or missing runtime probe");
         Require(result["case_counts"]!.AsObject().Sum(p => p.Value!.GetValue<int>()) >= 269, "incomplete full suite");
         foreach (var (prefix, cases) in new[] { ("QueuedWriteTests.", QueuedCaseCounts), ("PayloadLeaseTests.", LeaseCaseCounts), ("ParserRetentionTests.", RetentionCaseCounts), ("ReconnectTests.", ReconnectCaseCounts) })
             foreach (var (name, count) in cases)

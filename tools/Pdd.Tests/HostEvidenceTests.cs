@@ -55,6 +55,25 @@ public class HostEvidenceTests
         new XDocument(new XElement(ns + "TestRun", definitions, results)).Save(Path.Combine(target, "results.trx"));
     }
     [Fact]
+    public async Task CaptureReadbackClosesWritersBeforeReading()
+    {
+        using var tree = new TemporaryTree();
+        var result = await Processes.Run(["dotnet", "--version"], RequirementsTests.Root, tree.Path, 30);
+        Assert.True(result.Success, result.Stderr);
+        Assert.Equal(Data.Text(Path.Combine(tree.Path, "stdout.log")), result.Stdout);
+        Assert.NotEmpty(result.Stdout);
+    }
+    [Theory]
+    [InlineData("macos-10-net10.0", "macos", "macOS 15.8.2", "Unix 15.8.2", "Arm64")]
+    [InlineData("windows-10-net10.0", "windows", "Microsoft Windows 10.0.20348", "Microsoft Windows NT 10.0.20348.0", "X64")]
+    public void RecognizesQualifiedOsVersionFormats(string id, string os, string description, string version, string arch)
+    {
+        var host = Host;
+        host["os"] = os; host["os_description"] = description; host["os_version"] = version;
+        host["os_architecture"] = arch; host["process_architecture"] = arch;
+        Evidence.ValidateHostIdentity(Evidence.FindHostCell(id), host, ".NET 10.0.14");
+    }
+    [Fact]
     public void PositiveSourceBoundHostReceipt()
     {
         using var tree = new TemporaryTree();

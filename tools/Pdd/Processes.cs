@@ -80,6 +80,9 @@ public static class Processes
         await stderr.FlushAsync();
         if (combined is not null)
             await combined.FlushAsync();
+        // Close writers before readback: Windows enforces the read handle's sharing mode.
+        await stdout.DisposeAsync();
+        await stderr.DisposeAsync();
         record.ElapsedSeconds = Math.Round(watch.Elapsed.TotalSeconds, 3);
         record.Stdout = Data.Text(Path.Combine(directory, "stdout.log"));
         record.Stderr = Data.Text(Path.Combine(directory, "stderr.log"));

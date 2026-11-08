@@ -190,6 +190,11 @@ jobs:
           - { runner: windows-2022, prefix: windows-10, runtime: '10.0.x', targets: 'net10.0,netstandard2.0' }
           - { runner: macos-15, prefix: macos-10, runtime: '10.0.x', targets: 'net10.0,netstandard2.0' }
     runs-on: ${{ matrix.host.runner }}
+    env:
+      # Hash the same source bytes on all hosts, including Windows checkout.
+      GIT_CONFIG_COUNT: '1'
+      GIT_CONFIG_KEY_0: core.autocrlf
+      GIT_CONFIG_VALUE_0: 'false'
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
@@ -198,6 +203,8 @@ jobs:
           dotnet-version: 10.0.x
       - name: Build receipt tooling
         run: dotnet build tools/Pdd/Pdd.csproj -c Release
+      - name: Check host receipts and process log readback
+        run: dotnet test tools/Pdd.Tests/Pdd.Tests.csproj -c Release --filter "FullyQualifiedName~HostEvidenceTests|FullyQualifiedName~CaptureReadback"
       - name: Qualify actual host cells
         shell: pwsh
         env:
