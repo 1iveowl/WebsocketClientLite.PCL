@@ -20,6 +20,8 @@ dotnet build src/main/WebsocketClientLite.sln
 ./test-all-tfms.sh Release    # the same in Release, as CI runs it
 ```
 
+Run the [full local evidence checks](../verification/README.md#ci-verification-receipts-phase-2-increment-d) before merging routine changes. GitHub CI is reserved for releases, with manual dispatch available for release validation.
+
 The scripts need bash: macOS, Linux, WSL or Git Bash.
 
 The test project targets `net10.0` and links one library build at a time through the `LibTfm` property, so a single runtime exercises each build's `#if` code paths. To test one build:
@@ -42,7 +44,7 @@ dotnet test src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj -c R
 | `src/interface/IWebsocketClientLite` | Its interfaces, published as the separate `IWebsocketClientLite` package |
 | `src/main/WebsocketClientLiteTest` | Unit tests |
 | `src/test/NETCore.Console.Test` | A console sample that connects to public echo servers |
-| `.github/workflows` | `ci.yml` builds, tests and checks coverage for pushes and pull requests to `main`; `build.yml` publishes the packages when `GitVersion.yml` changes on a `releases/**` branch |
+| `.github/workflows` | `ci.yml` runs release checks and `build.yml` publishes packages when `GitVersion.yml` changes in a push or pull request to `releases/**`; ordinary changes are validated locally |
 
 ## Dev container
 

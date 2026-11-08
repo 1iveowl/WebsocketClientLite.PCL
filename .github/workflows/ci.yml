@@ -1,14 +1,17 @@
 name: CI
 
+# Automatic CI follows the release trigger; routine changes are validated locally.
 on:
   push:
     branches:
-      - main
       - "releases/**"
+    paths:
+      - "GitVersion.yml"
   pull_request:
     branches:
-      - main
       - "releases/**"
+    paths:
+      - "GitVersion.yml"
   workflow_dispatch:
 
 env:
