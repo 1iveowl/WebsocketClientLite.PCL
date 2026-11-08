@@ -1,7 +1,9 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net10.0</TargetFramework>
+    <TestHostTfm Condition="'$(TestHostTfm)' == ''">net10.0</TestHostTfm>
+    <TargetFramework>$(TestHostTfm)</TargetFramework>
+    <RollForward>LatestPatch</RollForward>
     <Nullable>enable</Nullable>
 
     <IsPackable>false</IsPackable>

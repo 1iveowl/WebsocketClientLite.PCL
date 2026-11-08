@@ -13,12 +13,18 @@ on:
     paths:
       - "GitVersion.yml"
   workflow_dispatch:
+    inputs:
+      host_qualification:
+        description: 'Manual P3-E host qualification only (does not satisfy release evidence)'
+        type: boolean
+        default: false
 
 env:
   PDD_PR_HEAD: ${{ github.event.pull_request.head.sha }}
 
 jobs:
   verify-protocol:
+    if: ${{ !inputs.host_qualification }}
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4
@@ -69,7 +75,8 @@ jobs:
           if-no-files-found: error
 
   build-and-test:
-    runs-on: ubuntu-latest
+    if: ${{ !inputs.host_qualification }}
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -100,7 +107,8 @@ jobs:
           if-no-files-found: error
 
   controlled-close:
-    runs-on: ubuntu-latest
+    if: ${{ !inputs.host_qualification }}
+    runs-on: ubuntu-24.04
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
@@ -117,7 +125,8 @@ jobs:
           if-no-files-found: error
 
   stryker-close:
-    runs-on: ubuntu-latest
+    if: ${{ !inputs.host_qualification }}
+    runs-on: ubuntu-24.04
     timeout-minutes: 40
     steps:
       - uses: actions/checkout@v4
@@ -134,9 +143,9 @@ jobs:
           if-no-files-found: error
 
   evidence-gate:
-    if: always()
+    if: ${{ always() && !inputs.host_qualification }}
     needs: [verify-protocol, build-and-test, controlled-close, stryker-close]
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-dotnet@v4
@@ -168,4 +177,46 @@ jobs:
             artifacts/pdd/tests/
             artifacts/pdd/controlled/
             artifacts/pdd/stryker/
+          if-no-files-found: error
+
+  qualify-host:
+    if: ${{ github.event_name == 'workflow_dispatch' && inputs.host_qualification }}
+    strategy:
+      fail-fast: false
+      matrix:
+        repetition: [1, 2]
+        host:
+          - { runner: ubuntu-24.04, prefix: linux-10, runtime: '10.0.x', targets: 'netstandard2.0,netstandard2.1,net8.0,net9.0,net10.0' }
+          - { runner: windows-2022, prefix: windows-10, runtime: '10.0.x', targets: 'net10.0,netstandard2.0' }
+          - { runner: macos-15, prefix: macos-10, runtime: '10.0.x', targets: 'net10.0,netstandard2.0' }
+    runs-on: ${{ matrix.host.runner }}
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+      - name: Build receipt tooling
+        run: dotnet build tools/Pdd/Pdd.csproj -c Release
+      - name: Qualify actual host cells
+        shell: pwsh
+        env:
+          CELL_PREFIX: ${{ matrix.host.prefix }}
+          LIBRARY_TARGETS: ${{ matrix.host.targets }}
+        run: |
+          $failed = $false
+          $cells = @()
+          foreach ($tfm in $env:LIBRARY_TARGETS.Split(',')) {
+            $cell = "$env:CELL_PREFIX-$tfm"
+            $cells += $cell
+            dotnet tools/Pdd/bin/Release/net10.0/Pdd.dll test-host --cell $cell --output "artifacts/hosts/$cell"
+            if ($LASTEXITCODE -ne 0) { $failed = $true }
+          }
+          dotnet tools/Pdd/bin/Release/net10.0/Pdd.dll aggregate --host-cells ($cells -join ',') --output artifacts/hosts
+          if ($LASTEXITCODE -ne 0 -or $failed) { exit 1 }
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: hosts-${{ matrix.host.prefix }}-${{ matrix.repetition }}
+          path: artifacts/hosts/
           if-no-files-found: error

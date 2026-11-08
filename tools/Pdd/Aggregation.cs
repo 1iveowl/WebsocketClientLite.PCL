@@ -35,6 +35,7 @@ public sealed partial class Evidence
             var definitions = tree.Descendants(ns + "UnitTest").ToDictionary(e => (string)e.Attribute("id")!, e => e.Element(ns + "TestMethod"));
             var tests = new Dictionary<string, string>();
             string? runtime = null;
+            JsonNode? host = null;
             var caseCounts = new Dictionary<string, int>();
             Dictionary<string, int> severity = new()
             {
@@ -60,6 +61,8 @@ public sealed partial class Evidence
                 {
                     var match = Regex.Match(item.Value, @"PDD_HOST_RUNTIME=(.+)");
                     runtime = match.Success ? match.Groups[1].Value.Trim() : null;
+                    var identity = Regex.Match(item.Value, @"PDD_HOST_IDENTITY=(.+)");
+                    if (identity.Success) host = Parse(identity.Groups[1].Value.Trim());
                 }
             }
             foreach (var (name, count) in caseCounts.Where(p => p.Key.StartsWith("WebsocketClientLiteTest.ControlledCloseTests.", StringComparison.Ordinal) || p.Key.StartsWith("WebsocketClientLiteTest.CloseBoundaryTests.", StringComparison.Ordinal)))
@@ -84,7 +87,7 @@ public sealed partial class Evidence
             }
             var run = Read(Path.Combine(path, "run.json"));
             var valid = Passed(run) && (run["command"]?.AsArray() ?? []).Any(c => c?.ToString() == "-p:LibTfm=" + tfm) && File.Exists(Path.Combine(path, "output.log"));
-            matrix[tfm] = new JsonObject { ["status"] = valid && tests.Count > 0 && tests.Values.All(x => x == "passed") && !string.IsNullOrEmpty(runtime) ? "passed" : "failed", ["execution"] = run, ["tests"] = Node(tests), ["host_runtime"] = runtime, ["trx"] = Path.GetRelativePath(directory, files[0]) };
+            matrix[tfm] = new JsonObject { ["status"] = valid && tests.Count > 0 && tests.Values.All(x => x == "passed") && !string.IsNullOrEmpty(runtime) ? "passed" : "failed", ["execution"] = run, ["tests"] = Node(tests), ["host_runtime"] = runtime, ["host"] = host, ["case_counts"] = Node(caseCounts), ["trx"] = Path.GetRelativePath(directory, files[0]) };
         }
         return matrix;
     }
@@ -259,6 +262,11 @@ public sealed partial class Evidence
             if (jobs.ContainsKey("tests"))
             {
                 matrix = TestResults(Path.Combine(directory, "tests"));
+                foreach (var cell in HostCells.Where(c => c.Placement == "mandatory"))
+                {
+                    try { ValidateHostIdentity(cell, matrix[cell.LibraryTfm]?["host"], S(matrix[cell.LibraryTfm], "host_runtime")); }
+                    catch (Exception e) when (e is not OutOfMemoryException) { errors.Add(cell.Id + ": " + e.Message); }
+                }
                 if (matrix.Any(p => S(p.Value, "status") != "passed"))
                     errors.Add("Incomplete or unsuccessful framework matrix/runtime evidence");
             }
