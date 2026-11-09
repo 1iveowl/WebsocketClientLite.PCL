@@ -24,10 +24,16 @@
 		"source=copilot-home-${localWorkspaceFolderBasename},target=/home/vscode/.copilot,type=volume",
 		// Persist layout and session records; conversation histories stay in the tool homes above.
 		"source=herdr-config-${localWorkspaceFolderBasename},target=/home/vscode/.config/herdr,type=volume",
+		// herdr-core's state: the Herdr desktop app's Spaces and terminal records, and the core's identity, which
+		// lets the app recognise a rebuilt container as the same machine. post-create links
+		// ~/.local/state/herdr-core here; mounting there would make Docker create ~/.local as root.
+		"source=herdr-core-state-${localWorkspaceFolderBasename},target=/home/vscode/.herdr-core-state,type=volume",
 		// GitHub CLI login (gh auth login); without the volume a rebuild signs gh out.
 		"source=gh-config-${localWorkspaceFolderBasename},target=/home/vscode/.config/gh,type=volume",
 		// Azure CLI login (az login); without the volume a rebuild signs az out.
 		"source=azure-config-${localWorkspaceFolderBasename},target=/home/vscode/.azure,type=volume",
+		// What TokenEconomizer has learned about this repository; without the volume a rebuild starts it over.
+		"source=tokeneconomizer-${localWorkspaceFolderBasename},target=/home/vscode/.tokeneconomizer,type=volume",
 		// Optional: a host folder of shared assistant skills, linked into the agent homes by post-create.
 		// initializeCommand creates it empty when missing. See docs/development.md.
 		"source=${localEnv:HOME}/GitHub/ai-skill,target=/opt/ai-skill,type=bind,consistency=cached"
