@@ -1,6 +1,10 @@
 name: CI
 
-# Automatic CI follows the release trigger; routine changes are validated locally.
+# Automatic CI runs for release preparation and for pull requests into main; routine changes are validated locally.
+# A pull request into main always runs, because main requires the build-and-test check and a path-filtered
+# workflow reports no check at all. A pull request into a release branch runs only when it changes GitVersion.yml,
+# like the publish workflow. One pull_request trigger cannot filter paths for one base branch only, so the scope
+# job makes that decision and the other jobs depend on it.
 on:
   push:
     branches:
@@ -9,9 +13,8 @@ on:
       - "GitVersion.yml"
   pull_request:
     branches:
+      - main
       - "releases/**"
-    paths:
-      - "GitVersion.yml"
   workflow_dispatch:
     inputs:
       host_qualification:
@@ -23,8 +26,34 @@ env:
   PDD_PR_HEAD: ${{ github.event.pull_request.head.sha }}
 
 jobs:
+  scope:
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      pull-requests: read
+    outputs:
+      run: ${{ steps.decide.outputs.run }}
+    steps:
+      - id: decide
+        env:
+          GH_TOKEN: ${{ github.token }}
+          EVENT: ${{ github.event_name }}
+          BASE_REF: ${{ github.event.pull_request.base.ref }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          run=true
+          if [ "$EVENT" = pull_request ] && [ "$BASE_REF" != main ]; then
+            files="$(gh api --paginate "repos/$GITHUB_REPOSITORY/pulls/$PR_NUMBER/files" --jq '.[].filename')"
+            if ! grep -qx 'GitVersion.yml' <<<"$files"; then
+              run=false
+            fi
+          fi
+          echo "run=$run" >> "$GITHUB_OUTPUT"
+          echo "CI checks run: $run" >> "$GITHUB_STEP_SUMMARY"
+
   verify-protocol:
-    if: ${{ !inputs.host_qualification }}
+    needs: scope
+    if: ${{ needs.scope.outputs.run == 'true' && !inputs.host_qualification }}
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4
@@ -48,7 +77,8 @@ jobs:
           path: artifacts/dafny/
 
   contract-change-report:
-    if: github.event_name == 'pull_request'
+    needs: scope
+    if: ${{ github.event_name == 'pull_request' && needs.scope.outputs.run == 'true' }}
     runs-on: ubuntu-22.04
     permissions:
       contents: read
@@ -75,7 +105,8 @@ jobs:
           if-no-files-found: error
 
   build-and-test:
-    if: ${{ !inputs.host_qualification }}
+    needs: scope
+    if: ${{ needs.scope.outputs.run == 'true' && !inputs.host_qualification }}
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout
@@ -107,7 +138,8 @@ jobs:
           if-no-files-found: error
 
   controlled-close:
-    if: ${{ !inputs.host_qualification }}
+    needs: scope
+    if: ${{ needs.scope.outputs.run == 'true' && !inputs.host_qualification }}
     runs-on: ubuntu-24.04
     timeout-minutes: 10
     steps:
@@ -125,7 +157,8 @@ jobs:
           if-no-files-found: error
 
   stryker-close:
-    if: ${{ !inputs.host_qualification }}
+    needs: scope
+    if: ${{ needs.scope.outputs.run == 'true' && !inputs.host_qualification }}
     runs-on: ubuntu-24.04
     timeout-minutes: 40
     steps:
@@ -143,8 +176,8 @@ jobs:
           if-no-files-found: error
 
   evidence-gate:
-    if: ${{ always() && !inputs.host_qualification }}
-    needs: [verify-protocol, build-and-test, controlled-close, stryker-close]
+    if: ${{ always() && needs.scope.outputs.run == 'true' && !inputs.host_qualification }}
+    needs: [scope, verify-protocol, build-and-test, controlled-close, stryker-close]
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
