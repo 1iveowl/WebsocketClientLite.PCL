@@ -78,7 +78,7 @@ devcontainer exec --workspace-folder . ./test-all-tfms.sh
 
 ### What stays across rebuilds
 
-Named Docker volumes keep the agents' logins and history, Herdr's layout, the Herdr desktop app's Spaces, what TokenEconomizer has learned, and the `gh` and `az` logins: `claude-home-<folder>`, `codex-home-<folder>`, `copilot-home-<folder>`, `herdr-config-<folder>`, `herdr-core-state-<folder>`, `gh-config-<folder>`, `azure-config-<folder>` and `tokeneconomizer-<folder>`, where `<folder>` is the checkout's folder name. Two checkouts with the same folder name share them. Remove the volumes to start from scratch.
+Named Docker volumes keep the agents' logins and history, Herdr's layout, the Herdr desktop app's Spaces, what TokenEconomizer has learned, and the `gh` and `az` logins: `claude-home-<folder>`, `codex-home-<folder>`, `copilot-home-<folder>`, `herdr-config-<folder>`, `herdr-core-state-<folder>`, `gh-config-<folder>`, `azure-config-<folder>` and `tokeneconomizer-<folder>`, where `<folder>` is the checkout's folder name. Two checkouts with the same folder name share them. Remove the volumes to start from scratch. When `gh` is signed in, the setup script also runs `gh auth setup-git`, so `git push` over HTTPS uses that login after a rebuild.
 
 ### Coding agents run without permission prompts
 
