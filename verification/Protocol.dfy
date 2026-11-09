@@ -278,7 +278,7 @@ module {:extern "WebsocketClientLite.VerifiedProtocol"} ProtocolCore {
 
     // The encoder writes CLIENT headers. Strip only MASK before invoking the
     // SERVER decoder; masking keys are outside the decoded length field.
-    static method {:isolate_assertions} HeaderRoundTrip(length: bv32) returns (decoded: bv64, serverHeader: Size)
+    static method {:isolate_assertions} {:timeLimit 120} HeaderRoundTrip(length: bv32) returns (decoded: bv64, serverHeader: Size)
       requires length <= 0x7fffffff - 14
       ensures decoded == length as bv64
       ensures serverHeader == (if length <= 125 then 2 else if length <= 65535 then 4 else 10)

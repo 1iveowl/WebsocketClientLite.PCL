@@ -385,7 +385,7 @@ module {:extern ""WebsocketClientLite.VerifiedProtocol""} ProtocolCore {
       assert Word([0, 0, 0, 0, a, b, c, d]) == (a as bv64 << 24 as bv7) | (b as bv64 << 16 as bv7) | (c as bv64 << 8 as bv7) | d as bv64;
     }
 
-    static method {:isolate_assertions} HeaderRoundTrip(length: bv32) returns (decoded: bv64, serverHeader: Size)
+    static method {:isolate_assertions} {:timeLimit 120} HeaderRoundTrip(length: bv32) returns (decoded: bv64, serverHeader: Size)
       requires length <= 2147483647 - 14
       ensures decoded == length as bv64
       ensures serverHeader == if length <= 125 then 2 else if length <= 65535 then 4 else 10

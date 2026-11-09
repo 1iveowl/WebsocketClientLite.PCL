@@ -65,7 +65,8 @@ SIGKILL or lost runner cannot guarantee cleanup or artifact upload.
 Mutation wall budgets remain 180 seconds for the baseline and 90 per mutant;
 `--baseline-budget` and `--mutant-budget` override them. The per-obligation Dafny
 limit remains 60 seconds, configurable with `--verification-time-limit`. The
-existing generation script retains its own 30-second obligation limit. No proofs
+existing generation script retains its own 30-second obligation limit. `HeaderRoundTrip`
+alone carries `{:timeLimit 120}`, which overrides both limits for that method. No proofs
 are skipped and no automatic retry changes classification. Capture and
 per-target commands have a new 1,800-second default wall budget per command,
 overridable with `--command-budget`. Git and version probes are bounded too.
