@@ -20,7 +20,7 @@ dotnet build src/main/WebsocketClientLite.sln
 ./test-all-tfms.sh Release    # the same in Release, as CI runs it
 ```
 
-Run the [full local evidence checks](../verification/README.md#ci-verification-receipts-phase-2-increment-d) before merging routine changes. GitHub CI is reserved for releases, with manual dispatch available for release validation.
+Run the [full local evidence checks](../verification/README.md#ci-verification-receipts-phase-2-increment-d) before merging routine changes. GitHub CI runs for releases and for pull requests into `main`, with manual dispatch available for release validation.
 
 The scripts need bash: macOS, Linux, WSL or Git Bash.
 
@@ -44,7 +44,7 @@ dotnet test src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj -c R
 | `src/interface/IWebsocketClientLite` | Its interfaces, published as the separate `IWebsocketClientLite` package |
 | `src/main/WebsocketClientLiteTest` | Unit tests |
 | `src/test/NETCore.Console.Test` | A console sample that connects to public echo servers |
-| `.github/workflows` | `ci.yml` runs release checks and `build.yml` publishes packages when `GitVersion.yml` changes in a push or pull request to `releases/**`; ordinary changes are validated locally |
+| `.github/workflows` | `ci.yml` runs the release checks when `GitVersion.yml` changes in a push or pull request to `releases/**`, and on every pull request into `main`; `build.yml` publishes packages on that same `GitVersion.yml` change; ordinary changes are validated locally |
 
 ## Dev container
 
@@ -78,7 +78,7 @@ devcontainer exec --workspace-folder . ./test-all-tfms.sh
 
 ### What stays across rebuilds
 
-Named Docker volumes keep the agents' logins and history, Herdr's layout, the Herdr desktop app's Spaces, what TokenEconomizer has learned, and the `gh` and `az` logins: `claude-home-<folder>`, `codex-home-<folder>`, `copilot-home-<folder>`, `herdr-config-<folder>`, `herdr-core-state-<folder>`, `gh-config-<folder>`, `azure-config-<folder>` and `tokeneconomizer-<folder>`, where `<folder>` is the checkout's folder name. Two checkouts with the same folder name share them. Remove the volumes to start from scratch.
+Named Docker volumes keep the agents' logins and history, Herdr's layout, the Herdr desktop app's Spaces, what TokenEconomizer has learned, and the `gh` and `az` logins: `claude-home-<folder>`, `codex-home-<folder>`, `copilot-home-<folder>`, `herdr-config-<folder>`, `herdr-core-state-<folder>`, `gh-config-<folder>`, `azure-config-<folder>` and `tokeneconomizer-<folder>`, where `<folder>` is the checkout's folder name. Two checkouts with the same folder name share them. Remove the volumes to start from scratch. When `gh` is signed in, the setup script also runs `gh auth setup-git`, so `git push` over HTTPS uses that login after a rebuild.
 
 ### Coding agents run without permission prompts
 
