@@ -73,6 +73,8 @@ now include an 18.317-second successful baseline and a later 37.153-second
 inconclusive baseline on identical source hashes: `HeaderRoundTrip` exceeded
 the original 30-second per-obligation limit. See the [successful PR run](https://github.com/1iveowl/WebsocketClientLite.PCL/actions/runs/42386797831)
 and [failed post-merge run](https://github.com/1iveowl/WebsocketClientLite.PCL/actions/runs/42387119885).
+`HeaderRoundTrip` later timed out at 60 seconds too, in CI on unchanged proof source, so it now
+carries its own `{:timeLimit 120}` attribute, which overrides the command-line limit for that method only.
 The default per-obligation limit is increased to 60 seconds to allow more
 headroom, independently of the unchanged wall-clock limits. Override it with
 `--verification-time-limit SECONDS` (positive integer); the exact value is
