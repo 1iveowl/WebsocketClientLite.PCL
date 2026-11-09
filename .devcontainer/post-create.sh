@@ -24,6 +24,13 @@ fi
 # the non-root account required for Claude's bypass-permissions mode.
 sudo chown -R "$(id -u):$(id -g)" "${CLAUDE_CONFIG_DIR}" "${CODEX_HOME}" "${COPILOT_HOME}" "${HOME}/.config/herdr" "${HOME}/.config/gh" "${HOME}/.azure" "${HOME}/.tokeneconomizer" "${HOME}/.herdr-core-state"
 
+# The gh login survives a rebuild in its volume, but the credential helper that lets git push with it is set in
+# ~/.gitconfig, which does not. Without it, git over HTTPS fails with "could not read Username". When gh is not
+# signed in yet, "gh auth login" offers the same setup.
+if gh auth status >/dev/null 2>&1; then
+	gh auth setup-git || echo "Could not set gh as git's credential helper; run 'gh auth setup-git'." >&2
+fi
+
 # herdr-core, which the Herdr desktop app copies into the container, keeps its Spaces, terminal records and identity in
 # ~/.local/state/herdr-core. Link that to its volume, so after a rebuild the app finds the same machine and Spaces.
 # The volume is mounted outside ~/.local because the image has no ~/.local and Docker would create it as root.
