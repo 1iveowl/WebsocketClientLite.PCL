@@ -101,6 +101,30 @@ Both non-minimal rows now fail on the old parser with
 `Assert.DoesNotContain() Failure: Sub-string found ... "aborted unexpectedly"`
 and pass on the current one.
 
+## Review fix and replay 3 (2026-11-11)
+
+A code review of #136 found that replay 2's assertion still depended on message
+text: if the end-of-stream message were reworded, `DoesNotContain` would pass
+trivially and the false pass would return. The rows are still unchanged, but each
+row is now sent with the payload its header announces (`MissingPayload`, zero
+bytes; the bit-63 row is not padded). A parser that accepted a non-minimal header
+now returns a frame, and `Assert.ThrowsAsync` fails without reading any message.
+The `DoesNotContain` check stays as a second guard, against the shared constant.
+
+Replay 3 ran on `a779602` with two versions of the test
+([replay-test.diff](evidence/header-review-fixes/replay-3/replay-test.diff)): one
+padded with no message check, one padded with the check. The literal message is used
+there because `a779602` has no constant.
+
+| Run | Result |
+| --- | --- |
+| `a779602`, padding only | run and failed: 7 of 8, both non-minimal rows `Assert.Throws() Failure: No exception was thrown` |
+| `a779602`, padding and message check | run and failed: 7 of 8, the same failures |
+| current tree | run and passed: 8 of 8 |
+
+The high-bit row passes on the old parser in every replay, for the reason under
+Limits.
+
 ## Limits
 
 - The high-bit row passes on the old parser because that parser rejected the frame
@@ -108,8 +132,10 @@ and pass on the current one.
   parse-level test can separate the RFC high-bit rule from the size policy. In
   `HeaderValid` the clause `(length & 0x8000000000000000) == 0` is implied by
   `length <= 0x7fffffff`.
-- The strengthened assertion depends on the end-of-stream message text, as the
-  existing `RejectsSequenceBeforeAttemptingPayloadRead` does.
+- Replay 2's assertion depended on the end-of-stream message text. Replay 3
+  removes that dependency for the non-minimal rows: they now carry their payload.
+  `RejectsSequenceBeforeAttemptingPayloadRead` still compares against the message,
+  now through the shared constant `TcpConnectionService.AbortedUnexpectedlyMessage`.
 - The replays ran on one host against the `net10.0` library build only. With the
   strengthened test on this branch, `./test-all-tfms.sh Release` passed 269 tests
   for each of the five library builds.

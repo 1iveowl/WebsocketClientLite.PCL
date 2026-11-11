@@ -1307,7 +1307,7 @@
         }
       ],
       "exclusions": [
-        "HeaderValid is the specification and is not a mutation target; mutants replace DecodeHeader's call to it with a weakened inline check.",
+        "HeaderValid is the specification and is not a mutation target; each mutant keeps DecodeHeader's call to it and adds one disjunct that accepts a single non-minimal length.",
         "The RSV, opcode, MASK and control-frame rules of PrefixValid and HeaderValid are proved by the same contract but are not the subject of this requirement.",
         "No proof of the stream reader, end-of-stream or cancellation handling, or the conversion of MaxFrameSize to the limit.",
         "No proof of generated C#, compiler/runtime correctness, successful allocation, concurrent buffer access or complete RFC conformance."

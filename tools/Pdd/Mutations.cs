@@ -137,12 +137,14 @@ public sealed class Mutations(string root)
             // the target clause; every error still needs its own postcondition location.
             const string Postcondition = "this is the postcondition that could not be proved";
             if (related.Count(p => p.Groups[4].Value == Postcondition) != errors) return Inconclusive();
+            List<(int First, int Last)>? predicates = null;
             foreach (Match p in related)
             {
                 if (p.Groups[1].Value != mutant.File || !int.TryParse(p.Groups[2].Value, out var line) || line < 1 || line > lines.Length) return Inconclusive();
                 if (p.Groups[4].Value == "this proposition could not be proved")
                 {
-                    if (!InNamedPredicate(source, mutant.TargetClause, line)) return Inconclusive();
+                    predicates ??= NamedPredicateLines(source, mutant.TargetClause);
+                    if (!predicates.Any(r => line >= r.First && line <= r.Last)) return Inconclusive();
                     continue;
                 }
                 if (p.Groups[4].Value != Postcondition) return Inconclusive();
@@ -155,19 +157,21 @@ public sealed class Mutations(string root)
         if (mutant.Classification == "invariant" && Regex.Matches(output, @"^\s*Related message: loop invariant violation\s*$", RegexOptions.Multiline).Count != errors) return Inconclusive();
         return new(matched.Contains(mutant.TargetClause) ? "detected" : "inconclusive", matched.ToArray());
     }
-    static bool InNamedPredicate(string source, string clause, int line)
+    // The line ranges of the bodies of the functions and predicates the clause names,
+    // found once per classification rather than once per related location.
+    static List<(int First, int Last)> NamedPredicateLines(string source, string clause)
     {
         var masked = Requirements.Masked(source);
+        var ranges = new List<(int First, int Last)>();
         foreach (Match d in Regex.Matches(masked, @"\b(?:ghost\s+)?(?:function|predicate)\s+(\w+)\s*\("))
         {
             if (!Regex.IsMatch(clause, @"\b" + Regex.Escape(d.Groups[1].Value) + @"\s*\(")) continue;
             var open = masked.IndexOf('{', d.Index + d.Length);
             if (open < 0) continue;
             var first = masked[..open].Count(c => c == '\n') + 1;
-            var last = first + Requirements.Body(masked, open).Count(c => c == '\n');
-            if (line >= first && line <= last) return true;
+            ranges.Add((first, first + Requirements.Body(masked, open).Count(c => c == '\n')));
         }
-        return false;
+        return ranges;
     }
     public delegate Task<ExecutionResult> Executor(string[] command, string tree, string directory, double budget, CancellationToken cancellation);
     public static async Task<JsonObject> Suite(MutationCatalog catalog, Dictionary<string, string> sources, string output, string[] command, double baselineBudget, double mutantBudget, CancellationToken cancellation = default, Executor? executor = null)
