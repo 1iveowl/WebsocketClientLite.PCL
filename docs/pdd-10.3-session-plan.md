@@ -5,22 +5,33 @@ steps, S1 to S9, each in a new session started with the prompt given below. Run
 them in order. The owner merges pull requests between steps at the merge points.
 Releasing stays the owner's step.
 
-| Step | Work | Branch | Pull request | Needs |
-| --- | --- | --- | --- | --- |
-| S1 | RFC citations in `Protocol.dfy`, regenerated C# | `chore/header-rule-traceability` | #136 (draft) | none |
-| S2 | Header requirement entries, header mutants, unmapped table, all checks | same | #136 | S1 |
-| M1 | **Owner reviews and merges #136 into `releases/10.3.0.0`** | | | S2 |
-| S3 | Test parity, part 1: tests that pass on end of stream, read-before-payload | `fix/header-test-parity` | new draft | M1 |
-| S4 | Test parity, part 2: reserved values, limit boundary, truncation, checks | same | same | S3 |
-| M2 | **Owner reviews and merges the test parity PR** | | | S4 |
-| S5 | Experiment 1 baseline: decision table and before numbers | `chore/reconnect-pure-decision` | new draft | none |
-| S6 | Experiment 1: pure function, plain tests, after numbers, recommendation | same | same | S5 |
-| M3 | **Owner decides adopt or not adopt and merges or closes** | | | S6 |
-| S7 | Experiment 2 baseline: core call inventory and before numbers | `chore/core-boundary-types` | new draft | M1 |
-| S8 | Experiment 2: typed adapter, after numbers, recommendation | same | same | S7 |
-| M4 | **Owner decides adopt or not adopt and merges or closes** | | | S8 |
-| S9 | Release readiness on `releases/10.3.0.0`, README draft | `docs/readme-10.3.0` | new | M1 to M4 |
-| M5 | **Owner releases**: `GitVersion.yml`, publish, release branch into `main` | | | S9 |
+| Step | Work | Branch | Pull request | Needs | Model, effort |
+| --- | --- | --- | --- | --- | --- |
+| S1 | RFC citations in `Protocol.dfy`, regenerated C# | `chore/header-rule-traceability` | #136 (draft) | none | Opus 5.5, high |
+| S2 | Header requirement entries, header mutants, unmapped table, all checks | same | #136 | S1 | Opus 5.5, high |
+| M1 | **Owner reviews and merges #136 into `releases/10.3.0.0`** | | | S2 | review: optional |
+| S3 | Test parity, part 1: tests that pass on end of stream, read-before-payload | `fix/header-test-parity` | new draft | M1 | Opus 5.5, high |
+| S4 | Test parity, part 2: reserved values, limit boundary, truncation, checks | same | same | S3 | Opus 5.5, high |
+| M2 | **Owner reviews and merges the test parity PR** | | | S4 | review: optional |
+| S5 | Experiment 1 baseline: decision table and before numbers | `chore/reconnect-pure-decision` | new draft | none | Opus 5.5, high |
+| S6 | Experiment 1: pure function, plain tests, after numbers, recommendation | same | same | S5 | Opus 5.5, high or xhigh |
+| M3 | **Owner decides adopt or not adopt and merges or closes** | | | S6 | review: optional |
+| S7 | Experiment 2 baseline: core call inventory and before numbers | `chore/core-boundary-types` | new draft | M1 | Opus 5.5, high |
+| S8 | Experiment 2: typed adapter, after numbers, recommendation | same | same | S7 | Opus 5.5, high |
+| M4 | **Owner decides adopt or not adopt and merges or closes** | | | S8 | review: optional |
+| S9 | Release readiness on `releases/10.3.0.0`, README draft | `docs/readme-10.3.0` | new | M1 to M4 | Sonnet 5.5, high |
+| M5 | **Owner releases**: `GitVersion.yml`, publish, release branch into `main` | | | S9 | |
+
+Start each session with `/model` and `/effort` set as the table says, using the
+explicit model ID: `claude-opus-5-5` or `claude-sonnet-5-5`, never an alias. S6
+refactors the concurrency-sensitive P3-D lifecycle code without changing its
+behaviour; xhigh gives more margin there if the extra cost is acceptable. S9 mostly runs known checks and drafts
+the README, so Sonnet is enough.
+
+Before each merge point M1 to M4, you may run `/code-review` on the step's pull
+request in a fresh session, so that the review is not anchored on the session that
+did the work. Findings are posted on the pull request and fixed on its branch
+before merging. The review is optional and does not replace the step's own checks.
 
 S5 and S6 do not depend on the header work and may run while M1 or M2 is
 pending. Every other step checks its "Needs" column first and ends
