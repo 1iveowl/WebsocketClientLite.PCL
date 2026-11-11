@@ -1,0 +1,102 @@
+  Determining projects to restore...
+  Restored /tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/6212eedc-1c62-4d8d-b543-832060c07737/scratchpad/copies/failing-first-a779602/src/main/WebsocketClientLite/WebsocketClientLite.csproj (in 106 ms).
+  Restored /tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/6212eedc-1c62-4d8d-b543-832060c07737/scratchpad/copies/failing-first-a779602/src/interface/IWebsocketClientLite/IWebsocketClientLite.csproj (in 104 ms).
+  Restored /tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/6212eedc-1c62-4d8d-b543-832060c07737/scratchpad/copies/failing-first-a779602/src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj (in 104 ms).
+  IWebsocketClientLite -> /tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/6212eedc-1c62-4d8d-b543-832060c07737/scratchpad/copies/failing-first-a779602/src/interface/IWebsocketClientLite/bin/Release/netstandard2.0/IWebsocketClientLite.dll
+  WebsocketClientLite -> /tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/6212eedc-1c62-4d8d-b543-832060c07737/scratchpad/copies/failing-first-a779602/src/main/WebsocketClientLite/bin/Release/net10.0/WebsocketClientLite.dll
+  WebsocketClientLiteTest -> /tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/6212eedc-1c62-4d8d-b543-832060c07737/scratchpad/copies/failing-first-a779602/src/main/WebsocketClientLiteTest/bin/Release/net10.0/WebsocketClientLiteTest.dll
+Test run for /tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/6212eedc-1c62-4d8d-b543-832060c07737/scratchpad/copies/failing-first-a779602/src/main/WebsocketClientLiteTest/bin/Release/net10.0/WebsocketClientLiteTest.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v4.0.1+0f7d528729 (64-bit .NET 10.0.14)
+[xUnit.net 00:00:00.04]   Discovering: WebsocketClientLiteTest
+[xUnit.net 00:00:00.08]   Discovered:  WebsocketClientLiteTest
+[xUnit.net 00:00:00.10]   Starting:    WebsocketClientLiteTest
+[xUnit.net 00:00:00.12]     WebsocketClientLiteTest.ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(header: [137, 126, 0, 200], limit: 0, read: 2) [FAIL]
+[xUnit.net 00:00:00.12]       Invalid header read 4 bytes in 4 attempts, expected 2
+[xUnit.net 00:00:00.12]       Stack Trace:
+[xUnit.net 00:00:00.13]         /tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/6212eedc-1c62-4d8d-b543-832060c07737/scratchpad/copies/failing-first-a779602/src/main/WebsocketClientLiteTest/ParserRetentionTests.cs(72,0): at WebsocketClientLiteTest.ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(Byte[] header, Int32 limit, Int32 read)
+[xUnit.net 00:00:00.13]         --- End of stack trace from previous location ---
+[xUnit.net 00:00:00.13]     WebsocketClientLiteTest.ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(header: [129, 127, 0, 0, 0, ···], limit: 0, read: 10) [FAIL]
+[xUnit.net 00:00:00.13]       Assert.Throws() Failure: No exception was thrown
+[xUnit.net 00:00:00.13]       Expected: typeof(WebsocketClientLite.CustomException.WebsocketClientLiteException)
+[xUnit.net 00:00:00.13]       Stack Trace:
+[xUnit.net 00:00:00.13]         /tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/6212eedc-1c62-4d8d-b543-832060c07737/scratchpad/copies/failing-first-a779602/src/main/WebsocketClientLiteTest/ParserRetentionTests.cs(71,0): at WebsocketClientLiteTest.ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(Byte[] header, Int32 limit, Int32 read)
+[xUnit.net 00:00:00.13]         --- End of stack trace from previous location ---
+[xUnit.net 00:00:00.13]     WebsocketClientLiteTest.ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(header: [193, 1], limit: 0, read: 2) [FAIL]
+[xUnit.net 00:00:00.13]       Assert.Throws() Failure: No exception was thrown
+[xUnit.net 00:00:00.13]       Expected: typeof(WebsocketClientLite.CustomException.WebsocketClientLiteException)
+[xUnit.net 00:00:00.13]       Stack Trace:
+[xUnit.net 00:00:00.13]         /tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/6212eedc-1c62-4d8d-b543-832060c07737/scratchpad/copies/failing-first-a779602/src/main/WebsocketClientLiteTest/ParserRetentionTests.cs(71,0): at WebsocketClientLiteTest.ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(Byte[] header, Int32 limit, Int32 read)
+[xUnit.net 00:00:00.13]         --- End of stack trace from previous location ---
+[xUnit.net 00:00:00.13]     WebsocketClientLiteTest.ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(header: [129, 126, 0, 125], limit: 0, read: 4) [FAIL]
+[xUnit.net 00:00:00.13]       Assert.Throws() Failure: No exception was thrown
+[xUnit.net 00:00:00.13]       Expected: typeof(WebsocketClientLite.CustomException.WebsocketClientLiteException)
+[xUnit.net 00:00:00.13]       Stack Trace:
+[xUnit.net 00:00:00.13]         /tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/6212eedc-1c62-4d8d-b543-832060c07737/scratchpad/copies/failing-first-a779602/src/main/WebsocketClientLiteTest/ParserRetentionTests.cs(71,0): at WebsocketClientLiteTest.ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(Byte[] header, Int32 limit, Int32 read)
+[xUnit.net 00:00:00.13]         --- End of stack trace from previous location ---
+[xUnit.net 00:00:00.13]     WebsocketClientLiteTest.ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(header: [129, 128, 1, 2, 3, ···], limit: 0, read: 2) [FAIL]
+[xUnit.net 00:00:00.13]       Assert.Throws() Failure: No exception was thrown
+[xUnit.net 00:00:00.13]       Expected: typeof(WebsocketClientLite.CustomException.WebsocketClientLiteException)
+[xUnit.net 00:00:00.13]       Stack Trace:
+[xUnit.net 00:00:00.13]         /tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/6212eedc-1c62-4d8d-b543-832060c07737/scratchpad/copies/failing-first-a779602/src/main/WebsocketClientLiteTest/ParserRetentionTests.cs(71,0): at WebsocketClientLiteTest.ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(Byte[] header, Int32 limit, Int32 read)
+[xUnit.net 00:00:00.13]         --- End of stack trace from previous location ---
+[xUnit.net 00:00:00.13]     WebsocketClientLiteTest.ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(header: [131, 1], limit: 0, read: 2) [FAIL]
+[xUnit.net 00:00:00.13]       Assert.Throws() Failure: No exception was thrown
+[xUnit.net 00:00:00.13]       Expected: typeof(WebsocketClientLite.CustomException.WebsocketClientLiteException)
+[xUnit.net 00:00:00.13]       Stack Trace:
+[xUnit.net 00:00:00.13]         /tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/6212eedc-1c62-4d8d-b543-832060c07737/scratchpad/copies/failing-first-a779602/src/main/WebsocketClientLiteTest/ParserRetentionTests.cs(71,0): at WebsocketClientLiteTest.ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(Byte[] header, Int32 limit, Int32 read)
+[xUnit.net 00:00:00.13]         --- End of stack trace from previous location ---
+  Passed WebsocketClientLiteTest.ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(header: [130, 126, 0, 200], limit: 100, read: 4) [4 ms]
+  Passed WebsocketClientLiteTest.PayloadParsingTests.Parse_OversizedControlFrame_Throws [4 ms]
+  Passed WebsocketClientLiteTest.PayloadParsingTests.Parse_FrameExceedingMaxFrameSize_Throws [< 1 ms]
+  Failed WebsocketClientLiteTest.ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(header: [137, 126, 0, 200], limit: 0, read: 2) [< 1 ms]
+  Error Message:
+   Invalid header read 4 bytes in 4 attempts, expected 2
+  Stack Trace:
+     at WebsocketClientLiteTest.ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(Byte[] header, Int32 limit, Int32 read) in /tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/6212eedc-1c62-4d8d-b543-832060c07737/scratchpad/copies/failing-first-a779602/src/main/WebsocketClientLiteTest/ParserRetentionTests.cs:line 72
+--- End of stack trace from previous location ---
+  Failed WebsocketClientLiteTest.ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(header: [129, 127, 0, 0, 0, ···], limit: 0, read: 10) [4 ms]
+  Error Message:
+   Assert.Throws() Failure: No exception was thrown
+Expected: typeof(WebsocketClientLite.CustomException.WebsocketClientLiteException)
+  Stack Trace:
+     at WebsocketClientLiteTest.ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(Byte[] header, Int32 limit, Int32 read) in /tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/6212eedc-1c62-4d8d-b543-832060c07737/scratchpad/copies/failing-first-a779602/src/main/WebsocketClientLiteTest/ParserRetentionTests.cs:line 71
+--- End of stack trace from previous location ---
+  Failed WebsocketClientLiteTest.ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(header: [193, 1], limit: 0, read: 2) [< 1 ms]
+  Error Message:
+   Assert.Throws() Failure: No exception was thrown
+Expected: typeof(WebsocketClientLite.CustomException.WebsocketClientLiteException)
+  Stack Trace:
+     at WebsocketClientLiteTest.ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(Byte[] header, Int32 limit, Int32 read) in /tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/6212eedc-1c62-4d8d-b543-832060c07737/scratchpad/copies/failing-first-a779602/src/main/WebsocketClientLiteTest/ParserRetentionTests.cs:line 71
+--- End of stack trace from previous location ---
+  Failed WebsocketClientLiteTest.ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(header: [129, 126, 0, 125], limit: 0, read: 4) [< 1 ms]
+  Error Message:
+   Assert.Throws() Failure: No exception was thrown
+Expected: typeof(WebsocketClientLite.CustomException.WebsocketClientLiteException)
+  Stack Trace:
+     at WebsocketClientLiteTest.ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(Byte[] header, Int32 limit, Int32 read) in /tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/6212eedc-1c62-4d8d-b543-832060c07737/scratchpad/copies/failing-first-a779602/src/main/WebsocketClientLiteTest/ParserRetentionTests.cs:line 71
+--- End of stack trace from previous location ---
+  Failed WebsocketClientLiteTest.ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(header: [129, 128, 1, 2, 3, ···], limit: 0, read: 2) [< 1 ms]
+  Error Message:
+   Assert.Throws() Failure: No exception was thrown
+Expected: typeof(WebsocketClientLite.CustomException.WebsocketClientLiteException)
+  Stack Trace:
+     at WebsocketClientLiteTest.ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(Byte[] header, Int32 limit, Int32 read) in /tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/6212eedc-1c62-4d8d-b543-832060c07737/scratchpad/copies/failing-first-a779602/src/main/WebsocketClientLiteTest/ParserRetentionTests.cs:line 71
+--- End of stack trace from previous location ---
+  Failed WebsocketClientLiteTest.ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(header: [131, 1], limit: 0, read: 2) [< 1 ms]
+  Error Message:
+   Assert.Throws() Failure: No exception was thrown
+Expected: typeof(WebsocketClientLite.CustomException.WebsocketClientLiteException)
+  Stack Trace:
+     at WebsocketClientLiteTest.ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(Byte[] header, Int32 limit, Int32 read) in /tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/6212eedc-1c62-4d8d-b543-832060c07737/scratchpad/copies/failing-first-a779602/src/main/WebsocketClientLiteTest/ParserRetentionTests.cs:line 71
+--- End of stack trace from previous location ---
+[xUnit.net 00:00:00.13]   Finished:    WebsocketClientLiteTest
+  Passed WebsocketClientLiteTest.ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(header: [129, 127, 128, 0, 0, ···], limit: 0, read: 10) [< 1 ms]
+  Passed WebsocketClientLiteTest.ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(header: [9, 1], limit: 0, read: 2) [< 1 ms]
+Results File: /workspaces/WebsocketClientLite.PCL/docs/evidence/header-test-parity/failing-first/a779602.trx
+
+Test Run Failed.
+Total tests: 11
+     Passed: 5
+     Failed: 6
+ Total time: 0.3433 Seconds

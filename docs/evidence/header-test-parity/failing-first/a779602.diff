@@ -1,0 +1,79 @@
+diff -ruN -x bin -x obj failing-first-a779602/src/main/WebsocketClientLiteTest/ParserRetentionTests.cs copy/src/main/WebsocketClientLiteTest/ParserRetentionTests.cs
+--- failing-first-a779602/src/main/WebsocketClientLiteTest/ParserRetentionTests.cs	1970-01-01 00:00:00.000000000 +0000
++++ copy/src/main/WebsocketClientLiteTest/ParserRetentionTests.cs	2026-11-11 16:17:53.141763040 +0000
+@@ -0,0 +1,75 @@
++using System;
++using System.IO;
++using System.Linq;
++using System.Reflection;
++using System.Threading;
++using System.Threading.Tasks;
++using WebsocketClientLite.CustomException;
++using WebsocketClientLite.Helper;
++using WebsocketClientLite.Service;
++using Xunit;
++
++namespace WebsocketClientLiteTest;
++
++// Replay reduction for a779602, which has no ParserRetentionTests. Input and Connection are
++// copied from ParserRetentionTests at 58bc568, MissingPayload from PayloadParsingTests at
++// 58bc568. The theory, its rows and its body are verbatim apart from the MissingPayload call.
++public class ParserRetentionTests
++{
++    private sealed class Input(byte[] bytes, bool cancelAtEnd = false) : MemoryStream(bytes)
++    {
++        public int Attempts { get; private set; }
++        public int BytesRead => (int)Position;
++        private int Next(Span<byte> destination)
++        {
++            Attempts++;
++            if (Position == Length && cancelAtEnd) throw new OperationCanceledException();
++            return base.Read(destination[..Math.Min(1, destination.Length)]);
++        }
++        public override Task<int> ReadAsync(byte[] buffer, int offset, int count, CancellationToken token) =>
++            Task.FromResult(Next(buffer.AsSpan(offset, count)));
++        public override ValueTask<int> ReadAsync(Memory<byte> buffer, CancellationToken token = default) =>
++            new(Next(buffer.Span));
++    }
++    private static TcpConnectionService Connection(Stream stream, int limit = 0)
++    {
++        var connection = new TcpConnectionService(() => false, (_, _, _, _) => true,
++            (_, _) => Task.CompletedTask, (_, _) => { }, true, maxFrameSize: limit);
++        typeof(TcpConnectionService).GetField("_stream", BindingFlags.Instance | BindingFlags.NonPublic)!.SetValue(connection, stream);
++        return connection;
++    }
++    private static int MissingPayload(byte[] bytes)
++    {
++        int marker = bytes[1] & 127;
++        int headerSize = marker <= 125 ? 2 : marker == 126 ? 4 : 10;
++        if (bytes.Length < headerSize) return 0;
++        ulong announced = marker <= 125 ? (ulong)marker : 0;
++        for (int i = 2; i < headerSize; i++) announced = announced << 8 | bytes[i];
++        if (announced > 65536) return 0;
++        return Math.Max(0, (int)announced - (bytes.Length - headerSize));
++    }
++    // Every invalid header of PayloadParsingTests, sent with the payload it announces, is
++    // refused after exactly the header bytes the decision needs: 2 when the first two bytes
++    // already decide (RSV bits, opcode, mask, control FIN or a control length marker above
++    // 125), otherwise the full 4- or 10-byte header. Attempts equal to the bytes read means
++    // no further read was tried, so no payload byte was read and the stream did not end.
++    // Rows of length 0 there announce one byte here, so that a payload read would show.
++    [Theory]
++    [InlineData(new byte[] { 0xC1, 1 }, 0, 2)] // RSV1
++    [InlineData(new byte[] { 0x83, 1 }, 0, 2)] // reserved opcode 3
++    [InlineData(new byte[] { 0x81, 0x80, 1, 2, 3, 4 }, 0, 2)] // masked server frame
++    [InlineData(new byte[] { 0x09, 1 }, 0, 2)] // fragmented control frame
++    [InlineData(new byte[] { 0x89, 126, 0, 200 }, 0, 2)] // control length above 125
++    [InlineData(new byte[] { 0x81, 126, 0, 125 }, 0, 4)] // non-minimal 16-bit length
++    [InlineData(new byte[] { 0x82, 126, 0, 200 }, 100, 4)] // above the configured limit
++    [InlineData(new byte[] { 0x81, 127, 0, 0, 0, 0, 0, 0, 255, 255 }, 0, 10)] // non-minimal 64-bit length
++    [InlineData(new byte[] { 0x81, 127, 128, 0, 0, 0, 0, 0, 0, 0 }, 0, 10)] // bit 63, not padded
++    public async Task InvalidHeadersRejectBeforePayloadRead(byte[] header, int limit, int read)
++    {
++        using var input = new Input(header.Concat(new byte[MissingPayload(header)]).ToArray());
++        using var connection = Connection(input, limit);
++        await Assert.ThrowsAsync<WebsocketClientLiteException>(() => connection.ReadDataframeAsync(CancellationToken.None));
++        Assert.True(input.BytesRead == read && input.Attempts == read,
++            $"Invalid header read {input.BytesRead} bytes in {input.Attempts} attempts, expected {read}");
++    }
++}
