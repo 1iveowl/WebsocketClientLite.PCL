@@ -29,6 +29,10 @@ cases of `InvalidHeadersRejectBeforePayloadRead` (9 from S3, 11 from S4) and 6 o
 `ConfiguredLimitAcceptsLimitAndRejectsSuccessorFromHeader`. All 40 passed, and both
 retention defects were run and detected; only the count check failed.
 
+On the owner's decision, `90c156f` changes the count to 40 and names both theories in
+`RetentionCaseCounts`. Every check was then run again, and all of them passed:
+[../checks-90c156f/](../checks-90c156f/README.md).
+
 S3 did not run the capture jobs. A run of `./scripts/pdd.sh retention-defects` on a
 worktree of `4c449d2`, S3's last commit, failed the same way with 23 baseline cases
 ([retention-4c449d2/](retention-4c449d2/)). The failure started with S3's theory.

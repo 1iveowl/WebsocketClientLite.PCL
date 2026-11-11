@@ -93,10 +93,14 @@ and the truncation theory, and `HEADER-002-TEST` adds both header-only theories.
 - Two rules are only covered together with another rule, so no parse-level test can
   show either alone: the bit-63 rule (with the size limit) and the opcode check for
   opcodes 3 to 7 (with the sequence rule).
-- The controlled capture job fails on this branch since S3. `tools/Pdd/RetentionDefects.cs`
-  requires exactly 14 results from the `ParserRetentionTests` baseline, and the two new
-  theories bring it to 40. Every case passes; only that count fails. The checks are in
-  [evidence/header-test-parity/part-2/checks/](evidence/header-test-parity/part-2/checks/README.md).
+- From S3 until `90c156f` the controlled capture job failed on this branch.
+  `tools/Pdd/RetentionDefects.cs` required exactly 14 results from the
+  `ParserRetentionTests` baseline, and the two new theories bring it to 40. Every case
+  passed; only that count failed. On the owner's decision, `90c156f` requires 40 and
+  names both theories in `RetentionCaseCounts`. The first checks are in
+  [part-2/checks/](evidence/header-test-parity/part-2/checks/README.md); the rerun,
+  in which every check passed, is in
+  [part-2/checks-90c156f/](evidence/header-test-parity/part-2/checks-90c156f/README.md).
 - The RSV and opcode rules have no requirement entry of their own. `HEADER-001`
   excludes them, and its test obligation names `RejectsMalformedFrames`, whose rows
   test them.
