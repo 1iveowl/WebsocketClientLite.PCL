@@ -87,7 +87,9 @@ Apply these in every later step.
 3. **Local time budget headroom is not CI headroom.** On a GitHub-hosted runner
    (run 43041451305) mutants took about 2.4 times as long as locally, and
    `CLOSE-003-premature-release`, 8.8 seconds locally, exhausted its 90-second
-   budget. Report any mutant above a third of its budget locally as a CI risk.
+   budget. In the next run (43046774633) the same mutant took 21.0 seconds, so one
+   run is not enough to call a timing safe or unsafe. Report any mutant above a
+   third of its budget locally as a CI risk.
 4. **Mutate by adding one case, not by copying the specification.** The first
    header mutants were a hand copy of `HeaderValid`'s body with the length rule
    weakened. They took 61 and 85 seconds, and a later change to `HeaderValid`
@@ -701,8 +703,13 @@ Found on 2026-11-11 at `34c2421` (#136 after the review fixes):
 - CI timing. In run 43041451305 (`9673862`, before the review fixes) mutants took
   about 21 seconds against about 9 locally, and `CLOSE-003-premature-release`
   exhausted the 90-second budget although it reported the expected error, so
-  `verify-protocol` and `evidence-gate` failed. The cause is not established. The
-  run is kept in `docs/evidence/header-review-fixes/ci-43041451305/`.
+  `verify-protocol` and `evidence-gate` failed. The run is kept in
+  `docs/evidence/header-review-fixes/ci-43041451305/`. In the next manual run,
+  43046774633 on `34a8950` (after the review fixes), every job passed: all 17
+  mutants were detected in 20.4 to 21.6 seconds each, `CLOSE-003-premature-release`
+  in 21.0 seconds. So the timeout did not repeat, and its cause is not established:
+  a slow runner, solver variance or something else. With runs of about 21 seconds,
+  CI has about four times headroom under the 90-second budget when no outlier occurs.
 
 What to do:
 
@@ -721,8 +728,10 @@ What to do:
    body's `{`) and build the fixture records relative to them. Show it with a kept
    run: a comment line added above `CloseStep` in an isolated copy leaves the Pdd
    tests passing.
-6. Dispatch CI again on the final commit and compare the per-mutant times. If a
-   budget is still exhausted, report the numbers and ask; do not change budgets.
+6. Dispatch CI again on the final commit and compare the per-mutant times with
+   43041451305 and 43046774633. One passing run does not show that the outlier is
+   gone. If a budget is exhausted, report the numbers and ask; do not change
+   budgets.
 7. Run every check: Pdd tests, `pdd.sh validate`, `scripts/dafny-masking.sh --check`,
    the mutation suite, the five-target matrix, the coverage gate and the four
    capture jobs with `aggregate`. Open a draft pull request against
