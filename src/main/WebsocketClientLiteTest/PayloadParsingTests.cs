@@ -37,7 +37,7 @@ public class PayloadParsingTests
 
     private async Task<Dataframe?> Parse(byte[] frame, int maxFrameSize = 0)
     {
-        var fake = new FakeTcpConnectionService(frame, maxFrameSize);
+        using var fake = new FakeTcpConnectionService(frame, maxFrameSize);
         return await fake.ReadDataframeAsync(CancellationToken.None);
     }
 
@@ -216,28 +216,45 @@ public class PayloadParsingTests
         Assert.Equal(new string('a', length), parsed.Message);
     }
 
+    // Headers that are refused from the header alone, each with the header bytes the
+    // decision needs: 2 when the first two bytes decide, otherwise the full 4- or 10-byte
+    // header. RejectsMalformedFrames and ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead
+    // both read this list, so a row added here is tried by both.
+    internal static readonly (byte[] Header, int Decides)[] InvalidHeaders =
+    {
+        (new byte[] { 0xC1, 0 }, 2), // RSV1
+        (new byte[] { 0xA1, 0 }, 2), // RSV2
+        (new byte[] { 0x91, 0 }, 2), // RSV3
+        // Reserved data opcodes 3 to 7. Combined coverage: they are in the data range, so
+        // Step's sequence rule, which admits only text or binary at idle, also refuses them
+        // without the Known check. No row shows the Known check alone for opcodes 3 to 7.
+        (new byte[] { 0x83, 0 }, 2),
+        (new byte[] { 0x84, 0 }, 2),
+        (new byte[] { 0x85, 0 }, 2),
+        (new byte[] { 0x86, 0 }, 2),
+        (new byte[] { 0x87, 0 }, 2),
+        (new byte[] { 0x8B, 0 }, 2), // reserved control opcodes 11 to 15
+        (new byte[] { 0x8C, 0 }, 2),
+        (new byte[] { 0x8D, 0 }, 2),
+        (new byte[] { 0x8E, 0 }, 2),
+        (new byte[] { 0x8F, 0 }, 2),
+        (new byte[] { 0x81, 126, 0, 125 }, 4), // non-minimal 16-bit length
+        (new byte[] { 0x81, 127, 0, 0, 0, 0, 0, 0, 255, 255 }, 10), // non-minimal 64-bit length
+        // Combined coverage: bit 63 set, and so also above int.MaxValue and the default limit.
+        // Removing either the bit-63 rule or the size limit leaves this row rejected by the
+        // other, so it cannot show that the bit-63 rule alone is enforced.
+        (new byte[] { 0x81, 127, 128, 0, 0, 0, 0, 0, 0, 0 }, 10),
+    };
+
+    public static TheoryData<byte[]> InvalidHeaderRows()
+    {
+        var rows = new TheoryData<byte[]>();
+        foreach (var (header, _) in InvalidHeaders) rows.Add(header);
+        return rows;
+    }
+
     [Theory]
-    [InlineData(new byte[] { 0xC1, 0 })] // RSV1
-    [InlineData(new byte[] { 0xA1, 0 })] // RSV2
-    [InlineData(new byte[] { 0x91, 0 })] // RSV3
-    [InlineData(new byte[] { 0x83, 0 })] // reserved data opcodes 3 to 7
-    // Combined coverage: opcodes 4 to 7 are in the data range, so Admit's sequence rule,
-    // which admits only text or binary at idle, also refuses them without the Known check.
-    [InlineData(new byte[] { 0x84, 0 })]
-    [InlineData(new byte[] { 0x85, 0 })]
-    [InlineData(new byte[] { 0x86, 0 })]
-    [InlineData(new byte[] { 0x87, 0 })]
-    [InlineData(new byte[] { 0x8B, 0 })] // reserved control opcodes 11 to 15
-    [InlineData(new byte[] { 0x8C, 0 })]
-    [InlineData(new byte[] { 0x8D, 0 })]
-    [InlineData(new byte[] { 0x8E, 0 })]
-    [InlineData(new byte[] { 0x8F, 0 })]
-    [InlineData(new byte[] { 0x81, 126, 0, 125 })]
-    [InlineData(new byte[] { 0x81, 127, 0, 0, 0, 0, 0, 0, 255, 255 })]
-    // Combined coverage: bit 63 set, and so also above int.MaxValue and the default limit.
-    // Removing either the bit-63 rule or the size limit leaves this row rejected by the
-    // other, so it cannot show that the bit-63 rule alone is enforced.
-    [InlineData(new byte[] { 0x81, 127, 128, 0, 0, 0, 0, 0, 0, 0 })]
+    [MemberData(nameof(InvalidHeaderRows))]
     [InlineData(new byte[] { 0x88, 1, 0 })]
     [InlineData(new byte[] { 0x88, 2, 3, 237 })] // forbidden 1005
     [InlineData(new byte[] { 0x88, 3, 3, 232, 255 })] // invalid reason UTF-8
@@ -334,6 +351,10 @@ public class PayloadParsingTests
             }
             catch (WebsocketClientLiteException)
             {
+            }
+            catch (Exception other)
+            {
+                wrong.Add($"{length}: {other.GetType().Name}: {other.Message}");
             }
         }
         Assert.True(wrong.Count == 0, "Truncated header did not end in end of stream at " + string.Join("; ", wrong));

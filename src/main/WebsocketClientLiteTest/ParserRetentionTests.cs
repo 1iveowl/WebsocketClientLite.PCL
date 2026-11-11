@@ -159,28 +159,26 @@ public class ParserRetentionTests
     // already decide (RSV bits, opcode, mask, control FIN or a control length marker above
     // 125), otherwise the full 4- or 10-byte header. Attempts equal to the bytes read means
     // no further read was tried, so no payload byte was read and the stream did not end.
-    // Rows of length 0 there announce one byte here, so that a payload read would show.
+    // The member rows are PayloadParsingTests.InvalidHeaders, which RejectsMalformedFrames
+    // also reads, so a row added there is tried here too. The inline rows are the headers
+    // of the single masked, fragmented control, oversized control and over-limit tests
+    // there. Every row announces at least one payload byte and carries it, so that a
+    // payload read would show; rows of length 0 there announce one byte here. The bit-63
+    // row is the exception: its length is refused alone, so it is not padded.
+    public static TheoryData<byte[], int, int> SharedInvalidHeaderRows()
+    {
+        var rows = new TheoryData<byte[], int, int>();
+        foreach (var (header, decides) in PayloadParsingTests.InvalidHeaders)
+            rows.Add(header.Length == 2 && header[1] == 0 ? new byte[] { header[0], 1 } : header, 0, decides);
+        return rows;
+    }
+
     [Theory]
-    [InlineData(new byte[] { 0xC1, 1 }, 0, 2)] // RSV1
-    [InlineData(new byte[] { 0xA1, 1 }, 0, 2)] // RSV2
-    [InlineData(new byte[] { 0x91, 1 }, 0, 2)] // RSV3
-    [InlineData(new byte[] { 0x83, 1 }, 0, 2)] // reserved data opcodes 3 to 7
-    [InlineData(new byte[] { 0x84, 1 }, 0, 2)]
-    [InlineData(new byte[] { 0x85, 1 }, 0, 2)]
-    [InlineData(new byte[] { 0x86, 1 }, 0, 2)]
-    [InlineData(new byte[] { 0x87, 1 }, 0, 2)]
-    [InlineData(new byte[] { 0x8B, 1 }, 0, 2)] // reserved control opcodes 11 to 15
-    [InlineData(new byte[] { 0x8C, 1 }, 0, 2)]
-    [InlineData(new byte[] { 0x8D, 1 }, 0, 2)]
-    [InlineData(new byte[] { 0x8E, 1 }, 0, 2)]
-    [InlineData(new byte[] { 0x8F, 1 }, 0, 2)]
-    [InlineData(new byte[] { 0x81, 0x80, 1, 2, 3, 4 }, 0, 2)] // masked server frame
+    [MemberData(nameof(SharedInvalidHeaderRows))]
+    [InlineData(new byte[] { 0x81, 0x81, 1, 2, 3, 4, 0 }, 0, 2)] // masked server frame: mask key and one payload byte
     [InlineData(new byte[] { 0x09, 1 }, 0, 2)] // fragmented control frame
     [InlineData(new byte[] { 0x89, 126, 0, 200 }, 0, 2)] // control length above 125
-    [InlineData(new byte[] { 0x81, 126, 0, 125 }, 0, 4)] // non-minimal 16-bit length
     [InlineData(new byte[] { 0x82, 126, 0, 200 }, 100, 4)] // above the configured limit
-    [InlineData(new byte[] { 0x81, 127, 0, 0, 0, 0, 0, 0, 255, 255 }, 0, 10)] // non-minimal 64-bit length
-    [InlineData(new byte[] { 0x81, 127, 128, 0, 0, 0, 0, 0, 0, 0 }, 0, 10)] // bit 63, not padded
     public async Task InvalidHeadersRejectBeforePayloadRead(byte[] header, int limit, int read)
     {
         using var input = new Input(header.Concat(new byte[PayloadParsingTests.MissingPayload(header)]).ToArray());
@@ -209,7 +207,10 @@ public class ParserRetentionTests
             : new byte[] { 0x82, 127, 0, 0, 0, 0, (byte)(length >> 24), (byte)(length >> 16), (byte)(length >> 8), (byte)length };
         var payload = Enumerable.Range(0, limit + 1).Select(i => (byte)(i * 7)).ToArray();
 
-        using (var input = new Input(Join(Header(limit), payload[..limit])))
+        var atLimit = Header(limit);
+        var above = Header(limit + 1);
+
+        using (var input = new Input(Join(atLimit, payload[..limit])))
         using (var connection = Connection(input, limit))
         {
             Dataframe? frame = null; Exception? error = null;
@@ -217,17 +218,16 @@ public class ParserRetentionTests
             catch (Exception e) { error = e; }
             Assert.True(error is null && frame is not null, $"Frame of exactly the limit {limit} was refused: {error}");
             Message(frame!, 2, payload[..limit]);
-            int wire = Header(limit).Length + limit;
+            int wire = atLimit.Length + limit;
             Assert.True(input.BytesRead == wire && input.Attempts == wire, "Frame at the limit read differs from its wire size");
         }
 
-        using (var input = new Input(Join(Header(limit + 1), payload)))
+        using (var input = new Input(Join(above, payload)))
         using (var connection = Connection(input, limit))
         {
             await Assert.ThrowsAsync<WebsocketClientLiteException>(() => connection.ReadDataframeAsync(CancellationToken.None));
-            int header = Header(limit + 1).Length;
-            Assert.True(input.BytesRead == header && input.Attempts == header,
-                $"Frame one above the limit {limit} read {input.BytesRead} bytes in {input.Attempts} attempts, expected {header}");
+            Assert.True(input.BytesRead == above.Length && input.Attempts == above.Length,
+                $"Frame one above the limit {limit} read {input.BytesRead} bytes in {input.Attempts} attempts, expected {above.Length}");
         }
     }
 
