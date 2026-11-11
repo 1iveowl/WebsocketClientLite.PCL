@@ -1,0 +1,34 @@
+--- PayloadParsingTests.a779602.cs	2026-11-11 14:58:08.472035894 +0000
++++ PayloadParsingTests.padding-and-message.cs	2026-11-11 14:58:08.480471813 +0000
+@@ -282,4 +282,31 @@
+         Assert.Equal(length, df!.Length);
+         Assert.Equal(new string('c', (int)length), df.Message);
+     }
++
++    [Theory]
++    [InlineData(new byte[] { 0xC1, 0 })]
++    [InlineData(new byte[] { 0x83, 0 })]
++    [InlineData(new byte[] { 0x81, 126, 0, 125 })]
++    [InlineData(new byte[] { 0x81, 127, 0, 0, 0, 0, 0, 0, 255, 255 })]
++    [InlineData(new byte[] { 0x81, 127, 128, 0, 0, 0, 0, 0, 0, 0 })]
++    [InlineData(new byte[] { 0x88, 1, 0 })]
++    [InlineData(new byte[] { 0x88, 2, 3, 237 })] // forbidden 1005
++    [InlineData(new byte[] { 0x88, 3, 3, 232, 255 })] // invalid reason UTF-8
++    public async Task RejectsMalformedFrames(byte[] bytes)
++    {
++        var frame = bytes.Concat(new byte[MissingPayload(bytes)]).ToArray();
++        var error = await Assert.ThrowsAsync<WebsocketClientLiteException>(() => Parse(frame));
++        Assert.DoesNotContain("aborted unexpectedly", error.Message, StringComparison.Ordinal);
++    }
++
++    private static int MissingPayload(byte[] bytes)
++    {
++        int marker = bytes[1] & 127;
++        int headerSize = marker <= 125 ? 2 : marker == 126 ? 4 : 10;
++        if (bytes.Length < headerSize) return 0;
++        ulong announced = marker <= 125 ? (ulong)marker : 0;
++        for (int i = 2; i < headerSize; i++) announced = announced << 8 | bytes[i];
++        if (announced > 65536) return 0;
++        return Math.Max(0, (int)announced - (bytes.Length - headerSize));
++    }
+ }

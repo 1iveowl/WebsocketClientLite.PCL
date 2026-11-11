@@ -1,0 +1,14 @@
+verification/Protocol.dfy(528,18): Error: this invariant could not be proved to be maintained by the loop
+ Related message: loop invariant violation
+    |
+528 |         invariant forall j :: 0 <= j < i as int ==> dest[offset as int + j] == source[j] ^
+    |                   ^^^^^^
+
+verification/Protocol.dfy(530,18): Error: this invariant could not be proved to be maintained by the loop
+ Related message: loop invariant violation
+    |
+530 |         invariant forall j :: 0 <= j < dest.Length && !(offset as int <= j < offset as int + i as int) ==> dest[j] == old(dest[j])
+    |                   ^^^^^^
+
+
+Dafny program verifier finished with 575 verified, 2 errors
