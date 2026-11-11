@@ -34,7 +34,10 @@ with its log, TRX file, diff and source hashes, and none was repeated:
 - part 1 (S3): [evidence/header-test-parity/](evidence/header-test-parity/README.md),
   copies of `fe0bd48` and `58bc568`;
 - part 2 (S4): [evidence/header-test-parity/part-2/](evidence/header-test-parity/part-2/README.md),
-  copies of `bcdcda6`.
+  copies of `bcdcda6`;
+- review fixes (after the `/code-review` of #140):
+  [evidence/header-test-parity/review-2026-11-11/](evidence/header-test-parity/review-2026-11-11/README.md),
+  copies of `cdcc233` and one of `c82da89`.
 
 A test that sends a header without its payload also passes when the parser accepts the
 header and then reaches the end of the stream. Every rejection test here therefore
@@ -46,9 +49,9 @@ the test fails on its own (lesson 5 of the plan).
 | # | Claim | Test that backs it | Failing first | What stays unbacked |
 | --- | --- | --- | --- | --- |
 | 1 | Non-minimal lengths are rejected | `PayloadParsingTests.RejectsMalformedFrames`, the 16-bit and 64-bit non-minimal rows | Replays 2 and 3 on `a779602` (`docs/header-length-validation.md`); part 2's `a779602` replay again | Nothing |
-| 2 | Invalid headers fail before the payload is read or allocated | `ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead`, 20 rows: every invalid header row, each with its payload on the stream. The bytes read and the read attempts must equal the header bytes the decision needs. Also the successor rows of claim 6 | `reads-past-header` fails all 20 rows (part 1 for the first 9, part 2 for all 20) and every successor row of claim 6. On `a779602` the control-length row reads 4 bytes, not 2 | Allocation is not observed. The tests show that no payload read is attempted; that no buffer is allocated follows from the code, where the buffer is allocated in the payload read |
+| 2 | Invalid headers fail before the payload is read or allocated | `ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead`, 20 rows: every invalid header row, each with its payload on the stream. The bytes read and the read attempts must equal the header bytes the decision needs. Also the successor rows of claim 6 | `reads-past-header` fails all 20 rows (part 1 for the first 9, part 2 for all 20, and again on `cdcc233` after the review fixes, with the masked row announcing one byte) and every successor row of claim 6. On `a779602` the control-length row reads 4 bytes, not 2 | Allocation is not observed. The tests show that no payload read is attempted; that no buffer is allocated follows from the code, where the buffer is allocated in the payload read |
 | 3 | Masked server frames are rejected | `PayloadParsingTests.RejectsMaskedServerFrame`, and its row in the claim 2 theory | `a779602` accepted it (part 1 and part 2) | Nothing |
-| 4 | Unsupported RSV bits and opcodes are rejected | `RejectsMalformedFrames` and the claim 2 theory: RSV1, RSV2, RSV3, opcodes 3 to 7 and 11 to 15, each in both | `a779602` accepts all 13 values. `rsv2-rsv3` fails the RSV2 and RSV3 rows. `unknown-opcodes` fails the rows for opcodes 11 to 15. `unknown-opcodes-sequence` fails the rows for 4 to 7 as well | The opcode check (`Known`) alone, for opcodes 3 to 7: without it, `Step`'s sequence rule still refuses a data opcode other than text or binary at idle, and other than continuation within a message. The rows are combined coverage, and a comment says so |
+| 4 | Unsupported RSV bits and opcodes are rejected | `RejectsMalformedFrames` and the claim 2 theory: RSV1, RSV2, RSV3, opcodes 3 to 7 and 11 to 15, each in both | `a779602` accepts all 13 values. `rsv2-rsv3` fails the RSV2 and RSV3 rows. `unknown-opcodes` fails the rows for opcodes 11 to 15. `unknown-opcodes-sequence` fails the rows for 4 to 7 as well; it kept opcode 3 refused. After the review: `known-removed` (no `Known` check for any opcode) fails only the rows for 11 to 15, and the rows for 3 to 7 pass in both tests. `known-sequence-removed` (also `Step`'s idle rule for 3 to 7) fails the rows for 3 to 7 too | The opcode check (`Known`) alone, for opcodes 3 to 7: without it, `Step`'s sequence rule still refuses a data opcode other than text or binary at idle, and other than continuation within a message. The rows for 3 to 7, the `0x83` row included, are combined coverage: `known-removed` shows it, and a comment above the `0x83` row says so |
 | 5 | Invalid control frames are rejected | `Parse_OversizedControlFrame_Throws` (with its payload since part 1), `Parse_FragmentedControlFrame_Throws`, and both rows in the claim 2 theory | Part 1: `control-length` fails the oversized test and its theory row. The fragmented row fails under `reads-past-header` | The control FIN rule alone: no copy removes it, and `a779602` already had it. `Parse_FragmentedControlFrame_Throws` sends a frame of length 0, so an accepting parser would return a frame and fail it, but that was not run |
 | 6 | The configured limit and its successor | `ParserRetentionTests.ConfiguredLimitAcceptsLimitAndRejectsSuccessorFromHeader`, limits 1, 100, 125, 200, 65535 and 65536: a frame of exactly the limit is read in full, and one byte more is refused after its header | `size-limit` and `limit-plus-one` fail all 6 rows on the successor. **Under `limit-plus-one`, every test that existed before S4 passes.** `limit-strict` fails all 6 rows on the limit itself, and also the existing `AccumulatedLimitRejectsBeforePayloadRead` | `a779602` had the same inclusive limit, so it cannot fail these rows. Only an inclusive comparison is tested, at six limits |
 | 7 | Every header truncation | `PayloadParsingTests.TruncatedHeadersNeverProduceFrames`, now a theory over a 4-byte (16-bit) and a 10-byte (64-bit) header. Every proper prefix must end in the end-of-stream error, and every prefix that does not is listed | `eof-as-cancel` fails both rows at every length. `eof-as-data` fails both rows; the 16-bit header produces a frame at lengths 1, 2 and 3 | No change in today's code affects a 16-bit truncation alone: the reader is shared, and the header size is proved. The row's own lengths 2 and 3 fail in both copies. A 2-byte header's truncations are lengths 0 and 1 of both rows |
@@ -72,13 +75,32 @@ Part 2 (S4, `bcdcda6`):
 
 - `RejectsMalformedFrames` and `InvalidHeadersRejectBeforePayloadRead` have a row for
   RSV2, RSV3, opcodes 4 to 7 and opcodes 11 to 15, owner decision 4. The rows for
-  opcodes 4 to 7 have a comment: combined coverage with the sequence rule.
+  opcodes 4 to 7 have a comment: combined coverage with the sequence rule. The review
+  found that the `0x83` row, which was there before, is combined coverage in the same
+  way; the review fixes move the comment above it.
 - New theory `ParserRetentionTests.ConfiguredLimitAcceptsLimitAndRejectsSuccessorFromHeader`.
 - `TruncatedHeadersNeverProduceFrames` is a theory over a 16-bit and a 64-bit header,
   and it now requires the end-of-stream error, compared through the shared constant
   `TcpConnectionService.AbortedUnexpectedlyMessage`. Before, any
   `WebsocketClientLiteException` passed. Under `eof-as-data` the 64-bit header ends in
   a protocol error at lengths 2 to 7, so the earlier test would have passed there.
+
+Review fixes (`cdcc233`, after the `/code-review` of #140):
+
+- The invalid header rows of `RejectsMalformedFrames` are one list,
+  `PayloadParsingTests.InvalidHeaders`, with the header bytes each decision needs.
+  `InvalidHeadersRejectBeforePayloadRead` reads the same list, so a row added there is
+  tried by both tests. The rows and their test names are unchanged: 19 and 20 cases.
+- The combined-coverage comment covers opcodes 3 to 7 and sits above the `0x83` row.
+- The masked row of the header-only theory announces one payload byte and carries it
+  after the mask key, as the other zero-length rows do. Before, it announced length 0,
+  and only the mask key bytes showed a read past the header.
+- `TruncatedHeadersNeverProduceFrames` lists a prefix that ends in any other exception
+  and goes on to the next prefix. Before, such an exception left the loop: under
+  `eof-as-other` on `c82da89` both rows fail on the escaping exception with nothing
+  listed; on `cdcc233` every prefix is listed.
+- `Parse` in `PayloadParsingTests` disposes its connection and socket. The limit theory
+  builds each header once.
 
 The requirement map points at the new tests: `HEADER-001-TEST` adds the limit theory
 and the truncation theory, and `HEADER-002-TEST` adds both header-only theories.
@@ -97,7 +119,8 @@ and the truncation theory, and `HEADER-002-TEST` adds both header-only theories.
   `tools/Pdd/RetentionDefects.cs` required exactly 14 results from the
   `ParserRetentionTests` baseline, and the two new theories bring it to 40. Every case
   passed; only that count failed. On the owner's decision, `90c156f` requires 40 and
-  names both theories in `RetentionCaseCounts`. The first checks are in
+  names both theories in `RetentionCaseCounts`. Since the review fixes the count is
+  derived: the sum of `RetentionCaseCounts` plus the runtime probe. The first checks are in
   [part-2/checks/](evidence/header-test-parity/part-2/checks/README.md); the rerun,
   in which every check passed, is in
   [part-2/checks-90c156f/](evidence/header-test-parity/part-2/checks-90c156f/README.md).
