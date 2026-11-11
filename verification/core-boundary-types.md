@@ -163,8 +163,10 @@ Local measurements on one machine, not CI and not portable: AMD Ryzen 9 9955HX
 times in a row, each under the shared timing lock `flock ~/worktrees/.timing.lock`.
 The `ps` output and the load average taken inside the lock just before each run are in
 `benchmark-run-N.meta`. The load average was 0.58 to 0.73, and the only other
-`claude -p` process was a code review session. Every run is reported; none was
-repeated or left out.
+`claude -p` process was a code review session. (On 2026-11-11 the process lists were
+reduced to process names, because they exposed other sessions' prompts, so this can no
+longer be checked from the `.meta` files; see the evidence README.) Every run is
+reported; none was repeated or left out.
 
 The benchmark covers only the hot byte loops: H4 (`Masking.Apply` through `Decode`),
 H1, H2, H3 and `MergeScalar`. It calls no decision method and no `WriteHeader`.
@@ -378,8 +380,10 @@ owner. D8, D10 and D11 have no precondition, and the adapter does not change D7'
 
 Local measurements on the same machine as section 3, `DOTNET_TieredCompilation=0`,
 Release. Every timed run used `flock ~/worktrees/.timing.lock`. Each `.meta` holds the
-`ps -eo pid,etime,args | grep -E 'claude -p|dotnet' | grep -v grep` output and the
-load taken inside the lock just before the run. Other sessions (S6 and the #140 fix
+process list (`ps -eo pid,etime,args | grep -E 'claude -p|dotnet' | grep -v grep`,
+reduced on 2026-11-11 to pid, etime and process name; see the evidence
+[README](../docs/evidence/core-boundary-types/README.md)) and the load taken inside
+the lock just before the run. Other sessions (S6 and the #140 fix
 session) were running; the one-minute load average was 0.65 to 1.60, against 0.58 to
 0.73 for the baseline. Every run is reported. The first after runs measured
 `6646466`, an earlier version of the production commit. They are kept in

@@ -15,7 +15,7 @@ for n in $(seq 1 "$runs"); do
   flock ~/worktrees/.timing.lock bash -c '
     meta=$1; outfile=$2; dll=$3
     { echo "date_utc=$(date -u +%Y-%m-%dT%H:%M:%SZ)"; echo "lock=flock ~/worktrees/.timing.lock";
-      echo "loadavg=$(cat /proc/loadavg)"; echo "ps:"; ps -eo pid,etime,args | grep -E "claude -p|dotnet" | grep -v grep || true; } > "$meta"
+      echo "loadavg=$(cat /proc/loadavg)"; echo "ps:"; ps -eo pid,etime,comm | grep -E "claude|dotnet|VBCSCompiler" || true; } > "$meta"
     start=$(date +%s.%N)
     DOTNET_TieredCompilation=0 dotnet "$dll" > "$outfile" 2>&1
     end=$(date +%s.%N)

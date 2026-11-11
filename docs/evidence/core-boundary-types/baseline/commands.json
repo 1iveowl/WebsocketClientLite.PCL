@@ -2,7 +2,7 @@
   "recorded": "2026-11-11. Step S7 of docs/pdd-10.3-session-plan.md. Local measurements on one dev container, not CI and not portable timing guarantees.",
   "base_commit": "fa96d59af838e7aa57071de1712a02c7065a6aab (origin/releases/10.3.0.0 when S7 started; see base-commit.txt)",
   "tree": "Clean checkout of the base commit in the git worktree ~/worktrees/s7. No production, test, Dafny or generated file differs from the base commit; only this evidence directory and verification/core-boundary-types.md were added, and they are not inputs to any command below.",
-  "timing_lock": "Every timed run used the shared timing lock `flock ~/worktrees/.timing.lock` (controller decision 2026-11-11), so no other session's timed run overlapped it. Each benchmark-run-N.meta holds the `ps -eo pid,etime,args | grep -E 'claude -p|dotnet' | grep -v grep` output taken inside the lock just before the run, and the load average.",
+  "timing_lock": "Every timed run used the shared timing lock `flock ~/worktrees/.timing.lock` (controller decision 2026-11-11), so no other session's timed run overlapped it. Each benchmark-run-N.meta holds the process list taken inside the lock just before the run, and the load average. The S7 and S8 runs recorded `ps -eo pid,etime,args | grep -E 'claude -p|dotnet' | grep -v grep`; on 2026-11-11 those lines were reduced to pid, etime and the process name, because the full command lines exposed other sessions' prompts (see ../README.md). bench.sh records `ps -eo pid,etime,comm | grep -E 'claude|dotnet|VBCSCompiler'` from then on.",
   "runs": [
     {
       "run": "benchmark-build",

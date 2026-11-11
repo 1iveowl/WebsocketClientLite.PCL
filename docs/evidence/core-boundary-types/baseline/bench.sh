@@ -11,8 +11,8 @@ flock ~/worktrees/.timing.lock bash -c '
   E="$1"; N="$2"
   {
     echo "lock acquired (UTC): $(date -u +%FT%TZ)"
-    echo "ps -eo pid,etime,args | grep -E \"claude -p|dotnet\" | grep -v grep (taken just before the run):"
-    ps -eo pid,etime,args | grep -E "claude -p|dotnet" | grep -v grep
+    echo "ps -eo pid,etime,comm | grep -E \"claude|dotnet|VBCSCompiler\" (taken just before the run):"
+    ps -eo pid,etime,comm | grep -E "claude|dotnet|VBCSCompiler"
     echo "uptime: $(uptime)"
   } >> "$E/benchmark-run-$N.meta"
   start=$(date +%s.%N)
