@@ -2,12 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Net.Sockets;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using WebsocketClientLite.Helper;
-using WebsocketClientLite.Service;
 using WebsocketClientLite.VerifiedProtocol;
 using Xunit;
 
@@ -20,6 +18,18 @@ public class CoreBoundaryTypesTests
 {
     private static readonly byte[] ReceiveCodes = { 0, 1, 2, 8 };
     private static readonly byte[] TransmitCodes = { 0, 1, 2, 8, 15 };
+
+    // The only members that call each type's private constructor. Each is tested below:
+    // FromCode over all 256 bytes, the wrappers against the generated methods they
+    // forward to, the named events by value. A new member that constructs a value fails
+    // OnlyTheListedMembersCallThePrivateConstructor until it is added here.
+    private static readonly Dictionary<Type, string[]> Factories = new()
+    {
+        [typeof(ReceiveState)] = new[] { "FromCode", "Step" },
+        [typeof(TransmitState)] = new[] { "SendFailed", "SendStep" },
+        [typeof(CloseState)] = new[] { "Step" },
+        [typeof(CloseEvent)] = new[] { "get_Received", "get_Send", "get_TimeoutOrFailure" },
+    };
 
     [Theory]
     [InlineData(typeof(ReceiveState))]
@@ -38,14 +48,53 @@ public class CoreBoundaryTypesTests
             type.Name + " does not hold exactly one readonly byte");
         var conversions = type.GetMethods(BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic)
             .Where(m => m.Name is "op_Implicit" or "op_Explicit").ToArray();
-        Assert.True(conversions.All(m => m.ReturnType != type), type.Name + " has a conversion into the type");
+        Assert.True(conversions.Length == 0, type.Name + " has a conversion operator; leaving the type is .Code");
+        var code = type.GetProperty("Code", BindingFlags.Instance | BindingFlags.NonPublic);
+        Assert.True(code is not null && code.PropertyType == typeof(byte) && !code.CanWrite,
+            type.Name + " does not expose its code as a read-only Code");
+    }
+
+    [Theory]
+    [InlineData(typeof(ReceiveState))]
+    [InlineData(typeof(TransmitState))]
+    [InlineData(typeof(CloseState))]
+    [InlineData(typeof(CloseEvent))]
+    public void OnlyTheListedMembersCallThePrivateConstructor(Type type)
+    {
+        // Only code inside the type, its nested types included, can call a private
+        // constructor. Scan the IL of every method there for newobj (0x73) or call (0x28)
+        // with the constructor's token. A byte that is not an instruction start can only
+        // add a caller, never hide one.
+        const BindingFlags all = BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public
+            | BindingFlags.NonPublic | BindingFlags.DeclaredOnly;
+        int token = type.GetConstructors(BindingFlags.Instance | BindingFlags.NonPublic).Single().MetadataToken;
+        var callers = new List<string>();
+        var types = new Queue<Type>(new[] { type });
+        while (types.Count > 0)
+        {
+            var current = types.Dequeue();
+            foreach (var nested in current.GetNestedTypes(BindingFlags.Public | BindingFlags.NonPublic)) types.Enqueue(nested);
+            foreach (var method in current.GetMethods(all).Cast<MethodBase>().Concat(current.GetConstructors(all)))
+            {
+                var il = method.GetMethodBody()?.GetILAsByteArray() ?? Array.Empty<byte>();
+                for (int i = 0; i + 4 < il.Length; i++)
+                {
+                    if ((il[i] == 0x73 || il[i] == 0x28) && BitConverter.ToInt32(il, i + 1) == token)
+                    {
+                        callers.Add(current == type ? method.Name : current.Name + "." + method.Name);
+                        break;
+                    }
+                }
+            }
+        }
+        Assert.Equal(Factories[type], callers.OrderBy(c => c, StringComparer.Ordinal).ToArray());
     }
 
     [Fact]
     public void DefaultIsCodeZeroAndNamedZeroInstances()
     {
-        Assert.Equal(0, (byte)default(ReceiveState));
-        Assert.Equal(0, (byte)ReceiveState.Idle);
+        Assert.Equal(0, default(ReceiveState).Code);
+        Assert.Equal(0, ReceiveState.Idle.Code);
         Assert.True(ReceiveState.Idle.IsIdle && !ReceiveState.Idle.IsClosed);
         Assert.Equal(0, default(TransmitState).Code);
         Assert.Equal(0, TransmitState.Idle.Code);
@@ -54,7 +103,17 @@ public class CoreBoundaryTypesTests
         Assert.False(CloseState.Open.Started || CloseState.Open.ReceivedOrTerminal);
         Assert.Equal(new byte[] { 0, 1, 2 },
             new[] { CloseEvent.Send, CloseEvent.Received, CloseEvent.TimeoutOrFailure }.Select(e => e.Code).ToArray());
-        Assert.Equal(0, default(CloseEvent).Code);
+    }
+
+    [Fact]
+    public void DefaultCloseEventIsNoEvent()
+    {
+        // An uninitialized event (a field, an array element, AdvanceClose(default)) must
+        // fail instead of requesting a Close.
+        Assert.Throws<InvalidOperationException>(() => default(CloseEvent).Code);
+        Assert.Throws<InvalidOperationException>(() => new CloseEvent[1].Single().Code);
+        Assert.Throws<InvalidOperationException>(() =>
+            CloseState.Step(CloseState.Open, default, out _, out _, out _));
     }
 
     [Fact]
@@ -65,7 +124,7 @@ public class CoreBoundaryTypesTests
             if (ReceiveCodes.Contains((byte)code))
             {
                 var state = ReceiveState.FromCode((byte)code);
-                Assert.Equal(code, (byte)state);
+                Assert.Equal(code, state.Code);
                 Assert.Equal(code == 0, state.IsIdle);
                 Assert.Equal(code == 8, state.IsClosed);
             }
@@ -80,14 +139,28 @@ public class CoreBoundaryTypesTests
     public async Task RawReadRejectsAnIllegalStateBeforeReadingAnyByte()
     {
         var stream = new MemoryStream(new byte[] { 0x82, 1, 7 });
-        using var connection = new TcpConnectionService(() => false, (_, _, _, _) => true,
-            (_, _) => Task.CompletedTask, (_, _) => { }, true, new TcpClient());
-        typeof(TcpConnectionService).GetField("_stream", BindingFlags.Instance | BindingFlags.NonPublic)!
-            .SetValue(connection, stream);
-        await Assert.ThrowsAsync<ArgumentOutOfRangeException>(() => connection.ReadDataframeAsync(CancellationToken.None, 3));
+        using var connection = TestConnections.Over(stream);
+        // The failure arrives through the task, as it does from the production read.
+        var pending = connection.ReadDataframeAsync(CancellationToken.None, 3);
+        Assert.True(pending.IsFaulted, "Illegal raw state threw at the call instead of faulting the task");
+        await Assert.ThrowsAsync<ArgumentOutOfRangeException>(() => pending);
         Assert.Equal(0, stream.Position);
         var frame = await connection.ReadDataframeAsync(CancellationToken.None, 0);
         Assert.True(frame is not null && frame.Payload!.SequenceEqual(new byte[] { 7 }), "Legal raw state did not read the frame");
+    }
+
+    [Fact]
+    public async Task RawReadRejectsATotalAboveTheLimitBeforeReadingAnyByte()
+    {
+        // A final empty continuation: with state 2 it completes the message.
+        var stream = new MemoryStream(new byte[] { 0x80, 0 });
+        using var connection = TestConnections.Over(stream, 4);
+        var pending = connection.ReadDataframeAsync(CancellationToken.None, 2, 5);
+        Assert.True(pending.IsFaulted, "Total above the limit threw at the call instead of faulting the task");
+        await Assert.ThrowsAsync<ArgumentOutOfRangeException>(() => pending);
+        Assert.Equal(0, stream.Position);
+        var frame = await connection.ReadDataframeAsync(CancellationToken.None, 2, 4);
+        Assert.True(frame is not null && frame.FIN && frame.Length == 0, "Total equal to the limit did not read the frame");
     }
 
     [Fact]
@@ -106,10 +179,10 @@ public class CoreBoundaryTypesTests
             foreach (uint length in lengths)
             {
                 ReceiveState.Step(state, op, fin, total, length, 8, out bool ok, out ReceiveState next, out uint size, out bool emit);
-                Protocol.Step(state, op, fin, total, length, 8, out bool rawOk, out byte rawNext, out uint rawSize, out bool rawEmit);
-                Assert.True(ok == rawOk && next == rawNext && size == rawSize && emit == rawEmit,
-                    $"Step differs at state {(byte)state}, op {op}, fin {fin}, total {total}, length {length}");
-                if (reached.Add(next)) frontier.Enqueue(next);
+                Protocol.Step(state.Code, op, fin, total, length, 8, out bool rawOk, out byte rawNext, out uint rawSize, out bool rawEmit);
+                Assert.True(ok == rawOk && next.Code == rawNext && size == rawSize && emit == rawEmit,
+                    $"Step differs at state {state.Code}, op {op}, fin {fin}, total {total}, length {length}");
+                if (reached.Add(next.Code)) frontier.Enqueue(next);
             }
         }
         Assert.Equal(ReceiveCodes, reached.OrderBy(c => c).ToArray());
@@ -176,7 +249,7 @@ public class CoreBoundaryTypesTests
                 transmit = TransmitState.SendFailed(transmit);
                 CloseState.Step(CloseState.Open, CloseEvent.Send, out CloseState close, out _, out _);
                 CloseState.Step(close, CloseEvent.Received, out close, out _, out _);
-                sum += (byte)receive + size + transmit.Code + close.Code + (ReceiveState.FromCode(8).IsClosed ? 1u : 0u);
+                sum += receive.Code + size + transmit.Code + close.Code + (ReceiveState.FromCode(8).IsClosed ? 1u : 0u);
             }
             return sum;
         }

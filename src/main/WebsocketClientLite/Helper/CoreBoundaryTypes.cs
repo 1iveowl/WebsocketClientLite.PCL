@@ -8,7 +8,10 @@ namespace WebsocketClientLite.Helper;
 // run time, so each type makes its precondition's value range unrepresentable: the
 // constructor is private, a value comes only from a named instance, from a checked
 // conversion or from a verified method's ensured output, and default(T) is code 0,
-// which every range below contains. Each wrapper only forwards to the generated method.
+// which every state range below contains. default(CloseEvent) is no event: its Code
+// throws. Each type has one shape: private readonly byte _code and internal byte Code.
+// There is no conversion into or out of a type, so leaving one is always an explicit
+// .Code. Each wrapper only forwards to the generated method.
 
 /// <summary>Receive message state of <c>Step</c> and <c>Admit</c>: 0 idle, 1 text
 /// message, 2 binary message, 8 Close received (<c>Protocol.dfy</c>, <c>Step</c>).</summary>
@@ -20,13 +23,11 @@ internal readonly struct ReceiveState
 
     internal static ReceiveState Idle => default;
 
+    internal byte Code => _code;
+
     internal bool IsIdle => _code == 0;
 
     internal bool IsClosed => _code == 8;
-
-    // Out of the type is always legal. Admit's call sites pass a ReceiveState as its
-    // byte argument through this conversion; there is no conversion into the type.
-    public static implicit operator byte(ReceiveState state) => state._code;
 
     /// <summary>Checked conversion for callers that hold a raw code. Throws for every
     /// byte outside {0, 1, 2, 8}.</summary>
@@ -96,14 +97,20 @@ internal readonly struct CloseState
 }
 
 /// <summary>Event of <c>CloseStep</c>: 0 request to send Close, 1 Close received,
-/// 2 timeout or transport failure. default(CloseEvent) is <see cref="Send"/>.</summary>
+/// 2 timeout or transport failure. The field holds the code plus one, so that
+/// default(CloseEvent) is none of the three events: its <see cref="Code"/> throws, and
+/// with it <see cref="CloseState.Step"/>.</summary>
 internal readonly struct CloseEvent
 {
-    private CloseEvent(byte code) => Code = code;
+    private readonly byte _code;
 
-    internal byte Code { get; }
+    private CloseEvent(byte code) => _code = (byte)(code + 1);
 
-    internal static CloseEvent Send => default;
+    internal byte Code => _code != 0
+        ? (byte)(_code - 1)
+        : throw new InvalidOperationException("default(CloseEvent) is not a close event.");
+
+    internal static CloseEvent Send => new(0);
 
     internal static CloseEvent Received => new(1);
 

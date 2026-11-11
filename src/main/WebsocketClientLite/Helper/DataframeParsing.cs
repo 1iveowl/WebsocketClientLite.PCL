@@ -18,8 +18,10 @@ internal static class DataframeParsing
     /// </summary>
     internal static async Task<Dataframe?> ReadDataframeAsync(
         this TcpConnectionService tcpConnection,
-        ReceiveState state, uint total, CancellationToken ct)
+        ReceiveState messageState, uint total, CancellationToken ct)
     {
+        // The receive state leaves its type here, once, as the byte both Admit calls take.
+        byte state = messageState.Code;
         var header = await tcpConnection.ReadHeaderBytesAsync(2, ct).ConfigureAwait(false);
         if (header is null)
         {
@@ -87,16 +89,4 @@ internal static class DataframeParsing
             Payload = payload,
         };
     }
-}
-
-// Reads a frame with a raw message state code, for the tests that hold one. A code
-// outside the receive states throws before anything is read. This is a separate class
-// so that DataframeParsing.ReadDataframeAsync stays one declaration for the requirement
-// map (verification/requirements.json and boundaries.json name it).
-internal static class DataframeParsingRawState
-{
-    internal static Task<Dataframe?> ReadDataframeAsync(
-        this TcpConnectionService tcpConnection,
-        CancellationToken ct, byte state = 0, uint total = 0) =>
-        tcpConnection.ReadDataframeAsync(ReceiveState.FromCode(state), total, ct);
 }
