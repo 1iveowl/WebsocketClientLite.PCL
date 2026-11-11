@@ -217,8 +217,21 @@ public class PayloadParsingTests
     }
 
     [Theory]
-    [InlineData(new byte[] { 0xC1, 0 })]
-    [InlineData(new byte[] { 0x83, 0 })]
+    [InlineData(new byte[] { 0xC1, 0 })] // RSV1
+    [InlineData(new byte[] { 0xA1, 0 })] // RSV2
+    [InlineData(new byte[] { 0x91, 0 })] // RSV3
+    [InlineData(new byte[] { 0x83, 0 })] // reserved data opcodes 3 to 7
+    // Combined coverage: opcodes 4 to 7 are in the data range, so Admit's sequence rule,
+    // which admits only text or binary at idle, also refuses them without the Known check.
+    [InlineData(new byte[] { 0x84, 0 })]
+    [InlineData(new byte[] { 0x85, 0 })]
+    [InlineData(new byte[] { 0x86, 0 })]
+    [InlineData(new byte[] { 0x87, 0 })]
+    [InlineData(new byte[] { 0x8B, 0 })] // reserved control opcodes 11 to 15
+    [InlineData(new byte[] { 0x8C, 0 })]
+    [InlineData(new byte[] { 0x8D, 0 })]
+    [InlineData(new byte[] { 0x8E, 0 })]
+    [InlineData(new byte[] { 0x8F, 0 })]
     [InlineData(new byte[] { 0x81, 126, 0, 125 })]
     [InlineData(new byte[] { 0x81, 127, 0, 0, 0, 0, 0, 0, 255, 255 })]
     // Combined coverage: bit 63 set, and so also above int.MaxValue and the default limit.
@@ -299,11 +312,30 @@ public class PayloadParsingTests
         Assert.DoesNotContain(TcpConnectionService.AbortedUnexpectedlyMessage, error.Message, StringComparison.Ordinal);
     }
 
-    [Fact]
-    public async Task TruncatedHeadersNeverProduceFrames()
+    // Every proper prefix of a 4-byte (16-bit length) and a 10-byte (64-bit length) header
+    // ends in the end-of-stream error: no frame, and no decision on bytes that never
+    // arrived. Every prefix is tried and each one that ends otherwise is listed.
+    [Theory]
+    [InlineData(new byte[] { 0x82, 126, 1, 0 })]
+    [InlineData(new byte[] { 0x82, 127, 0, 0, 0, 0, 0, 1, 0, 0 })]
+    public async Task TruncatedHeadersNeverProduceFrames(byte[] header)
     {
-        byte[] header = { 0x82, 127, 0, 0, 0, 0, 0, 1, 0, 0 };
+        var wrong = new List<string>();
         for (int length = 0; length < header.Length; length++)
-            await Assert.ThrowsAsync<WebsocketClientLiteException>(() => Parse(header.Take(length).ToArray()));
+        {
+            try
+            {
+                var frame = await Parse(header.Take(length).ToArray());
+                wrong.Add($"{length}: {(frame is null ? "null" : "frame")}");
+            }
+            catch (WebsocketClientLiteException error) when (error.Message != TcpConnectionService.AbortedUnexpectedlyMessage)
+            {
+                wrong.Add($"{length}: {error.Message}");
+            }
+            catch (WebsocketClientLiteException)
+            {
+            }
+        }
+        Assert.True(wrong.Count == 0, "Truncated header did not end in end of stream at " + string.Join("; ", wrong));
     }
 }

@@ -162,7 +162,18 @@ public class ParserRetentionTests
     // Rows of length 0 there announce one byte here, so that a payload read would show.
     [Theory]
     [InlineData(new byte[] { 0xC1, 1 }, 0, 2)] // RSV1
-    [InlineData(new byte[] { 0x83, 1 }, 0, 2)] // reserved opcode 3
+    [InlineData(new byte[] { 0xA1, 1 }, 0, 2)] // RSV2
+    [InlineData(new byte[] { 0x91, 1 }, 0, 2)] // RSV3
+    [InlineData(new byte[] { 0x83, 1 }, 0, 2)] // reserved data opcodes 3 to 7
+    [InlineData(new byte[] { 0x84, 1 }, 0, 2)]
+    [InlineData(new byte[] { 0x85, 1 }, 0, 2)]
+    [InlineData(new byte[] { 0x86, 1 }, 0, 2)]
+    [InlineData(new byte[] { 0x87, 1 }, 0, 2)]
+    [InlineData(new byte[] { 0x8B, 1 }, 0, 2)] // reserved control opcodes 11 to 15
+    [InlineData(new byte[] { 0x8C, 1 }, 0, 2)]
+    [InlineData(new byte[] { 0x8D, 1 }, 0, 2)]
+    [InlineData(new byte[] { 0x8E, 1 }, 0, 2)]
+    [InlineData(new byte[] { 0x8F, 1 }, 0, 2)]
     [InlineData(new byte[] { 0x81, 0x80, 1, 2, 3, 4 }, 0, 2)] // masked server frame
     [InlineData(new byte[] { 0x09, 1 }, 0, 2)] // fragmented control frame
     [InlineData(new byte[] { 0x89, 126, 0, 200 }, 0, 2)] // control length above 125
@@ -177,6 +188,47 @@ public class ParserRetentionTests
         await Assert.ThrowsAsync<WebsocketClientLiteException>(() => connection.ReadDataframeAsync(CancellationToken.None));
         Assert.True(input.BytesRead == read && input.Attempts == read,
             $"Invalid header read {input.BytesRead} bytes in {input.Attempts} attempts, expected {read}");
+    }
+
+    // The configured limit is inclusive: a frame of exactly the limit is read in full, and
+    // a frame one byte longer is refused after its header, with its payload present on the
+    // stream. The rows put the limit and its successor in each length encoding and across
+    // the 7/16-bit and 16/64-bit encoding boundaries.
+    [Theory]
+    [InlineData(1)]
+    [InlineData(100)]
+    [InlineData(125)]
+    [InlineData(200)]
+    [InlineData(65535)]
+    [InlineData(65536)]
+    public async Task ConfiguredLimitAcceptsLimitAndRejectsSuccessorFromHeader(int limit)
+    {
+        // Independent literal RFC 6455 section 5.2 encoding of an unmasked binary frame header.
+        static byte[] Header(int length) => length <= 125 ? new byte[] { 0x82, (byte)length }
+            : length <= 65535 ? new byte[] { 0x82, 126, (byte)(length >> 8), (byte)length }
+            : new byte[] { 0x82, 127, 0, 0, 0, 0, (byte)(length >> 24), (byte)(length >> 16), (byte)(length >> 8), (byte)length };
+        var payload = Enumerable.Range(0, limit + 1).Select(i => (byte)(i * 7)).ToArray();
+
+        using (var input = new Input(Join(Header(limit), payload[..limit])))
+        using (var connection = Connection(input, limit))
+        {
+            Dataframe? frame = null; Exception? error = null;
+            try { frame = await connection.ReadDataframeAsync(CancellationToken.None); }
+            catch (Exception e) { error = e; }
+            Assert.True(error is null && frame is not null, $"Frame of exactly the limit {limit} was refused: {error}");
+            Message(frame!, 2, payload[..limit]);
+            int wire = Header(limit).Length + limit;
+            Assert.True(input.BytesRead == wire && input.Attempts == wire, "Frame at the limit read differs from its wire size");
+        }
+
+        using (var input = new Input(Join(Header(limit + 1), payload)))
+        using (var connection = Connection(input, limit))
+        {
+            await Assert.ThrowsAsync<WebsocketClientLiteException>(() => connection.ReadDataframeAsync(CancellationToken.None));
+            int header = Header(limit + 1).Length;
+            Assert.True(input.BytesRead == header && input.Attempts == header,
+                $"Frame one above the limit {limit} read {input.BytesRead} bytes in {input.Attempts} attempts, expected {header}");
+        }
     }
 
     [Theory]
