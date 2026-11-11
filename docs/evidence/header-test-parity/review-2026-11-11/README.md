@@ -76,3 +76,40 @@ another count. There, a missing theory is caught by the test obligations instead
 `HEADER-002-TEST` names both theories and `HEADER-001-TEST` the limit theory, and a
 referenced test missing from any target's results leaves its obligation `not-run`,
 which fails the gate. The S4 file is kept as it was.
+
+## Checks on `5200f94` (`checks/`)
+
+Every check ran once, on the worktree at `5200f94`, with a clean tree before and after
+(`dirty=0` in [checks-run.log](checks/checks-run.log)). The commands are in
+[checks.sh](checks/checks.sh). The five-target matrix, the coverage run and gate and
+each capture job ran under the shared timing lock (`flock -o`, so that build servers do
+not inherit the lock). `<step>.others.txt` holds the load and the other `dotnet`
+processes at the start of each step. None was repeated.
+
+| Check | Result |
+| --- | --- |
+| Build, Release | run and passed |
+| `./scripts/pdd.sh validate` | run and passed: 16 requirements |
+| Pdd tests | run and passed: 262 of 262, with the derived retention count |
+| `./test-all-tfms.sh Release` | run and passed: 307 of 307 on each of the five targets, 131 s |
+| Coverage gate | run and passed: 83.1 % lines, 77.6 % branches, minimum 70 % |
+| `capture --job protocol` | run and passed, 188 s. `Dafny program verifier finished with 41 verified, 0 errors`. All 17 mutants detected, 8.6 to 9.4 s each against a 90 s budget, none above a third of it |
+| `capture --job tests` | run and passed, 165 s |
+| `capture --job controlled` | run and passed, 66 s: `retention` (40 baseline results, now derived) and `reconnect` included |
+| `capture --job stryker` | run and passed, 339 s. Dispositions matched; `verification/stryker-close-dispositions.json` unchanged |
+| `aggregate` | run and passed: machine evidence gate passed; review obligations not run |
+
+The capture set is [capture-5200f94.zip](checks/capture-5200f94.zip), and the aggregate
+summary [capture-summary.md](checks/capture-summary.md).
+
+### Stryker against S4
+
+248 of 249 outcomes match S4's run on `90c156f`. The one that differs is the mutant
+that removes `throw handshakeException;` at `WebsocketConnectionHandler.cs`, line 95:
+it survived both S4 runs and is **killed** here, by
+`ReconnectTests.FailedConnectTerminatesAndRemovesRegistration`. This is the race of
+lesson 10 and PR decision 5, not an effect of the review fixes, which do not touch that
+code or that test. S6 was running a test at the same time
+([capture-stryker.others.txt](checks/capture-stryker.others.txt)), and that test fails
+under load more often. The mutant still has no recorded disposition; S11 replaces the
+racing test.
