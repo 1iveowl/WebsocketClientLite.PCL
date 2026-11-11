@@ -1,0 +1,205 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="4aaf5b91-1081-4f7a-953e-15268f99acb1" name="@a920b7ae3df2 2026-11-11 13:15:39" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-11-11T13:15:39.6283560+00:00" queuing="2026-11-11T13:15:39.6283560+00:00" start="2026-11-11T13:15:39.2759921+00:00" finish="2026-11-11T13:15:39.6318532+00:00" />
+  <TestSettings name="default" id="dd6225f0-2e21-4d3c-8b20-cf31a2173a03">
+    <Deployment runDeploymentRoot="_a920b7ae3df2_2026-11-11_13_15_39" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="41a36576-c02b-44d9-b2cd-f5e34565fa54" testId="824a921e-d713-4e3e-b975-c6173aca1c23" testName="WebsocketClientLiteTest.PayloadParsingTests.RejectsMalformedFrames(bytes: [129, 126, 0, 125])" computerName="a920b7ae3df2" duration="00:00:00.0000490" startTime="2026-11-11T13:15:39.5794195+00:00" endTime="2026-11-11T13:15:39.5794522+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="41a36576-c02b-44d9-b2cd-f5e34565fa54">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.DoesNotContain() Failure: Sub-string found
+                                ↓ (pos 21)
+String: ···"ebsocket connection aborted unexpectedly."···
+Found:  "aborted unexpectedly"</Message>
+          <StackTrace>   at WebsocketClientLiteTest.PayloadParsingTests.RejectsMalformedFrames(Byte[] bytes) in /tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/e85ac318-b810-4e30-affa-a35c2c77090f/scratchpad/replay2/old-strengthened/src/main/WebsocketClientLiteTest/PayloadParsingTests.cs:line 301
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="9cff6e65-6419-47b1-8f74-3336ac1948c7" testId="94e9aea0-091c-74fc-22bd-90e7619f3fd4" testName="WebsocketClientLiteTest.PayloadParsingTests.RejectsMalformedFrames(bytes: [193, 0])" computerName="a920b7ae3df2" duration="00:00:00.0000190" startTime="2026-11-11T13:15:39.5796082+00:00" endTime="2026-11-11T13:15:39.5796321+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="9cff6e65-6419-47b1-8f74-3336ac1948c7">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: No exception was thrown
+Expected: typeof(WebsocketClientLite.CustomException.WebsocketClientLiteException)</Message>
+          <StackTrace>   at WebsocketClientLiteTest.PayloadParsingTests.RejectsMalformedFrames(Byte[] bytes) in /tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/e85ac318-b810-4e30-affa-a35c2c77090f/scratchpad/replay2/old-strengthened/src/main/WebsocketClientLiteTest/PayloadParsingTests.cs:line 297
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="3670d069-c16d-415a-bc45-836324672d21" testId="5528de3b-2e9f-6a2b-c963-3c77d4cca024" testName="WebsocketClientLiteTest.PayloadParsingTests.RejectsMalformedFrames(bytes: [136, 1, 0])" computerName="a920b7ae3df2" duration="00:00:00.0051692" startTime="2026-11-11T13:15:39.5593015+00:00" endTime="2026-11-11T13:15:39.5714743+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="3670d069-c16d-415a-bc45-836324672d21">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: No exception was thrown
+Expected: typeof(WebsocketClientLite.CustomException.WebsocketClientLiteException)</Message>
+          <StackTrace>   at WebsocketClientLiteTest.PayloadParsingTests.RejectsMalformedFrames(Byte[] bytes) in /tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/e85ac318-b810-4e30-affa-a35c2c77090f/scratchpad/replay2/old-strengthened/src/main/WebsocketClientLiteTest/PayloadParsingTests.cs:line 297
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="a1d16d5b-38f9-40fc-8e6d-8f35e989de8a" testId="9e1a88ae-d560-b286-1933-bb27b6783123" testName="WebsocketClientLiteTest.PayloadParsingTests.RejectsMalformedFrames(bytes: [136, 2, 3, 237])" computerName="a920b7ae3df2" duration="00:00:00.0000184" startTime="2026-11-11T13:15:39.5804494+00:00" endTime="2026-11-11T13:15:39.5804756+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="a1d16d5b-38f9-40fc-8e6d-8f35e989de8a">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: No exception was thrown
+Expected: typeof(WebsocketClientLite.CustomException.WebsocketClientLiteException)</Message>
+          <StackTrace>   at WebsocketClientLiteTest.PayloadParsingTests.RejectsMalformedFrames(Byte[] bytes) in /tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/e85ac318-b810-4e30-affa-a35c2c77090f/scratchpad/replay2/old-strengthened/src/main/WebsocketClientLiteTest/PayloadParsingTests.cs:line 297
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="3a85d0cc-dcf2-41ed-89f8-dbcf5ffce722" testId="866eaaf1-edef-8014-b43d-20e3dd2a3530" testName="WebsocketClientLiteTest.PayloadParsingTests.RejectsMalformedFrames(bytes: [129, 127, 128, 0, 0, ···])" computerName="a920b7ae3df2" duration="00:00:00.0000284" startTime="2026-11-11T13:15:39.5798504+00:00" endTime="2026-11-11T13:15:39.5800109+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="3a85d0cc-dcf2-41ed-89f8-dbcf5ffce722" />
+    <UnitTestResult executionId="b7148a09-7080-4437-b509-2a2c50dbb5c8" testId="52e3baef-65b5-ecd2-b8b8-a1038b5fdcf4" testName="WebsocketClientLiteTest.PayloadParsingTests.RejectsMalformedFrames(bytes: [129, 127, 0, 0, 0, ···])" computerName="a920b7ae3df2" duration="00:00:00.0008946" startTime="2026-11-11T13:15:39.5782440+00:00" endTime="2026-11-11T13:15:39.5782917+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="b7148a09-7080-4437-b509-2a2c50dbb5c8">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.DoesNotContain() Failure: Sub-string found
+                                ↓ (pos 21)
+String: ···"ebsocket connection aborted unexpectedly."···
+Found:  "aborted unexpectedly"</Message>
+          <StackTrace>   at WebsocketClientLiteTest.PayloadParsingTests.RejectsMalformedFrames(Byte[] bytes) in /tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/e85ac318-b810-4e30-affa-a35c2c77090f/scratchpad/replay2/old-strengthened/src/main/WebsocketClientLiteTest/PayloadParsingTests.cs:line 301
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="e552c46a-a402-448e-ad06-eaa5d4129611" testId="b19648ac-836b-d0f1-c5f8-1cc511db7e35" testName="WebsocketClientLiteTest.PayloadParsingTests.RejectsMalformedFrames(bytes: [131, 0])" computerName="a920b7ae3df2" duration="00:00:00.0000154" startTime="2026-11-11T13:15:39.5797238+00:00" endTime="2026-11-11T13:15:39.5797495+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e552c46a-a402-448e-ad06-eaa5d4129611">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: No exception was thrown
+Expected: typeof(WebsocketClientLite.CustomException.WebsocketClientLiteException)</Message>
+          <StackTrace>   at WebsocketClientLiteTest.PayloadParsingTests.RejectsMalformedFrames(Byte[] bytes) in /tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/e85ac318-b810-4e30-affa-a35c2c77090f/scratchpad/replay2/old-strengthened/src/main/WebsocketClientLiteTest/PayloadParsingTests.cs:line 297
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="1c4bd635-e034-42a4-b6e2-c5723ed4cb21" testId="64840f57-0bf4-52f8-d711-117560e53bcf" testName="WebsocketClientLiteTest.PayloadParsingTests.RejectsMalformedFrames(bytes: [136, 3, 3, 232, 255])" computerName="a920b7ae3df2" duration="00:00:00.0000127" startTime="2026-11-11T13:15:39.5806162+00:00" endTime="2026-11-11T13:15:39.5806415+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="1c4bd635-e034-42a4-b6e2-c5723ed4cb21">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: No exception was thrown
+Expected: typeof(WebsocketClientLite.CustomException.WebsocketClientLiteException)</Message>
+          <StackTrace>   at WebsocketClientLiteTest.PayloadParsingTests.RejectsMalformedFrames(Byte[] bytes) in /tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/e85ac318-b810-4e30-affa-a35c2c77090f/scratchpad/replay2/old-strengthened/src/main/WebsocketClientLiteTest/PayloadParsingTests.cs:line 297
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="WebsocketClientLiteTest.PayloadParsingTests.RejectsMalformedFrames(bytes: [136, 2, 3, 237])" storage="/tmp/claude-1000/-workspaces-websocketclientlite-pcl/e85ac318-b810-4e30-affa-a35c2c77090f/scratchpad/replay2/old-strengthened/src/main/websocketclientlitetest/bin/release/net10.0/websocketclientlitetest.dll" id="9e1a88ae-d560-b286-1933-bb27b6783123">
+      <Execution id="a1d16d5b-38f9-40fc-8e6d-8f35e989de8a" />
+      <TestMethod codeBase="/tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/e85ac318-b810-4e30-affa-a35c2c77090f/scratchpad/replay2/old-strengthened/src/main/WebsocketClientLiteTest/bin/Release/net10.0/WebsocketClientLiteTest.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="WebsocketClientLiteTest.PayloadParsingTests" name="RejectsMalformedFrames" />
+    </UnitTest>
+    <UnitTest name="WebsocketClientLiteTest.PayloadParsingTests.RejectsMalformedFrames(bytes: [131, 0])" storage="/tmp/claude-1000/-workspaces-websocketclientlite-pcl/e85ac318-b810-4e30-affa-a35c2c77090f/scratchpad/replay2/old-strengthened/src/main/websocketclientlitetest/bin/release/net10.0/websocketclientlitetest.dll" id="b19648ac-836b-d0f1-c5f8-1cc511db7e35">
+      <Execution id="e552c46a-a402-448e-ad06-eaa5d4129611" />
+      <TestMethod codeBase="/tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/e85ac318-b810-4e30-affa-a35c2c77090f/scratchpad/replay2/old-strengthened/src/main/WebsocketClientLiteTest/bin/Release/net10.0/WebsocketClientLiteTest.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="WebsocketClientLiteTest.PayloadParsingTests" name="RejectsMalformedFrames" />
+    </UnitTest>
+    <UnitTest name="WebsocketClientLiteTest.PayloadParsingTests.RejectsMalformedFrames(bytes: [136, 1, 0])" storage="/tmp/claude-1000/-workspaces-websocketclientlite-pcl/e85ac318-b810-4e30-affa-a35c2c77090f/scratchpad/replay2/old-strengthened/src/main/websocketclientlitetest/bin/release/net10.0/websocketclientlitetest.dll" id="5528de3b-2e9f-6a2b-c963-3c77d4cca024">
+      <Execution id="3670d069-c16d-415a-bc45-836324672d21" />
+      <TestMethod codeBase="/tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/e85ac318-b810-4e30-affa-a35c2c77090f/scratchpad/replay2/old-strengthened/src/main/WebsocketClientLiteTest/bin/Release/net10.0/WebsocketClientLiteTest.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="WebsocketClientLiteTest.PayloadParsingTests" name="RejectsMalformedFrames" />
+    </UnitTest>
+    <UnitTest name="WebsocketClientLiteTest.PayloadParsingTests.RejectsMalformedFrames(bytes: [129, 127, 128, 0, 0, ···])" storage="/tmp/claude-1000/-workspaces-websocketclientlite-pcl/e85ac318-b810-4e30-affa-a35c2c77090f/scratchpad/replay2/old-strengthened/src/main/websocketclientlitetest/bin/release/net10.0/websocketclientlitetest.dll" id="866eaaf1-edef-8014-b43d-20e3dd2a3530">
+      <Execution id="3a85d0cc-dcf2-41ed-89f8-dbcf5ffce722" />
+      <TestMethod codeBase="/tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/e85ac318-b810-4e30-affa-a35c2c77090f/scratchpad/replay2/old-strengthened/src/main/WebsocketClientLiteTest/bin/Release/net10.0/WebsocketClientLiteTest.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="WebsocketClientLiteTest.PayloadParsingTests" name="RejectsMalformedFrames" />
+    </UnitTest>
+    <UnitTest name="WebsocketClientLiteTest.PayloadParsingTests.RejectsMalformedFrames(bytes: [193, 0])" storage="/tmp/claude-1000/-workspaces-websocketclientlite-pcl/e85ac318-b810-4e30-affa-a35c2c77090f/scratchpad/replay2/old-strengthened/src/main/websocketclientlitetest/bin/release/net10.0/websocketclientlitetest.dll" id="94e9aea0-091c-74fc-22bd-90e7619f3fd4">
+      <Execution id="9cff6e65-6419-47b1-8f74-3336ac1948c7" />
+      <TestMethod codeBase="/tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/e85ac318-b810-4e30-affa-a35c2c77090f/scratchpad/replay2/old-strengthened/src/main/WebsocketClientLiteTest/bin/Release/net10.0/WebsocketClientLiteTest.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="WebsocketClientLiteTest.PayloadParsingTests" name="RejectsMalformedFrames" />
+    </UnitTest>
+    <UnitTest name="WebsocketClientLiteTest.PayloadParsingTests.RejectsMalformedFrames(bytes: [129, 127, 0, 0, 0, ···])" storage="/tmp/claude-1000/-workspaces-websocketclientlite-pcl/e85ac318-b810-4e30-affa-a35c2c77090f/scratchpad/replay2/old-strengthened/src/main/websocketclientlitetest/bin/release/net10.0/websocketclientlitetest.dll" id="52e3baef-65b5-ecd2-b8b8-a1038b5fdcf4">
+      <Execution id="b7148a09-7080-4437-b509-2a2c50dbb5c8" />
+      <TestMethod codeBase="/tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/e85ac318-b810-4e30-affa-a35c2c77090f/scratchpad/replay2/old-strengthened/src/main/WebsocketClientLiteTest/bin/Release/net10.0/WebsocketClientLiteTest.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="WebsocketClientLiteTest.PayloadParsingTests" name="RejectsMalformedFrames" />
+    </UnitTest>
+    <UnitTest name="WebsocketClientLiteTest.PayloadParsingTests.RejectsMalformedFrames(bytes: [136, 3, 3, 232, 255])" storage="/tmp/claude-1000/-workspaces-websocketclientlite-pcl/e85ac318-b810-4e30-affa-a35c2c77090f/scratchpad/replay2/old-strengthened/src/main/websocketclientlitetest/bin/release/net10.0/websocketclientlitetest.dll" id="64840f57-0bf4-52f8-d711-117560e53bcf">
+      <Execution id="1c4bd635-e034-42a4-b6e2-c5723ed4cb21" />
+      <TestMethod codeBase="/tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/e85ac318-b810-4e30-affa-a35c2c77090f/scratchpad/replay2/old-strengthened/src/main/WebsocketClientLiteTest/bin/Release/net10.0/WebsocketClientLiteTest.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="WebsocketClientLiteTest.PayloadParsingTests" name="RejectsMalformedFrames" />
+    </UnitTest>
+    <UnitTest name="WebsocketClientLiteTest.PayloadParsingTests.RejectsMalformedFrames(bytes: [129, 126, 0, 125])" storage="/tmp/claude-1000/-workspaces-websocketclientlite-pcl/e85ac318-b810-4e30-affa-a35c2c77090f/scratchpad/replay2/old-strengthened/src/main/websocketclientlitetest/bin/release/net10.0/websocketclientlitetest.dll" id="824a921e-d713-4e3e-b975-c6173aca1c23">
+      <Execution id="41a36576-c02b-44d9-b2cd-f5e34565fa54" />
+      <TestMethod codeBase="/tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/e85ac318-b810-4e30-affa-a35c2c77090f/scratchpad/replay2/old-strengthened/src/main/WebsocketClientLiteTest/bin/Release/net10.0/WebsocketClientLiteTest.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="WebsocketClientLiteTest.PayloadParsingTests" name="RejectsMalformedFrames" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="824a921e-d713-4e3e-b975-c6173aca1c23" executionId="41a36576-c02b-44d9-b2cd-f5e34565fa54" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="94e9aea0-091c-74fc-22bd-90e7619f3fd4" executionId="9cff6e65-6419-47b1-8f74-3336ac1948c7" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="5528de3b-2e9f-6a2b-c963-3c77d4cca024" executionId="3670d069-c16d-415a-bc45-836324672d21" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="9e1a88ae-d560-b286-1933-bb27b6783123" executionId="a1d16d5b-38f9-40fc-8e6d-8f35e989de8a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="866eaaf1-edef-8014-b43d-20e3dd2a3530" executionId="3a85d0cc-dcf2-41ed-89f8-dbcf5ffce722" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="52e3baef-65b5-ecd2-b8b8-a1038b5fdcf4" executionId="b7148a09-7080-4437-b509-2a2c50dbb5c8" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b19648ac-836b-d0f1-c5f8-1cc511db7e35" executionId="e552c46a-a402-448e-ad06-eaa5d4129611" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="64840f57-0bf4-52f8-d711-117560e53bcf" executionId="1c4bd635-e034-42a4-b6e2-c5723ed4cb21" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="8" executed="8" passed="1" failed="7" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v4.0.1+0f7d528729 (64-bit .NET 10.0.14)
+[xUnit.net 00:00:00.04]   Discovering: WebsocketClientLiteTest
+[xUnit.net 00:00:00.07]   Discovered:  WebsocketClientLiteTest
+[xUnit.net 00:00:00.09]   Starting:    WebsocketClientLiteTest
+[xUnit.net 00:00:00.11]       Assert.Throws() Failure: No exception was thrown
+[xUnit.net 00:00:00.11]       Expected: typeof(WebsocketClientLite.CustomException.WebsocketClientLiteException)
+[xUnit.net 00:00:00.11]       Stack Trace:
+[xUnit.net 00:00:00.11]         /tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/e85ac318-b810-4e30-affa-a35c2c77090f/scratchpad/replay2/old-strengthened/src/main/WebsocketClientLiteTest/PayloadParsingTests.cs(297,0): at WebsocketClientLiteTest.PayloadParsingTests.RejectsMalformedFrames(Byte[] bytes)
+[xUnit.net 00:00:00.11]         --- End of stack trace from previous location ---
+[xUnit.net 00:00:00.12]       Assert.DoesNotContain() Failure: Sub-string found
+[xUnit.net 00:00:00.12]                                       ↓ (pos 21)
+[xUnit.net 00:00:00.12]       String: ···"ebsocket connection aborted unexpectedly."···
+[xUnit.net 00:00:00.12]       Found:  "aborted unexpectedly"
+[xUnit.net 00:00:00.12]       Stack Trace:
+[xUnit.net 00:00:00.12]         /tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/e85ac318-b810-4e30-affa-a35c2c77090f/scratchpad/replay2/old-strengthened/src/main/WebsocketClientLiteTest/PayloadParsingTests.cs(301,0): at WebsocketClientLiteTest.PayloadParsingTests.RejectsMalformedFrames(Byte[] bytes)
+[xUnit.net 00:00:00.12]         --- End of stack trace from previous location ---
+[xUnit.net 00:00:00.12]       Assert.DoesNotContain() Failure: Sub-string found
+[xUnit.net 00:00:00.12]                                       ↓ (pos 21)
+[xUnit.net 00:00:00.12]       String: ···"ebsocket connection aborted unexpectedly."···
+[xUnit.net 00:00:00.12]       Found:  "aborted unexpectedly"
+[xUnit.net 00:00:00.12]       Stack Trace:
+[xUnit.net 00:00:00.12]         /tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/e85ac318-b810-4e30-affa-a35c2c77090f/scratchpad/replay2/old-strengthened/src/main/WebsocketClientLiteTest/PayloadParsingTests.cs(301,0): at WebsocketClientLiteTest.PayloadParsingTests.RejectsMalformedFrames(Byte[] bytes)
+[xUnit.net 00:00:00.12]         --- End of stack trace from previous location ---
+[xUnit.net 00:00:00.12]       Assert.Throws() Failure: No exception was thrown
+[xUnit.net 00:00:00.12]       Expected: typeof(WebsocketClientLite.CustomException.WebsocketClientLiteException)
+[xUnit.net 00:00:00.12]       Stack Trace:
+[xUnit.net 00:00:00.12]         /tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/e85ac318-b810-4e30-affa-a35c2c77090f/scratchpad/replay2/old-strengthened/src/main/WebsocketClientLiteTest/PayloadParsingTests.cs(297,0): at WebsocketClientLiteTest.PayloadParsingTests.RejectsMalformedFrames(Byte[] bytes)
+[xUnit.net 00:00:00.12]         --- End of stack trace from previous location ---
+[xUnit.net 00:00:00.12]       Assert.Throws() Failure: No exception was thrown
+[xUnit.net 00:00:00.12]       Expected: typeof(WebsocketClientLite.CustomException.WebsocketClientLiteException)
+[xUnit.net 00:00:00.12]       Stack Trace:
+[xUnit.net 00:00:00.12]         /tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/e85ac318-b810-4e30-affa-a35c2c77090f/scratchpad/replay2/old-strengthened/src/main/WebsocketClientLiteTest/PayloadParsingTests.cs(297,0): at WebsocketClientLiteTest.PayloadParsingTests.RejectsMalformedFrames(Byte[] bytes)
+[xUnit.net 00:00:00.12]         --- End of stack trace from previous location ---
+[xUnit.net 00:00:00.12]       Assert.Throws() Failure: No exception was thrown
+[xUnit.net 00:00:00.12]       Expected: typeof(WebsocketClientLite.CustomException.WebsocketClientLiteException)
+[xUnit.net 00:00:00.12]       Stack Trace:
+[xUnit.net 00:00:00.12]         /tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/e85ac318-b810-4e30-affa-a35c2c77090f/scratchpad/replay2/old-strengthened/src/main/WebsocketClientLiteTest/PayloadParsingTests.cs(297,0): at WebsocketClientLiteTest.PayloadParsingTests.RejectsMalformedFrames(Byte[] bytes)
+[xUnit.net 00:00:00.12]         --- End of stack trace from previous location ---
+[xUnit.net 00:00:00.12]       Assert.Throws() Failure: No exception was thrown
+[xUnit.net 00:00:00.12]       Expected: typeof(WebsocketClientLite.CustomException.WebsocketClientLiteException)
+[xUnit.net 00:00:00.12]       Stack Trace:
+[xUnit.net 00:00:00.12]         /tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/e85ac318-b810-4e30-affa-a35c2c77090f/scratchpad/replay2/old-strengthened/src/main/WebsocketClientLiteTest/PayloadParsingTests.cs(297,0): at WebsocketClientLiteTest.PayloadParsingTests.RejectsMalformedFrames(Byte[] bytes)
+[xUnit.net 00:00:00.12]         --- End of stack trace from previous location ---
+[xUnit.net 00:00:00.12]   Finished:    WebsocketClientLiteTest
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="a920b7ae3df2" outcome="Error" timestamp="2026-11-11T13:15:39.5730117+00:00">
+        <Text>[xUnit.net 00:00:00.11]     WebsocketClientLiteTest.PayloadParsingTests.RejectsMalformedFrames(bytes: [136, 1, 0]) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="a920b7ae3df2" outcome="Error" timestamp="2026-11-11T13:15:39.5786386+00:00">
+        <Text>[xUnit.net 00:00:00.12]     WebsocketClientLiteTest.PayloadParsingTests.RejectsMalformedFrames(bytes: [129, 127, 0, 0, 0, ···]) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="a920b7ae3df2" outcome="Error" timestamp="2026-11-11T13:15:39.5795442+00:00">
+        <Text>[xUnit.net 00:00:00.12]     WebsocketClientLiteTest.PayloadParsingTests.RejectsMalformedFrames(bytes: [129, 126, 0, 125]) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="a920b7ae3df2" outcome="Error" timestamp="2026-11-11T13:15:39.5796853+00:00">
+        <Text>[xUnit.net 00:00:00.12]     WebsocketClientLiteTest.PayloadParsingTests.RejectsMalformedFrames(bytes: [193, 0]) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="a920b7ae3df2" outcome="Error" timestamp="2026-11-11T13:15:39.5797840+00:00">
+        <Text>[xUnit.net 00:00:00.12]     WebsocketClientLiteTest.PayloadParsingTests.RejectsMalformedFrames(bytes: [131, 0]) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="a920b7ae3df2" outcome="Error" timestamp="2026-11-11T13:15:39.5805483+00:00">
+        <Text>[xUnit.net 00:00:00.12]     WebsocketClientLiteTest.PayloadParsingTests.RejectsMalformedFrames(bytes: [136, 2, 3, 237]) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="a920b7ae3df2" outcome="Error" timestamp="2026-11-11T13:15:39.5806670+00:00">
+        <Text>[xUnit.net 00:00:00.12]     WebsocketClientLiteTest.PayloadParsingTests.RejectsMalformedFrames(bytes: [136, 3, 3, 232, 255]) [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

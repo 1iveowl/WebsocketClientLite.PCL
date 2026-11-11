@@ -1,0 +1,149 @@
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  Pdd -> /workspaces/WebsocketClientLite.PCL/tools/Pdd/bin/Release/net10.0/Pdd.dll
+  Pdd.Tests -> /workspaces/WebsocketClientLite.PCL/tools/Pdd.Tests/bin/Release/net10.0/Pdd.Tests.dll
+Test run for /workspaces/WebsocketClientLite.PCL/tools/Pdd.Tests/bin/Release/net10.0/Pdd.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.33]     Pdd.Tests.PayloadEvidenceTests.CatalogRequiresCompletePayloadMappingAndKnownScope [FAIL]
+  Failed Pdd.Tests.PayloadEvidenceTests.CatalogRequiresCompletePayloadMappingAndKnownScope [182 ms]
+  Error Message:
+   Assert.Equal() Failure: Values differ
+Expected: 15
+Actual:   17
+  Stack Trace:
+     at Pdd.Tests.PayloadEvidenceTests.CatalogRequiresCompletePayloadMappingAndKnownScope() in /workspaces/WebsocketClientLite.PCL/tools/Pdd.Tests/PayloadEvidenceTests.cs:line 55
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+[xUnit.net 00:00:00.62]     Pdd.Tests.PayloadEvidenceTests.ObservedDiagnosticsRequireTheExactSemanticFailure(json: "{\"id\":\"REASSEMBLY-002-offset-stall\",\"exit_cod"···) [FAIL]
+[xUnit.net 00:00:00.71]     Pdd.Tests.PayloadEvidenceTests.ObservedDiagnosticsRequireTheExactSemanticFailure(json: "{\"id\":\"REASSEMBLY-001-offset-stall\",\"exit_cod"···) [FAIL]
+  Failed Pdd.Tests.PayloadEvidenceTests.ObservedDiagnosticsRequireTheExactSemanticFailure(json: "{\"id\":\"REASSEMBLY-002-offset-stall\",\"exit_cod"···) [92 ms]
+  Error Message:
+   Assert.Equal() Failure: Strings differ
+           ↓ (pos 0)
+Expected: "detected"
+Actual:   "inconclusive"
+           ↑ (pos 0)
+  Stack Trace:
+     at Pdd.Tests.PayloadEvidenceTests.ObservedDiagnosticsRequireTheExactSemanticFailure(String json) in /workspaces/WebsocketClientLite.PCL/tools/Pdd.Tests/PayloadEvidenceTests.cs:line 20
+   at InvokeStub_PayloadEvidenceTests.ObservedDiagnosticsRequireTheExactSemanticFailure(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed Pdd.Tests.PayloadEvidenceTests.ObservedDiagnosticsRequireTheExactSemanticFailure(json: "{\"id\":\"REASSEMBLY-001-offset-stall\",\"exit_cod"···) [89 ms]
+  Error Message:
+   Assert.Equal() Failure: Strings differ
+           ↓ (pos 0)
+Expected: "detected"
+Actual:   "inconclusive"
+           ↑ (pos 0)
+  Stack Trace:
+     at Pdd.Tests.PayloadEvidenceTests.ObservedDiagnosticsRequireTheExactSemanticFailure(String json) in /workspaces/WebsocketClientLite.PCL/tools/Pdd.Tests/PayloadEvidenceTests.cs:line 20
+   at InvokeStub_PayloadEvidenceTests.ObservedDiagnosticsRequireTheExactSemanticFailure(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+[xUnit.net 00:00:00.83]     Pdd.Tests.PayloadEvidenceTests.ObservedDiagnosticsRequireTheExactSemanticFailure(json: "{\"id\":\"MASK-002-tail-xor-to-or\",\"exit_code\":"···) [FAIL]
+[xUnit.net 00:00:00.88]     Pdd.Tests.MutationTests.PythonDiagnosticFixturesMatch(json: "{\"name\":\"target\",\"record\":{\"exit_code\":4,\"···) [FAIL]
+[xUnit.net 00:00:00.95]     Pdd.Tests.PayloadEvidenceTests.ObservedDiagnosticsRequireTheExactSemanticFailure(json: "{\"id\":\"MASK-002-preserve-prefix\",\"exit_code\""···) [FAIL]
+[xUnit.net 00:00:01.11]     Pdd.Tests.PayloadEvidenceTests.ObservedDiagnosticsRequireTheExactSemanticFailure(json: "{\"id\":\"REASSEMBLY-001-oversized-result\",\"exit"···) [FAIL]
+  Failed Pdd.Tests.PayloadEvidenceTests.ObservedDiagnosticsRequireTheExactSemanticFailure(json: "{\"id\":\"MASK-002-tail-xor-to-or\",\"exit_code\":"···) [120 ms]
+  Error Message:
+   Assert.Equal() Failure: Strings differ
+           ↓ (pos 0)
+Expected: "detected"
+Actual:   "inconclusive"
+           ↑ (pos 0)
+  Stack Trace:
+     at Pdd.Tests.PayloadEvidenceTests.ObservedDiagnosticsRequireTheExactSemanticFailure(String json) in /workspaces/WebsocketClientLite.PCL/tools/Pdd.Tests/PayloadEvidenceTests.cs:line 20
+   at InvokeStub_PayloadEvidenceTests.ObservedDiagnosticsRequireTheExactSemanticFailure(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed Pdd.Tests.MutationTests.PythonDiagnosticFixturesMatch(json: "{\"name\":\"target\",\"record\":{\"exit_code\":4,\"···) [106 ms]
+  Error Message:
+   Assert.Equal() Failure: Strings differ
+           ↓ (pos 0)
+Expected: "detected"
+Actual:   "inconclusive"
+           ↑ (pos 0)
+  Stack Trace:
+     at Pdd.Tests.MutationTests.PythonDiagnosticFixturesMatch(String json) in /workspaces/WebsocketClientLite.PCL/tools/Pdd.Tests/MutationTests.cs:line 19
+   at InvokeStub_MutationTests.PythonDiagnosticFixturesMatch(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed Pdd.Tests.PayloadEvidenceTests.ObservedDiagnosticsRequireTheExactSemanticFailure(json: "{\"id\":\"MASK-002-preserve-prefix\",\"exit_code\""···) [125 ms]
+  Error Message:
+   Assert.Equal() Failure: Strings differ
+           ↓ (pos 0)
+Expected: "detected"
+Actual:   "inconclusive"
+           ↑ (pos 0)
+  Stack Trace:
+     at Pdd.Tests.PayloadEvidenceTests.ObservedDiagnosticsRequireTheExactSemanticFailure(String json) in /workspaces/WebsocketClientLite.PCL/tools/Pdd.Tests/PayloadEvidenceTests.cs:line 20
+   at InvokeStub_PayloadEvidenceTests.ObservedDiagnosticsRequireTheExactSemanticFailure(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed Pdd.Tests.PayloadEvidenceTests.ObservedDiagnosticsRequireTheExactSemanticFailure(json: "{\"id\":\"REASSEMBLY-001-oversized-result\",\"exit"···) [160 ms]
+  Error Message:
+   Assert.Equal() Failure: Strings differ
+           ↓ (pos 0)
+Expected: "detected"
+Actual:   "inconclusive"
+           ↑ (pos 0)
+  Stack Trace:
+     at Pdd.Tests.PayloadEvidenceTests.ObservedDiagnosticsRequireTheExactSemanticFailure(String json) in /workspaces/WebsocketClientLite.PCL/tools/Pdd.Tests/PayloadEvidenceTests.cs:line 20
+   at InvokeStub_PayloadEvidenceTests.ObservedDiagnosticsRequireTheExactSemanticFailure(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+[xUnit.net 00:00:01.27]     Pdd.Tests.PayloadEvidenceTests.ObservedDiagnosticsRequireTheExactSemanticFailure(json: "{\"id\":\"MASK-003-preserve-prefix\",\"exit_code\""···) [FAIL]
+  Failed Pdd.Tests.PayloadEvidenceTests.ObservedDiagnosticsRequireTheExactSemanticFailure(json: "{\"id\":\"MASK-003-preserve-prefix\",\"exit_code\""···) [160 ms]
+  Error Message:
+   Assert.Equal() Failure: Strings differ
+           ↓ (pos 0)
+Expected: "detected"
+Actual:   "inconclusive"
+           ↑ (pos 0)
+  Stack Trace:
+     at Pdd.Tests.PayloadEvidenceTests.ObservedDiagnosticsRequireTheExactSemanticFailure(String json) in /workspaces/WebsocketClientLite.PCL/tools/Pdd.Tests/PayloadEvidenceTests.cs:line 20
+   at InvokeStub_PayloadEvidenceTests.ObservedDiagnosticsRequireTheExactSemanticFailure(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+[xUnit.net 00:00:01.43]     Pdd.Tests.PayloadEvidenceTests.ObservedDiagnosticsRequireTheExactSemanticFailure(json: "{\"id\":\"MASK-002-corrupt-bulk-byte\",\"exit_code"···) [FAIL]
+[xUnit.net 00:00:01.58]     Pdd.Tests.PayloadEvidenceTests.ObservedDiagnosticsRequireTheExactSemanticFailure(json: "{\"id\":\"MASK-003-xor-to-or\",\"exit_code\":4,\"s"···) [FAIL]
+  Failed Pdd.Tests.PayloadEvidenceTests.ObservedDiagnosticsRequireTheExactSemanticFailure(json: "{\"id\":\"MASK-002-corrupt-bulk-byte\",\"exit_code"···) [156 ms]
+  Error Message:
+   Assert.Equal() Failure: Strings differ
+           ↓ (pos 0)
+Expected: "detected"
+Actual:   "inconclusive"
+           ↑ (pos 0)
+  Stack Trace:
+     at Pdd.Tests.PayloadEvidenceTests.ObservedDiagnosticsRequireTheExactSemanticFailure(String json) in /workspaces/WebsocketClientLite.PCL/tools/Pdd.Tests/PayloadEvidenceTests.cs:line 20
+   at InvokeStub_PayloadEvidenceTests.ObservedDiagnosticsRequireTheExactSemanticFailure(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed Pdd.Tests.PayloadEvidenceTests.ObservedDiagnosticsRequireTheExactSemanticFailure(json: "{\"id\":\"MASK-003-xor-to-or\",\"exit_code\":4,\"s"···) [152 ms]
+  Error Message:
+   Assert.Equal() Failure: Strings differ
+           ↓ (pos 0)
+Expected: "detected"
+Actual:   "inconclusive"
+           ↑ (pos 0)
+  Stack Trace:
+     at Pdd.Tests.PayloadEvidenceTests.ObservedDiagnosticsRequireTheExactSemanticFailure(String json) in /workspaces/WebsocketClientLite.PCL/tools/Pdd.Tests/PayloadEvidenceTests.cs:line 20
+   at InvokeStub_PayloadEvidenceTests.ObservedDiagnosticsRequireTheExactSemanticFailure(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+[xUnit.net 00:00:02.00]     Pdd.Tests.PayloadEvidenceTests.PayloadSuiteEditsOneTemporarySourceAtATime [FAIL]
+[xUnit.net 00:00:02.32]     Pdd.Tests.MutationTests.SuiteIsolationAndPartialEvidence(mode: "success") [FAIL]
+  Failed Pdd.Tests.PayloadEvidenceTests.PayloadSuiteEditsOneTemporarySourceAtATime [153 ms]
+  Error Message:
+   Assert.Equal() Failure: Strings differ
+           ↓ (pos 0)
+Expected: "passed"
+Actual:   "failed"
+           ↑ (pos 0)
+  Stack Trace:
+     at Pdd.Tests.PayloadEvidenceTests.PayloadSuiteEditsOneTemporarySourceAtATime() in /workspaces/WebsocketClientLite.PCL/tools/Pdd.Tests/PayloadEvidenceTests.cs:line 118
+--- End of stack trace from previous location ---
+  Failed Pdd.Tests.MutationTests.SuiteIsolationAndPartialEvidence(mode: "success") [132 ms]
+  Error Message:
+   Assert.Equal() Failure: Strings differ
+           ↓ (pos 0)
+Expected: "passed"
+Actual:   "failed"
+           ↑ (pos 0)
+  Stack Trace:
+     at Pdd.Tests.MutationTests.SuiteIsolationAndPartialEvidence(String mode) in /workspaces/WebsocketClientLite.PCL/tools/Pdd.Tests/MutationTests.cs:line 98
+--- End of stack trace from previous location ---
+
+Failed!  - Failed:    12, Passed:   246, Skipped:     0, Total:   258, Duration: 13 s - Pdd.Tests.dll (net10.0)
+exit 1

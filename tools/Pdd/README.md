@@ -37,7 +37,7 @@ can be used directly with the same arguments.
 | --- | --- |
 | `validate [manifest.json]` | Validate requirements, boundaries, references and catalog-independent obligations. |
 | `contract-report --target REF --head HEAD --output FILE` | Compare committed trees from the actual target's unique merge base; requires semantic PR review. |
-| `mutations [--scope all|close|payload] [--output DIR]` | Verify baseline and isolated catalog edits (default: all 15). |
+| `mutations [--scope all|close|payload] [--output DIR]` | Verify baseline and isolated catalog edits (default: all 17). |
 | `capture --job protocol --output DIR` | Capture manifest, tooling tests, proof/audit/generated-source check and Dafny mutations. |
 | `capture --job tests --output DIR` | Capture Release restore/build, five library targets and the 70% coverage gate. |
 | `test-target --tfm TFM --output DIR` | Run one library target and capture TRX plus actual host-runtime evidence. |

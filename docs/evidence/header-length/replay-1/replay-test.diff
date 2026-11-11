@@ -1,0 +1,13 @@
+--- /tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/e85ac318-b810-4e30-affa-a35c2c77090f/scratchpad/replay/evidence/PayloadParsingTests.a779602.cs	2026-11-11 13:08:14.683182847 +0000
++++ /tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/e85ac318-b810-4e30-affa-a35c2c77090f/scratchpad/replay/evidence/PayloadParsingTests.replay.cs	2026-11-11 13:08:14.686784218 +0000
+@@ -282,4 +282,10 @@
+         Assert.Equal(length, df!.Length);
+         Assert.Equal(new string('c', (int)length), df.Message);
+     }
++
++    [Theory]
++    [InlineData(new byte[] { 0x81, 126, 0, 125 })]
++    [InlineData(new byte[] { 0x81, 127, 0, 0, 0, 0, 0, 0, 255, 255 })]
++    public async Task RejectsMalformedFrames(byte[] bytes) =>
++        await Assert.ThrowsAsync<WebsocketClientLiteException>(() => Parse(bytes));
+ }

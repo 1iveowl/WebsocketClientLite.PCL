@@ -221,8 +221,28 @@ public class PayloadParsingTests
     [InlineData(new byte[] { 0x88, 1, 0 })]
     [InlineData(new byte[] { 0x88, 2, 3, 237 })] // forbidden 1005
     [InlineData(new byte[] { 0x88, 3, 3, 232, 255 })] // invalid reason UTF-8
-    public async Task RejectsMalformedFrames(byte[] bytes) =>
-        await Assert.ThrowsAsync<WebsocketClientLiteException>(() => Parse(bytes));
+    public async Task RejectsMalformedFrames(byte[] bytes)
+    {
+        // Each row is sent with the payload its header announces, so a parser that
+        // accepted the header would return a frame instead of failing on EOF with the
+        // same exception type. The header itself has to be refused.
+        var frame = bytes.Concat(new byte[MissingPayload(bytes)]).ToArray();
+        var error = await Assert.ThrowsAsync<WebsocketClientLiteException>(() => Parse(frame));
+        Assert.DoesNotContain(TcpConnectionService.AbortedUnexpectedlyMessage, error.Message, StringComparison.Ordinal);
+    }
+
+    // Payload bytes the header announces but the row does not carry. A length above 64 KiB
+    // (the row with bit 63 set) is not padded: the header is refused on that bit alone.
+    private static int MissingPayload(byte[] bytes)
+    {
+        int marker = bytes[1] & 127;
+        int headerSize = marker <= 125 ? 2 : marker == 126 ? 4 : 10;
+        if (bytes.Length < headerSize) return 0;
+        ulong announced = marker <= 125 ? (ulong)marker : 0;
+        for (int i = 2; i < headerSize; i++) announced = announced << 8 | bytes[i];
+        if (announced > 65536) return 0;
+        return Math.Max(0, (int)announced - (bytes.Length - headerSize));
+    }
 
     [Theory]
     [InlineData(new byte[] { 0x80, 0 })] // orphan continuation
@@ -269,7 +289,7 @@ public class PayloadParsingTests
         // EOF would prove the parser tried to read the absent payload. Admission
         // must fail from the header and previous state instead.
         Assert.Contains("fragmentation sequence", error.Message, StringComparison.Ordinal);
-        Assert.DoesNotContain("aborted unexpectedly", error.Message, StringComparison.Ordinal);
+        Assert.DoesNotContain(TcpConnectionService.AbortedUnexpectedlyMessage, error.Message, StringComparison.Ordinal);
     }
 
     [Fact]

@@ -1,0 +1,7 @@
+verification/Masking.dfy(23,44): Error: assignment might update an array element not in the enclosing context's modifies clause
+   |
+23 |         data[i] := data[i] ^ key[i % 4]; key[0] := 0;
+   |                                             ^
+
+
+Dafny program verifier finished with 573 verified, 1 error

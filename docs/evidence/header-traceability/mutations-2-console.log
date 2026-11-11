@@ -1,0 +1,26 @@
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:00.53
+baseline: passed (8.789s)
+CLOSE-001-duplicate-send: detected (9.178s)
+CLOSE-001-suppressed-send: detected (8.865s)
+CLOSE-002-state-bit-loss: detected (8.889s)
+CLOSE-003-premature-release: detected (8.81s)
+CLOSE-003-suppressed-release: detected (8.753s)
+REASSEMBLY-001-offset-stall: detected (8.825s)
+REASSEMBLY-002-offset-stall: detected (8.757s)
+REASSEMBLY-001-oversized-result: detected (8.975s)
+MASK-001-xor-to-or: detected (8.817s)
+MASK-001-key-write: detected (8.615s)
+MASK-002-tail-xor-to-or: detected (8.771s)
+MASK-002-corrupt-bulk-byte: detected (8.865s)
+MASK-002-preserve-prefix: detected (8.965s)
+MASK-003-xor-to-or: detected (9.013s)
+MASK-003-preserve-prefix: detected (8.757s)
+HEADER-001-short-sixteen-bit: detected (61.181s)
+HEADER-001-short-sixty-four-bit: detected (85.202s)
+Evidence: /workspaces/WebsocketClientLite.PCL/docs/evidence/header-traceability/mutations-2
+exit 0

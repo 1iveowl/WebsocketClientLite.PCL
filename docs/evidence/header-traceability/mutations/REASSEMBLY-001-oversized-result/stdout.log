@@ -1,0 +1,12 @@
+verification/Protocol.dfy(232,4): Error: a postcondition could not be proved on this return path
+    |
+232 |     {
+    |     ^
+
+verification/Protocol.dfy(231,42): Related location: this is the postcondition that could not be proved
+    |
+231 |       ensures fresh(result) && result[..] == Parts(parts, parts.Length)
+    |                                           ^^
+
+
+Dafny program verifier finished with 573 verified, 1 error

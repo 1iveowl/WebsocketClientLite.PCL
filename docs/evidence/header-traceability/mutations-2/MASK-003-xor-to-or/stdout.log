@@ -1,0 +1,8 @@
+verification/Protocol.dfy(553,18): Error: this invariant could not be proved to be maintained by the loop
+ Related message: loop invariant violation
+    |
+553 |         invariant forall j :: 0 <= j < i as int ==> dest[offset as int + j] == old(dest[offset as int + j]) ^ old(dest[keyOffset as int + j % 4])
+    |                   ^^^^^^
+
+
+Dafny program verifier finished with 573 verified, 1 error

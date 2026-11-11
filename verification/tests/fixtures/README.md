@@ -27,3 +27,17 @@ aggregation of the identical artifacts: every JSON value matched after removing
 mutants identically. The prior 38 Python tests passed before removal. The C# suite
 retains the failure modes and adds actual descendant/session cancellation and
 additional malformed-evidence checks.
+
+## Line numbers updated on 2026-11-11
+
+Commit `ba499c3` added RFC citation comments to `verification/Protocol.dfy`, which
+moved the lines these fixtures name. On 2026-11-11 (pull request #136, owner
+decision on Q2):
+
+- `payload-diagnostics.json` was replaced with the observed output of a full
+  mutation run on the current source, `docs/evidence/header-traceability/mutations-2`.
+  It now also holds the two `HEADER-001` mutants.
+- In `mutation-cases.json`, only the Protocol.dfy and Masking.dfy line numbers
+  were shifted to the current `CloseStep` lines (146→199, 147→200, 153→206,
+  170→228, 317→389). The cases and their expected outcomes are unchanged. They
+  remain Python-produced classifier inputs, not a new Python run.

@@ -61,7 +61,7 @@ public class MutationTests
         return new()
         {
             ExitCode = 4,
-            Stdout = $"verification/Protocol.dfy(153,4): Error: a postcondition could not be proved on this return path\nverification/Protocol.dfy({line},22): Related location: this is the postcondition that could not be proved\nDafny program verifier finished with 40 verified, 1 error\n",
+            Stdout = $"verification/Protocol.dfy(206,4): Error: a postcondition could not be proved on this return path\nverification/Protocol.dfy({line},22): Related location: this is the postcondition that could not be proved\nDafny program verifier finished with 40 verified, 1 error\n",
             ElapsedSeconds = .1
         };
     }

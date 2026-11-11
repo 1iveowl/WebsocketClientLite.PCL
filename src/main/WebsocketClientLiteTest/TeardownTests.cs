@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using IWebsocketClientLite;
 using WebsocketClientLite;
+using WebsocketClientLite.Service;
 using Xunit;
 
 namespace WebsocketClientLiteTest;
@@ -168,7 +169,7 @@ public class TeardownTests
         Assert.True(winner == errored.Task, "stream completed gracefully instead of surfacing the read error");
 
         var error = await errored.Task;
-        Assert.Contains("aborted unexpectedly", error.Message, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains(TcpConnectionService.AbortedUnexpectedlyMessage, error.Message, StringComparison.Ordinal);
     }
 
     [Fact]

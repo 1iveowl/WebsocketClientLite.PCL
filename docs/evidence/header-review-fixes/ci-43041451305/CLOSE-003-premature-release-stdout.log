@@ -1,0 +1,10 @@
+verification/Protocol.dfy(206,4): Error: a postcondition could not be proved on this return path
+    |
+206 |     {
+    |     ^
+
+verification/Protocol.dfy(203,22): Related location: this is the postcondition that could not be proved
+    |
+203 |       ensures release <==> (next & 4) != 0 || (next & 3) == 3
+    |                       ^^^^
+

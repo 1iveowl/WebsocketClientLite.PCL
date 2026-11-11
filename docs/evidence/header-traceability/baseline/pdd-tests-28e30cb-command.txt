@@ -1,0 +1,1 @@
+git worktree add --detach <scratch>/wt-28e30cb 28e30cb; cd <scratch>/wt-28e30cb; dotnet test tools/Pdd.Tests/Pdd.Tests.csproj -c Release  # 2026-11-11

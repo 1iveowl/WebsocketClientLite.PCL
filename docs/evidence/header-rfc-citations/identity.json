@@ -1,0 +1,15 @@
+{
+  "recorded": "2026-11-11. Step S1 of docs/pdd-10.3-session-plan.md: RFC 6455 citations in verification/Protocol.dfy.",
+  "host": "Linux x86-64 Debian dev container, kernel 7.2.11+deb13-amd64, .NET SDK 10.0.403, Dafny 4.11.0 and Z3 4.12.1 from scripts/dafny-toolchain.sh",
+  "base": "28e30cb51b354391c174fc367199c7eedb459d11 (origin/chore/header-rule-traceability at the start of S1). The before run used this commit with a clean tracked tree.",
+  "files": {
+    "verification/Protocol.dfy": { "before_sha256": "1b66395acec0001f1abd24d9fe24e6a83f124c135171995df9ad676cbf17c131", "after_sha256": "86d4098ccfc556dd8ed0152732ea9f5dc981edfd1d7b03f0fcde864f112f21e8" },
+    "verification/generated/Masking.g.cs": { "before_sha256": "4908e6b50721c71ce854688a1ae0719bda151bb55cffcf40c3d19dd18deb32ce", "after_regeneration_sha256": "4908e6b50721c71ce854688a1ae0719bda151bb55cffcf40c3d19dd18deb32ce" }
+  },
+  "generated_csharp": "Regenerated with --write after the edit. The output is byte-identical to the committed file: the DafnySourceAttribute embeds Dafny's printed form of the program, which does not keep comments.",
+  "sources_read": {
+    "rfc6455": { "url": "https://www.rfc-editor.org/rfc/rfc6455.txt", "retrieved": "2026-11-11", "sha256": "765775326aee0ecca9b04bde3fd1f52932d498e33e34e428bd61b8a24da0fa3b" },
+    "errata": { "url": "https://www.rfc-editor.org/errata.json", "retrieved": "2026-11-11", "rfc6455_entries": 18, "relevant": "3912 (5.2, Rejected: 64-bit field with a 63-bit value space), 5288 (5.2, Editorial, Reported), 4184 (5.4, Rejected), 4672 (5.6, Reported: continuation is a data frame), 7262 (5.5.1, Reported: whether the Close reason must be UTF-8), 3227 and 4919 (7.4.1), 3150, 3473, 4398 and 5453 (4.1). None changes a cited rule; 7262 is noted beside CloseValid." },
+    "iana_close_codes": { "url": "https://www.iana.org/assignments/websocket/websocket.txt", "retrieved": "2026-11-11", "used_for": "1012 to 1014 are registered with IANA, not defined in RFC 6455 (cited beside CloseCode)." }
+  }
+}
