@@ -1,0 +1,12 @@
+diff -ruN base-mutant/src/main/WebsocketClientLite/Service/WebsocketConnectionHandler.cs copy/src/main/WebsocketClientLite/Service/WebsocketConnectionHandler.cs
+--- base-mutant/src/main/WebsocketClientLite/Service/WebsocketConnectionHandler.cs	2026-11-11 22:47:02.000000000 +0000
++++ copy/src/main/WebsocketClientLite/Service/WebsocketConnectionHandler.cs	2026-11-11 22:58:24.120729368 +0000
+@@ -92,7 +92,7 @@
+ 
+         if(handshakeException is not null)
+         {
+-            throw handshakeException;
++            ;
+         }
+         else if (handshakeState is HandshakeStateKind.HandshakeCompletedSuccessfully)
+         {
