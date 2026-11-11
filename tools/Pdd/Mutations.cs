@@ -10,6 +10,7 @@ public sealed class Mutations(string root)
     static readonly Dictionary<string, string> Scopes = new()
     {
         ["ProtocolCore.Protocol.CloseStep"] = "verification/Protocol.dfy",
+        ["ProtocolCore.Protocol.DecodeHeader"] = "verification/Protocol.dfy",
         ["ProtocolCore.Protocol.Merge"] = "verification/Protocol.dfy",
         ["ProtocolCore.Protocol.MergeScalar"] = "verification/Protocol.dfy",
         ["ProtocolCore.Protocol.CopyMasked"] = "verification/Protocol.dfy",
@@ -45,7 +46,7 @@ public sealed class Mutations(string root)
         bool Selected(string id) => scope == "all" || id.StartsWith("CLOSE-", StringComparison.Ordinal) == (scope == "close");
         foreach (var m in catalog.Mutants)
         {
-            Require(Regex.IsMatch(m.Id, @"^(CLOSE|REASSEMBLY|MASK)-[0-9]{3}-[a-z-]+$") && ids.Add(m.Id), "invalid/duplicate mutant ID");
+            Require(Regex.IsMatch(m.Id, @"^(CLOSE|REASSEMBLY|MASK|HEADER)-[0-9]{3}-[a-z-]+$") && ids.Add(m.Id), "invalid/duplicate mutant ID");
             Require(Selected(m.Requirement), "mutant outside selected suite");
             Require(Scopes.TryGetValue(m.Symbol, out var file) && file == m.File, "unsupported mutation scope");
             var req = manifest.Requirements.SingleOrDefault(r => r.Id == m.Requirement);
@@ -131,10 +132,20 @@ public sealed class Mutations(string root)
         }
         if (mutant.Classification == "postcondition")
         {
-            if (related.Count != errors) return Inconclusive();
+            // Dafny may add "this proposition could not be proved" inside a predicate the
+            // failed clause calls. Accept it only inside the body of a predicate named in
+            // the target clause; every error still needs its own postcondition location.
+            const string Postcondition = "this is the postcondition that could not be proved";
+            if (related.Count(p => p.Groups[4].Value == Postcondition) != errors) return Inconclusive();
             foreach (Match p in related)
             {
-                if (p.Groups[1].Value != mutant.File || !int.TryParse(p.Groups[2].Value, out var line) || line < 1 || line > lines.Length || p.Groups[4].Value != "this is the postcondition that could not be proved") return Inconclusive();
+                if (p.Groups[1].Value != mutant.File || !int.TryParse(p.Groups[2].Value, out var line) || line < 1 || line > lines.Length) return Inconclusive();
+                if (p.Groups[4].Value == "this proposition could not be proved")
+                {
+                    if (!InNamedPredicate(source, mutant.TargetClause, line)) return Inconclusive();
+                    continue;
+                }
+                if (p.Groups[4].Value != Postcondition) return Inconclusive();
                 var clause = Requirements.LogicalLine(lines, line - 1);
                 if (!mutant.AllowedClauses.Contains(clause)) return Inconclusive();
                 matched.Add(clause);
@@ -143,6 +154,20 @@ public sealed class Mutations(string root)
         else if (related.Count != 0) return Inconclusive();
         if (mutant.Classification == "invariant" && Regex.Matches(output, @"^\s*Related message: loop invariant violation\s*$", RegexOptions.Multiline).Count != errors) return Inconclusive();
         return new(matched.Contains(mutant.TargetClause) ? "detected" : "inconclusive", matched.ToArray());
+    }
+    static bool InNamedPredicate(string source, string clause, int line)
+    {
+        var masked = Requirements.Masked(source);
+        foreach (Match d in Regex.Matches(masked, @"\b(?:ghost\s+)?(?:function|predicate)\s+(\w+)\s*\("))
+        {
+            if (!Regex.IsMatch(clause, @"\b" + Regex.Escape(d.Groups[1].Value) + @"\s*\(")) continue;
+            var open = masked.IndexOf('{', d.Index + d.Length);
+            if (open < 0) continue;
+            var first = masked[..open].Count(c => c == '\n') + 1;
+            var last = first + Requirements.Body(masked, open).Count(c => c == '\n');
+            if (line >= first && line <= last) return true;
+        }
+        return false;
     }
     public delegate Task<ExecutionResult> Executor(string[] command, string tree, string directory, double budget, CancellationToken cancellation);
     public static async Task<JsonObject> Suite(MutationCatalog catalog, Dictionary<string, string> sources, string output, string[] command, double baselineBudget, double mutantBudget, CancellationToken cancellation = default, Executor? executor = null)

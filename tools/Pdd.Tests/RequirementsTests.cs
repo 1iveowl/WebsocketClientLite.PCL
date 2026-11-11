@@ -42,10 +42,30 @@ public class RequirementsTests
     public void ValidManifestAndTestedOnlyRequirements()
     {
         var manifest = new Requirements(Root).Validate();
-        Assert.Equal(14, manifest.Requirements.Length);
+        Assert.Equal(16, manifest.Requirements.Length);
         Assert.Empty(manifest.Requirements.Single(r => r.Id == "REASSEMBLY-003").Contracts);
         Assert.Empty(manifest.Requirements[3].Contracts);
         Assert.Empty(manifest.Requirements[4].Contracts);
+    }
+    [Fact]
+    public void TestReferencesAcceptArrayArgumentsInAttributes()
+    {
+        using var tree = new TemporaryTree();
+        File.WriteAllText(Path.Combine(tree.Path, "Demo.cs"), """
+            namespace Demo.Tests;
+            public class Rows
+            {
+                [Theory]
+                [InlineData(new byte[] { 0x81, 126, 0, 125 })] // a comment ] [ after the row
+                [InlineData(new byte[] { 0xC1, 0 })]
+                public void Accepted(byte[] bytes) { }
+
+                [InlineData(new byte[] { 0x81, 0 })]
+                public void NotATest(byte[] bytes) { }
+            }
+            """);
+        Assert.Contains("Accepted", Requirements.Resolve(tree.Path, new SourceReference("Demo.cs", "Demo.Tests.Rows.Accepted"), test: true));
+        Assert.Contains("not an xUnit test", Assert.Throws<InvalidDataException>(() => Requirements.Resolve(tree.Path, new SourceReference("Demo.cs", "Demo.Tests.Rows.NotATest"), test: true)).Message);
     }
     [Fact]
     public void SchemaAndDuplicateKeysFailClosed()

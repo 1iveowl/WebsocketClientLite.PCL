@@ -1,4 +1,5 @@
 using System.Text.Json.Nodes;
+using System.Text.RegularExpressions;
 using Pdd;
 using Xunit;
 
@@ -37,6 +38,23 @@ public class PayloadEvidenceTests
         }
     }
     [Fact]
+    public void PropositionLocationMustLieInAPredicateTheTargetNames()
+    {
+        var fixture = Diagnostics.Single(d => d!["id"]!.ToString() == "HEADER-001-short-sixteen-bit")!;
+        var mutant = Payload.Mutants.Single(m => m.Id == "HEADER-001-short-sixteen-bit");
+        var source = Mutations.Apply(Data.Text(Path.Combine(Root, mutant.File)), mutant);
+        Assert.Equal("detected", Mutations.Classify(Data.Model<ExecutionResult>(fixture), source, mutant).Status);
+        var inside = Regex.Match(fixture["stdout"]!.ToString(), @"Protocol\.dfy\((\d+),\d+\): Related location: this proposition").Groups[1].Value;
+        Assert.NotEmpty(inside);
+        var outside = Array.FindIndex(source.Split('\n'), l => l.Contains("static method DecodeHeader(", StringComparison.Ordinal)) + 1;
+        var moved = Data.Model<ExecutionResult>(fixture);
+        moved.Stdout = moved.Stdout.Replace($"Protocol.dfy({inside},", $"Protocol.dfy({outside},", StringComparison.Ordinal);
+        Assert.Equal("inconclusive", Mutations.Classify(moved, source, mutant).Status);
+        var alone = Data.Model<ExecutionResult>(fixture);
+        alone.Stdout = Regex.Replace(alone.Stdout, @"^.*Related location: this is the postcondition that could not be proved\r?\n", "", RegexOptions.Multiline);
+        Assert.Equal("inconclusive", Mutations.Classify(alone, source, mutant).Status);
+    }
+    [Fact]
     public void ScopedOffsetEditDoesNotMutateProductionAndScalarTogether()
     {
         var source = Data.Text(Path.Combine(Root, "verification/Protocol.dfy"));
@@ -52,7 +70,7 @@ public class PayloadEvidenceTests
     public void CatalogRequiresCompletePayloadMappingAndKnownScope()
     {
         var catalog = new Mutations(Root).LoadCatalog();
-        Assert.Equal(15, catalog.Mutants.Length);
+        Assert.Equal(17, catalog.Mutants.Length);
         var data = Data.Read(Path.Combine(Root, "verification/mutations/payload.json"));
         data["mutants"]![0]!["contract_clause"] = "ensures true";
         Assert.Throws<InvalidDataException>(() => new Mutations(Root).LoadCatalog(data, "payload"));
@@ -116,7 +134,7 @@ public class PayloadEvidenceTests
         }
         var result = await Mutations.Suite(catalog, sources, output.Path, ["fixture"], 1, 1, executor: Execute);
         Assert.Equal("passed", result["status"]!.ToString());
-        Assert.Equal(11, trees.Count);
+        Assert.Equal(13, trees.Count);
         Assert.All(trees, tree => Assert.False(Directory.Exists(tree)));
         Assert.All(sources, s => Assert.Equal(s.Value, Data.Text(Path.Combine(Root, s.Key))));
     }

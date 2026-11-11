@@ -150,6 +150,36 @@
       ],
       "classification": "invariant",
       "contract_clause": "ensures forall j :: 0 <= j < dest.Length && !(offset as int <= j < offset as int + count as int) ==> dest[j] == old(dest[j])"
+    },
+    {
+      "id": "HEADER-001-short-sixteen-bit",
+      "requirement": "HEADER-001",
+      "obligation": "HEADER-001-MUTATION",
+      "file": "verification/Protocol.dfy",
+      "symbol": "ProtocolCore.Protocol.DecodeHeader",
+      "before": "status := if HeaderValid(first, second, length, limit) then 2 else 1;",
+      "after": "status := if PrefixValid(first, second) && length <= limit && length <= 0x7fffffff && (length & 0x8000000000000000) == 0 && (if marker < 126 then length == marker as bv64 else if marker == 126 then length <= 65535 else length >= 65536) && ((first & 15) < 8 || ((first & 128) != 0 && length <= 125)) then 2 else 1;",
+      "target_clause": "ensures status == 2 ==> HeaderValid(first, second, length, limit) && available >= headerSize - 2",
+      "allowed_clauses": [
+        "ensures status == 2 ==> HeaderValid(first, second, length, limit) && available >= headerSize - 2",
+        "ensures PrefixValid(first, second) && available >= headerSize - 2 ==> length == (if (second & 127) <= 125 then (second & 127) as bv64 else Word(extended[..headerSize as int - 2])) && (status == 2 <==> HeaderValid(first, second, length, limit))"
+      ],
+      "classification": "postcondition"
+    },
+    {
+      "id": "HEADER-001-short-sixty-four-bit",
+      "requirement": "HEADER-001",
+      "obligation": "HEADER-001-MUTATION",
+      "file": "verification/Protocol.dfy",
+      "symbol": "ProtocolCore.Protocol.DecodeHeader",
+      "before": "status := if HeaderValid(first, second, length, limit) then 2 else 1;",
+      "after": "status := if PrefixValid(first, second) && length <= limit && length <= 0x7fffffff && (length & 0x8000000000000000) == 0 && (if marker < 126 then length == marker as bv64 else if marker == 126 then 126 <= length <= 65535 else true) && ((first & 15) < 8 || ((first & 128) != 0 && length <= 125)) then 2 else 1;",
+      "target_clause": "ensures status == 2 ==> HeaderValid(first, second, length, limit) && available >= headerSize - 2",
+      "allowed_clauses": [
+        "ensures status == 2 ==> HeaderValid(first, second, length, limit) && available >= headerSize - 2",
+        "ensures PrefixValid(first, second) && available >= headerSize - 2 ==> length == (if (second & 127) <= 125 then (second & 127) as bv64 else Word(extended[..headerSize as int - 2])) && (status == 2 <==> HeaderValid(first, second, length, limit))"
+      ],
+      "classification": "postcondition"
     }
   ]
 }

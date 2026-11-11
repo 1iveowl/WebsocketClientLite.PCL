@@ -118,7 +118,7 @@ public sealed class Requirements(string root)
         var before = scope[..declaration.Index];
         Require(before.Count(c => c == '{') == before.Count(c => c == '}'), $"nested declaration: {label}");
         if (test)
-            Require(Regex.IsMatch(before, @"\[(?:Fact|Theory)\](?:\s*\[[^\]]+\])*\s*$"), $"not an xUnit test declaration: {label}");
+            Require(Regex.IsMatch(before, @"\[(?:Fact|Theory)\](?:\s*\[(?:[^\[\]]|\[\])*\])*\s*$"), $"not an xUnit test declaration: {label}");
         var end = scope.IndexOf('{', declaration.Index + declaration.Length);
         if (reference.File.EndsWith(".cs"))
         {

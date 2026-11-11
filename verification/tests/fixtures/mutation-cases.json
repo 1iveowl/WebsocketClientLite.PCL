@@ -3,7 +3,7 @@
     "name": "target",
     "record": {
       "exit_code": 4,
-      "stdout": "verification/Protocol.dfy(153,4): Error: a postcondition could not be proved on this return path\nverification/Protocol.dfy(147,22): Related location: this is the postcondition that could not be proved\nDafny program verifier finished with 40 verified, 1 error\n",
+      "stdout": "verification/Protocol.dfy(206,4): Error: a postcondition could not be proved on this return path\nverification/Protocol.dfy(200,22): Related location: this is the postcondition that could not be proved\nDafny program verifier finished with 40 verified, 1 error\n",
       "stderr": "",
       "elapsed_seconds": 0.1
     },
@@ -19,7 +19,7 @@
     "name": "exit_code",
     "record": {
       "exit_code": 1,
-      "stdout": "verification/Protocol.dfy(153,4): Error: a postcondition could not be proved on this return path\nverification/Protocol.dfy(147,22): Related location: this is the postcondition that could not be proved\nDafny program verifier finished with 40 verified, 1 error\n",
+      "stdout": "verification/Protocol.dfy(206,4): Error: a postcondition could not be proved on this return path\nverification/Protocol.dfy(200,22): Related location: this is the postcondition that could not be proved\nDafny program verifier finished with 40 verified, 1 error\n",
       "stderr": "",
       "elapsed_seconds": 0.1
     },
@@ -33,7 +33,7 @@
     "name": "timed_out",
     "record": {
       "exit_code": 4,
-      "stdout": "verification/Protocol.dfy(153,4): Error: a postcondition could not be proved on this return path\nverification/Protocol.dfy(147,22): Related location: this is the postcondition that could not be proved\nDafny program verifier finished with 40 verified, 1 error\n",
+      "stdout": "verification/Protocol.dfy(206,4): Error: a postcondition could not be proved on this return path\nverification/Protocol.dfy(200,22): Related location: this is the postcondition that could not be proved\nDafny program verifier finished with 40 verified, 1 error\n",
       "stderr": "",
       "elapsed_seconds": 0.1,
       "timed_out": true
@@ -48,7 +48,7 @@
     "name": "interrupted",
     "record": {
       "exit_code": 4,
-      "stdout": "verification/Protocol.dfy(153,4): Error: a postcondition could not be proved on this return path\nverification/Protocol.dfy(147,22): Related location: this is the postcondition that could not be proved\nDafny program verifier finished with 40 verified, 1 error\n",
+      "stdout": "verification/Protocol.dfy(206,4): Error: a postcondition could not be proved on this return path\nverification/Protocol.dfy(200,22): Related location: this is the postcondition that could not be proved\nDafny program verifier finished with 40 verified, 1 error\n",
       "stderr": "",
       "elapsed_seconds": 0.1,
       "interrupted": true
@@ -63,7 +63,7 @@
     "name": "launch_error",
     "record": {
       "exit_code": 4,
-      "stdout": "verification/Protocol.dfy(153,4): Error: a postcondition could not be proved on this return path\nverification/Protocol.dfy(147,22): Related location: this is the postcondition that could not be proved\nDafny program verifier finished with 40 verified, 1 error\n",
+      "stdout": "verification/Protocol.dfy(206,4): Error: a postcondition could not be proved on this return path\nverification/Protocol.dfy(200,22): Related location: this is the postcondition that could not be proved\nDafny program verifier finished with 40 verified, 1 error\n",
       "stderr": "",
       "elapsed_seconds": 0.1,
       "launch_error": "missing"
@@ -78,7 +78,7 @@
     "name": "(170,4)",
     "record": {
       "exit_code": 4,
-      "stdout": "verification/Protocol.dfy(170,4): Error: a postcondition could not be proved on this return path\nverification/Protocol.dfy(147,22): Related location: this is the postcondition that could not be proved\nDafny program verifier finished with 40 verified, 1 error\n",
+      "stdout": "verification/Protocol.dfy(228,4): Error: a postcondition could not be proved on this return path\nverification/Protocol.dfy(200,22): Related location: this is the postcondition that could not be proved\nDafny program verifier finished with 40 verified, 1 error\n",
       "stderr": "",
       "elapsed_seconds": 0.1
     },
@@ -92,7 +92,7 @@
     "name": "Masking.dfy",
     "record": {
       "exit_code": 4,
-      "stdout": "verification/Masking.dfy(153,4): Error: a postcondition could not be proved on this return path\nverification/Masking.dfy(147,22): Related location: this is the postcondition that could not be proved\nDafny program verifier finished with 40 verified, 1 error\n",
+      "stdout": "verification/Masking.dfy(206,4): Error: a postcondition could not be proved on this return path\nverification/Masking.dfy(200,22): Related location: this is the postcondition that could not be proved\nDafny program verifier finished with 40 verified, 1 error\n",
       "stderr": "",
       "elapsed_seconds": 0.1
     },
@@ -106,7 +106,7 @@
     "name": "assertion might not hold",
     "record": {
       "exit_code": 4,
-      "stdout": "verification/Protocol.dfy(153,4): Error: assertion might not hold\nverification/Protocol.dfy(147,22): Related location: this is the postcondition that could not be proved\nDafny program verifier finished with 40 verified, 1 error\n",
+      "stdout": "verification/Protocol.dfy(206,4): Error: assertion might not hold\nverification/Protocol.dfy(200,22): Related location: this is the postcondition that could not be proved\nDafny program verifier finished with 40 verified, 1 error\n",
       "stderr": "",
       "elapsed_seconds": 0.1
     },
@@ -120,7 +120,7 @@
     "name": "2 errors",
     "record": {
       "exit_code": 4,
-      "stdout": "verification/Protocol.dfy(153,4): Error: a postcondition could not be proved on this return path\nverification/Protocol.dfy(147,22): Related location: this is the postcondition that could not be proved\nDafny program verifier finished with 40 verified, 2 errors\n",
+      "stdout": "verification/Protocol.dfy(206,4): Error: a postcondition could not be proved on this return path\nverification/Protocol.dfy(200,22): Related location: this is the postcondition that could not be proved\nDafny program verifier finished with 40 verified, 2 errors\n",
       "stderr": "",
       "elapsed_seconds": 0.1
     },
@@ -134,7 +134,7 @@
     "name": "1 error, 1 timed out",
     "record": {
       "exit_code": 4,
-      "stdout": "verification/Protocol.dfy(153,4): Error: a postcondition could not be proved on this return path\nverification/Protocol.dfy(147,22): Related location: this is the postcondition that could not be proved\nDafny program verifier finished with 40 verified, 1 error, 1 timed out\n",
+      "stdout": "verification/Protocol.dfy(206,4): Error: a postcondition could not be proved on this return path\nverification/Protocol.dfy(200,22): Related location: this is the postcondition that could not be proved\nDafny program verifier finished with 40 verified, 1 error, 1 timed out\n",
       "stderr": "",
       "elapsed_seconds": 0.1
     },
@@ -148,7 +148,7 @@
     "name": "extra-error",
     "record": {
       "exit_code": 4,
-      "stdout": "verification/Protocol.dfy(153,4): Error: a postcondition could not be proved on this return path\nverification/Protocol.dfy(147,22): Related location: this is the postcondition that could not be proved\nDafny program verifier finished with 40 verified, 1 error\n",
+      "stdout": "verification/Protocol.dfy(206,4): Error: a postcondition could not be proved on this return path\nverification/Protocol.dfy(200,22): Related location: this is the postcondition that could not be proved\nDafny program verifier finished with 40 verified, 1 error\n",
       "stderr": "Error: parser failed",
       "elapsed_seconds": 0.1
     },
@@ -162,7 +162,7 @@
     "name": "wrong-clause",
     "record": {
       "exit_code": 4,
-      "stdout": "verification/Protocol.dfy(153,4): Error: a postcondition could not be proved on this return path\nverification/Protocol.dfy(146,22): Related location: this is the postcondition that could not be proved\nDafny program verifier finished with 40 verified, 1 error\n",
+      "stdout": "verification/Protocol.dfy(206,4): Error: a postcondition could not be proved on this return path\nverification/Protocol.dfy(199,22): Related location: this is the postcondition that could not be proved\nDafny program verifier finished with 40 verified, 1 error\n",
       "stderr": "",
       "elapsed_seconds": 0.1
     },
@@ -229,7 +229,7 @@
     "record": {
       "exit_code": 4,
       "timed_out": false,
-      "stdout": "verification/Protocol.dfy(317,20): Error: Verification of 'ProtocolCore.Protocol.HeaderRoundTrip' timed out after 30 seconds.\nDafny program verifier finished with 573 verified, 0 errors, 1 time out\n",
+      "stdout": "verification/Protocol.dfy(389,20): Error: Verification of 'ProtocolCore.Protocol.HeaderRoundTrip' timed out after 30 seconds.\nDafny program verifier finished with 573 verified, 0 errors, 1 time out\n",
       "stderr": ""
     },
     "mutant": false,
@@ -243,7 +243,7 @@
     "record": {
       "exit_code": 4,
       "timed_out": false,
-      "stdout": "verification/Protocol.dfy(317,20): Error: Verification of 'ProtocolCore.Protocol.HeaderRoundTrip' timed out after 30 seconds.\nDafny program verifier finished with 573 verified, 0 errors, 1 time out\n",
+      "stdout": "verification/Protocol.dfy(389,20): Error: Verification of 'ProtocolCore.Protocol.HeaderRoundTrip' timed out after 30 seconds.\nDafny program verifier finished with 573 verified, 0 errors, 1 time out\n",
       "stderr": ""
     },
     "mutant": true,

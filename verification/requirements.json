@@ -1208,6 +1208,195 @@
         "No aggregate policy for simultaneous active subscriptions, arbitrary interleaving proof or unconditional connection progress.",
         "Caller-supplied sockets cannot reconnect. External connection work and finite callbacks remain trusted."
       ]
+    },
+    {
+      "id": "HEADER-001",
+      "intent": "A server frame header is accepted only with the minimal length encoding: marker 0-125 is the length, marker 126 carries a 16-bit length of 126-65535 and marker 127 a 64-bit length of at least 65536 with the most significant bit 0. The extended length is read in network byte order, the header is 2, 4 or 10 bytes, and the accepted length is at most the configured limit and 0x7fffffff.",
+      "origin": [
+        "https://www.rfc-editor.org/rfc/rfc6455.html#section-5.2",
+        "Library policy: the configured frame size limit and the 0x7fffffff array bound (section 10.4 asks for a limit and sets no value)"
+      ],
+      "contracts": [
+        {
+          "file": "verification/Protocol.dfy",
+          "symbol": "ProtocolCore.Protocol.DecodeHeader",
+          "clauses": [
+            "requires available as int <= extended.Length",
+            "ensures status <= 2",
+            "ensures headerSize == (if (second & 127) <= 125 then 2 else if (second & 127) == 126 then 4 else 10)",
+            "ensures status == 0 <==> PrefixValid(first, second) && available < headerSize - 2",
+            "ensures status == 2 ==> HeaderValid(first, second, length, limit) && available >= headerSize - 2",
+            "ensures PrefixValid(first, second) && available >= headerSize - 2 ==> length == (if (second & 127) <= 125 then (second & 127) as bv64 else Word(extended[..headerSize as int - 2])) && (status == 2 <==> HeaderValid(first, second, length, limit))"
+          ]
+        },
+        {
+          "file": "verification/Protocol.dfy",
+          "symbol": "ProtocolCore.Protocol.ReadLength",
+          "clauses": [
+            "requires count <= 8 && count as int <= bytes.Length",
+            "ensures value == Word(bytes[..count as int])"
+          ]
+        }
+      ],
+      "production_paths": [
+        {
+          "reference": {
+            "file": "src/main/WebsocketClientLite/Helper/DataframeParsing.cs",
+            "symbol": "WebsocketClientLite.Helper.DataframeParsing.ReadDataframeAsync"
+          },
+          "responsibility": "Pass the two prefix bytes, exactly the extended-length bytes read after them with their count, and the configured limit to Admit, which calls DecodeHeader; throw unless the status is 2."
+        }
+      ],
+      "assumptions": [
+        "HEADER-ADAPTER"
+      ],
+      "obligations": [
+        {
+          "id": "HEADER-001-PROOF",
+          "kind": "proof",
+          "delivery": "existing",
+          "description": "Verify the mapped contracts using the pinned toolchain and generated-code check. Frame conditions and preconditions remain unchanged. DecodeHeader sets its status by calling HeaderValid, the specification, so its status clause is close to true by construction; the proof's own content is the length decoding (ReadLength, Word), the header size and the need-more status.",
+          "references": [
+            {
+              "file": "verification/Protocol.dfy",
+              "symbol": "ProtocolCore.Protocol.DecodeHeader"
+            },
+            {
+              "file": "verification/Protocol.dfy",
+              "symbol": "ProtocolCore.Protocol.ReadLength"
+            }
+          ]
+        },
+        {
+          "id": "HEADER-001-TEST",
+          "kind": "test",
+          "delivery": "existing",
+          "description": "Require these independent byte, adapter or loopback tests on every supported library target; tests do not prove all inputs. The non-minimal length rows of RejectsMalformedFrames were replayed on 2026-11-11, failing on a779602 and passing on the current source (docs/header-length-validation.md).",
+          "references": [
+            {
+              "file": "src/main/WebsocketClientLiteTest/PayloadParsingTests.cs",
+              "symbol": "WebsocketClientLiteTest.PayloadParsingTests.RejectsMalformedFrames"
+            },
+            {
+              "file": "src/main/WebsocketClientLiteTest/PayloadParsingTests.cs",
+              "symbol": "WebsocketClientLiteTest.PayloadParsingTests.ParsesCanonicalServerLengths"
+            },
+            {
+              "file": "src/main/WebsocketClientLiteTest/ParserRetentionTests.cs",
+              "symbol": "WebsocketClientLiteTest.ParserRetentionTests.HugeLengthsRejectOnHeaderOnly"
+            },
+            {
+              "file": "src/main/WebsocketClientLiteTest/ProtocolCoreTests.cs",
+              "symbol": "WebsocketClientLiteTest.ProtocolCoreTests.PartialHeadersReturnNeedMoreWithoutReadingUnavailableBytes"
+            }
+          ]
+        },
+        {
+          "id": "HEADER-001-MUTATION",
+          "kind": "mutation",
+          "delivery": "existing",
+          "description": "Run the exact payload mutations with scripts/pdd.sh mutations. Only the catalogued semantic failure counts; unrelated assertions, syntax errors, survival and timeout fail the experiment.",
+          "references": []
+        },
+        {
+          "id": "HEADER-001-REVIEW",
+          "kind": "review",
+          "delivery": "existing",
+          "description": "Review the corresponding decision and boundaries in verification/close-intent-review.md against the PR revision. A machine result does not record acceptance.",
+          "references": []
+        }
+      ],
+      "exclusions": [
+        "HeaderValid is the specification and is not a mutation target; mutants replace DecodeHeader's call to it with a weakened inline check.",
+        "The RSV, opcode, MASK and control-frame rules of PrefixValid and HeaderValid are proved by the same contract but are not the subject of this requirement.",
+        "No proof of the stream reader, end-of-stream or cancellation handling, or the conversion of MaxFrameSize to the limit.",
+        "No proof of generated C#, compiler/runtime correctness, successful allocation, concurrent buffer access or complete RFC conformance."
+      ]
+    },
+    {
+      "id": "HEADER-002",
+      "intent": "A server frame is admitted or rejected from its header and the parser's message state alone, before any payload byte is read or allocated. An admitted frame has a valid header and a message size within the configured limit, and a rejected frame leaves the message state and total unchanged.",
+      "origin": [
+        "Library policy: admission from the header before any payload read or allocation (section 10.4 asks an implementation to protect itself against exceeding its limits)",
+        "https://www.rfc-editor.org/rfc/rfc6455.html#section-5.2",
+        "https://www.rfc-editor.org/rfc/rfc6455.html#section-5.4",
+        "https://www.rfc-editor.org/rfc/rfc6455.html#section-5.5"
+      ],
+      "contracts": [
+        {
+          "file": "verification/Protocol.dfy",
+          "symbol": "ProtocolCore.Protocol.Admit",
+          "clauses": [
+            "requires available as int <= extended.Length",
+            "requires state == 0 || state == 1 || state == 2 || state == 8",
+            "requires total <= limit",
+            "ensures status <= 2",
+            "ensures status != 2 ==> next == state && size == total && !emit",
+            "ensures status == 2 ==> HeaderValid(first, second, length, limit as bv64) && size <= limit"
+          ]
+        }
+      ],
+      "production_paths": [
+        {
+          "reference": {
+            "file": "src/main/WebsocketClientLite/Helper/DataframeParsing.cs",
+            "symbol": "WebsocketClientLite.Helper.DataframeParsing.ReadDataframeAsync"
+          },
+          "responsibility": "Call Admit after the prefix and again after the extended length, read more header bytes only on status 0, and read or allocate the payload only on status 2."
+        },
+        {
+          "reference": {
+            "file": "src/main/WebsocketClientLite/Service/WebsocketParserHandler.cs",
+            "symbol": "WebsocketClientLite.Service.WebsocketParserHandler.DataframeObservable"
+          },
+          "responsibility": "Supply the message state and retained total from the previous Step result."
+        }
+      ],
+      "assumptions": [
+        "HEADER-ADAPTER"
+      ],
+      "obligations": [
+        {
+          "id": "HEADER-002-PROOF",
+          "kind": "proof",
+          "delivery": "existing",
+          "description": "Verify the mapped contracts using the pinned toolchain and generated-code check. Frame conditions and preconditions remain unchanged.",
+          "references": [
+            {
+              "file": "verification/Protocol.dfy",
+              "symbol": "ProtocolCore.Protocol.Admit"
+            }
+          ]
+        },
+        {
+          "id": "HEADER-002-TEST",
+          "kind": "test",
+          "delivery": "existing",
+          "description": "Require these independent byte, adapter or loopback tests on every supported library target; tests do not prove all inputs.",
+          "references": [
+            {
+              "file": "src/main/WebsocketClientLiteTest/ParserRetentionTests.cs",
+              "symbol": "WebsocketClientLiteTest.ParserRetentionTests.HugeLengthsRejectOnHeaderOnly"
+            },
+            {
+              "file": "src/main/WebsocketClientLiteTest/PayloadParsingTests.cs",
+              "symbol": "WebsocketClientLiteTest.PayloadParsingTests.RejectsSequenceBeforeAttemptingPayloadRead"
+            }
+          ]
+        },
+        {
+          "id": "HEADER-002-REVIEW",
+          "kind": "review",
+          "delivery": "existing",
+          "description": "Review the corresponding decision and boundaries in verification/close-intent-review.md against the PR revision. A machine result does not record acceptance.",
+          "references": []
+        }
+      ],
+      "exclusions": [
+        "No Dafny mutation obligation: Admit is not in the mutation scopes, and its header part is HEADER-001's DecodeHeader.",
+        "The proof covers the decision, not the order of reads in C#; that order is tested only for the selected rows.",
+        "No proof of generated C#, compiler/runtime correctness, successful allocation, concurrent buffer access or complete RFC conformance."
+      ]
     }
   ],
   "boundaries_file": "verification/boundaries.json"

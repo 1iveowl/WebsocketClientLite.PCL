@@ -91,8 +91,8 @@ increment D. Controlled asynchronous Close schedules belong to increment E.
 
 ## F: reassembly and masking
 
-Default `mutations` runs both catalogs (15 edits); `--scope close` and
-`--scope payload` select five and ten respectively. CI retains the full suite as
+Default `mutations` runs both catalogs (17 edits); `--scope close` and
+`--scope payload` select five and twelve respectively. CI retains the full suite as
 a PR gate. Catalog validation requires every selected mutation obligation and
 rejects mismatched symbols, contract clauses, duplicate IDs and unsupported scopes.
 The default artifact directory retains its historical `close-mutations` name.
@@ -104,6 +104,7 @@ The default artifact directory retains its historical `close-mutations` name.
 | MASK-001 | XOR replaced by OR; write into key | Processed-prefix invariant; `modifies data` frame |
 | MASK-002 | Tail XOR replaced by OR; corrupt a completed bulk byte; write before slice | Processed-prefix and outside-slice invariants |
 | MASK-003 | XOR replaced by OR; write before slice | Processed-prefix and outside-slice invariants |
+| HEADER-001 | Accept a 16-bit length below 126; accept a 64-bit length below 65536 | DecodeHeader `status == 2 ==> HeaderValid(...)` postcondition |
 
 Invariant entries include `contract_clause` to associate an exact loop invariant
 with the public guarantee it supports. Only pinned loop-maintenance errors at
@@ -135,3 +136,23 @@ invariant failed, but a separate quantified proof timed out after 60 seconds
 That result is inconclusive, not detected. The final catalog instead corrupts a
 completed bulk byte and requires the same exact processed-prefix invariant
 failure. No budget or classifier relaxation hides the failed experiment.
+
+## Header mutants (2026-11-11)
+
+The two `HEADER-001` entries in `payload.json` replace DecodeHeader's call to
+`HeaderValid`, the specification, with a weakened inline copy of the check.
+`HeaderValid` itself is not a mutation target. Dafny reports one error for each:
+the postcondition `ensures status == 2 ==> HeaderValid(...) && available >= headerSize - 2`,
+with a second related location, "this proposition could not be proved", at the
+violated conjunct inside `HeaderValid`. The postcondition classifier accepts that
+second location only inside the body of a predicate named in the target clause.
+Every error still needs its own postcondition location. The `status == 2 <==>
+HeaderValid(...)` clause is an allowed companion; it was not reported.
+
+A first run named that biconditional as the target and was inconclusive. It is
+kept in `docs/evidence/header-traceability/mutations`. The owner then decided to
+retarget the mutants and extend the classifier
+(`docs/evidence/header-traceability/mutations-2`). In that run the header
+mutants took 61.2 and 85.2 seconds against the 90-second mutant budget, while
+the others took about 9 seconds. The budgets are unchanged; an exhausted budget
+stays inconclusive.
