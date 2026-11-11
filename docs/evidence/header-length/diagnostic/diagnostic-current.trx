@@ -1,0 +1,50 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="7e47ed10-3874-45ca-9ac6-f0d0844ebfd9" name="@a920b7ae3df2 2026-11-11 13:09:13" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-11-11T13:09:13.0365555+00:00" queuing="2026-11-11T13:09:13.0365556+00:00" start="2026-11-11T13:09:12.6638553+00:00" finish="2026-11-11T13:09:13.0403901+00:00" />
+  <TestSettings name="default" id="e94b447e-680b-4411-b86e-6cfe820aa596">
+    <Deployment runDeploymentRoot="_a920b7ae3df2_2026-11-11_13_09_13" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="c60f2161-23b0-4dcf-a2be-4582acd27954" testId="cdc43ce4-c035-af57-7f92-e144b0927678" testName="WebsocketClientLiteTest.HeaderLengthDiagnostic.Record(name: &quot;16-bit field carrying 125&quot;, header: [129, 126, 0, 125], announced: 125)" computerName="a920b7ae3df2" duration="00:00:00.0002706" startTime="2026-11-11T13:09:12.9851150+00:00" endTime="2026-11-11T13:09:12.9851738+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="c60f2161-23b0-4dcf-a2be-4582acd27954">
+      <Output>
+        <StdOut>16-bit field carrying 125; payload appended=False; total bytes=4; threw WebsocketClientLiteException: Protocol error: invalid server frame header/fragmentation sequence or payload exceeds the configured maximum.
+16-bit field carrying 125; payload appended=True; total bytes=129; threw WebsocketClientLiteException: Protocol error: invalid server frame header/fragmentation sequence or payload exceeds the configured maximum.</StdOut>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="63125e88-6253-4337-a1ff-262d724d99be" testId="0bcbe9a6-4a9a-0013-3d7d-5d90a5c35fdf" testName="WebsocketClientLiteTest.HeaderLengthDiagnostic.Record(name: &quot;64-bit field carrying 65535&quot;, header: [129, 127, 0, 0, 0, ···], announced: 65535)" computerName="a920b7ae3df2" duration="00:00:00.0047357" startTime="2026-11-11T13:09:12.9723973+00:00" endTime="2026-11-11T13:09:12.9804045+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="63125e88-6253-4337-a1ff-262d724d99be">
+      <Output>
+        <StdOut>64-bit field carrying 65535; payload appended=False; total bytes=10; threw WebsocketClientLiteException: Protocol error: invalid server frame header/fragmentation sequence or payload exceeds the configured maximum.
+64-bit field carrying 65535; payload appended=True; total bytes=65545; threw WebsocketClientLiteException: Protocol error: invalid server frame header/fragmentation sequence or payload exceeds the configured maximum.</StdOut>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="WebsocketClientLiteTest.HeaderLengthDiagnostic.Record(name: &quot;64-bit field carrying 65535&quot;, header: [129, 127, 0, 0, 0, ···], announced: 65535)" storage="/tmp/claude-1000/-workspaces-websocketclientlite-pcl/e85ac318-b810-4e30-affa-a35c2c77090f/scratchpad/replay/diag-current/src/main/websocketclientlitetest/bin/release/net10.0/websocketclientlitetest.dll" id="0bcbe9a6-4a9a-0013-3d7d-5d90a5c35fdf">
+      <Execution id="63125e88-6253-4337-a1ff-262d724d99be" />
+      <TestMethod codeBase="/tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/e85ac318-b810-4e30-affa-a35c2c77090f/scratchpad/replay/diag-current/src/main/WebsocketClientLiteTest/bin/Release/net10.0/WebsocketClientLiteTest.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="WebsocketClientLiteTest.HeaderLengthDiagnostic" name="Record" />
+    </UnitTest>
+    <UnitTest name="WebsocketClientLiteTest.HeaderLengthDiagnostic.Record(name: &quot;16-bit field carrying 125&quot;, header: [129, 126, 0, 125], announced: 125)" storage="/tmp/claude-1000/-workspaces-websocketclientlite-pcl/e85ac318-b810-4e30-affa-a35c2c77090f/scratchpad/replay/diag-current/src/main/websocketclientlitetest/bin/release/net10.0/websocketclientlitetest.dll" id="cdc43ce4-c035-af57-7f92-e144b0927678">
+      <Execution id="c60f2161-23b0-4dcf-a2be-4582acd27954" />
+      <TestMethod codeBase="/tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/e85ac318-b810-4e30-affa-a35c2c77090f/scratchpad/replay/diag-current/src/main/WebsocketClientLiteTest/bin/Release/net10.0/WebsocketClientLiteTest.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="WebsocketClientLiteTest.HeaderLengthDiagnostic" name="Record" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="cdc43ce4-c035-af57-7f92-e144b0927678" executionId="c60f2161-23b0-4dcf-a2be-4582acd27954" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="0bcbe9a6-4a9a-0013-3d7d-5d90a5c35fdf" executionId="63125e88-6253-4337-a1ff-262d724d99be" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Completed">
+    <Counters total="2" executed="2" passed="2" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v4.0.1+0f7d528729 (64-bit .NET 10.0.14)
+[xUnit.net 00:00:00.05]   Discovering: WebsocketClientLiteTest
+[xUnit.net 00:00:00.09]   Discovered:  WebsocketClientLiteTest
+[xUnit.net 00:00:00.11]   Starting:    WebsocketClientLiteTest
+[xUnit.net 00:00:00.13]   Finished:    WebsocketClientLiteTest
+</StdOut>
+    </Output>
+  </ResultSummary>
+</TestRun>

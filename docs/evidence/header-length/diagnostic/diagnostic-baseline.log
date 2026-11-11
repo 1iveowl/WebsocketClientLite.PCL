@@ -1,0 +1,33 @@
+  Determining projects to restore...
+  Restored /tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/e85ac318-b810-4e30-affa-a35c2c77090f/scratchpad/replay/diag-baseline/src/interface/IWebsocketClientLite/IWebsocketClientLite.csproj (in 110 ms).
+  Restored /tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/e85ac318-b810-4e30-affa-a35c2c77090f/scratchpad/replay/diag-baseline/src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj (in 110 ms).
+  Restored /tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/e85ac318-b810-4e30-affa-a35c2c77090f/scratchpad/replay/diag-baseline/src/main/WebsocketClientLite/WebsocketClientLite.csproj (in 111 ms).
+  IWebsocketClientLite -> /tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/e85ac318-b810-4e30-affa-a35c2c77090f/scratchpad/replay/diag-baseline/src/interface/IWebsocketClientLite/bin/Release/netstandard2.0/IWebsocketClientLite.dll
+  WebsocketClientLite -> /tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/e85ac318-b810-4e30-affa-a35c2c77090f/scratchpad/replay/diag-baseline/src/main/WebsocketClientLite/bin/Release/net10.0/WebsocketClientLite.dll
+  WebsocketClientLiteTest -> /tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/e85ac318-b810-4e30-affa-a35c2c77090f/scratchpad/replay/diag-baseline/src/main/WebsocketClientLiteTest/bin/Release/net10.0/WebsocketClientLiteTest.dll
+Test run for /tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/e85ac318-b810-4e30-affa-a35c2c77090f/scratchpad/replay/diag-baseline/src/main/WebsocketClientLiteTest/bin/Release/net10.0/WebsocketClientLiteTest.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+/tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/e85ac318-b810-4e30-affa-a35c2c77090f/scratchpad/replay/diag-baseline/src/main/WebsocketClientLiteTest/bin/Release/net10.0/WebsocketClientLiteTest.dll
+[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v4.0.1+0f7d528729 (64-bit .NET 10.0.14)
+[xUnit.net 00:00:00.04]   Discovering: WebsocketClientLiteTest
+[xUnit.net 00:00:00.08]   Discovered:  WebsocketClientLiteTest
+[xUnit.net 00:00:00.09]   Starting:    WebsocketClientLiteTest
+[xUnit.net 00:00:00.12]   Finished:    WebsocketClientLiteTest
+  Passed WebsocketClientLiteTest.HeaderLengthDiagnostic.Record(name: "64-bit field carrying 65535", header: [129, 127, 0, 0, 0, ···], announced: 65535) [5 ms]
+  Standard Output Messages:
+ 64-bit field carrying 65535; payload appended=False; total bytes=10; threw WebsocketClientLiteException: Websocket connection aborted unexpectedly. Check connection and socket security version/TLS version).
+ 64-bit field carrying 65535; payload appended=True; total bytes=65545; ACCEPTED: Length=65535, Opcode=Text, FIN=True, payload bytes=65535
+
+
+  Passed WebsocketClientLiteTest.HeaderLengthDiagnostic.Record(name: "16-bit field carrying 125", header: [129, 126, 0, 125], announced: 125) [< 1 ms]
+  Standard Output Messages:
+ 16-bit field carrying 125; payload appended=False; total bytes=4; threw WebsocketClientLiteException: Websocket connection aborted unexpectedly. Check connection and socket security version/TLS version).
+ 16-bit field carrying 125; payload appended=True; total bytes=129; ACCEPTED: Length=125, Opcode=Text, FIN=True, payload bytes=125
+
+
+Results File: /tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/e85ac318-b810-4e30-affa-a35c2c77090f/scratchpad/replay/evidence/diagnostic-baseline.trx
+
+Test Run Successful.
+Total tests: 2
+     Passed: 2
+ Total time: 0.3409 Seconds

@@ -1,0 +1,58 @@
+[
+  {
+    "run": "replay-1/baseline",
+    "command": "dotnet test src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj -c Release --filter FullyQualifiedName~PayloadParsingTests.RejectsMalformedFrames --results-directory <evidence> --logger trx;LogFileName=baseline.trx --logger console;verbosity=normal",
+    "log": "replay-1/baseline.log",
+    "trx": "replay-1/baseline.trx",
+    "exit": "exit=0 seconds=",
+    "outcome": "2 passed, 0 failed. The expected failure did not occur."
+  },
+  {
+    "run": "replay-1/current",
+    "command": "dotnet test src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj -c Release --filter FullyQualifiedName~PayloadParsingTests.RejectsMalformedFrames --results-directory <evidence> --logger trx;LogFileName=current.trx --logger console;verbosity=normal",
+    "log": "replay-1/current.log",
+    "trx": "replay-1/current.trx",
+    "exit": "exit=0 ms=3527",
+    "outcome": "8 passed."
+  },
+  {
+    "run": "diagnostic/diagnostic-baseline",
+    "command": "dotnet test src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj -c Release --filter FullyQualifiedName~HeaderLengthDiagnostic --results-directory <evidence> --logger trx;LogFileName=diagnostic-baseline.trx --logger console;verbosity=detailed",
+    "log": "diagnostic/diagnostic-baseline.log",
+    "trx": "diagnostic/diagnostic-baseline.trx",
+    "exit": "== baseline exit=0",
+    "outcome": "Records outcomes; asserts nothing."
+  },
+  {
+    "run": "diagnostic/diagnostic-current",
+    "command": "dotnet test src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj -c Release --filter FullyQualifiedName~HeaderLengthDiagnostic --results-directory <evidence> --logger trx;LogFileName=diagnostic-current.trx --logger console;verbosity=detailed",
+    "log": "diagnostic/diagnostic-current.log",
+    "trx": "diagnostic/diagnostic-current.trx",
+    "exit": "== current exit=0",
+    "outcome": "Records outcomes; asserts nothing."
+  },
+  {
+    "run": "replay-2/old-original",
+    "command": "dotnet test src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj -c Release --filter FullyQualifiedName~PayloadParsingTests.RejectsMalformedFrames --results-directory <evidence> --logger trx;LogFileName=old-original.trx --logger console;verbosity=normal",
+    "log": "replay-2/old-original.log",
+    "trx": "replay-2/old-original.trx",
+    "exit": "exit=1 ms=2245",
+    "outcome": "5 failed, 3 passed (both non-minimal rows and the high-bit row pass)."
+  },
+  {
+    "run": "replay-2/old-strengthened",
+    "command": "dotnet test src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj -c Release --filter FullyQualifiedName~PayloadParsingTests.RejectsMalformedFrames --results-directory <evidence> --logger trx;LogFileName=old-strengthened.trx --logger console;verbosity=normal",
+    "log": "replay-2/old-strengthened.log",
+    "trx": "replay-2/old-strengthened.trx",
+    "exit": "exit=1 ms=2188",
+    "outcome": "7 failed, 1 passed (the high-bit row, rejected by the old size limit)."
+  },
+  {
+    "run": "replay-2/current-strengthened",
+    "command": "dotnet test src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj -c Release --filter FullyQualifiedName~PayloadParsingTests.RejectsMalformedFrames --results-directory <evidence> --logger trx;LogFileName=current-strengthened.trx --logger console;verbosity=normal",
+    "log": "replay-2/current-strengthened.log",
+    "trx": "replay-2/current-strengthened.trx",
+    "exit": "exit=0 ms=2335",
+    "outcome": "8 passed."
+  }
+]

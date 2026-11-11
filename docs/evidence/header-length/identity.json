@@ -1,0 +1,74 @@
+{
+  "recorded": "2026-11-11. A replay made on this date, not a record from 2026-11-07.",
+  "host": "Linux x86-64 Debian dev container, kernel 7.2.11+deb13-amd64, .NET SDK 10.0.403, test host net10.0, Release",
+  "sources": {
+    "a779602eca143258bc1047a3f7c7faac35b9d7dd": "Merge of release 9.2.0. Equal to c482b0c^ (c482b0c has a single parent, a779602), so the two candidate baselines are one commit.",
+    "6eaa31e": "origin/releases/10.2.0.0 at the start of this work. src/, verification/ and scripts/ are identical to 30cf44a (origin/main)."
+  },
+  "copies": "Each copy is `git archive <commit> | tar -x` into a separate scratch directory, never the working checkout. In every copy only PayloadParsingTests.cs differs from its commit (plus HeaderLengthDiagnostic.cs in the diagnostic copies). Hashes below are of the files as built.",
+  "runs": {
+    "replay-1/baseline": {
+      "commit": "a779602",
+      "test": "two non-minimal rows of RejectsMalformedFrames as of 6eaa31e, verbatim (replay-1/replay-test.diff)",
+      "sha256": {
+        "src/main/WebsocketClientLite/Helper/DataframeParsing.cs": "2c518f5ece505a895698e42d7d7ecd9b4eccc9e28ee15f6fccf7b1da7c51ef38",
+        "src/main/WebsocketClientLite/Service/TcpConnectionService.cs": "d32b88b1e5364257c8c3b0c32616a8f110b0839d9d07874966d06b6dcb6c40c8",
+        "src/main/WebsocketClientLiteTest/PayloadParsingTests.cs": "e1886193da2f5fcfc9e0f98df933d922b4d401b26963918f7e018ba441a2676a"
+      }
+    },
+    "replay-1/current": {
+      "commit": "6eaa31e",
+      "test": "unchanged",
+      "sha256": {
+        "src/main/WebsocketClientLite/Helper/DataframeParsing.cs": "313ce2d74bf739bdf08a968b8096da3ff6f547e8bb60b1c3b68c8f19c8462f1b",
+        "src/main/WebsocketClientLite/Service/TcpConnectionService.cs": "b794ae5567f48d8b7541e525d9addb93ff5d20721e4630890270db9f7f939b31",
+        "src/main/WebsocketClientLiteTest/PayloadParsingTests.cs": "cc51e5ea8c0e3c48a60ba67837aec88b6f532c8b126ee5aec8a94e7f1728e501"
+      }
+    },
+    "diagnostic/baseline": {
+      "commit": "a779602",
+      "test": "HeaderLengthDiagnostic.cs added",
+      "sha256": {
+        "src/main/WebsocketClientLite/Helper/DataframeParsing.cs": "2c518f5ece505a895698e42d7d7ecd9b4eccc9e28ee15f6fccf7b1da7c51ef38",
+        "src/main/WebsocketClientLite/Service/TcpConnectionService.cs": "d32b88b1e5364257c8c3b0c32616a8f110b0839d9d07874966d06b6dcb6c40c8",
+        "src/main/WebsocketClientLiteTest/PayloadParsingTests.cs": "5799340e18a2fbc957f77265e3ea96d05b465e9a21be06e739965ae193fbc07b"
+      }
+    },
+    "diagnostic/current": {
+      "commit": "6eaa31e",
+      "test": "HeaderLengthDiagnostic.cs added",
+      "sha256": {
+        "src/main/WebsocketClientLite/Helper/DataframeParsing.cs": "313ce2d74bf739bdf08a968b8096da3ff6f547e8bb60b1c3b68c8f19c8462f1b",
+        "src/main/WebsocketClientLite/Service/TcpConnectionService.cs": "b794ae5567f48d8b7541e525d9addb93ff5d20721e4630890270db9f7f939b31",
+        "src/main/WebsocketClientLiteTest/PayloadParsingTests.cs": "cc51e5ea8c0e3c48a60ba67837aec88b6f532c8b126ee5aec8a94e7f1728e501"
+      }
+    },
+    "replay-2/old-original": {
+      "commit": "a779602",
+      "test": "all eight RejectsMalformedFrames rows, test body as of 6eaa31e",
+      "sha256": {
+        "src/main/WebsocketClientLite/Helper/DataframeParsing.cs": "2c518f5ece505a895698e42d7d7ecd9b4eccc9e28ee15f6fccf7b1da7c51ef38",
+        "src/main/WebsocketClientLite/Service/TcpConnectionService.cs": "d32b88b1e5364257c8c3b0c32616a8f110b0839d9d07874966d06b6dcb6c40c8",
+        "src/main/WebsocketClientLiteTest/PayloadParsingTests.cs": "016b4204cdaf7a76595fb88881d71f30761c8a43f9b3af4135b37ad62e1be719"
+      }
+    },
+    "replay-2/old-strengthened": {
+      "commit": "a779602",
+      "test": "all eight rows, strengthened body (replay-2/strengthening.diff)",
+      "sha256": {
+        "src/main/WebsocketClientLite/Helper/DataframeParsing.cs": "2c518f5ece505a895698e42d7d7ecd9b4eccc9e28ee15f6fccf7b1da7c51ef38",
+        "src/main/WebsocketClientLite/Service/TcpConnectionService.cs": "d32b88b1e5364257c8c3b0c32616a8f110b0839d9d07874966d06b6dcb6c40c8",
+        "src/main/WebsocketClientLiteTest/PayloadParsingTests.cs": "89b7db8d49f00bda488ac69e6281586d503319dab3b79e2890e982b77d8b25e3"
+      }
+    },
+    "replay-2/current-strengthened": {
+      "commit": "6eaa31e",
+      "test": "strengthened body, as committed on this branch",
+      "sha256": {
+        "src/main/WebsocketClientLite/Helper/DataframeParsing.cs": "313ce2d74bf739bdf08a968b8096da3ff6f547e8bb60b1c3b68c8f19c8462f1b",
+        "src/main/WebsocketClientLite/Service/TcpConnectionService.cs": "b794ae5567f48d8b7541e525d9addb93ff5d20721e4630890270db9f7f939b31",
+        "src/main/WebsocketClientLiteTest/PayloadParsingTests.cs": "40b4b1caa47d2b4fe5d0a326bab32f08aade0266af15e7ed87e4434cb1f07fcb"
+      }
+    }
+  }
+}

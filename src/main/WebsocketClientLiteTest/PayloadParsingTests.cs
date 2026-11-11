@@ -221,8 +221,14 @@ public class PayloadParsingTests
     [InlineData(new byte[] { 0x88, 1, 0 })]
     [InlineData(new byte[] { 0x88, 2, 3, 237 })] // forbidden 1005
     [InlineData(new byte[] { 0x88, 3, 3, 232, 255 })] // invalid reason UTF-8
-    public async Task RejectsMalformedFrames(byte[] bytes) =>
-        await Assert.ThrowsAsync<WebsocketClientLiteException>(() => Parse(bytes));
+    public async Task RejectsMalformedFrames(byte[] bytes)
+    {
+        var error = await Assert.ThrowsAsync<WebsocketClientLiteException>(() => Parse(bytes));
+        // The non-minimal length rows announce a payload they do not carry. A parser
+        // that accepts the header then fails on EOF with the same exception type, so
+        // EOF must not count as rejection: the header itself has to be refused.
+        Assert.DoesNotContain("aborted unexpectedly", error.Message, StringComparison.Ordinal);
+    }
 
     [Theory]
     [InlineData(new byte[] { 0x80, 0 })] // orphan continuation
