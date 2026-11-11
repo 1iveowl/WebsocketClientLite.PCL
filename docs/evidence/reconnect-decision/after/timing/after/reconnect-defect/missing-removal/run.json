@@ -1,0 +1,21 @@
+{
+  "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net10.0",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.TerminalCallbackSuccessorSurvivesOldCleanup|FullyQualifiedName=WebsocketClientLiteTest.RuntimeEvidenceTests.RecordHostRuntime",
+    "--logger",
+    "trx;LogFileName=results.trx",
+    "--results-directory",
+    "/tmp/s6-scratch/timing-out/after/reconnect-defect/missing-removal"
+  ],
+  "started_at": "2026-11-11T22:33:33.9830243+00:00",
+  "finished_at": "2026-11-11T22:33:38.7330994+00:00",
+  "status": "failed",
+  "exit_code": 1,
+  "log": "output.log"
+}

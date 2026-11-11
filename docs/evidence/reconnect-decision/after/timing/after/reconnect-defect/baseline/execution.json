@@ -1,0 +1,26 @@
+{
+  "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net10.0",
+    "--filter",
+    "FullyQualifiedName~WebsocketClientLiteTest.ReconnectTests|FullyQualifiedName=WebsocketClientLiteTest.RuntimeEvidenceTests.RecordHostRuntime",
+    "--logger",
+    "trx;LogFileName=results.trx",
+    "--results-directory",
+    "/tmp/s6-scratch/timing-out/after/reconnect-defect/baseline"
+  ],
+  "budget_seconds": 180,
+  "started_at": "2026-11-11T22:33:22.7616537+00:00",
+  "exit_code": 0,
+  "timed_out": false,
+  "interrupted": false,
+  "cleanup_incomplete": false,
+  "cleanup_seconds": 0,
+  "elapsed_seconds": 11.214,
+  "stdout": "  Determining projects to restore...\n  Restored /tmp/pdd-83388c07c330488591559d9a982bbdc3/src/main/WebsocketClientLite/WebsocketClientLite.csproj (in 134 ms).\n  Restored /tmp/pdd-83388c07c330488591559d9a982bbdc3/src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj (in 132 ms).\n  Restored /tmp/pdd-83388c07c330488591559d9a982bbdc3/src/interface/IWebsocketClientLite/IWebsocketClientLite.csproj (in 132 ms).\n  IWebsocketClientLite -> /tmp/pdd-83388c07c330488591559d9a982bbdc3/src/interface/IWebsocketClientLite/bin/Release/netstandard2.0/IWebsocketClientLite.dll\n  WebsocketClientLite -> /tmp/pdd-83388c07c330488591559d9a982bbdc3/src/main/WebsocketClientLite/bin/Release/net10.0/WebsocketClientLite.dll\n  WebsocketClientLiteTest -> /tmp/pdd-83388c07c330488591559d9a982bbdc3/src/main/WebsocketClientLiteTest/bin/Release/net10.0/WebsocketClientLiteTest.dll\nTest run for /tmp/pdd-83388c07c330488591559d9a982bbdc3/src/main/WebsocketClientLiteTest/bin/Release/net10.0/WebsocketClientLiteTest.dll (.NETCoreApp,Version=v10.0)\nA total of 1 test files matched the specified pattern.\nResults File: /tmp/s6-scratch/timing-out/after/reconnect-defect/baseline/results.trx\n\nPassed!  - Failed:     0, Passed:    10, Skipped:     0, Total:    10, Duration: 9 s - WebsocketClientLiteTest.dll (net10.0)\n",
+  "stderr": ""
+}

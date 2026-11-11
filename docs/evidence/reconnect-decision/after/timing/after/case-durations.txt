@@ -1,0 +1,191 @@
+plain-net10.0-repeat-1.trx: 36 results, outcomes=['Passed'], sum_case_seconds=0.012, max_case_seconds=0.006
+    0.000  Passed   WebsocketClientLiteTest.ReconnectDecisionTests.DisposedClientRejectsAdmissionAsEvents(asynchronous: False)
+    0.002  Passed   WebsocketClientLiteTest.ReconnectDecisionTests.DisposedClientRejectsAdmissionAsEvents(asynchronous: True)
+    0.000  Passed   WebsocketClientLiteTest.ReconnectDecisionTests.EveryStateAndEvent(row: 1, lifecycleEvent: "Subscribe", state: "O0", next: "Og", effect: "Admit")
+    0.000  Passed   WebsocketClientLiteTest.ReconnectDecisionTests.EveryStateAndEvent(row: 10, lifecycleEvent: "Register", state: "D0", next: "D0", effect: "Reject")
+    0.000  Passed   WebsocketClientLiteTest.ReconnectDecisionTests.EveryStateAndEvent(row: 11, lifecycleEvent: "Register", state: "Dg", next: "Dg", effect: "Reject")
+    0.000  Passed   WebsocketClientLiteTest.ReconnectDecisionTests.EveryStateAndEvent(row: 12, lifecycleEvent: "Register", state: "Dx", next: "Dx", effect: "Reject")
+    0.000  Passed   WebsocketClientLiteTest.ReconnectDecisionTests.EveryStateAndEvent(row: 13, lifecycleEvent: "Connect", state: "O0", next: "O0", effect: "Install")
+    0.000  Passed   WebsocketClientLiteTest.ReconnectDecisionTests.EveryStateAndEvent(row: 14, lifecycleEvent: "Connect", state: "Og", next: "Og", effect: "Install")
+    0.000  Passed   WebsocketClientLiteTest.ReconnectDecisionTests.EveryStateAndEvent(row: 15, lifecycleEvent: "Connect", state: "Ox", next: "Ox", effect: "Install")
+    0.000  Passed   WebsocketClientLiteTest.ReconnectDecisionTests.EveryStateAndEvent(row: 16, lifecycleEvent: "Connect", state: "D0", next: "D0", effect: "Reject")
+    0.004  Passed   WebsocketClientLiteTest.ReconnectDecisionTests.EveryStateAndEvent(row: 17, lifecycleEvent: "Connect", state: "Dg", next: "Dg", effect: "Reject")
+    0.000  Passed   WebsocketClientLiteTest.ReconnectDecisionTests.EveryStateAndEvent(row: 18, lifecycleEvent: "Connect", state: "Dx", next: "Dx", effect: "Reject")
+    0.000  Passed   WebsocketClientLiteTest.ReconnectDecisionTests.EveryStateAndEvent(row: 19, lifecycleEvent: "Terminate", state: "O0", next: "O0", effect: "Nothing")
+    0.000  Passed   WebsocketClientLiteTest.ReconnectDecisionTests.EveryStateAndEvent(row: 2, lifecycleEvent: "Subscribe", state: "Og", next: "Og", effect: "Admit")
+    0.000  Passed   WebsocketClientLiteTest.ReconnectDecisionTests.EveryStateAndEvent(row: 20, lifecycleEvent: "Terminate", state: "Og", next: "Og", effect: "NotifyNotConnected")
+    0.000  Passed   WebsocketClientLiteTest.ReconnectDecisionTests.EveryStateAndEvent(row: 21, lifecycleEvent: "Terminate", state: "Ox", next: "Ox", effect: "Nothing")
+    0.000  Passed   WebsocketClientLiteTest.ReconnectDecisionTests.EveryStateAndEvent(row: 22, lifecycleEvent: "Terminate", state: "D0", next: "D0", effect: "Nothing")
+    0.000  Passed   WebsocketClientLiteTest.ReconnectDecisionTests.EveryStateAndEvent(row: 23, lifecycleEvent: "Terminate", state: "Dg", next: "Dg", effect: "NotifyNotConnected")
+    0.000  Passed   WebsocketClientLiteTest.ReconnectDecisionTests.EveryStateAndEvent(row: 24, lifecycleEvent: "Terminate", state: "Dx", next: "Dx", effect: "Nothing")
+    0.000  Passed   WebsocketClientLiteTest.ReconnectDecisionTests.EveryStateAndEvent(row: 25, lifecycleEvent: "Dispose", state: "O0", next: "D0", effect: "CloseAdmission")
+    0.000  Passed   WebsocketClientLiteTest.ReconnectDecisionTests.EveryStateAndEvent(row: 26, lifecycleEvent: "Dispose", state: "Og", next: "Dg", effect: "CloseAdmission")
+    0.000  Passed   WebsocketClientLiteTest.ReconnectDecisionTests.EveryStateAndEvent(row: 27, lifecycleEvent: "Dispose", state: "Ox", next: "Dx", effect: "CloseAdmission")
+    0.000  Passed   WebsocketClientLiteTest.ReconnectDecisionTests.EveryStateAndEvent(row: 28, lifecycleEvent: "Dispose", state: "D0", next: "D0", effect: "Nothing")
+    0.000  Passed   WebsocketClientLiteTest.ReconnectDecisionTests.EveryStateAndEvent(row: 29, lifecycleEvent: "Dispose", state: "Dg", next: "Dg", effect: "Nothing")
+    0.000  Passed   WebsocketClientLiteTest.ReconnectDecisionTests.EveryStateAndEvent(row: 3, lifecycleEvent: "Subscribe", state: "Ox", next: "Og", effect: "Admit")
+    0.000  Passed   WebsocketClientLiteTest.ReconnectDecisionTests.EveryStateAndEvent(row: 30, lifecycleEvent: "Dispose", state: "Dx", next: "Dx", effect: "Nothing")
+    0.000  Passed   WebsocketClientLiteTest.ReconnectDecisionTests.EveryStateAndEvent(row: 4, lifecycleEvent: "Subscribe", state: "D0", next: "D0", effect: "Reject")
+    0.000  Passed   WebsocketClientLiteTest.ReconnectDecisionTests.EveryStateAndEvent(row: 5, lifecycleEvent: "Subscribe", state: "Dg", next: "Dg", effect: "Reject")
+    0.000  Passed   WebsocketClientLiteTest.ReconnectDecisionTests.EveryStateAndEvent(row: 6, lifecycleEvent: "Subscribe", state: "Dx", next: "Dx", effect: "Reject")
+    0.000  Passed   WebsocketClientLiteTest.ReconnectDecisionTests.EveryStateAndEvent(row: 7, lifecycleEvent: "Register", state: "O0", next: "O0", effect: "Register")
+    0.000  Passed   WebsocketClientLiteTest.ReconnectDecisionTests.EveryStateAndEvent(row: 8, lifecycleEvent: "Register", state: "Og", next: "Og", effect: "Register")
+    0.000  Passed   WebsocketClientLiteTest.ReconnectDecisionTests.EveryStateAndEvent(row: 9, lifecycleEvent: "Register", state: "Ox", next: "Ox", effect: "Register")
+    0.000  Passed   WebsocketClientLiteTest.ReconnectDecisionTests.NewClientIsOpenWithNoSubscription
+    0.006  Passed   WebsocketClientLiteTest.ReconnectDecisionTests.TableHasOneRowPerStateAndEvent
+    0.000  Passed   WebsocketClientLiteTest.ReconnectDecisionTests.TerminalCallbackSuccessorSurvivesOldCleanupAsEvents
+    0.000  Passed   WebsocketClientLiteTest.ReconnectDecisionTests.UndefinedEventIsRejected
+plain-net10.0-repeat-2.trx: 36 results, outcomes=['Passed'], sum_case_seconds=0.013, max_case_seconds=0.006
+    0.000  Passed   WebsocketClientLiteTest.ReconnectDecisionTests.DisposedClientRejectsAdmissionAsEvents(asynchronous: False)
+    0.002  Passed   WebsocketClientLiteTest.ReconnectDecisionTests.DisposedClientRejectsAdmissionAsEvents(asynchronous: True)
+    0.000  Passed   WebsocketClientLiteTest.ReconnectDecisionTests.EveryStateAndEvent(row: 1, lifecycleEvent: "Subscribe", state: "O0", next: "Og", effect: "Admit")
+    0.000  Passed   WebsocketClientLiteTest.ReconnectDecisionTests.EveryStateAndEvent(row: 10, lifecycleEvent: "Register", state: "D0", next: "D0", effect: "Reject")
+    0.000  Passed   WebsocketClientLiteTest.ReconnectDecisionTests.EveryStateAndEvent(row: 11, lifecycleEvent: "Register", state: "Dg", next: "Dg", effect: "Reject")
+    0.000  Passed   WebsocketClientLiteTest.ReconnectDecisionTests.EveryStateAndEvent(row: 12, lifecycleEvent: "Register", state: "Dx", next: "Dx", effect: "Reject")
+    0.000  Passed   WebsocketClientLiteTest.ReconnectDecisionTests.EveryStateAndEvent(row: 13, lifecycleEvent: "Connect", state: "O0", next: "O0", effect: "Install")
+    0.000  Passed   WebsocketClientLiteTest.ReconnectDecisionTests.EveryStateAndEvent(row: 14, lifecycleEvent: "Connect", state: "Og", next: "Og", effect: "Install")
+    0.000  Passed   WebsocketClientLiteTest.ReconnectDecisionTests.EveryStateAndEvent(row: 15, lifecycleEvent: "Connect", state: "Ox", next: "Ox", effect: "Install")
+    0.000  Passed   WebsocketClientLiteTest.ReconnectDecisionTests.EveryStateAndEvent(row: 16, lifecycleEvent: "Connect", state: "D0", next: "D0", effect: "Reject")
+    0.004  Passed   WebsocketClientLiteTest.ReconnectDecisionTests.EveryStateAndEvent(row: 17, lifecycleEvent: "Connect", state: "Dg", next: "Dg", effect: "Reject")
+    0.000  Passed   WebsocketClientLiteTest.ReconnectDecisionTests.EveryStateAndEvent(row: 18, lifecycleEvent: "Connect", state: "Dx", next: "Dx", effect: "Reject")
+    0.000  Passed   WebsocketClientLiteTest.ReconnectDecisionTests.EveryStateAndEvent(row: 19, lifecycleEvent: "Terminate", state: "O0", next: "O0", effect: "Nothing")
+    0.000  Passed   WebsocketClientLiteTest.ReconnectDecisionTests.EveryStateAndEvent(row: 2, lifecycleEvent: "Subscribe", state: "Og", next: "Og", effect: "Admit")
+    0.000  Passed   WebsocketClientLiteTest.ReconnectDecisionTests.EveryStateAndEvent(row: 20, lifecycleEvent: "Terminate", state: "Og", next: "Og", effect: "NotifyNotConnected")
+    0.000  Passed   WebsocketClientLiteTest.ReconnectDecisionTests.EveryStateAndEvent(row: 21, lifecycleEvent: "Terminate", state: "Ox", next: "Ox", effect: "Nothing")
+    0.000  Passed   WebsocketClientLiteTest.ReconnectDecisionTests.EveryStateAndEvent(row: 22, lifecycleEvent: "Terminate", state: "D0", next: "D0", effect: "Nothing")
+    0.000  Passed   WebsocketClientLiteTest.ReconnectDecisionTests.EveryStateAndEvent(row: 23, lifecycleEvent: "Terminate", state: "Dg", next: "Dg", effect: "NotifyNotConnected")
+    0.000  Passed   WebsocketClientLiteTest.ReconnectDecisionTests.EveryStateAndEvent(row: 24, lifecycleEvent: "Terminate", state: "Dx", next: "Dx", effect: "Nothing")
+    0.000  Passed   WebsocketClientLiteTest.ReconnectDecisionTests.EveryStateAndEvent(row: 25, lifecycleEvent: "Dispose", state: "O0", next: "D0", effect: "CloseAdmission")
+    0.000  Passed   WebsocketClientLiteTest.ReconnectDecisionTests.EveryStateAndEvent(row: 26, lifecycleEvent: "Dispose", state: "Og", next: "Dg", effect: "CloseAdmission")
+    0.000  Passed   WebsocketClientLiteTest.ReconnectDecisionTests.EveryStateAndEvent(row: 27, lifecycleEvent: "Dispose", state: "Ox", next: "Dx", effect: "CloseAdmission")
+    0.000  Passed   WebsocketClientLiteTest.ReconnectDecisionTests.EveryStateAndEvent(row: 28, lifecycleEvent: "Dispose", state: "D0", next: "D0", effect: "Nothing")
+    0.000  Passed   WebsocketClientLiteTest.ReconnectDecisionTests.EveryStateAndEvent(row: 29, lifecycleEvent: "Dispose", state: "Dg", next: "Dg", effect: "Nothing")
+    0.000  Passed   WebsocketClientLiteTest.ReconnectDecisionTests.EveryStateAndEvent(row: 3, lifecycleEvent: "Subscribe", state: "Ox", next: "Og", effect: "Admit")
+    0.000  Passed   WebsocketClientLiteTest.ReconnectDecisionTests.EveryStateAndEvent(row: 30, lifecycleEvent: "Dispose", state: "Dx", next: "Dx", effect: "Nothing")
+    0.000  Passed   WebsocketClientLiteTest.ReconnectDecisionTests.EveryStateAndEvent(row: 4, lifecycleEvent: "Subscribe", state: "D0", next: "D0", effect: "Reject")
+    0.000  Passed   WebsocketClientLiteTest.ReconnectDecisionTests.EveryStateAndEvent(row: 5, lifecycleEvent: "Subscribe", state: "Dg", next: "Dg", effect: "Reject")
+    0.000  Passed   WebsocketClientLiteTest.ReconnectDecisionTests.EveryStateAndEvent(row: 6, lifecycleEvent: "Subscribe", state: "Dx", next: "Dx", effect: "Reject")
+    0.000  Passed   WebsocketClientLiteTest.ReconnectDecisionTests.EveryStateAndEvent(row: 7, lifecycleEvent: "Register", state: "O0", next: "O0", effect: "Register")
+    0.000  Passed   WebsocketClientLiteTest.ReconnectDecisionTests.EveryStateAndEvent(row: 8, lifecycleEvent: "Register", state: "Og", next: "Og", effect: "Register")
+    0.000  Passed   WebsocketClientLiteTest.ReconnectDecisionTests.EveryStateAndEvent(row: 9, lifecycleEvent: "Register", state: "Ox", next: "Ox", effect: "Register")
+    0.000  Passed   WebsocketClientLiteTest.ReconnectDecisionTests.NewClientIsOpenWithNoSubscription
+    0.006  Passed   WebsocketClientLiteTest.ReconnectDecisionTests.TableHasOneRowPerStateAndEvent
+    0.000  Passed   WebsocketClientLiteTest.ReconnectDecisionTests.TerminalCallbackSuccessorSurvivesOldCleanupAsEvents
+    0.000  Passed   WebsocketClientLiteTest.ReconnectDecisionTests.UndefinedEventIsRejected
+plain-net10.0-repeat-3.trx: 36 results, outcomes=['Passed'], sum_case_seconds=0.012, max_case_seconds=0.006
+    0.000  Passed   WebsocketClientLiteTest.ReconnectDecisionTests.DisposedClientRejectsAdmissionAsEvents(asynchronous: False)
+    0.002  Passed   WebsocketClientLiteTest.ReconnectDecisionTests.DisposedClientRejectsAdmissionAsEvents(asynchronous: True)
+    0.000  Passed   WebsocketClientLiteTest.ReconnectDecisionTests.EveryStateAndEvent(row: 1, lifecycleEvent: "Subscribe", state: "O0", next: "Og", effect: "Admit")
+    0.000  Passed   WebsocketClientLiteTest.ReconnectDecisionTests.EveryStateAndEvent(row: 10, lifecycleEvent: "Register", state: "D0", next: "D0", effect: "Reject")
+    0.000  Passed   WebsocketClientLiteTest.ReconnectDecisionTests.EveryStateAndEvent(row: 11, lifecycleEvent: "Register", state: "Dg", next: "Dg", effect: "Reject")
+    0.000  Passed   WebsocketClientLiteTest.ReconnectDecisionTests.EveryStateAndEvent(row: 12, lifecycleEvent: "Register", state: "Dx", next: "Dx", effect: "Reject")
+    0.000  Passed   WebsocketClientLiteTest.ReconnectDecisionTests.EveryStateAndEvent(row: 13, lifecycleEvent: "Connect", state: "O0", next: "O0", effect: "Install")
+    0.000  Passed   WebsocketClientLiteTest.ReconnectDecisionTests.EveryStateAndEvent(row: 14, lifecycleEvent: "Connect", state: "Og", next: "Og", effect: "Install")
+    0.000  Passed   WebsocketClientLiteTest.ReconnectDecisionTests.EveryStateAndEvent(row: 15, lifecycleEvent: "Connect", state: "Ox", next: "Ox", effect: "Install")
+    0.000  Passed   WebsocketClientLiteTest.ReconnectDecisionTests.EveryStateAndEvent(row: 16, lifecycleEvent: "Connect", state: "D0", next: "D0", effect: "Reject")
+    0.004  Passed   WebsocketClientLiteTest.ReconnectDecisionTests.EveryStateAndEvent(row: 17, lifecycleEvent: "Connect", state: "Dg", next: "Dg", effect: "Reject")
+    0.000  Passed   WebsocketClientLiteTest.ReconnectDecisionTests.EveryStateAndEvent(row: 18, lifecycleEvent: "Connect", state: "Dx", next: "Dx", effect: "Reject")
+    0.000  Passed   WebsocketClientLiteTest.ReconnectDecisionTests.EveryStateAndEvent(row: 19, lifecycleEvent: "Terminate", state: "O0", next: "O0", effect: "Nothing")
+    0.000  Passed   WebsocketClientLiteTest.ReconnectDecisionTests.EveryStateAndEvent(row: 2, lifecycleEvent: "Subscribe", state: "Og", next: "Og", effect: "Admit")
+    0.000  Passed   WebsocketClientLiteTest.ReconnectDecisionTests.EveryStateAndEvent(row: 20, lifecycleEvent: "Terminate", state: "Og", next: "Og", effect: "NotifyNotConnected")
+    0.000  Passed   WebsocketClientLiteTest.ReconnectDecisionTests.EveryStateAndEvent(row: 21, lifecycleEvent: "Terminate", state: "Ox", next: "Ox", effect: "Nothing")
+    0.000  Passed   WebsocketClientLiteTest.ReconnectDecisionTests.EveryStateAndEvent(row: 22, lifecycleEvent: "Terminate", state: "D0", next: "D0", effect: "Nothing")
+    0.000  Passed   WebsocketClientLiteTest.ReconnectDecisionTests.EveryStateAndEvent(row: 23, lifecycleEvent: "Terminate", state: "Dg", next: "Dg", effect: "NotifyNotConnected")
+    0.000  Passed   WebsocketClientLiteTest.ReconnectDecisionTests.EveryStateAndEvent(row: 24, lifecycleEvent: "Terminate", state: "Dx", next: "Dx", effect: "Nothing")
+    0.000  Passed   WebsocketClientLiteTest.ReconnectDecisionTests.EveryStateAndEvent(row: 25, lifecycleEvent: "Dispose", state: "O0", next: "D0", effect: "CloseAdmission")
+    0.000  Passed   WebsocketClientLiteTest.ReconnectDecisionTests.EveryStateAndEvent(row: 26, lifecycleEvent: "Dispose", state: "Og", next: "Dg", effect: "CloseAdmission")
+    0.000  Passed   WebsocketClientLiteTest.ReconnectDecisionTests.EveryStateAndEvent(row: 27, lifecycleEvent: "Dispose", state: "Ox", next: "Dx", effect: "CloseAdmission")
+    0.000  Passed   WebsocketClientLiteTest.ReconnectDecisionTests.EveryStateAndEvent(row: 28, lifecycleEvent: "Dispose", state: "D0", next: "D0", effect: "Nothing")
+    0.000  Passed   WebsocketClientLiteTest.ReconnectDecisionTests.EveryStateAndEvent(row: 29, lifecycleEvent: "Dispose", state: "Dg", next: "Dg", effect: "Nothing")
+    0.000  Passed   WebsocketClientLiteTest.ReconnectDecisionTests.EveryStateAndEvent(row: 3, lifecycleEvent: "Subscribe", state: "Ox", next: "Og", effect: "Admit")
+    0.000  Passed   WebsocketClientLiteTest.ReconnectDecisionTests.EveryStateAndEvent(row: 30, lifecycleEvent: "Dispose", state: "Dx", next: "Dx", effect: "Nothing")
+    0.000  Passed   WebsocketClientLiteTest.ReconnectDecisionTests.EveryStateAndEvent(row: 4, lifecycleEvent: "Subscribe", state: "D0", next: "D0", effect: "Reject")
+    0.000  Passed   WebsocketClientLiteTest.ReconnectDecisionTests.EveryStateAndEvent(row: 5, lifecycleEvent: "Subscribe", state: "Dg", next: "Dg", effect: "Reject")
+    0.000  Passed   WebsocketClientLiteTest.ReconnectDecisionTests.EveryStateAndEvent(row: 6, lifecycleEvent: "Subscribe", state: "Dx", next: "Dx", effect: "Reject")
+    0.000  Passed   WebsocketClientLiteTest.ReconnectDecisionTests.EveryStateAndEvent(row: 7, lifecycleEvent: "Register", state: "O0", next: "O0", effect: "Register")
+    0.000  Passed   WebsocketClientLiteTest.ReconnectDecisionTests.EveryStateAndEvent(row: 8, lifecycleEvent: "Register", state: "Og", next: "Og", effect: "Register")
+    0.000  Passed   WebsocketClientLiteTest.ReconnectDecisionTests.EveryStateAndEvent(row: 9, lifecycleEvent: "Register", state: "Ox", next: "Ox", effect: "Register")
+    0.000  Passed   WebsocketClientLiteTest.ReconnectDecisionTests.NewClientIsOpenWithNoSubscription
+    0.006  Passed   WebsocketClientLiteTest.ReconnectDecisionTests.TableHasOneRowPerStateAndEvent
+    0.000  Passed   WebsocketClientLiteTest.ReconnectDecisionTests.TerminalCallbackSuccessorSurvivesOldCleanupAsEvents
+    0.000  Passed   WebsocketClientLiteTest.ReconnectDecisionTests.UndefinedEventIsRejected
+suite-net10.0-repeat-1.trx: 9 results, outcomes=['Passed'], sum_case_seconds=9.208, max_case_seconds=3.062
+    0.000  Passed   WebsocketClientLiteTest.ReconnectTests.DisposedClientRejectsAdmission(asynchronous: False)
+    0.001  Passed   WebsocketClientLiteTest.ReconnectTests.DisposedClientRejectsAdmission(asynchronous: True)
+    0.003  Passed   WebsocketClientLiteTest.ReconnectTests.FailedConnectTerminatesAndRemovesRegistration
+    3.056  Passed   WebsocketClientLiteTest.ReconnectTests.SequentialRepeatOrRetryUsesFreshServices(retry: False)
+    3.048  Passed   WebsocketClientLiteTest.ReconnectTests.SequentialRepeatOrRetryUsesFreshServices(retry: True)
+    0.036  Passed   WebsocketClientLiteTest.ReconnectTests.SetupAdmissionIsOwnedUntilTeardown(mode: "async")
+    0.001  Passed   WebsocketClientLiteTest.ReconnectTests.SetupAdmissionIsOwnedUntilTeardown(mode: "dispose")
+    0.002  Passed   WebsocketClientLiteTest.ReconnectTests.SetupAdmissionIsOwnedUntilTeardown(mode: "unsubscribe")
+    3.062  Passed   WebsocketClientLiteTest.ReconnectTests.TerminalCallbackSuccessorSurvivesOldCleanup
+suite-net10.0-repeat-2.trx: 9 results, outcomes=['Passed'], sum_case_seconds=9.216, max_case_seconds=3.064
+    0.000  Passed   WebsocketClientLiteTest.ReconnectTests.DisposedClientRejectsAdmission(asynchronous: False)
+    0.001  Passed   WebsocketClientLiteTest.ReconnectTests.DisposedClientRejectsAdmission(asynchronous: True)
+    0.003  Passed   WebsocketClientLiteTest.ReconnectTests.FailedConnectTerminatesAndRemovesRegistration
+    3.053  Passed   WebsocketClientLiteTest.ReconnectTests.SequentialRepeatOrRetryUsesFreshServices(retry: False)
+    3.045  Passed   WebsocketClientLiteTest.ReconnectTests.SequentialRepeatOrRetryUsesFreshServices(retry: True)
+    0.046  Passed   WebsocketClientLiteTest.ReconnectTests.SetupAdmissionIsOwnedUntilTeardown(mode: "async")
+    0.001  Passed   WebsocketClientLiteTest.ReconnectTests.SetupAdmissionIsOwnedUntilTeardown(mode: "dispose")
+    0.002  Passed   WebsocketClientLiteTest.ReconnectTests.SetupAdmissionIsOwnedUntilTeardown(mode: "unsubscribe")
+    3.064  Passed   WebsocketClientLiteTest.ReconnectTests.TerminalCallbackSuccessorSurvivesOldCleanup
+suite-net10.0-repeat-3.trx: 9 results, outcomes=['Passed'], sum_case_seconds=9.213, max_case_seconds=3.066
+    0.000  Passed   WebsocketClientLiteTest.ReconnectTests.DisposedClientRejectsAdmission(asynchronous: False)
+    0.001  Passed   WebsocketClientLiteTest.ReconnectTests.DisposedClientRejectsAdmission(asynchronous: True)
+    0.004  Passed   WebsocketClientLiteTest.ReconnectTests.FailedConnectTerminatesAndRemovesRegistration
+    3.054  Passed   WebsocketClientLiteTest.ReconnectTests.SequentialRepeatOrRetryUsesFreshServices(retry: False)
+    3.047  Passed   WebsocketClientLiteTest.ReconnectTests.SequentialRepeatOrRetryUsesFreshServices(retry: True)
+    0.039  Passed   WebsocketClientLiteTest.ReconnectTests.SetupAdmissionIsOwnedUntilTeardown(mode: "async")
+    0.001  Passed   WebsocketClientLiteTest.ReconnectTests.SetupAdmissionIsOwnedUntilTeardown(mode: "dispose")
+    0.002  Passed   WebsocketClientLiteTest.ReconnectTests.SetupAdmissionIsOwnedUntilTeardown(mode: "unsubscribe")
+    3.066  Passed   WebsocketClientLiteTest.ReconnectTests.TerminalCallbackSuccessorSurvivesOldCleanup
+suite-net10.0.trx: 9 results, outcomes=['Passed'], sum_case_seconds=9.216, max_case_seconds=3.065
+    0.000  Passed   WebsocketClientLiteTest.ReconnectTests.DisposedClientRejectsAdmission(asynchronous: False)
+    0.001  Passed   WebsocketClientLiteTest.ReconnectTests.DisposedClientRejectsAdmission(asynchronous: True)
+    0.002  Passed   WebsocketClientLiteTest.ReconnectTests.FailedConnectTerminatesAndRemovesRegistration
+    3.053  Passed   WebsocketClientLiteTest.ReconnectTests.SequentialRepeatOrRetryUsesFreshServices(retry: False)
+    3.051  Passed   WebsocketClientLiteTest.ReconnectTests.SequentialRepeatOrRetryUsesFreshServices(retry: True)
+    0.040  Passed   WebsocketClientLiteTest.ReconnectTests.SetupAdmissionIsOwnedUntilTeardown(mode: "async")
+    0.001  Passed   WebsocketClientLiteTest.ReconnectTests.SetupAdmissionIsOwnedUntilTeardown(mode: "dispose")
+    0.002  Passed   WebsocketClientLiteTest.ReconnectTests.SetupAdmissionIsOwnedUntilTeardown(mode: "unsubscribe")
+    3.065  Passed   WebsocketClientLiteTest.ReconnectTests.TerminalCallbackSuccessorSurvivesOldCleanup
+suite-net8.0.trx: 9 results, outcomes=['Passed'], sum_case_seconds=9.208, max_case_seconds=3.065
+    0.000  Passed   WebsocketClientLiteTest.ReconnectTests.DisposedClientRejectsAdmission(asynchronous: False)
+    0.001  Passed   WebsocketClientLiteTest.ReconnectTests.DisposedClientRejectsAdmission(asynchronous: True)
+    0.002  Passed   WebsocketClientLiteTest.ReconnectTests.FailedConnectTerminatesAndRemovesRegistration
+    3.055  Passed   WebsocketClientLiteTest.ReconnectTests.SequentialRepeatOrRetryUsesFreshServices(retry: False)
+    3.047  Passed   WebsocketClientLiteTest.ReconnectTests.SequentialRepeatOrRetryUsesFreshServices(retry: True)
+    0.035  Passed   WebsocketClientLiteTest.ReconnectTests.SetupAdmissionIsOwnedUntilTeardown(mode: "async")
+    0.001  Passed   WebsocketClientLiteTest.ReconnectTests.SetupAdmissionIsOwnedUntilTeardown(mode: "dispose")
+    0.002  Passed   WebsocketClientLiteTest.ReconnectTests.SetupAdmissionIsOwnedUntilTeardown(mode: "unsubscribe")
+    3.065  Passed   WebsocketClientLiteTest.ReconnectTests.TerminalCallbackSuccessorSurvivesOldCleanup
+suite-net9.0.trx: 9 results, outcomes=['Passed'], sum_case_seconds=9.222, max_case_seconds=3.067
+    0.000  Passed   WebsocketClientLiteTest.ReconnectTests.DisposedClientRejectsAdmission(asynchronous: False)
+    0.001  Passed   WebsocketClientLiteTest.ReconnectTests.DisposedClientRejectsAdmission(asynchronous: True)
+    0.002  Passed   WebsocketClientLiteTest.ReconnectTests.FailedConnectTerminatesAndRemovesRegistration
+    3.057  Passed   WebsocketClientLiteTest.ReconnectTests.SequentialRepeatOrRetryUsesFreshServices(retry: False)
+    3.050  Passed   WebsocketClientLiteTest.ReconnectTests.SequentialRepeatOrRetryUsesFreshServices(retry: True)
+    0.039  Passed   WebsocketClientLiteTest.ReconnectTests.SetupAdmissionIsOwnedUntilTeardown(mode: "async")
+    0.001  Passed   WebsocketClientLiteTest.ReconnectTests.SetupAdmissionIsOwnedUntilTeardown(mode: "dispose")
+    0.005  Passed   WebsocketClientLiteTest.ReconnectTests.SetupAdmissionIsOwnedUntilTeardown(mode: "unsubscribe")
+    3.067  Passed   WebsocketClientLiteTest.ReconnectTests.TerminalCallbackSuccessorSurvivesOldCleanup
+suite-netstandard2.0.trx: 9 results, outcomes=['Passed'], sum_case_seconds=9.204, max_case_seconds=3.063
+    0.000  Passed   WebsocketClientLiteTest.ReconnectTests.DisposedClientRejectsAdmission(asynchronous: False)
+    0.001  Passed   WebsocketClientLiteTest.ReconnectTests.DisposedClientRejectsAdmission(asynchronous: True)
+    0.003  Passed   WebsocketClientLiteTest.ReconnectTests.FailedConnectTerminatesAndRemovesRegistration
+    3.053  Passed   WebsocketClientLiteTest.ReconnectTests.SequentialRepeatOrRetryUsesFreshServices(retry: False)
+    3.046  Passed   WebsocketClientLiteTest.ReconnectTests.SequentialRepeatOrRetryUsesFreshServices(retry: True)
+    0.036  Passed   WebsocketClientLiteTest.ReconnectTests.SetupAdmissionIsOwnedUntilTeardown(mode: "async")
+    0.001  Passed   WebsocketClientLiteTest.ReconnectTests.SetupAdmissionIsOwnedUntilTeardown(mode: "dispose")
+    0.001  Passed   WebsocketClientLiteTest.ReconnectTests.SetupAdmissionIsOwnedUntilTeardown(mode: "unsubscribe")
+    3.063  Passed   WebsocketClientLiteTest.ReconnectTests.TerminalCallbackSuccessorSurvivesOldCleanup
+suite-netstandard2.1.trx: 9 results, outcomes=['Passed'], sum_case_seconds=9.207, max_case_seconds=3.066
+    0.000  Passed   WebsocketClientLiteTest.ReconnectTests.DisposedClientRejectsAdmission(asynchronous: False)
+    0.002  Passed   WebsocketClientLiteTest.ReconnectTests.DisposedClientRejectsAdmission(asynchronous: True)
+    0.003  Passed   WebsocketClientLiteTest.ReconnectTests.FailedConnectTerminatesAndRemovesRegistration
+    3.049  Passed   WebsocketClientLiteTest.ReconnectTests.SequentialRepeatOrRetryUsesFreshServices(retry: False)
+    3.047  Passed   WebsocketClientLiteTest.ReconnectTests.SequentialRepeatOrRetryUsesFreshServices(retry: True)
+    0.037  Passed   WebsocketClientLiteTest.ReconnectTests.SetupAdmissionIsOwnedUntilTeardown(mode: "async")
+    0.001  Passed   WebsocketClientLiteTest.ReconnectTests.SetupAdmissionIsOwnedUntilTeardown(mode: "dispose")
+    0.002  Passed   WebsocketClientLiteTest.ReconnectTests.SetupAdmissionIsOwnedUntilTeardown(mode: "unsubscribe")
+    3.066  Passed   WebsocketClientLiteTest.ReconnectTests.TerminalCallbackSuccessorSurvivesOldCleanup

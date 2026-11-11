@@ -316,5 +316,239 @@ measures the shell, not the decision.
 
 ## Results and recommendation
 
-Not yet written. Step S6 adds the after numbers under
-`docs/evidence/reconnect-decision/after/`, the results and the recommendation.
+Written 2026-11-11 in step S6. The production change is commit `bd743b3`, on its own
+so that it can be reverted without touching this report or the evidence. The after
+numbers, their commands and raw output are in
+`docs/evidence/reconnect-decision/after/` (its `README.md` lists every file). All
+numbers are local measurements on one host, with other step sessions running at the
+same time. Every timed run held the shared timing lock, and the processes running
+before each timed command are recorded beside it.
+
+### The change
+
+- `src/main/WebsocketClientLite/Helper/ReconnectDecision.cs`: `ReconnectDecision.Decide(state,
+  event, subscription)` returns the next state and the effect. The input is an
+  immutable `LifecycleState(Disposed, Generation)`, a `LifecycleEvent` and the
+  identity of the subscription that raises it. The result is a
+  `LifecycleStep(Next, Effect)`. There are no fields, locks, I/O or Rx types. The
+  switch has one arm per row group of the table, and an undefined event throws.
+- `ClientWebSocketRx` keeps `_lifecycleGate` and one field, `_lifecycle`, in place of
+  `_disposed` and `_generation`. The new private `Advance` calls `Decide`, stores
+  `Next` and returns `Effect`. That is the only store. Each of the six lock sites calls
+  `Advance` under the lock and performs the effect before it releases the lock, as
+  before (U4). A site goes on only when it gets its admitting effect (`Admit`,
+  `Register`, `Install`). Any other effect rejects, which for the values `Decide`
+  returns is the same as today. The Dispose sites do not use the effect: the drain
+  runs on every call, as before.
+- Behaviour is unchanged: by reading, at each site the new code takes the same branch
+  and leaves the same field values as the old code, for every state. No existing test
+  was changed, and every one passes on five targets (Checks below).
+
+### Plain tests
+
+`src/main/WebsocketClientLiteTest/ReconnectDecisionTests.cs`, 36 cases, with no
+schedule, socket or clock:
+
+- `EveryStateAndEvent`: the 30 rows of the transition table, one case each, with the
+  row number in the case name. Unreachable and undecided rows are included and pin
+  today's behaviour.
+- `TableHasOneRowPerStateAndEvent`: reads the 30 rows back and checks that they are
+  exactly the six states times the five events, numbered in the table's order, and
+  that every effect occurs.
+- `DisposedClientRejectsAdmissionAsEvents` (two cases): P3-D counterexample 1, Dispose
+  then Subscribe, once and with the second Dispose that `DisposeAsync` makes.
+- `TerminalCallbackSuccessorSurvivesOldCleanupAsEvents`: P3-D counterexample 2 as the
+  event sequence above, with `IsConnected` folded from the effects. Terminate(g1)
+  must leave it true, then the successor's own Terminate reports not connected.
+- `UndefinedEventIsRejected` and `NewClientIsOpenWithNoSubscription`.
+
+### Before and after
+
+| Measure | Before (S5, `fa96d59`) | After (`bd743b3`) |
+| --- | --- | --- |
+| Reconnect cases needing a real loopback | 9 of 9 | 9 of 9 |
+| needing a controlled schedule as well | 6 of 9 | 6 of 9 |
+| whose decision rows are also covered by a plain test | 0 of 9 | 9 of 9 |
+| whose other assertions are covered by a plain test | 0 of 9 | 0 of 9 |
+| Distinct reachable transitions covered by some test | 12 of 20, by reading | 20 of 20, plus the 8 unreachable rows |
+| Region lines: physical / code | 97 / 88 | 109 / 95 (`Advance` is 9 / 6 of them) |
+| Lifecycle-state lines in the region | 15 | 16 (S5's pattern widened to `_lifecycle`, `Advance` and `ReconnectDecision`; 12 with S5's pattern unchanged) |
+| Lock sites | 6 | 6 |
+| Lines that branch on or store the decision, in the shell | 7 (four conditions, three assignments) | 8 (four conditions on the effect, two Dispose calls, the call and the store in `Advance`) |
+| New maintained files | | `ReconnectDecision.cs` 92 lines (38 code), `ReconnectDecisionTests.cs` 170 lines (138 code) |
+| `pdd.sh reconnect-defect` (`missing-removal`) | detected | detected |
+| Decision-line defects caught by the reconnect suite | 2 of 6 | 2 of 6 in the function; 3 of 7 on the shell's side |
+| caught by any existing test | 2 of 6 | 2 of 6 in the function; 3 of 7 on the shell's side |
+| caught by the plain tests alone | none exist | 6 of 6 in the function; 0 of 7 on the shell's side |
+
+Each reconnect case reaches only rows that the plain tests also cover (S5's table of
+rows per case), so the decision part of all nine is now checked without a socket. No
+case becomes redundant, because each one also checks what only the shell does:
+registration removed, stream closed, `Sender` null, the old sender rejecting sends,
+the successor's echo. They all stay in place.
+
+### Run times
+
+Timed with S5's commands (`after/timing/measure.sh`). The after copy and the base copy
+ran back to back under one hold of the lock, from 22:31:57 to 22:35:23 UTC. During
+both, another session ran a Dafny protocol capture with mutations
+(`processes.txt`), so these runs had more load than S5's (load average 3 to 5 on 32
+CPUs, against 0.1 to 1.6).
+
+| Run | S5, `fa96d59`, alone | S6 rerun, `fa96d59`, under the lock | S6 after, `bd743b3`, under the lock |
+| --- | ---: | ---: | ---: |
+| Release build of the solution | 4.56 | 1.71 | 1.68 |
+| `ReconnectTests` with build, netstandard2.0 / 2.1 | 10.80 / 10.84 | 10.62 / 10.58 | 10.57 / 10.64 |
+| net8.0 / net9.0 / net10.0 | 10.65 / 10.65 / 10.63 | 10.55 / 10.68 / 10.67 | 10.61 / 10.62 / 10.64 |
+| net10.0, `--no-build`, three runs | 9.98, 9.98, 9.97 | 9.94, 9.94, 9.92 | 9.92, 9.97, 9.97 |
+| Sum of case durations, those three runs | 9.225, 9.225, 9.211 | 9.211, 9.214, 9.206 | 9.208, 9.216, 9.213 |
+| `pdd.sh reconnect-defect` | 16.93 | 16.72 | 17.00 |
+| `ReconnectDecisionTests`, net10.0, `--no-build`, three runs | | | 0.70, 0.70, 0.70 (cases sum to 0.012 to 0.013) |
+
+All values are wall seconds. The reconnect suite takes the same time after the change:
+the differences are at most 0.07 seconds, within the spread of each column. The three
+cases of about 3.05 seconds each still account for 9.2 of the 9.2 seconds; the
+decision was never where the time went. The build is faster in both S6 runs than in
+S5's because the compiler server was already running; the two S6 runs compare with
+each other, not with S5's build.
+
+### Seeded defects, both ways
+
+S5 found no seeded defect in a decision line, and the one existing defect,
+`missing-removal`, edits cleanup. S6 seeded six decision-line defects in the code at
+`fa96d59`, the same six in `ReconnectDecision.Decide`, and seven on the shell's side of
+the same lines at `bd743b3`, where the function is right and the shell ignores or
+misuses its result. Each was run against the reconnect suite three times, the other
+260 existing tests once and, after the change, the plain tests once. Every
+reconnect-suite verdict below held in all three runs. Commands, diffs and raw output:
+`after/decision-defects/`.
+
+| Defect | Rows | Before: reconnect suite / other tests | In the function: reconnect suite / other / plain tests | On the shell's side | its reconnect suite / other / plain tests |
+| --- | --- | --- | --- | --- | --- |
+| Subscribe ignores disposal | 4 to 6 | survived / survived | survived / survived / **detected** | Subscribe site ignores the effect | survived / survived / survived |
+| Subscribe does not store the generation | 1 to 3 | survived / survived | survived / survived / **detected** | `Advance` does not store (also rows 25 to 27) | detected / survived / survived |
+| Register ignores disposal | 10 to 12 | survived / survived | survived / survived / **detected** | Register site ignores the effect | survived / survived / survived |
+| Connect ignores disposal | 16 to 18 | survived / survived | survived / survived / **detected** | Connect site ignores the effect | survived / survived / survived |
+| Terminate ignores the generation (the P3-D stale notification) | 19, 21, 22, 24 | detected / survived | detected / survived / **detected** | Terminate site ignores the effect | detected / survived / survived |
+| | | | | Terminate site passes no identity (rows 20, 23) | survived / survived / survived |
+| Dispose leaves admission open | 25 to 27 | detected / survived | detected / survived / **detected** | Dispose sites skip the decision | detected / survived / survived |
+
+What the runs show:
+
+- The plain tests alone catch every defect seeded in the function, 6 of 6, in under
+  a second. The same six in today's code: the reconnect suite catches 2, and no other
+  test catches any.
+- The four that survive every existing test before the change also survive every
+  existing test when they are seeded in the function. Three of them have a form on
+  the shell's side, the Subscribe, Register and Connect sites ignoring the effect,
+  that survives every test, the plain tests included. Moving the rule into the
+  function protects the rule; it does not protect the lines that use it.
+- On the shell's side, the plain tests catch nothing, 0 of 7, as expected: they never
+  run the shell. The reconnect suite catches the same kinds of defect as before
+  (the stale notification and open admission) and misses the same kinds.
+- One survivor is not a violation of the intent. When Subscribe ignores disposal, or
+  its site ignores the effect, the Register check still rejects the subscription with
+  `ObjectDisposedException` and admits no service (I1 holds). Only the status
+  sequence changes: the subscriber sees `Initialized` first. The table, and so the
+  plain tests, are stricter than the intent here.
+- The others are real: a Register or Connect after disposal (rows 11 and 17, I1 and
+  I2) is reached by no test, and nothing in the 269 existing tests checks that
+  `IsConnected` becomes false when a connection ends (row 20). Only
+  `TerminalCallbackSuccessorSurvivesOldCleanup` observes `IsConnected`, and it checks
+  that it stays true. A defect that stops the final notification survives every
+  existing test in both shapes.
+
+### What the shell still has to guarantee
+
+The plain tests show that `Decide` maps every state and event to the row the table
+gives. They cannot show any of the following, which stays tested only by the loopback
+and schedule cases, or not at all:
+
+1. Each call to `Decide`, the store of its result and the effect happen under one hold
+   of `_lifecycleGate`. With one field holding both members, a store outside the lock
+   could also undo a disposal, which two separate fields could not.
+2. The shell performs the effect it gets back, and only that. The four branches on the
+   effect are the old four conditions in a new form: the after-shell defects show that
+   breaking one is caught exactly as before.
+3. The events are raised at the right points with the right identity: Subscribe before
+   the subscription is built, Register in the `Using` resource factory, Connect in
+   `InitSender` before `Sender` is set, Terminate in the `Finally` with the
+   subscription's own identity, Dispose at the start of `Dispose(bool)` and
+   `DisposeAsync`. Passing the wrong identity to Terminate survives every test.
+4. Each subscription gets a fresh identity, its `Finally` runs once, and a
+   subscription rejected at Subscribe never reaches Terminate.
+5. Register's `_activeConnections.TryAdd` happens inside the same hold as the decision,
+   so that a disposal after it drains the service (I2).
+6. Cleanup: the `Using` disposer removes the registration and disposes the service
+   (`missing-removal`), Dispose and DisposeAsync drain on every call,
+   `_disposables.Dispose()` runs, and `SetIsConnected` swallows the disposed subject (U3).
+7. The asynchronous orders that decide which rows occur: a handshake that completes
+   before or after disposal or after its own Terminate (U2), and the order Rx uses for
+   `Repeat` and `Retry` between the old Terminate and the new Subscribe.
+8. Everything the reconnect cases check beyond the rows: the registered service
+   identity, the closed transport stream, `Sender` null, old senders rejecting sends,
+   and progress shown by the successor's echo.
+
+### Dafny
+
+Expressing `Decide` in Dafny would not be a natural next step. Relative to the event's
+subscription the input has 30 classes, and the plain tests already run every one. A
+proof would add only the step from object identity to those classes, and the useful
+properties (disposal is permanent, only Subscribe moves the generation, Terminate
+notifies only its own generation) are each one row group of the table. What stays
+expensive is the list above, which is about the lock, the Rx pipeline and the
+sockets. `docs/pdd-phase-3-plan.md` already says that a duplicate state machine
+would not prove that orchestration. It would become worth considering if the deferred
+policy for concurrent subscriptions (U1) were decided, because the state would then be
+a set of active subscriptions, not two values.
+
+### Checks at `bd743b3`
+
+The four `pdd.sh capture` jobs ran at the production commit from a clean worktree,
+each into a new directory, and `aggregate` combined them
+(`docs/evidence/reconnect-decision/after/checks/`). The protocol job held the timing
+lock because its mutant times are reported here.
+
+| Check | Result |
+| --- | --- |
+| Release build of the solution | run and passed: 0 warnings, 0 errors |
+| Five-target test matrix (`./test-all-tfms.sh Release`) | run and passed: 305 of 305 on each of netstandard2.0, netstandard2.1, net8.0, net9.0 and net10.0, all on .NET 10.0.14 hosts |
+| Coverage gate | run and passed: line coverage 83.2 % (70 % required) |
+| `./scripts/pdd.sh validate` | run and passed: 16 requirements |
+| Pdd tests | run and passed: 262 of 262 |
+| Verifier and generated-code check (`scripts/dafny-masking.sh --check`) | run and passed: `Dafny program verifier finished with 41 verified, 0 errors` |
+| Dafny mutation suite | run and passed: baseline passed, 17 of 17 detected, 8.75 to 10.20 seconds each against a 90-second budget. None is above a third of its budget, so none is a CI risk by lesson 3 |
+| Controlled and seeded-defect checks (`capture --job controlled`) | run and passed: controlled defect, boundary, queued, lease, retention and reconnect experiments; `missing-removal` detected |
+| Stryker (`capture --job stryker`) | run and passed: recorded dispositions matched, `stryker-close-dispositions.json` unchanged. The line 95 `throw handshakeException;` mutant was killed this run by `FailedConnectTerminatesAndRemovesRegistration`, the test lesson 10 shows to race against it, so the kill is not evidence; S11 replaces it |
+| `aggregate` | run and passed: machine evidence gate passed; review evidence not-run |
+| Plain tests and seeded defects of this step | run and passed, as reported above |
+
+### Recommendation: do not adopt
+
+The criterion is additional assurance per unit of maintained machinery.
+
+- Added assurance: the rule is executable and pinned row by row, eight reachable
+  transitions that no test reached are now covered, and every seeded defect in the
+  rule is caught in under a second, where the loopback suite caught 2 of 6.
+- What it does not change: the function mirrors the six lock sites one to one. Each
+  site still branches once on the decision, so the shell has 8 such lines in place of
+  7. No lock site, stateful line, expensive test or shell guarantee is removed, and
+  the reconnect suite takes the same time. The defects that matter here survive every
+  test in the shell's form just as they did before. The four conditions and three
+  assignments of today's rule are not where the risk is; their use by the shell is.
+- Cost: two new files (38 code lines, 138 test code lines), five new internal types
+  and one indirection at every lock site.
+
+This is the case the brief describes: a thin wrapper that mirrors the lock sites one
+to one and removes nothing from the expensive part. The report, the table and the
+evidence are the deliverable. Under owner decision 3 of 2026-11-11 (overnight chain),
+not adopting means a revert of `bd743b3` on this branch, and the pull request merges
+with the report.
+
+Two findings stand without the function and are listed for the owner, not acted on
+here: no test checks that `IsConnected` becomes false when a connection ends, and rows
+11 and 17 (Register or Connect after disposal) are reached by no test. A loopback
+assertion on the final `IsConnected` value would, by reading, catch the surviving
+"does not store the generation" and "passes no identity" defects in either code
+shape; that was not run. Rows 11 and 17 need a controlled schedule either way. If U1
+is decided later, the function and its tests in `bd743b3` are the starting point.

@@ -1,0 +1,11 @@
+--- a/src/main/WebsocketClientLite/Helper/ReconnectDecision.cs
++++ b/src/main/WebsocketClientLite/Helper/ReconnectDecision.cs
+@@ -77,7 +77,7 @@
+             // Rows 1 to 6. Disposal is permanent; otherwise the newest subscription
+             // owns the final not-connected notification.
+             LifecycleEvent.Subscribe when state.Disposed => new(state, LifecycleEffect.Reject),
+-            LifecycleEvent.Subscribe => new(state with { Generation = subscription }, LifecycleEffect.Admit),
++            LifecycleEvent.Subscribe => new(state, LifecycleEffect.Admit),
+             // Rows 7 to 18. Register and Connect look only at disposal.
+             LifecycleEvent.Register => new(state, state.Disposed ? LifecycleEffect.Reject : LifecycleEffect.Register),
+             LifecycleEvent.Connect => new(state, state.Disposed ? LifecycleEffect.Reject : LifecycleEffect.Install),

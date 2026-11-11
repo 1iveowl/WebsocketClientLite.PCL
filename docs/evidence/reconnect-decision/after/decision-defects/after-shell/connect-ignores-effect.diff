@@ -1,0 +1,12 @@
+--- a/src/main/WebsocketClientLite/ClientWebSocketRx.cs
++++ b/src/main/WebsocketClientLite/ClientWebSocketRx.cs
+@@ -272,8 +272,7 @@
+             {
+                 lock (_lifecycleGate)
+                 {
+-                    if (Advance(LifecycleEvent.Connect, generation) != LifecycleEffect.Install)
+-                        throw new ObjectDisposedException(nameof(ClientWebSocketRx));
++                    _ = Advance(LifecycleEvent.Connect, generation);
+                     Sender = sender;
+                     NegotiatedSubprotocols = negotiatedSubprotocols;
+                     SetIsConnected(true);

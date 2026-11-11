@@ -1,0 +1,11 @@
+--- a/src/main/WebsocketClientLite/Helper/ReconnectDecision.cs
++++ b/src/main/WebsocketClientLite/Helper/ReconnectDecision.cs
+@@ -86,7 +86,7 @@
+                 ReferenceEquals(state.Generation, subscription) ? LifecycleEffect.NotifyNotConnected : LifecycleEffect.Nothing),
+             // Rows 25 to 30. Dispose closes admission once; later calls change nothing.
+             LifecycleEvent.Dispose when state.Disposed => new(state, LifecycleEffect.Nothing),
+-            LifecycleEvent.Dispose => new(state with { Disposed = true }, LifecycleEffect.CloseAdmission),
++            LifecycleEvent.Dispose => new(state, LifecycleEffect.CloseAdmission),
+             _ => throw new ArgumentOutOfRangeException(nameof(lifecycleEvent), lifecycleEvent, null),
+         };
+ }

@@ -1,0 +1,11 @@
+--- a/src/main/WebsocketClientLite/ClientWebSocketRx.cs
++++ b/src/main/WebsocketClientLite/ClientWebSocketRx.cs
+@@ -312,7 +312,7 @@
+             {
+                 lock (_lifecycleGate)
+                 {
+-                    if (Advance(LifecycleEvent.Terminate, generation) == LifecycleEffect.NotifyNotConnected)
++                    if (Advance(LifecycleEvent.Terminate, null) == LifecycleEffect.NotifyNotConnected)
+                         SetIsConnected(false);
+                 }
+             })

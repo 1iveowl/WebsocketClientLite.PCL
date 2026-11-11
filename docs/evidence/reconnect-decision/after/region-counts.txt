@@ -1,0 +1,27 @@
+file /tmp/s6-scratch/timing-after/src/main/WebsocketClientLite/ClientWebSocketRx.cs
+sha256 ba241d387ed97b8b3faef83a269b3dbb2f295d20941c32d945d579ab44c459f8
+fields: lines 25-27, physical 3, code 2, lifecycle-state lines 1 (S5 pattern) / 2 (after pattern), lock sites []
+      25: private readonly object _lifecycleGate = new();
+      27: private LifecycleState _lifecycle;
+Advance (new): lines 159-167, physical 9, code 6, lifecycle-state lines 0 (S5 pattern) / 3 (after pattern), lock sites []
+     162: private LifecycleEffect Advance(LifecycleEvent lifecycleEvent, object? subscription)
+     164: var step = ReconnectDecision.Decide(_lifecycle, lifecycleEvent, subscription);
+     165: _lifecycle = step.Next;
+connect observable: lines 259-320, physical 62, code 59, lifecycle-state lines 9 (S5 pattern) / 9 (after pattern), lock sites [262, 273, 290, 313]
+     261: var generation = new object();
+     262: lock (_lifecycleGate)
+     264: if (Advance(LifecycleEvent.Subscribe, generation) != LifecycleEffect.Admit)
+     273: lock (_lifecycleGate)
+     275: if (Advance(LifecycleEvent.Connect, generation) != LifecycleEffect.Install)
+     290: lock (_lifecycleGate)
+     292: if (Advance(LifecycleEvent.Register, generation) != LifecycleEffect.Register)
+     313: lock (_lifecycleGate)
+     315: if (Advance(LifecycleEvent.Terminate, generation) == LifecycleEffect.NotifyNotConnected)
+Dispose(bool): lines 340-360, physical 21, code 15, lifecycle-state lines 1 (S5 pattern) / 1 (after pattern), lock sites [345]
+     345: lock (_lifecycleGate) _ = Advance(LifecycleEvent.Dispose, null);
+DisposeAsync: lines 380-393, physical 14, code 13, lifecycle-state lines 1 (S5 pattern) / 1 (after pattern), lock sites [382]
+     382: lock (_lifecycleGate) _ = Advance(LifecycleEvent.Dispose, null);
+total {'physical': 109, 'code': 95, 'state_s5_pattern': 12, 'state_after_pattern': 16, 'locks': 6}
+every lock statement in file [262, 273, 290, 313, 345, 382]
+src/main/WebsocketClientLite/Helper/ReconnectDecision.cs: sha256 8fb0027637e02086134944d75644d219301b20ef5c23caa5068251532cc2f959, physical 92, code (no blank, // or /// lines) 38
+src/main/WebsocketClientLiteTest/ReconnectDecisionTests.cs: sha256 0f7c31ba34ccc6736f81bd1bc7aa4240cf702b78219cfd58ec3b0c0cb896464d, physical 170, code (no blank, // or /// lines) 138

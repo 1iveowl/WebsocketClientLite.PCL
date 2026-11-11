@@ -1,0 +1,10 @@
+--- a/src/main/WebsocketClientLite/ClientWebSocketRx.cs
++++ b/src/main/WebsocketClientLite/ClientWebSocketRx.cs
+@@ -278,7 +278,6 @@
+                     {
+                         lock (_lifecycleGate)
+                         {
+-                            if (_disposed) throw new ObjectDisposedException(nameof(ClientWebSocketRx));
+                             service = WebsocketClientFactory.Create(
+                                 () => IsSecureConnectionScheme(uri), ValidateServerCertificate, obsStatus, this);
+                             _activeConnections.TryAdd(service, 0);

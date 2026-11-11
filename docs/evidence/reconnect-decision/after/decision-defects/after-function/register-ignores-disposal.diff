@@ -1,0 +1,11 @@
+--- a/src/main/WebsocketClientLite/Helper/ReconnectDecision.cs
++++ b/src/main/WebsocketClientLite/Helper/ReconnectDecision.cs
+@@ -79,7 +79,7 @@
+             LifecycleEvent.Subscribe when state.Disposed => new(state, LifecycleEffect.Reject),
+             LifecycleEvent.Subscribe => new(state with { Generation = subscription }, LifecycleEffect.Admit),
+             // Rows 7 to 18. Register and Connect look only at disposal.
+-            LifecycleEvent.Register => new(state, state.Disposed ? LifecycleEffect.Reject : LifecycleEffect.Register),
++            LifecycleEvent.Register => new(state, LifecycleEffect.Register),
+             LifecycleEvent.Connect => new(state, state.Disposed ? LifecycleEffect.Reject : LifecycleEffect.Install),
+             // Rows 19 to 24. Only the newest subscription reports not connected, also after disposal.
+             LifecycleEvent.Terminate => new(state,
