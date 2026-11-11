@@ -9,7 +9,7 @@ public class PayloadEvidenceTests
 {
     static string Root => RequirementsTests.Root;
     static MutationCatalog Payload => new Mutations(Root).LoadCatalog(scope: "payload");
-    static JsonArray Diagnostics => Data.Read(Path.Combine(Root, "verification/tests/fixtures/payload-diagnostics.json")).AsArray();
+    static JsonArray Diagnostics => Fixtures.Rendered(Data.Read(Path.Combine(Root, "verification/tests/fixtures/payload-diagnostics.json"))).AsArray();
     public static IEnumerable<object[]> Cases() => Diagnostics.Select(c => new object[] { c!.ToJsonString() });
     [Theory, MemberData(nameof(Cases))]
     public void ObservedDiagnosticsRequireTheExactSemanticFailure(string json)
@@ -37,22 +37,49 @@ public class PayloadEvidenceTests
             Assert.Equal("inconclusive", Mutations.Classify(invalid, source, target).Status);
         }
     }
-    [Fact]
-    public void PropositionLocationMustLieInAPredicateTheTargetNames()
+    // The 1-based line of the first line of `source` that contains `text`, asserted to exist.
+    static int LineOf(string source, string text)
+    {
+        var line = Array.FindIndex(source.Split('\n'), l => l.Contains(text, StringComparison.Ordinal)) + 1;
+        Assert.True(line > 0, $"line not found: {text}");
+        return line;
+    }
+    [Theory]
+    [InlineData("signature")]
+    [InlineData("Known")]
+    [InlineData("PrefixValid")]
+    [InlineData("without-postcondition")]
+    public void PropositionLocationMustLieInAPredicateTheTargetNames(string mode)
     {
         var fixture = Diagnostics.Single(d => d!["id"]!.ToString() == "HEADER-001-short-sixteen-bit")!;
         var mutant = Payload.Mutants.Single(m => m.Id == "HEADER-001-short-sixteen-bit");
         var source = Mutations.Apply(Data.Text(Path.Combine(Root, mutant.File)), mutant);
         Assert.Equal("detected", Mutations.Classify(Data.Model<ExecutionResult>(fixture), source, mutant).Status);
         var inside = Regex.Match(fixture["stdout"]!.ToString(), @"Protocol\.dfy\((\d+),\d+\): Related location: this proposition").Groups[1].Value;
-        Assert.NotEmpty(inside);
-        var outside = Array.FindIndex(source.Split('\n'), l => l.Contains("static method DecodeHeader(", StringComparison.Ordinal)) + 1;
+        Assert.Equal(LineOf(source, "else if marker == 126 then 126 <= length <= 65535 else length >= 65536) &&"), int.Parse(inside));
         var moved = Data.Model<ExecutionResult>(fixture);
-        moved.Stdout = moved.Stdout.Replace($"Protocol.dfy({inside},", $"Protocol.dfy({outside},", StringComparison.Ordinal);
+        // Outside every function, and inside the bodies of two predicates the target clause
+        // does not name: Known's body is on its declaration line, PrefixValid's body follows it.
+        int? line = mode switch
+        {
+            "signature" => LineOf(source, "static method DecodeHeader("),
+            "Known" => LineOf(source, "static function Known(op: bv8): bool { op == 0 ||"),
+            "PrefixValid" => LineOf(source, "static function PrefixValid(first: bv8, second: bv8): bool {") + 2,
+            _ => null
+        };
+        if (line is { } target)
+        {
+            Assert.DoesNotContain("PrefixValid(", mutant.TargetClause);
+            Assert.DoesNotContain("Known(", mutant.TargetClause);
+            if (mode == "PrefixValid")
+                Assert.Contains("Known(op)", source.Split('\n')[target - 1]);
+            moved.Stdout = moved.Stdout.Replace($"Protocol.dfy({inside},", $"Protocol.dfy({target},", StringComparison.Ordinal);
+            Assert.Contains($"Protocol.dfy({target},", moved.Stdout);
+        }
+        else
+            moved.Stdout = Regex.Replace(moved.Stdout, @"^.*Related location: this is the postcondition that could not be proved\r?\n", "", RegexOptions.Multiline);
+        Assert.NotEqual(fixture["stdout"]!.ToString(), moved.Stdout);
         Assert.Equal("inconclusive", Mutations.Classify(moved, source, mutant).Status);
-        var alone = Data.Model<ExecutionResult>(fixture);
-        alone.Stdout = Regex.Replace(alone.Stdout, @"^.*Related location: this is the postcondition that could not be proved\r?\n", "", RegexOptions.Multiline);
-        Assert.Equal("inconclusive", Mutations.Classify(alone, source, mutant).Status);
     }
     [Fact]
     public void ScopedOffsetEditDoesNotMutateProductionAndScalarTogether()

@@ -2,61 +2,61 @@
   {
     "id": "REASSEMBLY-001-offset-stall",
     "exit_code": 4,
-    "stdout": "verification/Protocol.dfy(239,32): Error: this invariant could not be proved to be maintained by the loop\n Related message: loop invariant violation\n    |\n239 |         invariant offset as int == |Parts(parts, p as int)| && offset <= total\n    |                                 ^^\n\n\nDafny program verifier finished with 573 verified, 1 error\n"
+    "stdout": "verification/Protocol.dfy({ProtocolCore.Protocol.Merge+7},32): Error: this invariant could not be proved to be maintained by the loop\n Related message: loop invariant violation\n    |\n{ProtocolCore.Protocol.Merge+7} |         invariant offset as int == |Parts(parts, p as int)| && offset <= total\n    |                                 ^^\n\n\nDafny program verifier finished with 573 verified, 1 error\n"
   },
   {
     "id": "REASSEMBLY-002-offset-stall",
     "exit_code": 4,
-    "stdout": "verification/Protocol.dfy(267,32): Error: this invariant could not be proved to be maintained by the loop\n Related message: loop invariant violation\n    |\n267 |         invariant offset as int == |Parts(parts, p as int)| && offset <= total\n    |                                 ^^\n\n\nDafny program verifier finished with 573 verified, 1 error\n"
+    "stdout": "verification/Protocol.dfy({ProtocolCore.Protocol.MergeScalar+7},32): Error: this invariant could not be proved to be maintained by the loop\n Related message: loop invariant violation\n    |\n{ProtocolCore.Protocol.MergeScalar+7} |         invariant offset as int == |Parts(parts, p as int)| && offset <= total\n    |                                 ^^\n\n\nDafny program verifier finished with 573 verified, 1 error\n"
   },
   {
     "id": "REASSEMBLY-001-oversized-result",
     "exit_code": 4,
-    "stdout": "verification/Protocol.dfy(232,4): Error: a postcondition could not be proved on this return path\n    |\n232 |     {\n    |     ^\n\nverification/Protocol.dfy(231,42): Related location: this is the postcondition that could not be proved\n    |\n231 |       ensures fresh(result) && result[..] == Parts(parts, parts.Length)\n    |                                           ^^\n\n\nDafny program verifier finished with 573 verified, 1 error\n"
+    "stdout": "verification/Protocol.dfy({ProtocolCore.Protocol.Merge+0},4): Error: a postcondition could not be proved on this return path\n    |\n{ProtocolCore.Protocol.Merge+0} |     {\n    |     ^\n\nverification/Protocol.dfy({ProtocolCore.Protocol.Merge-1},42): Related location: this is the postcondition that could not be proved\n    |\n{ProtocolCore.Protocol.Merge-1} |       ensures fresh(result) && result[..] == Parts(parts, parts.Length)\n    |                                           ^^\n\n\nDafny program verifier finished with 573 verified, 1 error\n"
   },
   {
     "id": "MASK-001-xor-to-or",
     "exit_code": 4,
-    "stdout": "verification/Masking.dfy(18,18): Error: this invariant could not be proved to be maintained by the loop\n Related message: loop invariant violation\n   |\n18 |         invariant forall j :: 0 <= j < i as int ==>\n   |                   ^^^^^^\n\n\nDafny program verifier finished with 573 verified, 1 error\n"
+    "stdout": "verification/Masking.dfy({MaskingCore.Masking.Apply+4},18): Error: this invariant could not be proved to be maintained by the loop\n Related message: loop invariant violation\n   |\n{MaskingCore.Masking.Apply+4} |         invariant forall j :: 0 <= j < i as int ==>\n   |                   ^^^^^^\n\n\nDafny program verifier finished with 573 verified, 1 error\n"
   },
   {
     "id": "MASK-001-key-write",
     "exit_code": 4,
-    "stdout": "verification/Masking.dfy(23,44): Error: assignment might update an array element not in the enclosing context's modifies clause\n   |\n23 |         data[i] := data[i] ^ key[i % 4]; key[0] := 0;\n   |                                             ^\n\n\nDafny program verifier finished with 573 verified, 1 error\n"
+    "stdout": "verification/Masking.dfy({MaskingCore.Masking.Apply+9},44): Error: assignment might update an array element not in the enclosing context's modifies clause\n   |\n{MaskingCore.Masking.Apply+9} |         data[i] := data[i] ^ key[i % 4]; key[0] := 0;\n   |                                             ^\n\n\nDafny program verifier finished with 573 verified, 1 error\n"
   },
   {
     "id": "MASK-002-tail-xor-to-or",
     "exit_code": 4,
-    "stdout": "verification/Protocol.dfy(528,18): Error: this invariant could not be proved to be maintained by the loop\n Related message: loop invariant violation\n    |\n528 |         invariant forall j :: 0 <= j < i as int ==> dest[offset as int + j] == source[j] ^\n    |                   ^^^^^^\n\n\nDafny program verifier finished with 573 verified, 1 error\n"
+    "stdout": "verification/Protocol.dfy({ProtocolCore.Protocol.CopyMasked+31},18): Error: this invariant could not be proved to be maintained by the loop\n Related message: loop invariant violation\n    |\n{ProtocolCore.Protocol.CopyMasked+31} |         invariant forall j :: 0 <= j < i as int ==> dest[offset as int + j] == source[j] ^\n    |                   ^^^^^^\n\n\nDafny program verifier finished with 573 verified, 1 error\n"
   },
   {
     "id": "MASK-002-corrupt-bulk-byte",
     "exit_code": 4,
-    "stdout": "verification/Protocol.dfy(501,18): Error: this invariant could not be proved to be maintained by the loop\n Related message: loop invariant violation\n    |\n501 |         invariant forall j :: 0 <= j < i as int ==> dest[offset as int + j] == source[j] ^\n    |                   ^^^^^^\n\n\nDafny program verifier finished with 576 verified, 1 error\n"
+    "stdout": "verification/Protocol.dfy({ProtocolCore.Protocol.CopyMasked+4},18): Error: this invariant could not be proved to be maintained by the loop\n Related message: loop invariant violation\n    |\n{ProtocolCore.Protocol.CopyMasked+4} |         invariant forall j :: 0 <= j < i as int ==> dest[offset as int + j] == source[j] ^\n    |                   ^^^^^^\n\n\nDafny program verifier finished with 576 verified, 1 error\n"
   },
   {
     "id": "MASK-002-preserve-prefix",
     "exit_code": 4,
-    "stdout": "verification/Protocol.dfy(528,18): Error: this invariant could not be proved to be maintained by the loop\n Related message: loop invariant violation\n    |\n528 |         invariant forall j :: 0 <= j < i as int ==> dest[offset as int + j] == source[j] ^\n    |                   ^^^^^^\n\nverification/Protocol.dfy(530,18): Error: this invariant could not be proved to be maintained by the loop\n Related message: loop invariant violation\n    |\n530 |         invariant forall j :: 0 <= j < dest.Length && !(offset as int <= j < offset as int + i as int) ==> dest[j] == old(dest[j])\n    |                   ^^^^^^\n\n\nDafny program verifier finished with 575 verified, 2 errors\n"
+    "stdout": "verification/Protocol.dfy({ProtocolCore.Protocol.CopyMasked+31},18): Error: this invariant could not be proved to be maintained by the loop\n Related message: loop invariant violation\n    |\n{ProtocolCore.Protocol.CopyMasked+31} |         invariant forall j :: 0 <= j < i as int ==> dest[offset as int + j] == source[j] ^\n    |                   ^^^^^^\n\nverification/Protocol.dfy({ProtocolCore.Protocol.CopyMasked+33},18): Error: this invariant could not be proved to be maintained by the loop\n Related message: loop invariant violation\n    |\n{ProtocolCore.Protocol.CopyMasked+33} |         invariant forall j :: 0 <= j < dest.Length && !(offset as int <= j < offset as int + i as int) ==> dest[j] == old(dest[j])\n    |                   ^^^^^^\n\n\nDafny program verifier finished with 575 verified, 2 errors\n"
   },
   {
     "id": "MASK-003-xor-to-or",
     "exit_code": 4,
-    "stdout": "verification/Protocol.dfy(553,18): Error: this invariant could not be proved to be maintained by the loop\n Related message: loop invariant violation\n    |\n553 |         invariant forall j :: 0 <= j < i as int ==> dest[offset as int + j] == old(dest[offset as int + j]) ^ old(dest[keyOffset as int + j % 4])\n    |                   ^^^^^^\n\n\nDafny program verifier finished with 573 verified, 1 error\n"
+    "stdout": "verification/Protocol.dfy({ProtocolCore.Protocol.MaskSlice+4},18): Error: this invariant could not be proved to be maintained by the loop\n Related message: loop invariant violation\n    |\n{ProtocolCore.Protocol.MaskSlice+4} |         invariant forall j :: 0 <= j < i as int ==> dest[offset as int + j] == old(dest[offset as int + j]) ^ old(dest[keyOffset as int + j % 4])\n    |                   ^^^^^^\n\n\nDafny program verifier finished with 573 verified, 1 error\n"
   },
   {
     "id": "MASK-003-preserve-prefix",
     "exit_code": 4,
-    "stdout": "verification/Protocol.dfy(554,18): Error: this invariant could not be proved to be maintained by the loop\n Related message: loop invariant violation\n    |\n554 |         invariant forall j :: 0 <= j < dest.Length && !(offset as int <= j < offset as int + i as int) ==> dest[j] == old(dest[j])\n    |                   ^^^^^^\n\n\nDafny program verifier finished with 573 verified, 1 error\n"
+    "stdout": "verification/Protocol.dfy({ProtocolCore.Protocol.MaskSlice+5},18): Error: this invariant could not be proved to be maintained by the loop\n Related message: loop invariant violation\n    |\n{ProtocolCore.Protocol.MaskSlice+5} |         invariant forall j :: 0 <= j < dest.Length && !(offset as int <= j < offset as int + i as int) ==> dest[j] == old(dest[j])\n    |                   ^^^^^^\n\n\nDafny program verifier finished with 573 verified, 1 error\n"
   },
   {
     "id": "HEADER-001-short-sixteen-bit",
     "exit_code": 4,
-    "stdout": "verification/Protocol.dfy(72,4): Error: a postcondition could not be proved on this return path\n   |\n72 |     {\n   |     ^\n\nverification/Protocol.dfy(68,41): Related location: this is the postcondition that could not be proved\n   |\n68 |       ensures status == 2 ==> HeaderValid(first, second, length, limit) && available >= headerSize - 2\n   |                                          ^\n\nverification/Protocol.dfy(53,38): Related location: this proposition could not be proved\n   |\n53 |        else if marker == 126 then 126 <= length <= 65535 else length >= 65536) &&\n   |                                       ^^\n\n\nDafny program verifier finished with 573 verified, 1 error\n"
+    "stdout": "verification/Protocol.dfy({ProtocolCore.Protocol.DecodeHeader+0},4): Error: a postcondition could not be proved on this return path\n   |\n{ProtocolCore.Protocol.DecodeHeader+0} |     {\n   |     ^\n\nverification/Protocol.dfy({ProtocolCore.Protocol.DecodeHeader-4},41): Related location: this is the postcondition that could not be proved\n   |\n{ProtocolCore.Protocol.DecodeHeader-4} |       ensures status == 2 ==> HeaderValid(first, second, length, limit) && available >= headerSize - 2\n   |                                          ^\n\nverification/Protocol.dfy({ProtocolCore.Protocol.HeaderValid+6},38): Related location: this proposition could not be proved\n   |\n{ProtocolCore.Protocol.HeaderValid+6} |        else if marker == 126 then 126 <= length <= 65535 else length >= 65536) &&\n   |                                       ^^\n\n\nDafny program verifier finished with 573 verified, 1 error\n"
   },
   {
     "id": "HEADER-001-short-sixty-four-bit",
     "exit_code": 4,
-    "stdout": "verification/Protocol.dfy(72,4): Error: a postcondition could not be proved on this return path\n   |\n72 |     {\n   |     ^\n\nverification/Protocol.dfy(68,41): Related location: this is the postcondition that could not be proved\n   |\n68 |       ensures status == 2 ==> HeaderValid(first, second, length, limit) && available >= headerSize - 2\n   |                                          ^\n\nverification/Protocol.dfy(53,69): Related location: this proposition could not be proved\n   |\n53 |        else if marker == 126 then 126 <= length <= 65535 else length >= 65536) &&\n   |                                                                      ^^\n\n\nDafny program verifier finished with 573 verified, 1 error\n"
+    "stdout": "verification/Protocol.dfy({ProtocolCore.Protocol.DecodeHeader+0},4): Error: a postcondition could not be proved on this return path\n   |\n{ProtocolCore.Protocol.DecodeHeader+0} |     {\n   |     ^\n\nverification/Protocol.dfy({ProtocolCore.Protocol.DecodeHeader-4},41): Related location: this is the postcondition that could not be proved\n   |\n{ProtocolCore.Protocol.DecodeHeader-4} |       ensures status == 2 ==> HeaderValid(first, second, length, limit) && available >= headerSize - 2\n   |                                          ^\n\nverification/Protocol.dfy({ProtocolCore.Protocol.HeaderValid+6},69): Related location: this proposition could not be proved\n   |\n{ProtocolCore.Protocol.HeaderValid+6} |        else if marker == 126 then 126 <= length <= 65535 else length >= 65536) &&\n   |                                                                      ^^\n\n\nDafny program verifier finished with 573 verified, 1 error\n"
   }
 ]
