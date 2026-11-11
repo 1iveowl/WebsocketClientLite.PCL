@@ -1,0 +1,29 @@
+  Determining projects to restore...
+  Restored /tmp/m4-seed-step-drops-state-i7Cfh2/src/main/WebsocketClientLite/WebsocketClientLite.csproj (in 131 ms).
+  Restored /tmp/m4-seed-step-drops-state-i7Cfh2/src/interface/IWebsocketClientLite/IWebsocketClientLite.csproj (in 125 ms).
+  Restored /tmp/m4-seed-step-drops-state-i7Cfh2/src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj (in 126 ms).
+  IWebsocketClientLite -> /tmp/m4-seed-step-drops-state-i7Cfh2/src/interface/IWebsocketClientLite/bin/Release/netstandard2.0/IWebsocketClientLite.dll
+  WebsocketClientLite -> /tmp/m4-seed-step-drops-state-i7Cfh2/src/main/WebsocketClientLite/bin/Release/net10.0/WebsocketClientLite.dll
+  WebsocketClientLiteTest -> /tmp/m4-seed-step-drops-state-i7Cfh2/src/main/WebsocketClientLiteTest/bin/Release/net10.0/WebsocketClientLiteTest.dll
+Test run for /tmp/m4-seed-step-drops-state-i7Cfh2/src/main/WebsocketClientLiteTest/bin/Release/net10.0/WebsocketClientLiteTest.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.14]     WebsocketClientLiteTest.CoreBoundaryTypesTests.WrappersDoNotAllocate [FAIL]
+[xUnit.net 00:00:00.14]     WebsocketClientLiteTest.CoreBoundaryTypesTests.ReceiveStepMatchesStepAndReachesExactlyTheReceiveStates [FAIL]
+  Failed WebsocketClientLiteTest.CoreBoundaryTypesTests.WrappersDoNotAllocate [3 ms]
+  Error Message:
+   Assert.Equal() Failure: Values differ
+Expected: 270000
+Actual:   230000
+  Stack Trace:
+     at WebsocketClientLiteTest.CoreBoundaryTypesTests.WrappersDoNotAllocate() in /tmp/m4-seed-step-drops-state-i7Cfh2/src/main/WebsocketClientLiteTest/CoreBoundaryTypesTests.cs:line 261
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed WebsocketClientLiteTest.CoreBoundaryTypesTests.ReceiveStepMatchesStepAndReachesExactlyTheReceiveStates [< 1 ms]
+  Error Message:
+   Step differs at state 1, op 0, fin False, total 0, length 0
+  Stack Trace:
+     at WebsocketClientLiteTest.CoreBoundaryTypesTests.ReceiveStepMatchesStepAndReachesExactlyTheReceiveStates() in /tmp/m4-seed-step-drops-state-i7Cfh2/src/main/WebsocketClientLiteTest/CoreBoundaryTypesTests.cs:line 183
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+
+Failed!  - Failed:     2, Passed:    15, Skipped:     0, Total:    17, Duration: 31 ms - WebsocketClientLiteTest.dll (net10.0)

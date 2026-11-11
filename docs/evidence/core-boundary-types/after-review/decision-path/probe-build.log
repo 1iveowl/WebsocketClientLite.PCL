@@ -1,0 +1,11 @@
+  Determining projects to restore...
+  Restored /tmp/s8-probe-NXcpFA/DecisionPathProbe.csproj (in 353 ms).
+  Restored /tmp/fix143-probe/src/src/interface/IWebsocketClientLite/IWebsocketClientLite.csproj (in 357 ms).
+  IWebsocketClientLite -> /tmp/s8-probe-NXcpFA/bin/IWebsocketClientLite.dll
+  DecisionPathProbe -> /tmp/s8-probe-NXcpFA/bin/DecisionPathProbe.dll
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:02.60

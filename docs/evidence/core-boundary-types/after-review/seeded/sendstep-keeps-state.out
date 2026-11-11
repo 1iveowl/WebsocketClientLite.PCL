@@ -1,0 +1,30 @@
+  Determining projects to restore...
+  Restored /tmp/m4-seed-sendstep-keeps-state-CanxW4/src/main/WebsocketClientLite/WebsocketClientLite.csproj (in 146 ms).
+  Restored /tmp/m4-seed-sendstep-keeps-state-CanxW4/src/interface/IWebsocketClientLite/IWebsocketClientLite.csproj (in 144 ms).
+  Restored /tmp/m4-seed-sendstep-keeps-state-CanxW4/src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj (in 144 ms).
+  IWebsocketClientLite -> /tmp/m4-seed-sendstep-keeps-state-CanxW4/src/interface/IWebsocketClientLite/bin/Release/netstandard2.0/IWebsocketClientLite.dll
+  WebsocketClientLite -> /tmp/m4-seed-sendstep-keeps-state-CanxW4/src/main/WebsocketClientLite/bin/Release/net10.0/WebsocketClientLite.dll
+  WebsocketClientLiteTest -> /tmp/m4-seed-sendstep-keeps-state-CanxW4/src/main/WebsocketClientLiteTest/bin/Release/net10.0/WebsocketClientLiteTest.dll
+Test run for /tmp/m4-seed-sendstep-keeps-state-CanxW4/src/main/WebsocketClientLiteTest/bin/Release/net10.0/WebsocketClientLiteTest.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.16]     WebsocketClientLiteTest.CoreBoundaryTypesTests.OnlyTheListedMembersCallThePrivateConstructor(type: typeof(WebsocketClientLite.Helper.TransmitState)) [FAIL]
+  Failed WebsocketClientLiteTest.CoreBoundaryTypesTests.OnlyTheListedMembersCallThePrivateConstructor(type: typeof(WebsocketClientLite.Helper.TransmitState)) [6 ms]
+  Error Message:
+   Assert.Equal() Failure: Collections differ
+                         ↓ (pos 1)
+Expected: ["SendFailed", "SendStep"]
+Actual:   ["SendFailed"]
+  Stack Trace:
+     at WebsocketClientLiteTest.CoreBoundaryTypesTests.OnlyTheListedMembersCallThePrivateConstructor(Type type) in /tmp/m4-seed-sendstep-keeps-state-CanxW4/src/main/WebsocketClientLiteTest/CoreBoundaryTypesTests.cs:line 90
+   at InvokeStub_CoreBoundaryTypesTests.OnlyTheListedMembersCallThePrivateConstructor(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+[xUnit.net 00:00:00.18]     WebsocketClientLiteTest.CoreBoundaryTypesTests.TransmitStepMatchesSendStepAndReachesExactlyTxState [FAIL]
+  Failed WebsocketClientLiteTest.CoreBoundaryTypesTests.TransmitStepMatchesSendStepAndReachesExactlyTxState [1 ms]
+  Error Message:
+   SendStep differs at state 0, op 1, fin False
+  Stack Trace:
+     at WebsocketClientLiteTest.CoreBoundaryTypesTests.TransmitStepMatchesSendStepAndReachesExactlyTxState() in /tmp/m4-seed-sendstep-keeps-state-CanxW4/src/main/WebsocketClientLiteTest/CoreBoundaryTypesTests.cs:line 207
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+
+Failed!  - Failed:     2, Passed:    15, Skipped:     0, Total:    17, Duration: 52 ms - WebsocketClientLiteTest.dll (net10.0)

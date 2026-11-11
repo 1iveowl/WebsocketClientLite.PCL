@@ -1,0 +1,1 @@
+source=git archive 35192752625fd9b8e937af75272d67b7afeb83b9 (the final production commit after the M4 review), extracted to a temporary directory on 2026-11-11T23:06:25Z; the commit is read from the archive with git get-tar-commit-id

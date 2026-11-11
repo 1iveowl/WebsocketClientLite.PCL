@@ -1,0 +1,7 @@
+id=sendstep-keeps-state
+commit=3519275
+before=        next = new TransmitState(code);
+after=        next = state;
+source_sha256=1a3445d1034abf18459a3107a418c1ec1e45ce39fa93b9d20036b35b17c98086
+mutant_sha256=7b69aa64cccf7f0ed8a0d05be59c610aa8b8b5c8da1e3964d9ce94c9baa998d8
+exit=1

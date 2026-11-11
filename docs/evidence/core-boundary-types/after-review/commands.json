@@ -1,0 +1,37 @@
+{
+  "recorded": "2026-11-11. M4 review fixes of PR #143 (findings r4544078277 to r4544079322). Local measurements on the same dev container as baseline/ and after/, not CI and not portable timing guarantees.",
+  "production_commit": "35192752625fd9b8e937af75272d67b7afeb83b9 (3519275), the final production commit. Each benchmark-run-N.meta records it inside the lock with git rev-parse HEAD in the benchmarked tree, and each decision-path/probe-run-N.meta records it from the git archive with git get-tar-commit-id (finding 6).",
+  "timing_lock": "Every timed run used flock ~/worktrees/.timing.lock. Each .meta holds `ps -eo pid,etime,comm | grep -E 'claude|dotnet|VBCSCompiler'` and the load average taken inside the lock just before the run. Other sessions were running untimed work at the same time; the one-minute load average was 2.66 to 39.19, against 0.58 to 0.73 for the baseline.",
+  "runs": [
+    {
+      "run": "benchmark-build",
+      "command": "dotnet build verification/benchmark/MaskingBenchmark.csproj -c Release",
+      "log": "benchmark-build.log",
+      "timed": false
+    },
+    {
+      "run": "benchmark-run-1..3",
+      "command": "bash docs/evidence/core-boundary-types/baseline/bench.sh docs/evidence/core-boundary-types/after-review N, run from this worktree with HEAD at 3519275 and no tracked change; it runs DOTNET_TieredCompilation=0 dotnet run --project verification/benchmark/MaskingBenchmark.csproj -c Release under the lock",
+      "log": "benchmark-run-N.out",
+      "meta": "benchmark-run-N.meta",
+      "timed": true,
+      "outcome": "All three exit=0; 8.50, 8.31 and 8.37 s wall."
+    },
+    {
+      "run": "decision-path probe, 3 runs",
+      "command": "git archive 3519275 > <tmp>/source.tar; tar -x -C <tmp>/src -f <tmp>/source.tar; bash docs/evidence/core-boundary-types/decision-path/run.sh <tmp>/src docs/evidence/core-boundary-types/after-review/decision-path/probe 3",
+      "log": "decision-path/probe-run-N.out, decision-path/probe-build.log, decision-path/source.txt",
+      "meta": "decision-path/probe-run-N.meta",
+      "timed": true,
+      "outcome": "All three exit=0."
+    },
+    {
+      "run": "seeded adapter defects",
+      "command": "flock ~/worktrees/.timing.lock bash docs/evidence/core-boundary-types/after-review/seeded/seed.sh 3519275 docs/evidence/core-boundary-types/after-review/seeded",
+      "log": "seeded/<id>.out",
+      "meta": "seeded/<id>.meta",
+      "timed": false,
+      "outcome": "Control 17 of 17 passed; each of the 7 defects failed at least one named plain test (exit=1)."
+    }
+  ]
+}

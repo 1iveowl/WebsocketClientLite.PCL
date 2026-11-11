@@ -1,0 +1,33 @@
+  Determining projects to restore...
+  Restored /tmp/m4-seed-fromcode-accepts-3-WJFNhL/src/main/WebsocketClientLite/WebsocketClientLite.csproj (in 109 ms).
+  Restored /tmp/m4-seed-fromcode-accepts-3-WJFNhL/src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj (in 107 ms).
+  Restored /tmp/m4-seed-fromcode-accepts-3-WJFNhL/src/interface/IWebsocketClientLite/IWebsocketClientLite.csproj (in 107 ms).
+  IWebsocketClientLite -> /tmp/m4-seed-fromcode-accepts-3-WJFNhL/src/interface/IWebsocketClientLite/bin/Release/netstandard2.0/IWebsocketClientLite.dll
+  WebsocketClientLite -> /tmp/m4-seed-fromcode-accepts-3-WJFNhL/src/main/WebsocketClientLite/bin/Release/net10.0/WebsocketClientLite.dll
+  WebsocketClientLiteTest -> /tmp/m4-seed-fromcode-accepts-3-WJFNhL/src/main/WebsocketClientLiteTest/bin/Release/net10.0/WebsocketClientLiteTest.dll
+Test run for /tmp/m4-seed-fromcode-accepts-3-WJFNhL/src/main/WebsocketClientLiteTest/bin/Release/net10.0/WebsocketClientLiteTest.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.15]     WebsocketClientLiteTest.CoreBoundaryTypesTests.RawReadRejectsAnIllegalStateBeforeReadingAnyByte [FAIL]
+  Failed WebsocketClientLiteTest.CoreBoundaryTypesTests.RawReadRejectsAnIllegalStateBeforeReadingAnyByte [4 ms]
+  Error Message:
+   Assert.Throws() Failure: Exception type was not an exact match
+Expected: typeof(System.ArgumentOutOfRangeException)
+Actual:   typeof(WebsocketClientLite.CustomException.WebsocketClientLiteException)
+---- WebsocketClientLite.CustomException.WebsocketClientLiteException : Protocol error: invalid server frame header/fragmentation sequence or payload exceeds the configured maximum.
+  Stack Trace:
+     at WebsocketClientLiteTest.CoreBoundaryTypesTests.RawReadRejectsAnIllegalStateBeforeReadingAnyByte() in /tmp/m4-seed-fromcode-accepts-3-WJFNhL/src/main/WebsocketClientLiteTest/CoreBoundaryTypesTests.cs:line 146
+--- End of stack trace from previous location ---
+----- Inner Stack Trace -----
+   at WebsocketClientLite.Helper.DataframeParsing.ReadDataframeAsync(TcpConnectionService tcpConnection, ReceiveState messageState, UInt32 total, CancellationToken ct) in /tmp/m4-seed-fromcode-accepts-3-WJFNhL/src/main/WebsocketClientLite/Helper/DataframeParsing.cs:line 52
+   at WebsocketClientLiteTest.DataframeParsingRawState.ReadDataframeAsync(TcpConnectionService tcpConnection, CancellationToken ct, Byte state, UInt32 total) in /tmp/m4-seed-fromcode-accepts-3-WJFNhL/src/main/WebsocketClientLiteTest/TestConnections.cs:line 46
+[xUnit.net 00:00:00.16]     WebsocketClientLiteTest.CoreBoundaryTypesTests.FromCodeAcceptsExactlyTheReceiveStates [FAIL]
+  Failed WebsocketClientLiteTest.CoreBoundaryTypesTests.FromCodeAcceptsExactlyTheReceiveStates [1 ms]
+  Error Message:
+   Assert.Throws() Failure: No exception was thrown
+Expected: typeof(System.ArgumentOutOfRangeException)
+  Stack Trace:
+     at WebsocketClientLiteTest.CoreBoundaryTypesTests.FromCodeAcceptsExactlyTheReceiveStates() in /tmp/m4-seed-fromcode-accepts-3-WJFNhL/src/main/WebsocketClientLiteTest/CoreBoundaryTypesTests.cs:line 133
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+
+Failed!  - Failed:     2, Passed:    15, Skipped:     0, Total:    17, Duration: 32 ms - WebsocketClientLiteTest.dll (net10.0)

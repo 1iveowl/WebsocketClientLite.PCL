@@ -274,14 +274,15 @@ and [`decision-path/`](../docs/evidence/core-boundary-types/decision-path/).
 
 `src/main/WebsocketClientLite/Helper/CoreBoundaryTypes.cs` adds four internal
 `readonly struct`s. Each holds one `readonly byte`, has one private constructor and no
-conversion into the type:
+conversion into the type. (Changed at M4, section 9: no type has a conversion out of it
+either, each exposes its code only as `Code`, and `default(CloseEvent)` is no event.)
 
 | Type | Codes | Values come only from | Wrapper that forwards to the generated method |
 | --- | --- | --- | --- |
-| `ReceiveState` | 0, 1, 2, 8 | `Idle` (= `default`), `FromCode` (throws for any other byte), `Step`'s ensured `next` | `ReceiveState.Step` → `Protocol.Step`. The two `Protocol.Admit` calls take a `ReceiveState` through an implicit conversion to `byte`. |
+| `ReceiveState` | 0, 1, 2, 8 | `Idle` (= `default`), `FromCode` (throws for any other byte), `Step`'s ensured `next` | `ReceiveState.Step` → `Protocol.Step`. In S8 the two `Protocol.Admit` calls took a `ReceiveState` through an implicit conversion to `byte`; since M4 `ReadDataframeAsync` takes `.Code` once into a local `byte state` (section 9). |
 | `TransmitState` | 0, 1, 2, 8, 15 (`TxState`) | `Idle` (= `default`), `SendStep`'s ensured `next`, `SendFailed`'s result (8 or 15) | `TransmitState.SendStep`, `TransmitState.SendFailed` |
 | `CloseState` | 0..7 | `Open` (= `default`), `CloseStep`'s ensured `next` | `CloseState.Step` → `Protocol.CloseStep` |
-| `CloseEvent` | 0, 1, 2 | `Send` (= `default`), `Received`, `TimeoutOrFailure` | (argument of `CloseState.Step`) |
+| `CloseEvent` | 0, 1, 2 | `Send` (= `default` in S8; since M4 `default` is no event), `Received`, `TimeoutOrFailure` | (argument of `CloseState.Step`) |
 
 The call sites after the change, by S7's IDs:
 
@@ -296,17 +297,24 @@ The call sites after the change, by S7's IDs:
 | E1, H1-H4, X1 | header encoding and byte loops | Unchanged, as the brief says |
 
 Tests call `ReadDataframeAsync(ct, 2, retained)` and `ReadDataframeAsync(ct)` with raw
-codes (`ParserRetentionTests`, `PayloadParsingTests`) and must stay unchanged. That
-entry point is kept in its own class, `DataframeParsingRawState`. It converts with
-`ReceiveState.FromCode`, so an illegal code throws `ArgumentOutOfRangeException` before
-any byte is read. Production does not call it. It is in its own class so that
-`DataframeParsing.ReadDataframeAsync`, which `requirements.json` and `boundaries.json`
-name, stays one declaration (section 8, decision 6).
+codes (`ParserRetentionTests`, `PayloadParsingTests`) and must stay unchanged. In S8 that
+entry point was kept in the production assembly, in its own class
+`DataframeParsingRawState`, so that `DataframeParsing.ReadDataframeAsync`, which
+`requirements.json` and `boundaries.json` name, stays one declaration (section 8,
+decision 6). Since M4 the class is in the test project
+(`src/main/WebsocketClientLiteTest/TestConnections.cs`), so production has no entry point
+that takes a raw state. It converts with `ReceiveState.FromCode` and rejects a total
+above the connection's limit, and both failures fault the returned task before any byte
+is read (section 9).
 
 ### Can a caller construct an out-of-range state or event? (Done when 1)
 
-No, in safe C#. The evidence is in the plain tests in
-`src/main/WebsocketClientLiteTest/CoreBoundaryTypesTests.cs`:
+No, in safe C#, for code outside the four types: the constructor is private and there is
+no conversion into a type, so the C# compiler rejects any other way to make a value
+except `default`. Code inside a type can call its private constructor with any byte;
+since M4 a plain test pins which members do (section 9, finding 8). The evidence is in
+the plain tests in `src/main/WebsocketClientLiteTest/CoreBoundaryTypesTests.cs` (the S8
+list follows; section 9 lists the M4 additions):
 
 - `OnlyPrivateConstructorsAndOneByteField`: each type is a readonly struct with one
   private constructor, one readonly `byte` field and no conversion into the type.
@@ -331,13 +339,19 @@ What the types do not stop, stated exactly:
   unsafe code and no `AllowUnsafeBlocks`; its tests use reflection only to set
   `TcpConnectionService._stream`.
 - **`default(CloseEvent)` is `Send`.** It is a legal event, so a forgotten argument
-  cannot become illegal, but it is the event that requests a Close.
+  cannot become illegal, but it is the event that requests a Close. (Fixed at M4:
+  `default(CloseEvent)` is no event and its `Code` throws; section 9.)
 - **Relations, not ranges.** `total <= limit` (D1-D3), `available <= extended.Length`
   (D2), the `Merge` total (H3) and every `Size` range stay as they were: the type
   holds a code, not a relation between two values. See decision 4 for a cursor that
   would cover `total <= limit`.
 - **The raw entry point.** `DataframeParsingRawState.ReadDataframeAsync` takes a byte
-  and checks it at run time. That is a check, not a type.
+  and checks it at run time. That is a check, not a type. (Since M4 it is in the test
+  project and also checks the total; section 9.)
+- **Members inside a type.** Any member of a type can call its private constructor with
+  an arbitrary byte; `OnlyPrivateConstructorsAndOneByteField` does not show otherwise.
+  (Since M4 `OnlyTheListedMembersCallThePrivateConstructor` pins the members that do;
+  section 9.)
 
 ### Seeded defects in the adapter
 
@@ -514,13 +528,15 @@ Assurance gained:
   too, by the argument in section 1, so no defect was found. The gain is that a later
   edit cannot break them silently: `AdvanceClose(3)`, `_closeState = 9`,
   `_sendState = 4` or `ReadDataframeAsync` with state 5 from production no longer
-  compile.
+  compile. (In S8 the last one compiled, through the raw entry point that was then in
+  the production assembly, and failed at run time. Since M4 that entry point is in the
+  test project, so the claim holds; section 9, finding 1.)
 - The value part of CLOSE-LOCK and the message-state part of HEADER-ADAPTER can leave
   the assumption register (section 5), and the `TxState` gap S7 found is closed
   without a new entry.
-- It is not only a renaming: the reflection test and the closure tests show that an
-  out-of-range value cannot be constructed and that every wrapper returns what the
-  core returns.
+- It is not only a renaming: the compiler rejects construction outside the types, the
+  closure tests show that every wrapper returns what the core returns, and since M4 a
+  plain test pins the members inside each type that construct a value (section 9).
 
 Machinery: one 111-line file of 56 code lines, 7 code lines for the raw entry point, 177
 code lines of plain tests that run in about 30 ms. No allocation, no measurable time
@@ -534,10 +550,11 @@ Weaker than the brief hoped:
 - Only ranges are enforced. REASSEMBLY-TOTALS and MASK-ADAPTER, two of the brief's
   three examples, are relations and are untouched, as S7 predicted. So is
   `total <= limit` in HEADER-ADAPTER.
-- The raw entry point stays for the tests, with a run-time check.
+- The raw entry point stays for the tests, with a run-time check. (Since M4 it is in
+  the test project.)
 - `ReceiveState` converts implicitly to `byte`, so that the `Admit` lines keep the text
-  a seeded defect patches.
-- `default(CloseEvent)` is the legal event `Send`.
+  a seeded defect patches. (Removed at M4; section 9.)
+- `default(CloseEvent)` is the legal event `Send`. (Fixed at M4; section 9.)
 
 ## 8. Decisions for owner review (S8)
 
@@ -562,13 +579,15 @@ Weaker than the brief hoped:
    not authorize, so it is proposed here, not done.
 5. **The implicit conversion `ReceiveState` → `byte`** exists so that the two
    `Protocol.Admit` lines keep their exact text, the `late-scratch` anchor. A
-   conversion out of the type is always legal; there is none into it.
+   conversion out of the type is always legal; there is none into it. (Superseded at
+   M4: removed, and the anchor text kept another way; section 9, finding 2.)
 6. **The raw-code entry point.** `ParserRetentionTests` passes `(ct, 2, retained)` and
    `PayloadParsingTests` passes `(ct)`. Tests stay unchanged, so
    `DataframeParsingRawState.ReadDataframeAsync` keeps that signature and checks the
    code at run time. It is a separate class because an overload in `DataframeParsing`
    made `pdd.sh validate` fail ("2 declarations") and 79 Pdd tests with it. No
-   requirement entry was edited.
+   requirement entry was edited. (Superseded at M4: the class is in the test project;
+   section 9, finding 1.)
 7. **The plain tests are in the production commit**, so that the revert at M4 (owner
    decision 2026-11-11, item 3), if any, leaves a tree that builds.
 8. **The production commit was rewritten once before the first push.** `6646466` had
@@ -585,3 +604,135 @@ Weaker than the brief hoped:
     HEADER-002 could name `CoreBoundaryTypesTests`. That is the owner's change.
 11. **CI was not dispatched by S8.** The controller dispatches it on the final commit at
     M4 (owner decision 2026-11-11, item 2).
+
+## 9. M4 review fixes (2026-11-11)
+
+Written 2026-11-11 for merge point M4, after the `/code-review high` of PR #143 (inline
+comments r4544078277 to r4544079322), under the owner decision and the controller
+decision of 2026-11-11 posted on #143. Production commit: `3519275`, on top of the S8
+commits, holding the production change and its plain tests only. Evidence:
+[`docs/evidence/core-boundary-types/after-review/`](../docs/evidence/core-boundary-types/after-review/).
+No change to the Dafny sources, the generated file, any test that existed before S8,
+`tools/Pdd`, the `tools/Pdd` seeded-defect anchors, `boundaries.json`,
+`requirements.json` or the requirements schema.
+
+### What each finding changed
+
+| # | Finding | What was done | Commit |
+| --- | --- | --- | --- |
+| 1 | The raw `ReadDataframeAsync(ct, byte state, uint total)` was in the production assembly, so section 7's "state 5 from production no longer compiles" was false | `DataframeParsingRawState` moved to the test project (`TestConnections.cs`). Production has no entry point that takes a raw state, so the claim is now true. `DataframeParsing.ReadDataframeAsync` stays one declaration; `pdd.sh validate` passes | `3519275` |
+| 2 | The implicit `ReceiveState` → `byte` conversion let a state flow into any byte parameter, such as `CloseStep`'s | Removed. `ReadDataframeAsync` takes `messageState.Code` once into a local `byte state`, so the two `Admit` lines keep their exact text, the `late-scratch` anchor, with no tooling change. Comparisons such as `state == 8` no longer compile | `3519275` |
+| 3 | The `.meta` files held full `ps -eo args` lines with other sessions' prompts | Every committed `.meta` reduced to pid, etime and process name; the scripts record `ps -eo pid,etime,comm`; note in the evidence README. Timings and other fields unchanged. History not rewritten | `d13be1c` |
+| 4 | The raw entry point passed `total` unchecked to `Admit`, which requires `total <= limit` | It rejects a total above `MaxFrameSize` with `ArgumentOutOfRangeException` before reading. New test `RawReadRejectsATotalAboveTheLimitBeforeReadingAnyByte` (total = limit still reads) | `3519275` |
+| 5 | The raw entry point threw synchronously, where the old `async` method faulted its task | It is `async` again. Both raw-read tests assert that the task is faulted, not that the call throws | `3519275` |
+| 6 | `bench.sh` ran `cd /home/vscode/worktrees/s7` and no `.meta` named the measured commit | It benchmarks the caller's git tree and records `git rev-parse HEAD` and the changed-file count inside the lock; `decision-path/run.sh` records the source commit and its real exit code. S7 and S8 both worked in `~/worktrees/s7` (the paths in `after/checks/stryker.log` and `solution-build.log`), so S8's after runs measured S8's tree, but which commit is not recorded inside those runs | `65666dc` |
+| 7 | `default(CloseEvent)` was `Send`, so an uninitialized event requested a Close | `CloseEvent` stores its code plus one. `default(CloseEvent).Code` throws `InvalidOperationException`, and with it `CloseState.Step`. New test `DefaultCloseEventIsNoEvent` | `3519275` |
+| 8 | `OnlyPrivateConstructorsAndOneByteField` does not show that no member inside a type constructs an illegal value | New test `OnlyTheListedMembersCallThePrivateConstructor`: it scans the IL of every method of each type and its nested types for calls to the private constructor, and requires exactly an allow-list (`FromCode`, `Step`; `SendStep`, `SendFailed`; `Step`; the three named events). Section 4's claim is reworded to what is enforced (below) | `3519275` |
+| 9 | The new test copied the `_stream` reflection that about 10 test files hold | A shared `TestConnections.Over(stream, limit)` builds the connection for the new tests. The copies in tests that existed before S8 are not consolidated (decision 3 below) | `3519275` |
+| 10 | The four types used three shapes | One shape: `private readonly byte _code;` and `internal byte Code`. The reflection test checks that `Code` exists and that no type has a conversion operator | `3519275` |
+
+### What the types enforce now, stated exactly (finding 8)
+
+- **Enforced by the C# compiler:** outside the four types, safe C# can make a value only
+  through their members or `default`. The constructor is private and there is no
+  conversion into or out of any type, so leaving a type is always a visible `.Code`.
+  `default` is code 0 for the three state types, which every state range contains, and
+  is no event for `CloseEvent`: using it throws.
+- **Enforced by a plain test, not by the compiler:** which members inside each type call
+  its private constructor. A new member that does fails
+  `OnlyTheListedMembersCallThePrivateConstructor` until it is added to the allow-list.
+  The test shows who constructs, not that a listed member constructs only legal codes.
+  That is shown member by member: `FromCode` over all 256 bytes, each wrapper against the
+  generated method it forwards to over every reachable state, and the named events by
+  value. A wrapper's result is legal because the generated method's `ensures` says so.
+- **Not enforced:** reflection, `Unsafe.As` and unsafe code; the relations
+  (`total <= limit`, REASSEMBLY-TOTALS, MASK-ADAPTER); and, inside
+  `DataframeParsing.ReadDataframeAsync`, the local `byte state`, which is the one place
+  the receive state leaves its type, for the two `Admit` calls.
+
+### After-review numbers (local measurements)
+
+Same machine and command as sections 3 and 6, under `flock ~/worktrees/.timing.lock`,
+on `3519275` as recorded inside each run. Other sessions were running untimed work:
+the one-minute load average was 15.16, 14.32 and 2.66 for the three benchmark runs and
+38.93, 39.19 and 9.16 for the probe runs, against 0.58 to 0.73 for the baseline. Every run is
+reported.
+
+- **README benchmark** (`after-review/benchmark-run-N.*`). Its three source files are
+  unchanged since `d5c648d`. Every verified median is inside S7's run-to-run range or
+  within 1.7% of it; the largest difference is `Merge` at 65536 bytes in run 2,
+  1095.28 ns against S7's 1068.76 to 1077.77. Every masking row allocated 0 bytes.
+  Verified medians in ns, runs 1 / 2 / 3: `Masking.Apply` 1024 B 281.68 / 281.35 /
+  282.41 (S7 281.66 to 284.32); `Masking.Apply` 1 MiB 281226.80 / 276600.51 /
+  278063.34 (S7 277662.95 to 277896.28); `CopyMasked` 65536 B 22974.29 / 22991.90 /
+  23039.67 (S7 22956.65 to 22994.08); `MaskSlice` 65536 B 26498.28 / 26400.69 /
+  26506.88 (S7 26532.98 to 26551.39). The raw output has every row.
+- **Decision-path probe** (`after-review/decision-path/`), built from `git archive
+  3519275`, three runs. The median bytes per frame equal S8's before and after values in
+  all seven scenarios (receive 208.26 / 320.28 / 392.28 / 216.28 / 180.28, send
+  104.12 / 104.14). In run 1, one trial of "receive text 125 B" measured 320.26 bytes
+  per frame, below the median; every other trial of every run equals its median. So
+  section 6's "minimum equals maximum in each `.out`" does not hold for that run; the
+  lower value is not an added allocation. Times overlap S8's before and after runs
+  (for example receive binary 16 B 111.1 / 109.8 / 120.0 ns, send binary 16 B 678.5 /
+  692.3 / 736.0 ns).
+- **Lines.** `CoreBoundaryTypes.cs` 111 → 118 lines, 56 → 59 code lines.
+  `DataframeParsing.cs` 102 → 92 lines, 82 → 76 code lines (the raw entry point left).
+  Production net against `d5c648d`: +120 lines, +60 code lines. Tests:
+  `CoreBoundaryTypesTests.cs` 190 → 263 lines, 177 → 234 code lines, and
+  `TestConnections.cs` (new, with the raw entry point) 48 lines, 34 code lines.
+
+### Seeded adapter defects (`after-review/seeded/`)
+
+`seed.sh` is S8's script with three more defects, run on `3519275` under the lock. Each
+copy runs only `CoreBoundaryTypesTests` (17 tests).
+
+| Defect | Edit | Result |
+| --- | --- | --- |
+| none (control) | no change | 17 of 17 passed |
+| `fromcode-accepts-3` | `FromCode` also accepts 3 | 2 failed: `FromCodeAccepts...`, `RawReadRejectsAnIllegalState...` |
+| `received-is-event-2` | `CloseEvent.Received` is code 2 | 2 failed: `DefaultIsCodeZero...`, `WrappersDoNotAllocate` |
+| `sendstep-keeps-state` | `SendStep` returns the old state | 2 failed: `TransmitStepMatches...`, `OnlyTheListedMembers...` (`TransmitState`) |
+| `step-drops-state` | `Step` passes state 0 to the core | 2 failed: `ReceiveStepMatches...`, `WrappersDoNotAllocate` |
+| `extra-factory` (finding 8) | adds `CloseState.From(byte code) => new(code)` | 1 failed: `OnlyTheListedMembers...` (`CloseState`): expected `["Step"]`, actual `["From", "Step"]` |
+| `implicit-conversion` (finding 2) | restores `implicit operator byte(ReceiveState)` | 1 failed: `OnlyPrivateConstructorsAndOneByteField` (`ReceiveState`) |
+| `default-event-is-send` (finding 7) | `default(CloseEvent).Code` returns 0 | 1 failed: `DefaultCloseEventIsNoEvent` |
+
+The plain tests alone catch each one. S8's four anchors still occur exactly once, and
+so do the `tools/Pdd` anchors (`late-scratch`, `control-total`), which the controlled
+capture job below patched.
+
+### Recommendation after the review
+
+**Unchanged: adopt.** No finding weakens the result. Findings 1, 2, 7 and 8 remove three
+of the four limits section 7 listed as "weaker than the brief hoped" (the raw entry point
+in production, the implicit conversion, `default(CloseEvent)`) and make the claim about
+construction exact. Production went from +63 to +60 code lines against `d5c648d`, because
+the raw entry point left it, and the plain tests grew by 91 code lines
+(`CoreBoundaryTypesTests.cs` and `TestConnections.cs`), with no allocation and no
+measurable time on the measured paths.
+
+### Decisions for owner review (M4)
+
+1. **Finding 2 was fixed without a tooling change.** The `late-scratch` anchor names a
+   variable `state`, so `ReadDataframeAsync`'s parameter is now `messageState` and a
+   local `byte state = messageState.Code;` feeds the two `Admit` lines. Inside that one
+   method the code is a byte again; this is stated above as not enforced.
+2. **Finding 8 was fixed in a test, not by the compiler.** The allow-list makes adding a
+   constructing member a visible edit; it does not prove the new member correct.
+3. **Finding 9 is fixed for the new tests only.** About 10 test files that existed
+   before S8 keep their own `_stream` reflection. Moving them onto
+   `TestConnections.Over` would change existing tests, which the brief keeps unchanged.
+   It is a follow-up for the owner to allow.
+4. **Finding 3: no history was rewritten**, as the controller decided. The full
+   process lines stay in this branch's history (commits up to `f5d49f2`) until the
+   branch is deleted, which is the owner's call. After a squash merge the release
+   branch has only the reduced files. Section 3's remark that the only other `claude -p`
+   process was a code review session can no longer be checked from the files.
+5. **Finding 6: S8's after runs are not rerun as a correction.** They measured S8's
+   tree (see the table), and their commit is recorded only outside the runs
+   (`after/source-commit.txt`). The M4 runs record it inside.
+6. **`default(CloseEvent)` now throws** inside `AdvanceClose`, under `_stateLock`. Only
+   a programming error reaches it; every legal event behaves as before.
+7. **Measured under load.** The after-review runs ran while other sessions did untimed
+   work (one-minute load up to 39.19). The lock kept other timed runs out, not other work.
