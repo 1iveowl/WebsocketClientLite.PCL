@@ -1,0 +1,2 @@
+/bin/bash: line 15: /usr/bin/time: No such file or directory
+exit 127

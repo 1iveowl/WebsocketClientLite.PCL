@@ -1,0 +1,9 @@
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  Pdd -> /workspaces/WebsocketClientLite.PCL/tools/Pdd/bin/Release/net10.0/Pdd.dll
+  Pdd.Tests -> /workspaces/WebsocketClientLite.PCL/tools/Pdd.Tests/bin/Release/net10.0/Pdd.Tests.dll
+Test run for /workspaces/WebsocketClientLite.PCL/tools/Pdd.Tests/bin/Release/net10.0/Pdd.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+
+Passed!  - Failed:     0, Passed:   262, Skipped:     0, Total:   262, Duration: 13 s - Pdd.Tests.dll (net10.0)
+exit 0

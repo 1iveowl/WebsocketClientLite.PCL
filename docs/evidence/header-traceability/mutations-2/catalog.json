@@ -1,0 +1,257 @@
+{
+  "schema_version": 1,
+  "mutants": [
+    {
+      "id": "CLOSE-001-duplicate-send",
+      "requirement": "CLOSE-001",
+      "obligation": "CLOSE-001-MUTATION",
+      "before": "send := event == 0 && (state & 5) == 0;",
+      "after": "send := event == 0 && (state & 4) == 0;",
+      "target_clause": "ensures send <==> event == 0 && (state & 5) == 0",
+      "allowed_clauses": [
+        "ensures send <==> event == 0 && (state & 5) == 0",
+        "ensures (state & 1) != 0 ==> !send"
+      ],
+      "classification": "postcondition",
+      "file": "verification/Protocol.dfy",
+      "symbol": "ProtocolCore.Protocol.CloseStep"
+    },
+    {
+      "id": "CLOSE-001-suppressed-send",
+      "requirement": "CLOSE-001",
+      "obligation": "CLOSE-001-MUTATION",
+      "before": "send := event == 0 && (state & 5) == 0;",
+      "after": "send := false;",
+      "target_clause": "ensures send <==> event == 0 && (state & 5) == 0",
+      "allowed_clauses": [
+        "ensures send <==> event == 0 && (state & 5) == 0"
+      ],
+      "classification": "postcondition",
+      "file": "verification/Protocol.dfy",
+      "symbol": "ProtocolCore.Protocol.CloseStep"
+    },
+    {
+      "id": "CLOSE-002-state-bit-loss",
+      "requirement": "CLOSE-002",
+      "obligation": "CLOSE-002-MUTATION",
+      "before": "else if event == 1 then state | 2 else state | 4;",
+      "after": "else if event == 1 then 2 else state | 4;",
+      "target_clause": "ensures next <= 7 && (next & state) == state",
+      "allowed_clauses": [
+        "ensures next <= 7 && (next & state) == state"
+      ],
+      "classification": "postcondition",
+      "file": "verification/Protocol.dfy",
+      "symbol": "ProtocolCore.Protocol.CloseStep"
+    },
+    {
+      "id": "CLOSE-003-premature-release",
+      "requirement": "CLOSE-003",
+      "obligation": "CLOSE-003-MUTATION",
+      "before": "release := (next & 4) != 0 || (next & 3) == 3;",
+      "after": "release := true;",
+      "target_clause": "ensures release <==> (next & 4) != 0 || (next & 3) == 3",
+      "allowed_clauses": [
+        "ensures release <==> (next & 4) != 0 || (next & 3) == 3",
+        "ensures release ==> (next & 3) == 3 || event == 2 || (state & 4) != 0"
+      ],
+      "classification": "postcondition",
+      "file": "verification/Protocol.dfy",
+      "symbol": "ProtocolCore.Protocol.CloseStep"
+    },
+    {
+      "id": "CLOSE-003-suppressed-release",
+      "requirement": "CLOSE-003",
+      "obligation": "CLOSE-003-MUTATION",
+      "before": "release := (next & 4) != 0 || (next & 3) == 3;",
+      "after": "release := false;",
+      "target_clause": "ensures release <==> (next & 4) != 0 || (next & 3) == 3",
+      "allowed_clauses": [
+        "ensures release <==> (next & 4) != 0 || (next & 3) == 3"
+      ],
+      "classification": "postcondition",
+      "file": "verification/Protocol.dfy",
+      "symbol": "ProtocolCore.Protocol.CloseStep"
+    },
+    {
+      "id": "REASSEMBLY-001-offset-stall",
+      "requirement": "REASSEMBLY-001",
+      "obligation": "REASSEMBLY-001-MUTATION",
+      "before": "offset := offset + segment.Length as Size;",
+      "after": "offset := offset;",
+      "target_clause": "invariant offset as int == |Parts(parts, p as int)| && offset <= total",
+      "allowed_clauses": [
+        "invariant offset as int == |Parts(parts, p as int)| && offset <= total"
+      ],
+      "classification": "invariant",
+      "contract_clause": "ensures fresh(result) && result[..] == Parts(parts, parts.Length)",
+      "file": "verification/Protocol.dfy",
+      "symbol": "ProtocolCore.Protocol.Merge"
+    },
+    {
+      "id": "REASSEMBLY-002-offset-stall",
+      "requirement": "REASSEMBLY-002",
+      "obligation": "REASSEMBLY-002-MUTATION",
+      "before": "offset := offset + segment.Length as Size;",
+      "after": "offset := offset;",
+      "target_clause": "invariant offset as int == |Parts(parts, p as int)| && offset <= total",
+      "allowed_clauses": [
+        "invariant offset as int == |Parts(parts, p as int)| && offset <= total"
+      ],
+      "classification": "invariant",
+      "contract_clause": "ensures fresh(result) && result[..] == Parts(parts, parts.Length)",
+      "file": "verification/Protocol.dfy",
+      "symbol": "ProtocolCore.Protocol.MergeScalar"
+    },
+    {
+      "id": "REASSEMBLY-001-oversized-result",
+      "requirement": "REASSEMBLY-001",
+      "obligation": "REASSEMBLY-001-MUTATION",
+      "before": "result := new bv8[total];",
+      "after": "result := new bv8[total as int + 1];",
+      "target_clause": "ensures fresh(result) && result[..] == Parts(parts, parts.Length)",
+      "allowed_clauses": [
+        "ensures fresh(result) && result[..] == Parts(parts, parts.Length)"
+      ],
+      "classification": "postcondition",
+      "file": "verification/Protocol.dfy",
+      "symbol": "ProtocolCore.Protocol.Merge"
+    },
+    {
+      "id": "MASK-001-xor-to-or",
+      "requirement": "MASK-001",
+      "obligation": "MASK-001-MUTATION",
+      "before": "data[i] := data[i] ^ key[i % 4];",
+      "after": "data[i] := data[i] | key[i % 4];",
+      "target_clause": "invariant forall j :: 0 <= j < i as int ==> data[j] == old(data[j]) ^ key[j % 4]",
+      "allowed_clauses": [
+        "invariant forall j :: 0 <= j < i as int ==> data[j] == old(data[j]) ^ key[j % 4]"
+      ],
+      "classification": "invariant",
+      "contract_clause": "ensures forall j :: 0 <= j < data.Length ==> data[j] == old(data[j]) ^ key[j % 4]",
+      "file": "verification/Masking.dfy",
+      "symbol": "MaskingCore.Masking.Apply"
+    },
+    {
+      "id": "MASK-001-key-write",
+      "requirement": "MASK-001",
+      "obligation": "MASK-001-MUTATION",
+      "before": "data[i] := data[i] ^ key[i % 4];",
+      "after": "data[i] := data[i] ^ key[i % 4]; key[0] := 0;",
+      "target_clause": "modifies data",
+      "allowed_clauses": [
+        "modifies data"
+      ],
+      "classification": "frame",
+      "file": "verification/Masking.dfy",
+      "symbol": "MaskingCore.Masking.Apply"
+    },
+    {
+      "id": "MASK-002-tail-xor-to-or",
+      "requirement": "MASK-002",
+      "obligation": "MASK-002-MUTATION",
+      "before": "dest[offset + i] := source[i] ^ k;",
+      "after": "dest[offset + i] := source[i] | k;",
+      "target_clause": "invariant forall j :: 0 <= j < i as int ==> dest[offset as int + j] == source[j] ^ (if j % 4 == 0 then k0 else if j % 4 == 1 then k1 else if j % 4 == 2 then k2 else k3)",
+      "allowed_clauses": [
+        "invariant forall j :: 0 <= j < i as int ==> dest[offset as int + j] == source[j] ^ (if j % 4 == 0 then k0 else if j % 4 == 1 then k1 else if j % 4 == 2 then k2 else k3)"
+      ],
+      "classification": "invariant",
+      "contract_clause": "ensures forall j :: 0 <= j < count as int ==> dest[offset as int + j] == source[j] ^ (if j % 4 == 0 then k0 else if j % 4 == 1 then k1 else if j % 4 == 2 then k2 else k3)",
+      "file": "verification/Protocol.dfy",
+      "symbol": "ProtocolCore.Protocol.CopyMasked"
+    },
+    {
+      "id": "MASK-002-corrupt-bulk-byte",
+      "requirement": "MASK-002",
+      "obligation": "MASK-002-MUTATION",
+      "before": "i := i + 4;",
+      "after": "i := i + 4; dest[offset] := 0;",
+      "target_clause": "invariant forall j :: 0 <= j < i as int ==> dest[offset as int + j] == source[j] ^ (if j % 4 == 0 then k0 else if j % 4 == 1 then k1 else if j % 4 == 2 then k2 else k3)",
+      "allowed_clauses": [
+        "invariant forall j :: 0 <= j < i as int ==> dest[offset as int + j] == source[j] ^ (if j % 4 == 0 then k0 else if j % 4 == 1 then k1 else if j % 4 == 2 then k2 else k3)"
+      ],
+      "classification": "invariant",
+      "contract_clause": "ensures forall j :: 0 <= j < count as int ==> dest[offset as int + j] == source[j] ^ (if j % 4 == 0 then k0 else if j % 4 == 1 then k1 else if j % 4 == 2 then k2 else k3)",
+      "file": "verification/Protocol.dfy",
+      "symbol": "ProtocolCore.Protocol.CopyMasked"
+    },
+    {
+      "id": "MASK-002-preserve-prefix",
+      "requirement": "MASK-002",
+      "obligation": "MASK-002-MUTATION",
+      "before": "dest[offset + i] := source[i] ^ k;",
+      "after": "dest[offset + i] := source[i] ^ k; dest[0] := 0;",
+      "target_clause": "invariant forall j :: 0 <= j < dest.Length && !(offset as int <= j < offset as int + i as int) ==> dest[j] == old(dest[j])",
+      "allowed_clauses": [
+        "invariant forall j :: 0 <= j < i as int ==> dest[offset as int + j] == source[j] ^ (if j % 4 == 0 then k0 else if j % 4 == 1 then k1 else if j % 4 == 2 then k2 else k3)",
+        "invariant forall j :: 0 <= j < dest.Length && !(offset as int <= j < offset as int + i as int) ==> dest[j] == old(dest[j])"
+      ],
+      "classification": "invariant",
+      "contract_clause": "ensures forall j :: 0 <= j < dest.Length && !(offset as int <= j < offset as int + count as int) ==> dest[j] == old(dest[j])",
+      "file": "verification/Protocol.dfy",
+      "symbol": "ProtocolCore.Protocol.CopyMasked"
+    },
+    {
+      "id": "MASK-003-xor-to-or",
+      "requirement": "MASK-003",
+      "obligation": "MASK-003-MUTATION",
+      "before": "dest[offset + i] := dest[offset + i] ^ dest[keyOffset + i % 4];",
+      "after": "dest[offset + i] := dest[offset + i] | dest[keyOffset + i % 4];",
+      "target_clause": "invariant forall j :: 0 <= j < i as int ==> dest[offset as int + j] == old(dest[offset as int + j]) ^ old(dest[keyOffset as int + j % 4])",
+      "allowed_clauses": [
+        "invariant forall j :: 0 <= j < i as int ==> dest[offset as int + j] == old(dest[offset as int + j]) ^ old(dest[keyOffset as int + j % 4])"
+      ],
+      "classification": "invariant",
+      "contract_clause": "ensures forall j :: 0 <= j < count as int ==> dest[offset as int + j] == old(dest[offset as int + j]) ^ old(dest[keyOffset as int + j % 4])",
+      "file": "verification/Protocol.dfy",
+      "symbol": "ProtocolCore.Protocol.MaskSlice"
+    },
+    {
+      "id": "MASK-003-preserve-prefix",
+      "requirement": "MASK-003",
+      "obligation": "MASK-003-MUTATION",
+      "before": "dest[offset + i] := dest[offset + i] ^ dest[keyOffset + i % 4];",
+      "after": "dest[offset + i] := dest[offset + i] ^ dest[keyOffset + i % 4]; dest[0] := 0;",
+      "target_clause": "invariant forall j :: 0 <= j < dest.Length && !(offset as int <= j < offset as int + i as int) ==> dest[j] == old(dest[j])",
+      "allowed_clauses": [
+        "invariant forall j :: 0 <= j < i as int ==> dest[offset as int + j] == old(dest[offset as int + j]) ^ old(dest[keyOffset as int + j % 4])",
+        "invariant forall j :: 0 <= j < dest.Length && !(offset as int <= j < offset as int + i as int) ==> dest[j] == old(dest[j])"
+      ],
+      "classification": "invariant",
+      "contract_clause": "ensures forall j :: 0 <= j < dest.Length && !(offset as int <= j < offset as int + count as int) ==> dest[j] == old(dest[j])",
+      "file": "verification/Protocol.dfy",
+      "symbol": "ProtocolCore.Protocol.MaskSlice"
+    },
+    {
+      "id": "HEADER-001-short-sixteen-bit",
+      "requirement": "HEADER-001",
+      "obligation": "HEADER-001-MUTATION",
+      "before": "status := if HeaderValid(first, second, length, limit) then 2 else 1;",
+      "after": "status := if PrefixValid(first, second) && length <= limit && length <= 0x7fffffff && (length & 0x8000000000000000) == 0 && (if marker < 126 then length == marker as bv64 else if marker == 126 then length <= 65535 else length >= 65536) && ((first & 15) < 8 || ((first & 128) != 0 && length <= 125)) then 2 else 1;",
+      "target_clause": "ensures status == 2 ==> HeaderValid(first, second, length, limit) && available >= headerSize - 2",
+      "allowed_clauses": [
+        "ensures status == 2 ==> HeaderValid(first, second, length, limit) && available >= headerSize - 2",
+        "ensures PrefixValid(first, second) && available >= headerSize - 2 ==> length == (if (second & 127) <= 125 then (second & 127) as bv64 else Word(extended[..headerSize as int - 2])) && (status == 2 <==> HeaderValid(first, second, length, limit))"
+      ],
+      "classification": "postcondition",
+      "file": "verification/Protocol.dfy",
+      "symbol": "ProtocolCore.Protocol.DecodeHeader"
+    },
+    {
+      "id": "HEADER-001-short-sixty-four-bit",
+      "requirement": "HEADER-001",
+      "obligation": "HEADER-001-MUTATION",
+      "before": "status := if HeaderValid(first, second, length, limit) then 2 else 1;",
+      "after": "status := if PrefixValid(first, second) && length <= limit && length <= 0x7fffffff && (length & 0x8000000000000000) == 0 && (if marker < 126 then length == marker as bv64 else if marker == 126 then 126 <= length <= 65535 else true) && ((first & 15) < 8 || ((first & 128) != 0 && length <= 125)) then 2 else 1;",
+      "target_clause": "ensures status == 2 ==> HeaderValid(first, second, length, limit) && available >= headerSize - 2",
+      "allowed_clauses": [
+        "ensures status == 2 ==> HeaderValid(first, second, length, limit) && available >= headerSize - 2",
+        "ensures PrefixValid(first, second) && available >= headerSize - 2 ==> length == (if (second & 127) <= 125 then (second & 127) as bv64 else Word(extended[..headerSize as int - 2])) && (status == 2 <==> HeaderValid(first, second, length, limit))"
+      ],
+      "classification": "postcondition",
+      "file": "verification/Protocol.dfy",
+      "symbol": "ProtocolCore.Protocol.DecodeHeader"
+    }
+  ]
+}

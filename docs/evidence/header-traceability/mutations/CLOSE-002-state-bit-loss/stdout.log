@@ -1,0 +1,12 @@
+verification/Protocol.dfy(206,4): Error: a postcondition could not be proved on this return path
+    |
+206 |     {
+    |     ^
+
+verification/Protocol.dfy(199,42): Related location: this is the postcondition that could not be proved
+    |
+199 |       ensures next <= 7 && (next & state) == state
+    |                                           ^^
+
+
+Dafny program verifier finished with 573 verified, 1 error

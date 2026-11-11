@@ -1,0 +1,10 @@
+  Determining projects to restore...
+  Restored /tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/88c164d8-00ce-4452-bf4e-c0ff82a48a9d/scratchpad/wt-28e30cb/tools/Pdd/Pdd.csproj (in 39 ms).
+  Restored /tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/88c164d8-00ce-4452-bf4e-c0ff82a48a9d/scratchpad/wt-28e30cb/tools/Pdd.Tests/Pdd.Tests.csproj (in 171 ms).
+  Pdd -> /tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/88c164d8-00ce-4452-bf4e-c0ff82a48a9d/scratchpad/wt-28e30cb/tools/Pdd/bin/Release/net10.0/Pdd.dll
+  Pdd.Tests -> /tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/88c164d8-00ce-4452-bf4e-c0ff82a48a9d/scratchpad/wt-28e30cb/tools/Pdd.Tests/bin/Release/net10.0/Pdd.Tests.dll
+Test run for /tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/88c164d8-00ce-4452-bf4e-c0ff82a48a9d/scratchpad/wt-28e30cb/tools/Pdd.Tests/bin/Release/net10.0/Pdd.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+
+Passed!  - Failed:     0, Passed:   258, Skipped:     0, Total:   258, Duration: 13 s - Pdd.Tests.dll (net10.0)
+exit 0
