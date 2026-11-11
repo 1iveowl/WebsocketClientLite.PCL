@@ -1,0 +1,12 @@
+  Determining projects to restore...
+  Restored /tmp/pdd-83388c07c330488591559d9a982bbdc3/src/main/WebsocketClientLite/WebsocketClientLite.csproj (in 134 ms).
+  Restored /tmp/pdd-83388c07c330488591559d9a982bbdc3/src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj (in 132 ms).
+  Restored /tmp/pdd-83388c07c330488591559d9a982bbdc3/src/interface/IWebsocketClientLite/IWebsocketClientLite.csproj (in 132 ms).
+  IWebsocketClientLite -> /tmp/pdd-83388c07c330488591559d9a982bbdc3/src/interface/IWebsocketClientLite/bin/Release/netstandard2.0/IWebsocketClientLite.dll
+  WebsocketClientLite -> /tmp/pdd-83388c07c330488591559d9a982bbdc3/src/main/WebsocketClientLite/bin/Release/net10.0/WebsocketClientLite.dll
+  WebsocketClientLiteTest -> /tmp/pdd-83388c07c330488591559d9a982bbdc3/src/main/WebsocketClientLiteTest/bin/Release/net10.0/WebsocketClientLiteTest.dll
+Test run for /tmp/pdd-83388c07c330488591559d9a982bbdc3/src/main/WebsocketClientLiteTest/bin/Release/net10.0/WebsocketClientLiteTest.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+Results File: /tmp/s6-scratch/timing-out/after/reconnect-defect/baseline/results.trx
+
+Passed!  - Failed:     0, Passed:    10, Skipped:     0, Total:    10, Duration: 9 s - WebsocketClientLiteTest.dll (net10.0)

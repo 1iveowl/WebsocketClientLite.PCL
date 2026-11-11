@@ -4,6 +4,7 @@
  "production_commit": "bd743b3dbb6af860804af1244e204e385eff595e",
  "base_commit": "fa96d59af838e7aa57071de1712a02c7065a6aab",
  "scratch": "/tmp/s6-scratch, outside the repository",
+ "review_fix_2026_11_11": "M3 review of PR #142, findings 1 and 2: every output listed below existed on disk, and the gitignored .log files among them were force-added unchanged on 2026-11-11. None is missing and none was recreated. The process lines in timing/*/processes.txt and checks/processes-before-protocol.txt were reduced to pid, elapsed time and command name on 2026-11-11, because they exposed other sessions' prompts; see README.md.",
  "runs": [
   {
    "run": "decision defects, before side",
