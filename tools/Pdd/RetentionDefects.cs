@@ -18,7 +18,9 @@ public sealed partial class Evidence
         ["IncompleteMessageTerminatesWithoutEmission"] = 2,
         ["CloseAndInvalidContinuationDoNotLeakRetainedData"] = 1,
         ["SplitUtf8IsValidatedOnlyWhenComplete"] = 1,
-        ["HandshakeConsumesScratchImmediatelyAndStopsBeforeFrame"] = 1
+        ["HandshakeConsumesScratchImmediatelyAndStopsBeforeFrame"] = 1,
+        ["InvalidHeadersRejectBeforePayloadRead"] = 20,
+        ["ConfiguredLimitAcceptsLimitAndRejectsSuccessorFromHeader"] = 6
     };
     public static readonly (string Id, string Source, string Before, string After, string Test, string Assertion)[] RetentionCases =
     [
@@ -82,7 +84,7 @@ public sealed partial class Evidence
         Require(S(report, "status") == "passed" && S(report, "library_target") == "net10.0" && Passed(report["baseline"]), "Incomplete retention baseline/report");
         XNamespace ns = "http://microsoft.com/schemas/VisualStudio/TeamTest/2010";
         var baseline = XDocument.Load(Path.Combine(directory, "baseline/results.trx")).Descendants(ns + "UnitTestResult").ToArray();
-        Require(baseline.Length == 14 && baseline.All(r => (string?)r.Attribute("outcome") == "Passed"), "Incomplete retention baseline cases");
+        Require(baseline.Length == 40 && baseline.All(r => (string?)r.Attribute("outcome") == "Passed"), "Incomplete retention baseline cases");
         foreach (var (test, count) in RetentionCaseCounts)
             Require(baseline.Count(r => ((string?)r.Attribute("testName"))?.Contains("ParserRetentionTests." + test, StringComparison.Ordinal) == true) == count, "Missing named retention baseline case");
         ValidateRetentionExecution(Path.Combine(directory, "baseline"), 0);
