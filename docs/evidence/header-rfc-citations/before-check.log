@@ -1,0 +1,27 @@
+4.11.0+fcb2042d6d043a2634f0854338c08feeaaaf4ae2
+Z3 version 4.12.1 - 64 bit
+verification/Protocol.dfy(69,17): Warning: unusual indentation in right-hand operand of <==> (which ends at line 72, column 97); do you perhaps need parentheses?
+verification/Protocol.dfy(99,26): Warning: unusual indentation in right-hand operand of ==> (which ends at line 104, column 20); do you perhaps need parentheses?
+verification/Protocol.dfy(105,46): Warning: unusual indentation in right-hand operand of ==> (which ends at line 106, column 84); do you perhaps need parentheses?
+verification/Protocol.dfy(126,9): Warning: unusual indentation in else branch of if-then-else (which ends at line 127, column 87); do you perhaps need parentheses?
+verification/Protocol.dfy(134,9): Warning: unusual indentation in else branch of if-then-else (which ends at line 135, column 87); do you perhaps need parentheses?
+verification/Protocol.dfy(337,27): Warning: unusual indentation in right-hand operand of ==> (which ends at line 338, column 104); do you perhaps need parentheses?
+verification/Protocol.dfy(339,17): Warning: unusual indentation in right-hand operand of <==> (which ends at line 341, column 93); do you perhaps need parentheses?
+verification/Protocol.dfy(393,48): Warning: unusual indentation in right-hand operand of ==> (which ends at line 394, column 93); do you perhaps need parentheses?
+verification/Protocol.dfy(400,48): Warning: unusual indentation in right-hand operand of ==> (which ends at line 401, column 95); do you perhaps need parentheses?
+verification/Protocol.dfy(427,48): Warning: unusual indentation in right-hand operand of ==> (which ends at line 428, column 95); do you perhaps need parentheses?
+Dafny auditor completed with 2 findings
+
+Dafny program verifier did not attempt verification
+
+Dafny program verifier finished with 41 verified, 0 errors
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:00.50
+
+real	0m10.494s
+user	0m8.619s
+sys	0m0.518s
