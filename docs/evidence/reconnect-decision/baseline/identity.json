@@ -1,0 +1,16 @@
+{
+  "made": "2026-11-11",
+  "step": "S5 of docs/pdd-10.3-session-plan.md, Experiment 1 baseline (before numbers)",
+  "base_commit": "fa96d59af838e7aa57071de1712a02c7065a6aab",
+  "base_ref": "origin/releases/10.3.0.0 at 2026-11-11T21:45:49Z",
+  "measured_in": "detached git worktree at the base commit, git status --porcelain empty before and after (host.txt)",
+  "files_sha256": {
+    "src/main/WebsocketClientLite/ClientWebSocketRx.cs": "ccc2a82e729957a394d628c0f1367b0259076270346a5d99c84bc7d9e50d7f10",
+    "src/main/WebsocketClientLiteTest/ReconnectTests.cs": "901fb59bef6d107f725ae04508f3760313b2ee59db2be52add0612b1be345fbe",
+    "tools/Pdd/ReconnectDefects.cs": "f721fe3b5d532fa52a3262c3121a224e9d3a9606f0639d9a8d574d620c8325ee",
+    "verification/reconnect-intent.md": "00f46a90ca4ce1c2acb990c4803c3dc1b38c8e1c036fae129ac82478f89b455e",
+    "docs/p3-d-validation.md": "d290e543c230f79d53ce750420bb1615af5f0a6173262b5da5cb65998735fa76"
+  },
+  "host": "see host.txt: Linux 7.2.11+deb13-amd64 x86_64, AMD Ryzen 9 9955HX, 32 logical CPUs, SDK 10.0.403, test host .NET 10.0.14; load average 0.08 before, 1.61 after; no other job ran",
+  "nature": "Local measurements on one host, one session. Not a CI measurement and not a distribution."
+}

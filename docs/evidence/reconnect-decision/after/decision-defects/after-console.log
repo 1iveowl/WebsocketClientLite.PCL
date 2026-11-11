@@ -1,0 +1,17 @@
+2026-11-11T22:15:19Z
+subscribe-ignores-disposal {'reconnect': 'survived', 'other': 'survived', 'plain': 'detected'} 
+subscribe-keeps-generation {'reconnect': 'survived', 'other': 'survived', 'plain': 'detected'} 
+register-ignores-disposal {'reconnect': 'survived', 'other': 'survived', 'plain': 'detected'} 
+connect-ignores-disposal {'reconnect': 'survived', 'other': 'survived', 'plain': 'detected'} 
+terminate-ignores-generation {'reconnect': 'detected', 'other': 'survived', 'plain': 'detected'} 
+dispose-not-permanent {'reconnect': 'detected', 'other': 'survived', 'plain': 'detected'} 
+exit=0
+subscribe-ignores-effect {'reconnect': 'survived', 'other': 'survived', 'plain': 'survived'} 
+shell-skips-store {'reconnect': 'detected', 'other': 'survived', 'plain': 'survived'} 
+register-ignores-effect {'reconnect': 'survived', 'other': 'survived', 'plain': 'survived'} 
+connect-ignores-effect {'reconnect': 'survived', 'other': 'survived', 'plain': 'survived'} 
+terminate-ignores-effect {'reconnect': 'detected', 'other': 'survived', 'plain': 'survived'} 
+terminate-passes-no-identity {'reconnect': 'survived', 'other': 'survived', 'plain': 'survived'} 
+dispose-skips-decision {'reconnect': 'detected', 'other': 'survived', 'plain': 'survived'} 
+exit=0
+2026-11-11T22:30:39Z

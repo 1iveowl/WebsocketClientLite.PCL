@@ -1,0 +1,23 @@
+file /tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/59ab5014-b189-4286-91c4-eee051d950c7/scratchpad/wt-base/src/main/WebsocketClientLite/ClientWebSocketRx.cs
+sha256 ccc2a82e729957a394d628c0f1367b0259076270346a5d99c84bc7d9e50d7f10
+fields: lines 24-26, physical 3, code 3, lifecycle-state lines 3, lock sites []
+      24: private readonly object _lifecycleGate = new();
+      25: private bool _disposed;
+      26: private object? _generation;
+connect observable: lines 248-307, physical 60, code 57, lifecycle-state lines 10, lock sites [251, 263, 279, 301]
+     250: var generation = new object();
+     251: lock (_lifecycleGate)
+     253: if (_disposed)
+     258: _generation = generation;
+     263: lock (_lifecycleGate)
+     265: if (_disposed) throw new ObjectDisposedException(nameof(ClientWebSocketRx));
+     279: lock (_lifecycleGate)
+     281: if (_disposed) throw new ObjectDisposedException(nameof(ClientWebSocketRx));
+     301: lock (_lifecycleGate)
+     303: if (ReferenceEquals(_generation, generation)) SetIsConnected(false);
+Dispose(bool): lines 327-346, physical 20, code 15, lifecycle-state lines 1, lock sites [331]
+     331: lock (_lifecycleGate) _disposed = true;
+DisposeAsync: lines 366-379, physical 14, code 13, lifecycle-state lines 1, lock sites [368]
+     368: lock (_lifecycleGate) _disposed = true;
+total {'physical': 97, 'code': 88, 'state': 15, 'locks': 6}
+every lock statement in file [251, 263, 279, 301, 331, 368]

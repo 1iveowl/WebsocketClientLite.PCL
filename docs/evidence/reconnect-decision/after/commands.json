@@ -1,0 +1,115 @@
+{
+ "made": "2026-11-11",
+ "step": "S6 of docs/pdd-10.3-session-plan.md, Experiment 1 after numbers",
+ "production_commit": "bd743b3dbb6af860804af1244e204e385eff595e",
+ "base_commit": "fa96d59af838e7aa57071de1712a02c7065a6aab",
+ "scratch": "/tmp/s6-scratch, outside the repository",
+ "review_fix_2026_11_11": "M3 review of PR #142, findings 1 and 2: every output listed below existed on disk, and the gitignored .log files among them were force-added unchanged on 2026-11-11. None is missing and none was recreated. The process lines in timing/*/processes.txt and checks/processes-before-protocol.txt were reduced to pid, elapsed time and command name on 2026-11-11, because they exposed other sessions' prompts; see README.md.",
+ "runs": [
+  {
+   "run": "decision defects, before side",
+   "started_utc": "2026-11-11T22:07:08Z", "finished_utc": "2026-11-11T22:14:05Z",
+   "command": "git archive fa96d59 | tar -x -C <scratch>/defects-before-copy; python3 -I decision_defects.py catalog-before.json before <scratch>/defects-before-copy <scratch>/defects-before-out (absolute paths)",
+   "lock": "no: detection runs, untimed",
+   "outputs": [
+    "decision-defects/before/"
+   ],
+   "outcome": "complete. Unchanged copy passed (reconnect 3 of 3 runs, other 260 tests). Reconnect suite detected 2 of 6 defects in all 3 runs each, survived 4 of 6 in all 3 runs each; other tests detected none."
+  },
+  {
+   "run": "decision defects, after-function, attempt 1 (interrupted)",
+   "command": "python3 -I decision_defects.py catalog-after.json after-function <scratch>/defects-after-copy defects-after-function-out (relative output path)",
+   "lock": "no",
+   "outputs": [
+    "decision-defects/interrupted/attempt-1/"
+   ],
+   "outcome": "Stopped by the session during the unchanged copy's first reconnect run: the background job limit (10 minutes) was shorter than the run. No defect applied, no outcome recorded. It also had the relative-path fault of attempt 2."
+  },
+  {
+   "run": "decision defects, after-function, attempt 2 (interrupted)",
+   "command": "as attempt 1, on a fresh copy, with a 1-hour limit",
+   "lock": "no",
+   "outputs": [
+    "decision-defects/interrupted/attempt-2/"
+   ],
+   "outcome": "Stopped by the session during the unchanged copy's first reconnect run: the relative output path made dotnet test write the TRX files inside the copy, so every run would have been inconclusive. No defect applied, no outcome recorded. decision_defects.py now makes both paths absolute."
+  },
+  {
+   "run": "decision defects, after-function and after-shell, attempt 3",
+   "command": "git archive bd743b3 | tar -x -C <scratch>/defects-after-copy; python3 -I decision_defects.py catalog-after.json after-function <copy> <scratch>/defects-after-function-out; python3 -I decision_defects.py catalog-after.json after-shell <copy> <scratch>/defects-after-shell-out",
+   "lock": "no",
+   "outputs": [
+    "decision-defects/after-function/",
+    "decision-defects/after-shell/",
+    "decision-defects/after-console.log"
+   ],
+   "outcome": "complete, 22:15:19Z to 22:30:39Z. Unchanged copy passed all three suites on both sides. after-function: plain tests detected 6 of 6, reconnect suite 2 of 6, other tests 0. after-shell: plain tests 0 of 7, reconnect suite 3 of 7, other tests 0. No run was mixed."
+  },
+  {
+   "run": "summary table",
+   "command": "python3 -I summarize.py before/results.json after-function/results.json after-shell/results.json > summary.md",
+   "outputs": [
+    "decision-defects/summary.md"
+   ],
+   "outcome": "written"
+  },
+  {
+   "run": "timing, attempt 1 (failed before measuring)",
+   "command": "bash timing/run-locked.sh <repo> bd743b3 fa96d59 <scratch> <scratch>/timing-out",
+   "lock": "not reached",
+   "outputs": [
+    "timing/failed-attempts/attempt-1-console.log"
+   ],
+   "outcome": "Exit 128 at the scratch commit: no git identity in the scratch repository. Nothing measured. The script now passes the repository user's identity to that commit."
+  },
+  {
+   "run": "timing, attempt 2 (failed before measuring)",
+   "command": "as attempt 1",
+   "lock": "not reached",
+   "outputs": [
+    "timing/failed-attempts/attempt-2-console.log",
+    "timing/failed-attempts/attempt-2-copies.txt"
+   ],
+   "outcome": "Exit 1 at the tree check: git add -A left out tracked files that .gitignore matches (evidence logs), so the copy's tree differed from bd743b3's. Nothing measured. The script now uses git add -A -f."
+  },
+  {
+   "run": "timing, attempt 3",
+   "command": "bash timing/run-locked.sh /home/vscode/worktrees/s6 bd743b3 fa96d59 <scratch> <scratch>/timing-out",
+   "lock": "yes: one hold, acquired 22:31:57Z, released 22:35:23Z (timing/lock.txt); processes before each timed command in timing/*/processes.txt",
+   "outputs": [
+    "timing/after/",
+    "timing/base-rerun/",
+    "timing/copies.txt",
+    "timing/lock.txt",
+    "timing/console.log"
+   ],
+   "outcome": "exit 0. Both copies' tree hashes equal the commits' (copies.txt). Every timed command exited 0. reconnect-defect passed on both (missing-removal detected)."
+  },
+  {
+   "run": "case durations",
+   "command": "python3 -I ../baseline/trx_cases.py timing/<after|base-rerun>/trx",
+   "outputs": [
+    "timing/after/case-durations.txt",
+    "timing/base-rerun/case-durations.txt"
+   ],
+   "outcome": "written"
+  },
+  {
+   "run": "region counts",
+   "command": "python3 -I count_region_after.py <scratch>/timing-after",
+   "outputs": [
+    "region-counts.txt"
+   ],
+   "outcome": "109 physical, 95 code, 16 lifecycle-state lines (12 with S5's pattern), 6 lock sites; ReconnectDecision.cs 92/38, ReconnectDecisionTests.cs 170/138"
+  },
+  {
+   "run": "checks: four capture jobs and aggregate",
+   "command": "bash checks/run-captures.sh /home/vscode/worktrees/s6 /home/vscode/worktrees/s6/artifacts/s6-checks (this folder was moved out of the worktree while they ran, so the tree was clean)",
+   "lock": "protocol job only (its per-mutant times are reported); tests, controlled and stryker are untimed checks",
+   "outputs": [
+    "checks/"
+   ],
+   "outcome": "Tested commit bd743b3, git status empty before and after. protocol, tests, controlled, stryker and aggregate each exit 0; machine evidence gate passed."
+  }
+ ]
+}

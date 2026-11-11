@@ -1,0 +1,20 @@
+--- a/src/main/WebsocketClientLite/ClientWebSocketRx.cs
++++ b/src/main/WebsocketClientLite/ClientWebSocketRx.cs
+@@ -328,7 +328,7 @@
+     {
+         if (disposing)
+         {
+-            lock (_lifecycleGate) _disposed = true;
++            // seeded defect: admission stays open
+             // Abrupt teardown of any still-active connection: the close
+             // handshake is attempted best-effort within a bound (see
+             // WebsocketConnectionHandler.Dispose). Prefer DisposeAsync /
+@@ -365,7 +365,7 @@
+     /// </summary>
+     public async ValueTask DisposeAsync()
+     {
+-        lock (_lifecycleGate) _disposed = true;
++        // seeded defect: admission stays open
+         foreach (var ws in _activeConnections.Keys)
+         {
+             if (_activeConnections.TryRemove(ws, out _))

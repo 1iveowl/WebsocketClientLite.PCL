@@ -1,0 +1,11 @@
+--- a/src/main/WebsocketClientLite/ClientWebSocketRx.cs
++++ b/src/main/WebsocketClientLite/ClientWebSocketRx.cs
+@@ -162,7 +162,7 @@
+     private LifecycleEffect Advance(LifecycleEvent lifecycleEvent, object? subscription)
+     {
+         var step = ReconnectDecision.Decide(_lifecycle, lifecycleEvent, subscription);
+-        _lifecycle = step.Next;
++        // seeded defect: the returned state is not stored
+         return step.Effect;
+     }
+ 

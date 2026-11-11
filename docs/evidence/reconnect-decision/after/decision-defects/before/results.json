@@ -1,0 +1,1119 @@
+{
+ "made": "2026-11-11",
+ "side": "before",
+ "copy": "/tmp/s6-scratch/defects-before-copy",
+ "commit": "fa96d59af838e7aa57071de1712a02c7065a6aab",
+ "library_target": "net10.0",
+ "configuration": "Release",
+ "plan": [
+  [
+   "reconnect",
+   3
+  ],
+  [
+   "other",
+   1
+  ]
+ ],
+ "suites": {
+  "reconnect": "FullyQualifiedName~WebsocketClientLiteTest.ReconnectTests",
+  "plain": "FullyQualifiedName~WebsocketClientLiteTest.ReconnectDecisionTests",
+  "other": "FullyQualifiedName!~WebsocketClientLiteTest.ReconnectTests&FullyQualifiedName!~WebsocketClientLiteTest.ReconnectDecisionTests"
+ },
+ "unchanged": {
+  "build": {
+   "command": [
+    "dotnet",
+    "build",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net10.0",
+    "--nologo"
+   ],
+   "exit": 0,
+   "timed_out": false,
+   "seconds": 1.42,
+   "log": "unchanged/build.log"
+  },
+  "suites": {
+   "reconnect": {
+    "verdict": "survived",
+    "runs": [
+     {
+      "command": [
+       "dotnet",
+       "test",
+       "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+       "-c",
+       "Release",
+       "-p:LibTfm=net10.0",
+       "--no-build",
+       "--nologo",
+       "--filter",
+       "FullyQualifiedName~WebsocketClientLiteTest.ReconnectTests",
+       "--logger",
+       "trx;LogFileName=reconnect-1.trx",
+       "--results-directory",
+       "/tmp/s6-scratch/defects-before-out/unchanged"
+      ],
+      "exit": 0,
+      "timed_out": false,
+      "seconds": 9.99,
+      "log": "unchanged/reconnect-1.log",
+      "trx": {
+       "total": 9,
+       "passed": 9,
+       "not_passed": []
+      },
+      "outcome": "passed"
+     },
+     {
+      "command": [
+       "dotnet",
+       "test",
+       "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+       "-c",
+       "Release",
+       "-p:LibTfm=net10.0",
+       "--no-build",
+       "--nologo",
+       "--filter",
+       "FullyQualifiedName~WebsocketClientLiteTest.ReconnectTests",
+       "--logger",
+       "trx;LogFileName=reconnect-2.trx",
+       "--results-directory",
+       "/tmp/s6-scratch/defects-before-out/unchanged"
+      ],
+      "exit": 0,
+      "timed_out": false,
+      "seconds": 10.04,
+      "log": "unchanged/reconnect-2.log",
+      "trx": {
+       "total": 9,
+       "passed": 9,
+       "not_passed": []
+      },
+      "outcome": "passed"
+     },
+     {
+      "command": [
+       "dotnet",
+       "test",
+       "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+       "-c",
+       "Release",
+       "-p:LibTfm=net10.0",
+       "--no-build",
+       "--nologo",
+       "--filter",
+       "FullyQualifiedName~WebsocketClientLiteTest.ReconnectTests",
+       "--logger",
+       "trx;LogFileName=reconnect-3.trx",
+       "--results-directory",
+       "/tmp/s6-scratch/defects-before-out/unchanged"
+      ],
+      "exit": 0,
+      "timed_out": false,
+      "seconds": 10.03,
+      "log": "unchanged/reconnect-3.log",
+      "trx": {
+       "total": 9,
+       "passed": 9,
+       "not_passed": []
+      },
+      "outcome": "passed"
+     }
+    ]
+   },
+   "other": {
+    "verdict": "survived",
+    "runs": [
+     {
+      "command": [
+       "dotnet",
+       "test",
+       "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+       "-c",
+       "Release",
+       "-p:LibTfm=net10.0",
+       "--no-build",
+       "--nologo",
+       "--filter",
+       "FullyQualifiedName!~WebsocketClientLiteTest.ReconnectTests&FullyQualifiedName!~WebsocketClientLiteTest.ReconnectDecisionTests",
+       "--logger",
+       "trx;LogFileName=other-1.trx",
+       "--results-directory",
+       "/tmp/s6-scratch/defects-before-out/unchanged"
+      ],
+      "exit": 0,
+      "timed_out": false,
+      "seconds": 25.62,
+      "log": "unchanged/other-1.log",
+      "trx": {
+       "total": 260,
+       "passed": 260,
+       "not_passed": []
+      },
+      "outcome": "passed"
+     }
+    ]
+   }
+  }
+ },
+ "defects": [
+  {
+   "id": "subscribe-ignores-disposal",
+   "rows": [
+    4,
+    5,
+    6
+   ],
+   "description": "Subscribe admits after disposal and stores the generation (line 253).",
+   "source_sha256": "ccc2a82e729957a394d628c0f1367b0259076270346a5d99c84bc7d9e50d7f10",
+   "mutant_sha256": "4f68053525dcfc8c71e4b4162eeafd3f1eb9c19b64567b20f18f36ee8f54ad7c",
+   "build": {
+    "command": [
+     "dotnet",
+     "build",
+     "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+     "-c",
+     "Release",
+     "-p:LibTfm=net10.0",
+     "--nologo"
+    ],
+    "exit": 0,
+    "timed_out": false,
+    "seconds": 1.12,
+    "log": "subscribe-ignores-disposal/build.log"
+   },
+   "suites": {
+    "reconnect": {
+     "verdict": "survived",
+     "runs": [
+      {
+       "command": [
+        "dotnet",
+        "test",
+        "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+        "-c",
+        "Release",
+        "-p:LibTfm=net10.0",
+        "--no-build",
+        "--nologo",
+        "--filter",
+        "FullyQualifiedName~WebsocketClientLiteTest.ReconnectTests",
+        "--logger",
+        "trx;LogFileName=reconnect-1.trx",
+        "--results-directory",
+        "/tmp/s6-scratch/defects-before-out/subscribe-ignores-disposal"
+       ],
+       "exit": 0,
+       "timed_out": false,
+       "seconds": 9.99,
+       "log": "subscribe-ignores-disposal/reconnect-1.log",
+       "trx": {
+        "total": 9,
+        "passed": 9,
+        "not_passed": []
+       },
+       "outcome": "passed"
+      },
+      {
+       "command": [
+        "dotnet",
+        "test",
+        "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+        "-c",
+        "Release",
+        "-p:LibTfm=net10.0",
+        "--no-build",
+        "--nologo",
+        "--filter",
+        "FullyQualifiedName~WebsocketClientLiteTest.ReconnectTests",
+        "--logger",
+        "trx;LogFileName=reconnect-2.trx",
+        "--results-directory",
+        "/tmp/s6-scratch/defects-before-out/subscribe-ignores-disposal"
+       ],
+       "exit": 0,
+       "timed_out": false,
+       "seconds": 10.04,
+       "log": "subscribe-ignores-disposal/reconnect-2.log",
+       "trx": {
+        "total": 9,
+        "passed": 9,
+        "not_passed": []
+       },
+       "outcome": "passed"
+      },
+      {
+       "command": [
+        "dotnet",
+        "test",
+        "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+        "-c",
+        "Release",
+        "-p:LibTfm=net10.0",
+        "--no-build",
+        "--nologo",
+        "--filter",
+        "FullyQualifiedName~WebsocketClientLiteTest.ReconnectTests",
+        "--logger",
+        "trx;LogFileName=reconnect-3.trx",
+        "--results-directory",
+        "/tmp/s6-scratch/defects-before-out/subscribe-ignores-disposal"
+       ],
+       "exit": 0,
+       "timed_out": false,
+       "seconds": 10.04,
+       "log": "subscribe-ignores-disposal/reconnect-3.log",
+       "trx": {
+        "total": 9,
+        "passed": 9,
+        "not_passed": []
+       },
+       "outcome": "passed"
+      }
+     ]
+    },
+    "other": {
+     "verdict": "survived",
+     "runs": [
+      {
+       "command": [
+        "dotnet",
+        "test",
+        "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+        "-c",
+        "Release",
+        "-p:LibTfm=net10.0",
+        "--no-build",
+        "--nologo",
+        "--filter",
+        "FullyQualifiedName!~WebsocketClientLiteTest.ReconnectTests&FullyQualifiedName!~WebsocketClientLiteTest.ReconnectDecisionTests",
+        "--logger",
+        "trx;LogFileName=other-1.trx",
+        "--results-directory",
+        "/tmp/s6-scratch/defects-before-out/subscribe-ignores-disposal"
+       ],
+       "exit": 0,
+       "timed_out": false,
+       "seconds": 25.68,
+       "log": "subscribe-ignores-disposal/other-1.log",
+       "trx": {
+        "total": 260,
+        "passed": 260,
+        "not_passed": []
+       },
+       "outcome": "passed"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "subscribe-keeps-generation",
+   "rows": [
+    1,
+    2,
+    3
+   ],
+   "description": "Subscribe admits without storing the new generation (line 258).",
+   "source_sha256": "ccc2a82e729957a394d628c0f1367b0259076270346a5d99c84bc7d9e50d7f10",
+   "mutant_sha256": "4e9f75c400f722064e778cc4f9d6f2a0c5dca52d5f8508495d9f02938fe30e50",
+   "build": {
+    "command": [
+     "dotnet",
+     "build",
+     "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+     "-c",
+     "Release",
+     "-p:LibTfm=net10.0",
+     "--nologo"
+    ],
+    "exit": 0,
+    "timed_out": false,
+    "seconds": 1.12,
+    "log": "subscribe-keeps-generation/build.log"
+   },
+   "suites": {
+    "reconnect": {
+     "verdict": "survived",
+     "runs": [
+      {
+       "command": [
+        "dotnet",
+        "test",
+        "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+        "-c",
+        "Release",
+        "-p:LibTfm=net10.0",
+        "--no-build",
+        "--nologo",
+        "--filter",
+        "FullyQualifiedName~WebsocketClientLiteTest.ReconnectTests",
+        "--logger",
+        "trx;LogFileName=reconnect-1.trx",
+        "--results-directory",
+        "/tmp/s6-scratch/defects-before-out/subscribe-keeps-generation"
+       ],
+       "exit": 0,
+       "timed_out": false,
+       "seconds": 10.04,
+       "log": "subscribe-keeps-generation/reconnect-1.log",
+       "trx": {
+        "total": 9,
+        "passed": 9,
+        "not_passed": []
+       },
+       "outcome": "passed"
+      },
+      {
+       "command": [
+        "dotnet",
+        "test",
+        "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+        "-c",
+        "Release",
+        "-p:LibTfm=net10.0",
+        "--no-build",
+        "--nologo",
+        "--filter",
+        "FullyQualifiedName~WebsocketClientLiteTest.ReconnectTests",
+        "--logger",
+        "trx;LogFileName=reconnect-2.trx",
+        "--results-directory",
+        "/tmp/s6-scratch/defects-before-out/subscribe-keeps-generation"
+       ],
+       "exit": 0,
+       "timed_out": false,
+       "seconds": 10.05,
+       "log": "subscribe-keeps-generation/reconnect-2.log",
+       "trx": {
+        "total": 9,
+        "passed": 9,
+        "not_passed": []
+       },
+       "outcome": "passed"
+      },
+      {
+       "command": [
+        "dotnet",
+        "test",
+        "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+        "-c",
+        "Release",
+        "-p:LibTfm=net10.0",
+        "--no-build",
+        "--nologo",
+        "--filter",
+        "FullyQualifiedName~WebsocketClientLiteTest.ReconnectTests",
+        "--logger",
+        "trx;LogFileName=reconnect-3.trx",
+        "--results-directory",
+        "/tmp/s6-scratch/defects-before-out/subscribe-keeps-generation"
+       ],
+       "exit": 0,
+       "timed_out": false,
+       "seconds": 10.04,
+       "log": "subscribe-keeps-generation/reconnect-3.log",
+       "trx": {
+        "total": 9,
+        "passed": 9,
+        "not_passed": []
+       },
+       "outcome": "passed"
+      }
+     ]
+    },
+    "other": {
+     "verdict": "survived",
+     "runs": [
+      {
+       "command": [
+        "dotnet",
+        "test",
+        "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+        "-c",
+        "Release",
+        "-p:LibTfm=net10.0",
+        "--no-build",
+        "--nologo",
+        "--filter",
+        "FullyQualifiedName!~WebsocketClientLiteTest.ReconnectTests&FullyQualifiedName!~WebsocketClientLiteTest.ReconnectDecisionTests",
+        "--logger",
+        "trx;LogFileName=other-1.trx",
+        "--results-directory",
+        "/tmp/s6-scratch/defects-before-out/subscribe-keeps-generation"
+       ],
+       "exit": 0,
+       "timed_out": false,
+       "seconds": 25.68,
+       "log": "subscribe-keeps-generation/other-1.log",
+       "trx": {
+        "total": 260,
+        "passed": 260,
+        "not_passed": []
+       },
+       "outcome": "passed"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "register-ignores-disposal",
+   "rows": [
+    10,
+    11,
+    12
+   ],
+   "description": "Register creates and registers a service after disposal (line 281).",
+   "source_sha256": "ccc2a82e729957a394d628c0f1367b0259076270346a5d99c84bc7d9e50d7f10",
+   "mutant_sha256": "9d809e8847aab9b35c48dbd63f9c7cc2333afdc83c78822c4fe728d57a657ed2",
+   "build": {
+    "command": [
+     "dotnet",
+     "build",
+     "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+     "-c",
+     "Release",
+     "-p:LibTfm=net10.0",
+     "--nologo"
+    ],
+    "exit": 0,
+    "timed_out": false,
+    "seconds": 1.22,
+    "log": "register-ignores-disposal/build.log"
+   },
+   "suites": {
+    "reconnect": {
+     "verdict": "survived",
+     "runs": [
+      {
+       "command": [
+        "dotnet",
+        "test",
+        "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+        "-c",
+        "Release",
+        "-p:LibTfm=net10.0",
+        "--no-build",
+        "--nologo",
+        "--filter",
+        "FullyQualifiedName~WebsocketClientLiteTest.ReconnectTests",
+        "--logger",
+        "trx;LogFileName=reconnect-1.trx",
+        "--results-directory",
+        "/tmp/s6-scratch/defects-before-out/register-ignores-disposal"
+       ],
+       "exit": 0,
+       "timed_out": false,
+       "seconds": 10.04,
+       "log": "register-ignores-disposal/reconnect-1.log",
+       "trx": {
+        "total": 9,
+        "passed": 9,
+        "not_passed": []
+       },
+       "outcome": "passed"
+      },
+      {
+       "command": [
+        "dotnet",
+        "test",
+        "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+        "-c",
+        "Release",
+        "-p:LibTfm=net10.0",
+        "--no-build",
+        "--nologo",
+        "--filter",
+        "FullyQualifiedName~WebsocketClientLiteTest.ReconnectTests",
+        "--logger",
+        "trx;LogFileName=reconnect-2.trx",
+        "--results-directory",
+        "/tmp/s6-scratch/defects-before-out/register-ignores-disposal"
+       ],
+       "exit": 0,
+       "timed_out": false,
+       "seconds": 10.04,
+       "log": "register-ignores-disposal/reconnect-2.log",
+       "trx": {
+        "total": 9,
+        "passed": 9,
+        "not_passed": []
+       },
+       "outcome": "passed"
+      },
+      {
+       "command": [
+        "dotnet",
+        "test",
+        "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+        "-c",
+        "Release",
+        "-p:LibTfm=net10.0",
+        "--no-build",
+        "--nologo",
+        "--filter",
+        "FullyQualifiedName~WebsocketClientLiteTest.ReconnectTests",
+        "--logger",
+        "trx;LogFileName=reconnect-3.trx",
+        "--results-directory",
+        "/tmp/s6-scratch/defects-before-out/register-ignores-disposal"
+       ],
+       "exit": 0,
+       "timed_out": false,
+       "seconds": 9.99,
+       "log": "register-ignores-disposal/reconnect-3.log",
+       "trx": {
+        "total": 9,
+        "passed": 9,
+        "not_passed": []
+       },
+       "outcome": "passed"
+      }
+     ]
+    },
+    "other": {
+     "verdict": "survived",
+     "runs": [
+      {
+       "command": [
+        "dotnet",
+        "test",
+        "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+        "-c",
+        "Release",
+        "-p:LibTfm=net10.0",
+        "--no-build",
+        "--nologo",
+        "--filter",
+        "FullyQualifiedName!~WebsocketClientLiteTest.ReconnectTests&FullyQualifiedName!~WebsocketClientLiteTest.ReconnectDecisionTests",
+        "--logger",
+        "trx;LogFileName=other-1.trx",
+        "--results-directory",
+        "/tmp/s6-scratch/defects-before-out/register-ignores-disposal"
+       ],
+       "exit": 0,
+       "timed_out": false,
+       "seconds": 25.64,
+       "log": "register-ignores-disposal/other-1.log",
+       "trx": {
+        "total": 260,
+        "passed": 260,
+        "not_passed": []
+       },
+       "outcome": "passed"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "connect-ignores-disposal",
+   "rows": [
+    16,
+    17,
+    18
+   ],
+   "description": "Connect installs the sender and reports connected after disposal (line 265).",
+   "source_sha256": "ccc2a82e729957a394d628c0f1367b0259076270346a5d99c84bc7d9e50d7f10",
+   "mutant_sha256": "f82360c5cc61be09cc629faeb8ef7f008ee51a051cb2d87cd318b27cc1e9aa80",
+   "build": {
+    "command": [
+     "dotnet",
+     "build",
+     "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+     "-c",
+     "Release",
+     "-p:LibTfm=net10.0",
+     "--nologo"
+    ],
+    "exit": 0,
+    "timed_out": false,
+    "seconds": 1.12,
+    "log": "connect-ignores-disposal/build.log"
+   },
+   "suites": {
+    "reconnect": {
+     "verdict": "survived",
+     "runs": [
+      {
+       "command": [
+        "dotnet",
+        "test",
+        "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+        "-c",
+        "Release",
+        "-p:LibTfm=net10.0",
+        "--no-build",
+        "--nologo",
+        "--filter",
+        "FullyQualifiedName~WebsocketClientLiteTest.ReconnectTests",
+        "--logger",
+        "trx;LogFileName=reconnect-1.trx",
+        "--results-directory",
+        "/tmp/s6-scratch/defects-before-out/connect-ignores-disposal"
+       ],
+       "exit": 0,
+       "timed_out": false,
+       "seconds": 10.0,
+       "log": "connect-ignores-disposal/reconnect-1.log",
+       "trx": {
+        "total": 9,
+        "passed": 9,
+        "not_passed": []
+       },
+       "outcome": "passed"
+      },
+      {
+       "command": [
+        "dotnet",
+        "test",
+        "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+        "-c",
+        "Release",
+        "-p:LibTfm=net10.0",
+        "--no-build",
+        "--nologo",
+        "--filter",
+        "FullyQualifiedName~WebsocketClientLiteTest.ReconnectTests",
+        "--logger",
+        "trx;LogFileName=reconnect-2.trx",
+        "--results-directory",
+        "/tmp/s6-scratch/defects-before-out/connect-ignores-disposal"
+       ],
+       "exit": 0,
+       "timed_out": false,
+       "seconds": 10.05,
+       "log": "connect-ignores-disposal/reconnect-2.log",
+       "trx": {
+        "total": 9,
+        "passed": 9,
+        "not_passed": []
+       },
+       "outcome": "passed"
+      },
+      {
+       "command": [
+        "dotnet",
+        "test",
+        "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+        "-c",
+        "Release",
+        "-p:LibTfm=net10.0",
+        "--no-build",
+        "--nologo",
+        "--filter",
+        "FullyQualifiedName~WebsocketClientLiteTest.ReconnectTests",
+        "--logger",
+        "trx;LogFileName=reconnect-3.trx",
+        "--results-directory",
+        "/tmp/s6-scratch/defects-before-out/connect-ignores-disposal"
+       ],
+       "exit": 0,
+       "timed_out": false,
+       "seconds": 10.04,
+       "log": "connect-ignores-disposal/reconnect-3.log",
+       "trx": {
+        "total": 9,
+        "passed": 9,
+        "not_passed": []
+       },
+       "outcome": "passed"
+      }
+     ]
+    },
+    "other": {
+     "verdict": "survived",
+     "runs": [
+      {
+       "command": [
+        "dotnet",
+        "test",
+        "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+        "-c",
+        "Release",
+        "-p:LibTfm=net10.0",
+        "--no-build",
+        "--nologo",
+        "--filter",
+        "FullyQualifiedName!~WebsocketClientLiteTest.ReconnectTests&FullyQualifiedName!~WebsocketClientLiteTest.ReconnectDecisionTests",
+        "--logger",
+        "trx;LogFileName=other-1.trx",
+        "--results-directory",
+        "/tmp/s6-scratch/defects-before-out/connect-ignores-disposal"
+       ],
+       "exit": 0,
+       "timed_out": false,
+       "seconds": 25.69,
+       "log": "connect-ignores-disposal/other-1.log",
+       "trx": {
+        "total": 260,
+        "passed": 260,
+        "not_passed": []
+       },
+       "outcome": "passed"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "terminate-ignores-generation",
+   "rows": [
+    19,
+    21,
+    22,
+    24
+   ],
+   "description": "Terminate reports not-connected for any generation, the P3-D stale notification (line 303).",
+   "source_sha256": "ccc2a82e729957a394d628c0f1367b0259076270346a5d99c84bc7d9e50d7f10",
+   "mutant_sha256": "903c622c7209f02fc0278c49fab6bc95cdd8d3f2de147f4e3386ac34e281627e",
+   "build": {
+    "command": [
+     "dotnet",
+     "build",
+     "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+     "-c",
+     "Release",
+     "-p:LibTfm=net10.0",
+     "--nologo"
+    ],
+    "exit": 0,
+    "timed_out": false,
+    "seconds": 1.22,
+    "log": "terminate-ignores-generation/build.log"
+   },
+   "suites": {
+    "reconnect": {
+     "verdict": "detected",
+     "runs": [
+      {
+       "command": [
+        "dotnet",
+        "test",
+        "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+        "-c",
+        "Release",
+        "-p:LibTfm=net10.0",
+        "--no-build",
+        "--nologo",
+        "--filter",
+        "FullyQualifiedName~WebsocketClientLiteTest.ReconnectTests",
+        "--logger",
+        "trx;LogFileName=reconnect-1.trx",
+        "--results-directory",
+        "/tmp/s6-scratch/defects-before-out/terminate-ignores-generation"
+       ],
+       "exit": 1,
+       "timed_out": false,
+       "seconds": 9.94,
+       "log": "terminate-ignores-generation/reconnect-1.log",
+       "trx": {
+        "total": 9,
+        "passed": 8,
+        "not_passed": [
+         {
+          "test": "WebsocketClientLiteTest.ReconnectTests.TerminalCallbackSuccessorSurvivesOldCleanup",
+          "outcome": "Failed",
+          "message": "Old cleanup reset successor connectivity"
+         }
+        ]
+       },
+       "outcome": "failed"
+      },
+      {
+       "command": [
+        "dotnet",
+        "test",
+        "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+        "-c",
+        "Release",
+        "-p:LibTfm=net10.0",
+        "--no-build",
+        "--nologo",
+        "--filter",
+        "FullyQualifiedName~WebsocketClientLiteTest.ReconnectTests",
+        "--logger",
+        "trx;LogFileName=reconnect-2.trx",
+        "--results-directory",
+        "/tmp/s6-scratch/defects-before-out/terminate-ignores-generation"
+       ],
+       "exit": 1,
+       "timed_out": false,
+       "seconds": 10.25,
+       "log": "terminate-ignores-generation/reconnect-2.log",
+       "trx": {
+        "total": 9,
+        "passed": 8,
+        "not_passed": [
+         {
+          "test": "WebsocketClientLiteTest.ReconnectTests.TerminalCallbackSuccessorSurvivesOldCleanup",
+          "outcome": "Failed",
+          "message": "Old cleanup reset successor connectivity"
+         }
+        ]
+       },
+       "outcome": "failed"
+      },
+      {
+       "command": [
+        "dotnet",
+        "test",
+        "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+        "-c",
+        "Release",
+        "-p:LibTfm=net10.0",
+        "--no-build",
+        "--nologo",
+        "--filter",
+        "FullyQualifiedName~WebsocketClientLiteTest.ReconnectTests",
+        "--logger",
+        "trx;LogFileName=reconnect-3.trx",
+        "--results-directory",
+        "/tmp/s6-scratch/defects-before-out/terminate-ignores-generation"
+       ],
+       "exit": 1,
+       "timed_out": false,
+       "seconds": 9.94,
+       "log": "terminate-ignores-generation/reconnect-3.log",
+       "trx": {
+        "total": 9,
+        "passed": 8,
+        "not_passed": [
+         {
+          "test": "WebsocketClientLiteTest.ReconnectTests.TerminalCallbackSuccessorSurvivesOldCleanup",
+          "outcome": "Failed",
+          "message": "Old cleanup reset successor connectivity"
+         }
+        ]
+       },
+       "outcome": "failed"
+      }
+     ]
+    },
+    "other": {
+     "verdict": "survived",
+     "runs": [
+      {
+       "command": [
+        "dotnet",
+        "test",
+        "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+        "-c",
+        "Release",
+        "-p:LibTfm=net10.0",
+        "--no-build",
+        "--nologo",
+        "--filter",
+        "FullyQualifiedName!~WebsocketClientLiteTest.ReconnectTests&FullyQualifiedName!~WebsocketClientLiteTest.ReconnectDecisionTests",
+        "--logger",
+        "trx;LogFileName=other-1.trx",
+        "--results-directory",
+        "/tmp/s6-scratch/defects-before-out/terminate-ignores-generation"
+       ],
+       "exit": 0,
+       "timed_out": false,
+       "seconds": 25.63,
+       "log": "terminate-ignores-generation/other-1.log",
+       "trx": {
+        "total": 260,
+        "passed": 260,
+        "not_passed": []
+       },
+       "outcome": "passed"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "dispose-not-permanent",
+   "rows": [
+    25,
+    26,
+    27
+   ],
+   "description": "Dispose and DisposeAsync leave admission open (lines 331 and 368).",
+   "source_sha256": "ccc2a82e729957a394d628c0f1367b0259076270346a5d99c84bc7d9e50d7f10",
+   "mutant_sha256": "54126903b22d10f2cedc3422b7290f2fd59a56b06c38d3d42a11a7f20890f17c",
+   "build": {
+    "command": [
+     "dotnet",
+     "build",
+     "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+     "-c",
+     "Release",
+     "-p:LibTfm=net10.0",
+     "--nologo"
+    ],
+    "exit": 0,
+    "timed_out": false,
+    "seconds": 1.17,
+    "log": "dispose-not-permanent/build.log"
+   },
+   "suites": {
+    "reconnect": {
+     "verdict": "detected",
+     "runs": [
+      {
+       "command": [
+        "dotnet",
+        "test",
+        "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+        "-c",
+        "Release",
+        "-p:LibTfm=net10.0",
+        "--no-build",
+        "--nologo",
+        "--filter",
+        "FullyQualifiedName~WebsocketClientLiteTest.ReconnectTests",
+        "--logger",
+        "trx;LogFileName=reconnect-1.trx",
+        "--results-directory",
+        "/tmp/s6-scratch/defects-before-out/dispose-not-permanent"
+       ],
+       "exit": 1,
+       "timed_out": false,
+       "seconds": 16.01,
+       "log": "dispose-not-permanent/reconnect-1.log",
+       "trx": {
+        "total": 9,
+        "passed": 7,
+        "not_passed": [
+         {
+          "test": "WebsocketClientLiteTest.ReconnectTests.DisposedClientRejectsAdmission(asynchronous: False)",
+          "outcome": "Failed",
+          "message": "Disposed client admitted a connection"
+         },
+         {
+          "test": "WebsocketClientLiteTest.ReconnectTests.DisposedClientRejectsAdmission(asynchronous: True)",
+          "outcome": "Failed",
+          "message": "Disposed client admitted a connection"
+         }
+        ]
+       },
+       "outcome": "failed"
+      },
+      {
+       "command": [
+        "dotnet",
+        "test",
+        "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+        "-c",
+        "Release",
+        "-p:LibTfm=net10.0",
+        "--no-build",
+        "--nologo",
+        "--filter",
+        "FullyQualifiedName~WebsocketClientLiteTest.ReconnectTests",
+        "--logger",
+        "trx;LogFileName=reconnect-2.trx",
+        "--results-directory",
+        "/tmp/s6-scratch/defects-before-out/dispose-not-permanent"
+       ],
+       "exit": 1,
+       "timed_out": false,
+       "seconds": 16.06,
+       "log": "dispose-not-permanent/reconnect-2.log",
+       "trx": {
+        "total": 9,
+        "passed": 7,
+        "not_passed": [
+         {
+          "test": "WebsocketClientLiteTest.ReconnectTests.DisposedClientRejectsAdmission(asynchronous: False)",
+          "outcome": "Failed",
+          "message": "Disposed client admitted a connection"
+         },
+         {
+          "test": "WebsocketClientLiteTest.ReconnectTests.DisposedClientRejectsAdmission(asynchronous: True)",
+          "outcome": "Failed",
+          "message": "Disposed client admitted a connection"
+         }
+        ]
+       },
+       "outcome": "failed"
+      },
+      {
+       "command": [
+        "dotnet",
+        "test",
+        "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+        "-c",
+        "Release",
+        "-p:LibTfm=net10.0",
+        "--no-build",
+        "--nologo",
+        "--filter",
+        "FullyQualifiedName~WebsocketClientLiteTest.ReconnectTests",
+        "--logger",
+        "trx;LogFileName=reconnect-3.trx",
+        "--results-directory",
+        "/tmp/s6-scratch/defects-before-out/dispose-not-permanent"
+       ],
+       "exit": 1,
+       "timed_out": false,
+       "seconds": 16.0,
+       "log": "dispose-not-permanent/reconnect-3.log",
+       "trx": {
+        "total": 9,
+        "passed": 7,
+        "not_passed": [
+         {
+          "test": "WebsocketClientLiteTest.ReconnectTests.DisposedClientRejectsAdmission(asynchronous: False)",
+          "outcome": "Failed",
+          "message": "Disposed client admitted a connection"
+         },
+         {
+          "test": "WebsocketClientLiteTest.ReconnectTests.DisposedClientRejectsAdmission(asynchronous: True)",
+          "outcome": "Failed",
+          "message": "Disposed client admitted a connection"
+         }
+        ]
+       },
+       "outcome": "failed"
+      }
+     ]
+    },
+    "other": {
+     "verdict": "survived",
+     "runs": [
+      {
+       "command": [
+        "dotnet",
+        "test",
+        "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+        "-c",
+        "Release",
+        "-p:LibTfm=net10.0",
+        "--no-build",
+        "--nologo",
+        "--filter",
+        "FullyQualifiedName!~WebsocketClientLiteTest.ReconnectTests&FullyQualifiedName!~WebsocketClientLiteTest.ReconnectDecisionTests",
+        "--logger",
+        "trx;LogFileName=other-1.trx",
+        "--results-directory",
+        "/tmp/s6-scratch/defects-before-out/dispose-not-permanent"
+       ],
+       "exit": 0,
+       "timed_out": false,
+       "seconds": 25.63,
+       "log": "dispose-not-permanent/other-1.log",
+       "trx": {
+        "total": 260,
+        "passed": 260,
+        "not_passed": []
+       },
+       "outcome": "passed"
+      }
+     ]
+    }
+   }
+  }
+ ],
+ "status": "complete"
+}

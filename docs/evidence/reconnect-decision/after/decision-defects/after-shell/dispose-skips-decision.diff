@@ -1,0 +1,20 @@
+--- a/src/main/WebsocketClientLite/ClientWebSocketRx.cs
++++ b/src/main/WebsocketClientLite/ClientWebSocketRx.cs
+@@ -342,7 +342,7 @@
+         if (disposing)
+         {
+             // Closes admission. The drain below runs on every call, whatever the effect.
+-            lock (_lifecycleGate) _ = Advance(LifecycleEvent.Dispose, null);
++            // seeded defect: admission stays open
+             // Abrupt teardown of any still-active connection: the close
+             // handshake is attempted best-effort within a bound (see
+             // WebsocketConnectionHandler.Dispose). Prefer DisposeAsync /
+@@ -379,7 +379,7 @@
+     /// </summary>
+     public async ValueTask DisposeAsync()
+     {
+-        lock (_lifecycleGate) _ = Advance(LifecycleEvent.Dispose, null);
++        // seeded defect: admission stays open
+         foreach (var ws in _activeConnections.Keys)
+         {
+             if (_activeConnections.TryRemove(ws, out _))

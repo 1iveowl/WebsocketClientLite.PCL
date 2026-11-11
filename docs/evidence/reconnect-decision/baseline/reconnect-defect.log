@@ -1,0 +1,7 @@
+$ ./scripts/pdd.sh reconnect-defect --output /tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/59ab5014-b189-4286-91c4-eee051d950c7/scratchpad/baseline-out/reconnect-defect
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:00.76

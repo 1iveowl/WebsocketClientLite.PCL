@@ -1,0 +1,26 @@
+{
+  "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net10.0",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.TerminalCallbackSuccessorSurvivesOldCleanup|FullyQualifiedName=WebsocketClientLiteTest.RuntimeEvidenceTests.RecordHostRuntime",
+    "--logger",
+    "trx;LogFileName=results.trx",
+    "--results-directory",
+    "/tmp/s6-scratch/timing-out/base-rerun/reconnect-defect/missing-removal"
+  ],
+  "budget_seconds": 180,
+  "started_at": "2026-11-11T22:35:18.5324406+00:00",
+  "exit_code": 1,
+  "timed_out": false,
+  "interrupted": false,
+  "cleanup_incomplete": false,
+  "cleanup_seconds": 0,
+  "elapsed_seconds": 4.647,
+  "stdout": "  Determining projects to restore...\n  All projects are up-to-date for restore.\n  IWebsocketClientLite -> /tmp/pdd-1859057bf82741c4ae6cd2ddb81b7b4d/src/interface/IWebsocketClientLite/bin/Release/netstandard2.0/IWebsocketClientLite.dll\n  WebsocketClientLite -> /tmp/pdd-1859057bf82741c4ae6cd2ddb81b7b4d/src/main/WebsocketClientLite/bin/Release/net10.0/WebsocketClientLite.dll\n  WebsocketClientLiteTest -> /tmp/pdd-1859057bf82741c4ae6cd2ddb81b7b4d/src/main/WebsocketClientLiteTest/bin/Release/net10.0/WebsocketClientLiteTest.dll\nTest run for /tmp/pdd-1859057bf82741c4ae6cd2ddb81b7b4d/src/main/WebsocketClientLiteTest/bin/Release/net10.0/WebsocketClientLiteTest.dll (.NETCoreApp,Version=v10.0)\nA total of 1 test files matched the specified pattern.\n  Failed WebsocketClientLiteTest.ReconnectTests.TerminalCallbackSuccessorSurvivesOldCleanup [3 s]\n  Error Message:\n   Old service retained registration\n  Stack Trace:\n     at WebsocketClientLiteTest.ReconnectTests.TerminalCallbackSuccessorSurvivesOldCleanup() in /tmp/pdd-1859057bf82741c4ae6cd2ddb81b7b4d/src/main/WebsocketClientLiteTest/ReconnectTests.cs:line 87\n--- End of stack trace from previous location ---\nResults File: /tmp/s6-scratch/timing-out/base-rerun/reconnect-defect/missing-removal/results.trx\n\nFailed!  - Failed:     1, Passed:     1, Skipped:     0, Total:     2, Duration: 3 s - WebsocketClientLiteTest.dll (net10.0)\n",
+  "stderr": "[xUnit.net 00:00:03.19]     WebsocketClientLiteTest.ReconnectTests.TerminalCallbackSuccessorSurvivesOldCleanup [FAIL]\n"
+}

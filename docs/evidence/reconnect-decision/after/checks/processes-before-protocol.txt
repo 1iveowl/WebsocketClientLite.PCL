@@ -1,0 +1,15 @@
+== before protocol at 2026-11-11T22:36:09Z, load 2.06 2.66 2.12
+ 568353       53:09 VBCSCompiler
+ 577568       32:42 dotnet MSBuild.dll
+ 577569       32:42 dotnet MSBuild.dll
+ 577570       32:42 dotnet MSBuild.dll
+ 577648       32:41 dotnet MSBuild.dll
+ 577649       32:41 dotnet MSBuild.dll
+ 577650       32:41 dotnet MSBuild.dll
+ 577683       32:41 dotnet MSBuild.dll
+ 577982       32:22 claude
+ 650448       00:51 dotnet Pdd.dll
+ 651664       00:23 dotnet Pdd.dll
+ 651749       00:22 dotnet test
+ 651837       00:21 dotnet vstest.console.dll
+ 651850       00:21 dotnet testhost.dll

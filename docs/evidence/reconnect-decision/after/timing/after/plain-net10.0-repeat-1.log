@@ -1,0 +1,6 @@
+$ dotnet test src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj -c Release -p:LibTfm=net10.0 --no-build --nologo --filter FullyQualifiedName~WebsocketClientLiteTest.ReconnectDecisionTests --logger trx;LogFileName=plain-net10.0-repeat-1.trx --results-directory /tmp/s6-scratch/timing-out/after/trx
+Test run for /tmp/s6-scratch/timing-after/src/main/WebsocketClientLiteTest/bin/Release/net10.0/WebsocketClientLiteTest.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+Results File: /tmp/s6-scratch/timing-out/after/trx/plain-net10.0-repeat-1.trx
+
+Passed!  - Failed:     0, Passed:    36, Skipped:     0, Total:    36, Duration: 19 ms - WebsocketClientLiteTest.dll (net10.0)

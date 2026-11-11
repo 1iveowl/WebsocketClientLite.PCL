@@ -1,0 +1,80 @@
+suite-net10.0-repeat-1.trx: 9 results, outcomes=['Passed'], sum_case_seconds=9.225, max_case_seconds=3.072
+    0.000  Passed   WebsocketClientLiteTest.ReconnectTests.DisposedClientRejectsAdmission(asynchronous: False)
+    0.001  Passed   WebsocketClientLiteTest.ReconnectTests.DisposedClientRejectsAdmission(asynchronous: True)
+    0.004  Passed   WebsocketClientLiteTest.ReconnectTests.FailedConnectTerminatesAndRemovesRegistration
+    3.052  Passed   WebsocketClientLiteTest.ReconnectTests.SequentialRepeatOrRetryUsesFreshServices(retry: False)
+    3.054  Passed   WebsocketClientLiteTest.ReconnectTests.SequentialRepeatOrRetryUsesFreshServices(retry: True)
+    0.039  Passed   WebsocketClientLiteTest.ReconnectTests.SetupAdmissionIsOwnedUntilTeardown(mode: "async")
+    0.001  Passed   WebsocketClientLiteTest.ReconnectTests.SetupAdmissionIsOwnedUntilTeardown(mode: "dispose")
+    0.002  Passed   WebsocketClientLiteTest.ReconnectTests.SetupAdmissionIsOwnedUntilTeardown(mode: "unsubscribe")
+    3.072  Passed   WebsocketClientLiteTest.ReconnectTests.TerminalCallbackSuccessorSurvivesOldCleanup
+suite-net10.0-repeat-2.trx: 9 results, outcomes=['Passed'], sum_case_seconds=9.225, max_case_seconds=3.071
+    0.001  Passed   WebsocketClientLiteTest.ReconnectTests.DisposedClientRejectsAdmission(asynchronous: False)
+    0.001  Passed   WebsocketClientLiteTest.ReconnectTests.DisposedClientRejectsAdmission(asynchronous: True)
+    0.004  Passed   WebsocketClientLiteTest.ReconnectTests.FailedConnectTerminatesAndRemovesRegistration
+    3.053  Passed   WebsocketClientLiteTest.ReconnectTests.SequentialRepeatOrRetryUsesFreshServices(retry: False)
+    3.054  Passed   WebsocketClientLiteTest.ReconnectTests.SequentialRepeatOrRetryUsesFreshServices(retry: True)
+    0.039  Passed   WebsocketClientLiteTest.ReconnectTests.SetupAdmissionIsOwnedUntilTeardown(mode: "async")
+    0.001  Passed   WebsocketClientLiteTest.ReconnectTests.SetupAdmissionIsOwnedUntilTeardown(mode: "dispose")
+    0.002  Passed   WebsocketClientLiteTest.ReconnectTests.SetupAdmissionIsOwnedUntilTeardown(mode: "unsubscribe")
+    3.071  Passed   WebsocketClientLiteTest.ReconnectTests.TerminalCallbackSuccessorSurvivesOldCleanup
+suite-net10.0-repeat-3.trx: 9 results, outcomes=['Passed'], sum_case_seconds=9.211, max_case_seconds=3.067
+    0.000  Passed   WebsocketClientLiteTest.ReconnectTests.DisposedClientRejectsAdmission(asynchronous: False)
+    0.001  Passed   WebsocketClientLiteTest.ReconnectTests.DisposedClientRejectsAdmission(asynchronous: True)
+    0.003  Passed   WebsocketClientLiteTest.ReconnectTests.FailedConnectTerminatesAndRemovesRegistration
+    3.051  Passed   WebsocketClientLiteTest.ReconnectTests.SequentialRepeatOrRetryUsesFreshServices(retry: False)
+    3.046  Passed   WebsocketClientLiteTest.ReconnectTests.SequentialRepeatOrRetryUsesFreshServices(retry: True)
+    0.039  Passed   WebsocketClientLiteTest.ReconnectTests.SetupAdmissionIsOwnedUntilTeardown(mode: "async")
+    0.001  Passed   WebsocketClientLiteTest.ReconnectTests.SetupAdmissionIsOwnedUntilTeardown(mode: "dispose")
+    0.002  Passed   WebsocketClientLiteTest.ReconnectTests.SetupAdmissionIsOwnedUntilTeardown(mode: "unsubscribe")
+    3.067  Passed   WebsocketClientLiteTest.ReconnectTests.TerminalCallbackSuccessorSurvivesOldCleanup
+suite-net10.0.trx: 9 results, outcomes=['Passed'], sum_case_seconds=9.223, max_case_seconds=3.065
+    0.000  Passed   WebsocketClientLiteTest.ReconnectTests.DisposedClientRejectsAdmission(asynchronous: False)
+    0.002  Passed   WebsocketClientLiteTest.ReconnectTests.DisposedClientRejectsAdmission(asynchronous: True)
+    0.003  Passed   WebsocketClientLiteTest.ReconnectTests.FailedConnectTerminatesAndRemovesRegistration
+    3.059  Passed   WebsocketClientLiteTest.ReconnectTests.SequentialRepeatOrRetryUsesFreshServices(retry: False)
+    3.052  Passed   WebsocketClientLiteTest.ReconnectTests.SequentialRepeatOrRetryUsesFreshServices(retry: True)
+    0.038  Passed   WebsocketClientLiteTest.ReconnectTests.SetupAdmissionIsOwnedUntilTeardown(mode: "async")
+    0.001  Passed   WebsocketClientLiteTest.ReconnectTests.SetupAdmissionIsOwnedUntilTeardown(mode: "dispose")
+    0.002  Passed   WebsocketClientLiteTest.ReconnectTests.SetupAdmissionIsOwnedUntilTeardown(mode: "unsubscribe")
+    3.065  Passed   WebsocketClientLiteTest.ReconnectTests.TerminalCallbackSuccessorSurvivesOldCleanup
+suite-net8.0.trx: 9 results, outcomes=['Passed'], sum_case_seconds=9.220, max_case_seconds=3.070
+    0.000  Passed   WebsocketClientLiteTest.ReconnectTests.DisposedClientRejectsAdmission(asynchronous: False)
+    0.001  Passed   WebsocketClientLiteTest.ReconnectTests.DisposedClientRejectsAdmission(asynchronous: True)
+    0.004  Passed   WebsocketClientLiteTest.ReconnectTests.FailedConnectTerminatesAndRemovesRegistration
+    3.053  Passed   WebsocketClientLiteTest.ReconnectTests.SequentialRepeatOrRetryUsesFreshServices(retry: False)
+    3.049  Passed   WebsocketClientLiteTest.ReconnectTests.SequentialRepeatOrRetryUsesFreshServices(retry: True)
+    0.037  Passed   WebsocketClientLiteTest.ReconnectTests.SetupAdmissionIsOwnedUntilTeardown(mode: "async")
+    0.002  Passed   WebsocketClientLiteTest.ReconnectTests.SetupAdmissionIsOwnedUntilTeardown(mode: "dispose")
+    0.005  Passed   WebsocketClientLiteTest.ReconnectTests.SetupAdmissionIsOwnedUntilTeardown(mode: "unsubscribe")
+    3.070  Passed   WebsocketClientLiteTest.ReconnectTests.TerminalCallbackSuccessorSurvivesOldCleanup
+suite-net9.0.trx: 9 results, outcomes=['Passed'], sum_case_seconds=9.220, max_case_seconds=3.066
+    0.003  Passed   WebsocketClientLiteTest.ReconnectTests.DisposedClientRejectsAdmission(asynchronous: False)
+    0.001  Passed   WebsocketClientLiteTest.ReconnectTests.DisposedClientRejectsAdmission(asynchronous: True)
+    0.004  Passed   WebsocketClientLiteTest.ReconnectTests.FailedConnectTerminatesAndRemovesRegistration
+    3.057  Passed   WebsocketClientLiteTest.ReconnectTests.SequentialRepeatOrRetryUsesFreshServices(retry: False)
+    3.050  Passed   WebsocketClientLiteTest.ReconnectTests.SequentialRepeatOrRetryUsesFreshServices(retry: True)
+    0.037  Passed   WebsocketClientLiteTest.ReconnectTests.SetupAdmissionIsOwnedUntilTeardown(mode: "async")
+    0.001  Passed   WebsocketClientLiteTest.ReconnectTests.SetupAdmissionIsOwnedUntilTeardown(mode: "dispose")
+    0.002  Passed   WebsocketClientLiteTest.ReconnectTests.SetupAdmissionIsOwnedUntilTeardown(mode: "unsubscribe")
+    3.066  Passed   WebsocketClientLiteTest.ReconnectTests.TerminalCallbackSuccessorSurvivesOldCleanup
+suite-netstandard2.0.trx: 9 results, outcomes=['Passed'], sum_case_seconds=9.212, max_case_seconds=3.064
+    0.000  Passed   WebsocketClientLiteTest.ReconnectTests.DisposedClientRejectsAdmission(asynchronous: False)
+    0.001  Passed   WebsocketClientLiteTest.ReconnectTests.DisposedClientRejectsAdmission(asynchronous: True)
+    0.003  Passed   WebsocketClientLiteTest.ReconnectTests.FailedConnectTerminatesAndRemovesRegistration
+    3.054  Passed   WebsocketClientLiteTest.ReconnectTests.SequentialRepeatOrRetryUsesFreshServices(retry: False)
+    3.050  Passed   WebsocketClientLiteTest.ReconnectTests.SequentialRepeatOrRetryUsesFreshServices(retry: True)
+    0.037  Passed   WebsocketClientLiteTest.ReconnectTests.SetupAdmissionIsOwnedUntilTeardown(mode: "async")
+    0.001  Passed   WebsocketClientLiteTest.ReconnectTests.SetupAdmissionIsOwnedUntilTeardown(mode: "dispose")
+    0.002  Passed   WebsocketClientLiteTest.ReconnectTests.SetupAdmissionIsOwnedUntilTeardown(mode: "unsubscribe")
+    3.064  Passed   WebsocketClientLiteTest.ReconnectTests.TerminalCallbackSuccessorSurvivesOldCleanup
+suite-netstandard2.1.trx: 9 results, outcomes=['Passed'], sum_case_seconds=9.215, max_case_seconds=3.067
+    0.000  Passed   WebsocketClientLiteTest.ReconnectTests.DisposedClientRejectsAdmission(asynchronous: False)
+    0.002  Passed   WebsocketClientLiteTest.ReconnectTests.DisposedClientRejectsAdmission(asynchronous: True)
+    0.004  Passed   WebsocketClientLiteTest.ReconnectTests.FailedConnectTerminatesAndRemovesRegistration
+    3.053  Passed   WebsocketClientLiteTest.ReconnectTests.SequentialRepeatOrRetryUsesFreshServices(retry: False)
+    3.050  Passed   WebsocketClientLiteTest.ReconnectTests.SequentialRepeatOrRetryUsesFreshServices(retry: True)
+    0.038  Passed   WebsocketClientLiteTest.ReconnectTests.SetupAdmissionIsOwnedUntilTeardown(mode: "async")
+    0.001  Passed   WebsocketClientLiteTest.ReconnectTests.SetupAdmissionIsOwnedUntilTeardown(mode: "dispose")
+    0.002  Passed   WebsocketClientLiteTest.ReconnectTests.SetupAdmissionIsOwnedUntilTeardown(mode: "unsubscribe")
+    3.067  Passed   WebsocketClientLiteTest.ReconnectTests.TerminalCallbackSuccessorSurvivesOldCleanup

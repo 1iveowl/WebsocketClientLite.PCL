@@ -1,0 +1,13 @@
+--- a/src/main/WebsocketClientLite/ClientWebSocketRx.cs
++++ b/src/main/WebsocketClientLite/ClientWebSocketRx.cs
+@@ -312,8 +312,8 @@
+             {
+                 lock (_lifecycleGate)
+                 {
+-                    if (Advance(LifecycleEvent.Terminate, generation) == LifecycleEffect.NotifyNotConnected)
+-                        SetIsConnected(false);
++                    _ = Advance(LifecycleEvent.Terminate, generation);
++                    SetIsConnected(false);
+                 }
+             })
+             .Subscribe(state => obsTuple.OnNext((null, state)), obsTuple.OnError, obsTuple.OnCompleted);

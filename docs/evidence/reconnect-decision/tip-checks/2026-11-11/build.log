@@ -1,0 +1,16 @@
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  IWebsocketClientLite -> /home/vscode/worktrees/s6/src/interface/IWebsocketClientLite/bin/Release/netstandard2.0/IWebsocketClientLite.dll
+  WebsocketClientLite -> /home/vscode/worktrees/s6/src/main/WebsocketClientLite/bin/Release/netstandard2.1/WebsocketClientLite.dll
+  WebsocketClientLite -> /home/vscode/worktrees/s6/src/main/WebsocketClientLite/bin/Release/netstandard2.0/WebsocketClientLite.dll
+  WebsocketClientLite -> /home/vscode/worktrees/s6/src/main/WebsocketClientLite/bin/Release/net8.0/WebsocketClientLite.dll
+  WebsocketClientLite -> /home/vscode/worktrees/s6/src/main/WebsocketClientLite/bin/Release/net9.0/WebsocketClientLite.dll
+  WebsocketClientLite -> /home/vscode/worktrees/s6/src/main/WebsocketClientLite/bin/Release/net10.0/WebsocketClientLite.dll
+  NETCore.Console.Test -> /home/vscode/worktrees/s6/src/test/NETCore.Console.Test/bin/Release/net10.0/NETCore.Console.Test.dll
+  WebsocketClientLiteTest -> /home/vscode/worktrees/s6/src/main/WebsocketClientLiteTest/bin/Release/net10.0/WebsocketClientLiteTest.dll
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:01.25

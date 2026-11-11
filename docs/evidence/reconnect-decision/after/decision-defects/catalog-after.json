@@ -1,0 +1,245 @@
+{
+  "made": "2026-11-11",
+  "note": "Seeded defects on the after commit. after-function: the six defects of catalog-before.json, seeded in ReconnectDecision.Decide. after-shell: the shell's side of the same lines in ClientWebSocketRx.cs, where the function is right and the shell ignores or misuses what it returns.",
+  "sides": {
+    "after-function": {
+      "commit": "bd743b3dbb6af860804af1244e204e385eff595e",
+      "plain_tests": true
+    },
+    "after-shell": {
+      "commit": "bd743b3dbb6af860804af1244e204e385eff595e",
+      "plain_tests": true
+    }
+  },
+  "defects": [
+    {
+      "id": "subscribe-ignores-disposal",
+      "side": "after-function",
+      "rows": [
+        4,
+        5,
+        6
+      ],
+      "description": "Subscribe admits after disposal and stores the generation.",
+      "file": "src/main/WebsocketClientLite/Helper/ReconnectDecision.cs",
+      "edits": [
+        {
+          "before": "            LifecycleEvent.Subscribe when state.Disposed => new(state, LifecycleEffect.Reject),\n",
+          "after": ""
+        }
+      ]
+    },
+    {
+      "id": "subscribe-keeps-generation",
+      "side": "after-function",
+      "rows": [
+        1,
+        2,
+        3
+      ],
+      "description": "Subscribe admits without storing the new generation.",
+      "file": "src/main/WebsocketClientLite/Helper/ReconnectDecision.cs",
+      "edits": [
+        {
+          "before": "LifecycleEvent.Subscribe => new(state with { Generation = subscription }, LifecycleEffect.Admit),",
+          "after": "LifecycleEvent.Subscribe => new(state, LifecycleEffect.Admit),"
+        }
+      ]
+    },
+    {
+      "id": "register-ignores-disposal",
+      "side": "after-function",
+      "rows": [
+        10,
+        11,
+        12
+      ],
+      "description": "Register creates and registers a service after disposal.",
+      "file": "src/main/WebsocketClientLite/Helper/ReconnectDecision.cs",
+      "edits": [
+        {
+          "before": "LifecycleEvent.Register => new(state, state.Disposed ? LifecycleEffect.Reject : LifecycleEffect.Register),",
+          "after": "LifecycleEvent.Register => new(state, LifecycleEffect.Register),"
+        }
+      ]
+    },
+    {
+      "id": "connect-ignores-disposal",
+      "side": "after-function",
+      "rows": [
+        16,
+        17,
+        18
+      ],
+      "description": "Connect installs the sender and reports connected after disposal.",
+      "file": "src/main/WebsocketClientLite/Helper/ReconnectDecision.cs",
+      "edits": [
+        {
+          "before": "LifecycleEvent.Connect => new(state, state.Disposed ? LifecycleEffect.Reject : LifecycleEffect.Install),",
+          "after": "LifecycleEvent.Connect => new(state, LifecycleEffect.Install),"
+        }
+      ]
+    },
+    {
+      "id": "terminate-ignores-generation",
+      "side": "after-function",
+      "rows": [
+        19,
+        21,
+        22,
+        24
+      ],
+      "description": "Terminate reports not-connected for any generation, the P3-D stale notification.",
+      "file": "src/main/WebsocketClientLite/Helper/ReconnectDecision.cs",
+      "edits": [
+        {
+          "before": "ReferenceEquals(state.Generation, subscription) ? LifecycleEffect.NotifyNotConnected : LifecycleEffect.Nothing),",
+          "after": "LifecycleEffect.NotifyNotConnected),"
+        }
+      ]
+    },
+    {
+      "id": "dispose-not-permanent",
+      "side": "after-function",
+      "rows": [
+        25,
+        26,
+        27
+      ],
+      "description": "Dispose leaves admission open.",
+      "file": "src/main/WebsocketClientLite/Helper/ReconnectDecision.cs",
+      "edits": [
+        {
+          "before": "LifecycleEvent.Dispose => new(state with { Disposed = true }, LifecycleEffect.CloseAdmission),",
+          "after": "LifecycleEvent.Dispose => new(state, LifecycleEffect.CloseAdmission),"
+        }
+      ]
+    },
+    {
+      "id": "subscribe-ignores-effect",
+      "side": "after-shell",
+      "rows": [
+        4,
+        5,
+        6
+      ],
+      "description": "The Subscribe site admits whatever the effect. The function still leaves the state unchanged on Reject, so unlike the before defect the generation is not stored.",
+      "file": "src/main/WebsocketClientLite/ClientWebSocketRx.cs",
+      "edits": [
+        {
+          "before": "                if (Advance(LifecycleEvent.Subscribe, generation) != LifecycleEffect.Admit)\n                {",
+          "after": "                _ = Advance(LifecycleEvent.Subscribe, generation);\n                if (false)\n                {"
+        }
+      ]
+    },
+    {
+      "id": "shell-skips-store",
+      "side": "after-shell",
+      "rows": [
+        1,
+        2,
+        3,
+        25,
+        26,
+        27
+      ],
+      "description": "Advance does not store the returned state, so no event changes it: the shell's side of subscribe-keeps-generation and dispose-not-permanent together.",
+      "file": "src/main/WebsocketClientLite/ClientWebSocketRx.cs",
+      "edits": [
+        {
+          "before": "        _lifecycle = step.Next;\n",
+          "after": "        // seeded defect: the returned state is not stored\n"
+        }
+      ]
+    },
+    {
+      "id": "register-ignores-effect",
+      "side": "after-shell",
+      "rows": [
+        10,
+        11,
+        12
+      ],
+      "description": "The Register site registers whatever the effect.",
+      "file": "src/main/WebsocketClientLite/ClientWebSocketRx.cs",
+      "edits": [
+        {
+          "before": "                            if (Advance(LifecycleEvent.Register, generation) != LifecycleEffect.Register)\n                                throw new ObjectDisposedException(nameof(ClientWebSocketRx));\n",
+          "after": "                            _ = Advance(LifecycleEvent.Register, generation);\n"
+        }
+      ]
+    },
+    {
+      "id": "connect-ignores-effect",
+      "side": "after-shell",
+      "rows": [
+        16,
+        17,
+        18
+      ],
+      "description": "The Connect site installs whatever the effect.",
+      "file": "src/main/WebsocketClientLite/ClientWebSocketRx.cs",
+      "edits": [
+        {
+          "before": "                    if (Advance(LifecycleEvent.Connect, generation) != LifecycleEffect.Install)\n                        throw new ObjectDisposedException(nameof(ClientWebSocketRx));\n",
+          "after": "                    _ = Advance(LifecycleEvent.Connect, generation);\n"
+        }
+      ]
+    },
+    {
+      "id": "terminate-ignores-effect",
+      "side": "after-shell",
+      "rows": [
+        19,
+        21,
+        22,
+        24
+      ],
+      "description": "The Terminate site reports not-connected whatever the effect.",
+      "file": "src/main/WebsocketClientLite/ClientWebSocketRx.cs",
+      "edits": [
+        {
+          "before": "                    if (Advance(LifecycleEvent.Terminate, generation) == LifecycleEffect.NotifyNotConnected)\n                        SetIsConnected(false);",
+          "after": "                    _ = Advance(LifecycleEvent.Terminate, generation);\n                    SetIsConnected(false);"
+        }
+      ]
+    },
+    {
+      "id": "terminate-passes-no-identity",
+      "side": "after-shell",
+      "rows": [
+        20,
+        23
+      ],
+      "description": "The Terminate site passes null instead of its subscription, so no teardown reports not-connected.",
+      "file": "src/main/WebsocketClientLite/ClientWebSocketRx.cs",
+      "edits": [
+        {
+          "before": "Advance(LifecycleEvent.Terminate, generation)",
+          "after": "Advance(LifecycleEvent.Terminate, null)"
+        }
+      ]
+    },
+    {
+      "id": "dispose-skips-decision",
+      "side": "after-shell",
+      "rows": [
+        25,
+        26,
+        27
+      ],
+      "description": "Dispose and DisposeAsync do not call the decision, so admission stays open.",
+      "file": "src/main/WebsocketClientLite/ClientWebSocketRx.cs",
+      "edits": [
+        {
+          "before": "            lock (_lifecycleGate) _ = Advance(LifecycleEvent.Dispose, null);\n            // Abrupt",
+          "after": "            // seeded defect: admission stays open\n            // Abrupt"
+        },
+        {
+          "before": "        lock (_lifecycleGate) _ = Advance(LifecycleEvent.Dispose, null);\n        foreach",
+          "after": "        // seeded defect: admission stays open\n        foreach"
+        }
+      ]
+    }
+  ]
+}

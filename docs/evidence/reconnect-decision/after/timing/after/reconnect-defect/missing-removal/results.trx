@@ -1,0 +1,62 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="578bfc50-539c-4399-ba7a-ca7d2eb886c2" name="@a920b7ae3df2 2026-11-11 22:33:36" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-11-11T22:33:36.9808809+00:00" queuing="2026-11-11T22:33:36.9808810+00:00" start="2026-11-11T22:33:35.3108137+00:00" finish="2026-11-11T22:33:38.7009786+00:00" />
+  <TestSettings name="default" id="a1eb7350-3615-40a6-88a2-dbb2bb6e98d5">
+    <Deployment runDeploymentRoot="_a920b7ae3df2_2026-11-11_22_33_36" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="5a3aeee3-7721-441a-b28a-f10270d94476" testId="655cdd3e-4c9c-6553-17dd-43fd5ec11467" testName="WebsocketClientLiteTest.ReconnectTests.TerminalCallbackSuccessorSurvivesOldCleanup" computerName="a920b7ae3df2" duration="00:00:03.0510308" startTime="2026-11-11T22:33:35.6067076+00:00" endTime="2026-11-11T22:33:38.6661216+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="5a3aeee3-7721-441a-b28a-f10270d94476">
+      <Output>
+        <ErrorInfo>
+          <Message>Old service retained registration</Message>
+          <StackTrace>   at WebsocketClientLiteTest.ReconnectTests.TerminalCallbackSuccessorSurvivesOldCleanup() in /tmp/pdd-83388c07c330488591559d9a982bbdc3/src/main/WebsocketClientLiteTest/ReconnectTests.cs:line 87
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="aa3a82f5-fc3a-440a-bac2-b44d1aeb6500" testId="0d093c91-0f22-865f-6883-5850f825657f" testName="WebsocketClientLiteTest.RuntimeEvidenceTests.RecordHostRuntime" computerName="a920b7ae3df2" duration="00:00:00.0043792" startTime="2026-11-11T22:33:35.6060637+00:00" endTime="2026-11-11T22:33:35.6138233+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="aa3a82f5-fc3a-440a-bac2-b44d1aeb6500">
+      <Output>
+        <StdOut>PDD_HOST_RUNTIME=.NET 10.0.14
+PDD_HOST_IDENTITY={"runtime":".NET 10.0.14","runtime_version":"10.0.14","test_framework":".NETCoreApp,Version=v10.0","os":"linux","os_description":"Ubuntu 24.04.5 LTS","os_version":"Unix 7.2.11.13","os_release":"PRETTY_NAME=\u0022Ubuntu 24.04.5 LTS\u0022\nNAME=\u0022Ubuntu\u0022\nVERSION_ID=\u002224.04\u0022\nVERSION=\u002224.04.5 LTS (Noble Numbat)\u0022\nVERSION_CODENAME=noble\nID=ubuntu\nID_LIKE=debian\nHOME_URL=\u0022https://www.ubuntu.com/\u0022\nSUPPORT_URL=\u0022https://help.ubuntu.com/\u0022\nBUG_REPORT_URL=\u0022https://bugs.launchpad.net/ubuntu/\u0022\nPRIVACY_POLICY_URL=\u0022https://www.ubuntu.com/legal/terms-and-policies/privacy-policy\u0022\nUBUNTU_CODENAME=noble\nLOGO=ubuntu-logo\n","os_architecture":"X64","process_architecture":"X64","library_framework":".NETCoreApp,Version=v10.0","library_name":"WebsocketClientLite, Version=10.2.0.0, Culture=neutral, PublicKeyToken=null","library_path":"/tmp/pdd-83388c07c330488591559d9a982bbdc3/src/main/WebsocketClientLiteTest/bin/Release/net10.0/WebsocketClientLite.dll","library_sha256":"c21b9168dd163fee20151b569525953d21a6cf453a80fdf2dd36906c0864ffd1","library_mvid":"4c455660-05cd-4bab-ba1e-558d39f0ec59"}</StdOut>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="WebsocketClientLiteTest.RuntimeEvidenceTests.RecordHostRuntime" storage="/tmp/pdd-83388c07c330488591559d9a982bbdc3/src/main/websocketclientlitetest/bin/release/net10.0/websocketclientlitetest.dll" id="0d093c91-0f22-865f-6883-5850f825657f">
+      <Execution id="aa3a82f5-fc3a-440a-bac2-b44d1aeb6500" />
+      <TestMethod codeBase="/tmp/pdd-83388c07c330488591559d9a982bbdc3/src/main/WebsocketClientLiteTest/bin/Release/net10.0/WebsocketClientLiteTest.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="WebsocketClientLiteTest.RuntimeEvidenceTests" name="RecordHostRuntime" />
+    </UnitTest>
+    <UnitTest name="WebsocketClientLiteTest.ReconnectTests.TerminalCallbackSuccessorSurvivesOldCleanup" storage="/tmp/pdd-83388c07c330488591559d9a982bbdc3/src/main/websocketclientlitetest/bin/release/net10.0/websocketclientlitetest.dll" id="655cdd3e-4c9c-6553-17dd-43fd5ec11467">
+      <Execution id="5a3aeee3-7721-441a-b28a-f10270d94476" />
+      <TestMethod codeBase="/tmp/pdd-83388c07c330488591559d9a982bbdc3/src/main/WebsocketClientLiteTest/bin/Release/net10.0/WebsocketClientLiteTest.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="WebsocketClientLiteTest.ReconnectTests" name="TerminalCallbackSuccessorSurvivesOldCleanup" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="655cdd3e-4c9c-6553-17dd-43fd5ec11467" executionId="5a3aeee3-7721-441a-b28a-f10270d94476" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="0d093c91-0f22-865f-6883-5850f825657f" executionId="aa3a82f5-fc3a-440a-bac2-b44d1aeb6500" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="2" executed="2" passed="1" failed="1" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v4.0.1+0f7d528729 (64-bit .NET 10.0.14)
+[xUnit.net 00:00:00.04]   Discovering: WebsocketClientLiteTest
+[xUnit.net 00:00:00.09]   Discovered:  WebsocketClientLiteTest
+[xUnit.net 00:00:00.10]   Starting:    WebsocketClientLiteTest
+[xUnit.net 00:00:03.18]       Old service retained registration
+[xUnit.net 00:00:03.18]       Stack Trace:
+[xUnit.net 00:00:03.18]         /tmp/pdd-83388c07c330488591559d9a982bbdc3/src/main/WebsocketClientLiteTest/ReconnectTests.cs(87,0): at WebsocketClientLiteTest.ReconnectTests.TerminalCallbackSuccessorSurvivesOldCleanup()
+[xUnit.net 00:00:03.18]         --- End of stack trace from previous location ---
+[xUnit.net 00:00:03.18]   Finished:    WebsocketClientLiteTest
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="a920b7ae3df2" outcome="Error" timestamp="2026-11-11T22:33:38.6678712+00:00">
+        <Text>[xUnit.net 00:00:03.18]     WebsocketClientLiteTest.ReconnectTests.TerminalCallbackSuccessorSurvivesOldCleanup [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

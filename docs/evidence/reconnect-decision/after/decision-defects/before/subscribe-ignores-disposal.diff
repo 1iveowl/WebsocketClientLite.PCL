@@ -1,0 +1,11 @@
+--- a/src/main/WebsocketClientLite/ClientWebSocketRx.cs
++++ b/src/main/WebsocketClientLite/ClientWebSocketRx.cs
+@@ -250,7 +250,7 @@
+             var generation = new object();
+             lock (_lifecycleGate)
+             {
+-                if (_disposed)
++                if (false)
+                 {
+                     obsTuple.OnError(new ObjectDisposedException(nameof(ClientWebSocketRx)));
+                     return Disposable.Empty;
