@@ -1,0 +1,132 @@
+## current/current: 51 of 51 passed
+## failing-first/a779602: 13 of 48 passed
+- Failed: ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(header: [129, 126, 0, 125], limit: 0, read: 4) -- Assert.Throws() Failure: No exception was thrown
+- Failed: ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(header: [129, 127, 0, 0, 0, ···], limit: 0, read: 10) -- Assert.Throws() Failure: No exception was thrown
+- Failed: ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(header: [129, 128, 1, 2, 3, ···], limit: 0, read: 2) -- Assert.Throws() Failure: No exception was thrown
+- Failed: ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(header: [131, 1], limit: 0, read: 2) -- Assert.Throws() Failure: No exception was thrown
+- Failed: ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(header: [132, 1], limit: 0, read: 2) -- Assert.Throws() Failure: No exception was thrown
+- Failed: ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(header: [133, 1], limit: 0, read: 2) -- Assert.Throws() Failure: No exception was thrown
+- Failed: ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(header: [134, 1], limit: 0, read: 2) -- Assert.Throws() Failure: No exception was thrown
+- Failed: ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(header: [135, 1], limit: 0, read: 2) -- Assert.Throws() Failure: No exception was thrown
+- Failed: ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(header: [137, 126, 0, 200], limit: 0, read: 2) -- Invalid header read 4 bytes in 4 attempts, expected 2
+- Failed: ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(header: [139, 1], limit: 0, read: 2) -- Assert.Throws() Failure: No exception was thrown
+- Failed: ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(header: [140, 1], limit: 0, read: 2) -- Assert.Throws() Failure: No exception was thrown
+- Failed: ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(header: [141, 1], limit: 0, read: 2) -- Assert.Throws() Failure: No exception was thrown
+- Failed: ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(header: [142, 1], limit: 0, read: 2) -- Assert.Throws() Failure: No exception was thrown
+- Failed: ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(header: [143, 1], limit: 0, read: 2) -- Assert.Throws() Failure: No exception was thrown
+- Failed: ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(header: [145, 1], limit: 0, read: 2) -- Assert.Throws() Failure: No exception was thrown
+- Failed: ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(header: [161, 1], limit: 0, read: 2) -- Assert.Throws() Failure: No exception was thrown
+- Failed: ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(header: [193, 1], limit: 0, read: 2) -- Assert.Throws() Failure: No exception was thrown
+- Failed: ParserRetentionTests.RejectsMalformedFrames(bytes: [129, 126, 0, 125]) -- Assert.Throws() Failure: No exception was thrown
+- Failed: ParserRetentionTests.RejectsMalformedFrames(bytes: [129, 127, 0, 0, 0, ···]) -- Assert.Throws() Failure: No exception was thrown
+- Failed: ParserRetentionTests.RejectsMalformedFrames(bytes: [131, 0]) -- Assert.Throws() Failure: No exception was thrown
+- Failed: ParserRetentionTests.RejectsMalformedFrames(bytes: [132, 0]) -- Assert.Throws() Failure: No exception was thrown
+- Failed: ParserRetentionTests.RejectsMalformedFrames(bytes: [133, 0]) -- Assert.Throws() Failure: No exception was thrown
+- Failed: ParserRetentionTests.RejectsMalformedFrames(bytes: [134, 0]) -- Assert.Throws() Failure: No exception was thrown
+- Failed: ParserRetentionTests.RejectsMalformedFrames(bytes: [135, 0]) -- Assert.Throws() Failure: No exception was thrown
+- Failed: ParserRetentionTests.RejectsMalformedFrames(bytes: [136, 1, 0]) -- Assert.Throws() Failure: No exception was thrown
+- Failed: ParserRetentionTests.RejectsMalformedFrames(bytes: [136, 2, 3, 237]) -- Assert.Throws() Failure: No exception was thrown
+- Failed: ParserRetentionTests.RejectsMalformedFrames(bytes: [136, 3, 3, 232, 255]) -- Assert.Throws() Failure: No exception was thrown
+- Failed: ParserRetentionTests.RejectsMalformedFrames(bytes: [139, 0]) -- Assert.Throws() Failure: No exception was thrown
+- Failed: ParserRetentionTests.RejectsMalformedFrames(bytes: [140, 0]) -- Assert.Throws() Failure: No exception was thrown
+- Failed: ParserRetentionTests.RejectsMalformedFrames(bytes: [141, 0]) -- Assert.Throws() Failure: No exception was thrown
+- Failed: ParserRetentionTests.RejectsMalformedFrames(bytes: [142, 0]) -- Assert.Throws() Failure: No exception was thrown
+- Failed: ParserRetentionTests.RejectsMalformedFrames(bytes: [143, 0]) -- Assert.Throws() Failure: No exception was thrown
+- Failed: ParserRetentionTests.RejectsMalformedFrames(bytes: [145, 0]) -- Assert.Throws() Failure: No exception was thrown
+- Failed: ParserRetentionTests.RejectsMalformedFrames(bytes: [161, 0]) -- Assert.Throws() Failure: No exception was thrown
+- Failed: ParserRetentionTests.RejectsMalformedFrames(bytes: [193, 0]) -- Assert.Throws() Failure: No exception was thrown
+## failing-first/eof-as-cancel: 49 of 51 passed
+- Failed: PayloadParsingTests.TruncatedHeadersNeverProduceFrames(header: [130, 126, 1, 0]) -- Truncated header did not end in end of stream at 0: null; 1: null; 2: null; 3: null
+- Failed: PayloadParsingTests.TruncatedHeadersNeverProduceFrames(header: [130, 127, 0, 0, 0, ···]) -- Truncated header did not end in end of stream at 0: null; 1: null; 2: null; 3: null; 4: null; 5: null; 6: null; 7: null; 8: null; 9: null
+## failing-first/eof-as-data: 49 of 51 passed
+- Failed: PayloadParsingTests.TruncatedHeadersNeverProduceFrames(header: [130, 126, 1, 0]) -- Truncated header did not end in end of stream at 0: Protocol error: invalid server frame header/fragmentation sequence or payload exceeds the configured maximum.; 1: frame; 2: frame; 3: frame
+- Failed: PayloadParsingTests.TruncatedHeadersNeverProduceFrames(header: [130, 127, 0, 0, 0, ···]) -- Truncated header did not end in end of stream at 0: Protocol error: invalid server frame header/fragmentation sequence or payload exceeds the configured maximum.; 1: frame; 2: Protocol error: invalid server frame header/
+## failing-first/limit-plus-one: 45 of 51 passed
+- Failed: ParserRetentionTests.ConfiguredLimitAcceptsLimitAndRejectsSuccessorFromHeader(limit: 1) -- Assert.Throws() Failure: No exception was thrown
+- Failed: ParserRetentionTests.ConfiguredLimitAcceptsLimitAndRejectsSuccessorFromHeader(limit: 100) -- Assert.Throws() Failure: No exception was thrown
+- Failed: ParserRetentionTests.ConfiguredLimitAcceptsLimitAndRejectsSuccessorFromHeader(limit: 125) -- Assert.Throws() Failure: No exception was thrown
+- Failed: ParserRetentionTests.ConfiguredLimitAcceptsLimitAndRejectsSuccessorFromHeader(limit: 200) -- Assert.Throws() Failure: No exception was thrown
+- Failed: ParserRetentionTests.ConfiguredLimitAcceptsLimitAndRejectsSuccessorFromHeader(limit: 65535) -- Assert.Throws() Failure: No exception was thrown
+- Failed: ParserRetentionTests.ConfiguredLimitAcceptsLimitAndRejectsSuccessorFromHeader(limit: 65536) -- Assert.Throws() Failure: No exception was thrown
+## failing-first/limit-strict: 43 of 51 passed
+- Failed: ParserRetentionTests.AccumulatedLimitRejectsBeforePayloadRead(limit: 1) -- Control payload changed retained budget: WebsocketClientLite.CustomException.WebsocketClientLiteException: Protocol error: invalid server frame header/fragmentation sequence or payload exceeds the configured maximum.
+- Failed: ParserRetentionTests.AccumulatedLimitRejectsBeforePayloadRead(limit: 4) -- Control payload changed retained budget: WebsocketClientLite.CustomException.WebsocketClientLiteException: Protocol error: invalid server frame header/fragmentation sequence or payload exceeds the configured maximum.
+- Failed: ParserRetentionTests.ConfiguredLimitAcceptsLimitAndRejectsSuccessorFromHeader(limit: 1) -- Frame of exactly the limit 1 was refused: WebsocketClientLite.CustomException.WebsocketClientLiteException: Protocol error: invalid server frame header/fragmentation sequence or payload exceeds the configured maximum.
+- Failed: ParserRetentionTests.ConfiguredLimitAcceptsLimitAndRejectsSuccessorFromHeader(limit: 100) -- Frame of exactly the limit 100 was refused: WebsocketClientLite.CustomException.WebsocketClientLiteException: Protocol error: invalid server frame header/fragmentation sequence or payload exceeds the configured maximum.
+- Failed: ParserRetentionTests.ConfiguredLimitAcceptsLimitAndRejectsSuccessorFromHeader(limit: 125) -- Frame of exactly the limit 125 was refused: WebsocketClientLite.CustomException.WebsocketClientLiteException: Protocol error: invalid server frame header/fragmentation sequence or payload exceeds the configured maximum.
+- Failed: ParserRetentionTests.ConfiguredLimitAcceptsLimitAndRejectsSuccessorFromHeader(limit: 200) -- Frame of exactly the limit 200 was refused: WebsocketClientLite.CustomException.WebsocketClientLiteException: Protocol error: invalid server frame header/fragmentation sequence or payload exceeds the configured maximum.
+- Failed: ParserRetentionTests.ConfiguredLimitAcceptsLimitAndRejectsSuccessorFromHeader(limit: 65535) -- Frame of exactly the limit 65535 was refused: WebsocketClientLite.CustomException.WebsocketClientLiteException: Protocol error: invalid server frame header/fragmentation sequence or payload exceeds the configured maximum
+- Failed: ParserRetentionTests.ConfiguredLimitAcceptsLimitAndRejectsSuccessorFromHeader(limit: 65536) -- Frame of exactly the limit 65536 was refused: WebsocketClientLite.CustomException.WebsocketClientLiteException: Protocol error: invalid server frame header/fragmentation sequence or payload exceeds the configured maximum
+## failing-first/reads-past-header: 23 of 51 passed
+- Failed: ParserRetentionTests.AccumulatedLimitRejectsBeforePayloadRead(limit: 1) -- Accumulated limit consumed rejected payload
+- Failed: ParserRetentionTests.AccumulatedLimitRejectsBeforePayloadRead(limit: 4) -- Accumulated limit consumed rejected payload
+- Failed: ParserRetentionTests.ConfiguredLimitAcceptsLimitAndRejectsSuccessorFromHeader(limit: 1) -- Frame one above the limit 1 read 3 bytes in 3 attempts, expected 2
+- Failed: ParserRetentionTests.ConfiguredLimitAcceptsLimitAndRejectsSuccessorFromHeader(limit: 100) -- Frame one above the limit 100 read 3 bytes in 3 attempts, expected 2
+- Failed: ParserRetentionTests.ConfiguredLimitAcceptsLimitAndRejectsSuccessorFromHeader(limit: 125) -- Frame one above the limit 125 read 5 bytes in 5 attempts, expected 4
+- Failed: ParserRetentionTests.ConfiguredLimitAcceptsLimitAndRejectsSuccessorFromHeader(limit: 200) -- Frame one above the limit 200 read 5 bytes in 5 attempts, expected 4
+- Failed: ParserRetentionTests.ConfiguredLimitAcceptsLimitAndRejectsSuccessorFromHeader(limit: 65535) -- Frame one above the limit 65535 read 11 bytes in 11 attempts, expected 10
+- Failed: ParserRetentionTests.ConfiguredLimitAcceptsLimitAndRejectsSuccessorFromHeader(limit: 65536) -- Frame one above the limit 65536 read 11 bytes in 11 attempts, expected 10
+- Failed: ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(header: [129, 126, 0, 125], limit: 0, read: 4) -- Invalid header read 5 bytes in 5 attempts, expected 4
+- Failed: ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(header: [129, 127, 0, 0, 0, ···], limit: 0, read: 10) -- Invalid header read 11 bytes in 11 attempts, expected 10
+- Failed: ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(header: [129, 127, 128, 0, 0, ···], limit: 0, read: 10) -- Invalid header read 10 bytes in 11 attempts, expected 10
+- Failed: ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(header: [129, 128, 1, 2, 3, ···], limit: 0, read: 2) -- Invalid header read 3 bytes in 3 attempts, expected 2
+- Failed: ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(header: [130, 126, 0, 200], limit: 100, read: 4) -- Invalid header read 5 bytes in 5 attempts, expected 4
+- Failed: ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(header: [131, 1], limit: 0, read: 2) -- Invalid header read 3 bytes in 3 attempts, expected 2
+- Failed: ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(header: [132, 1], limit: 0, read: 2) -- Invalid header read 3 bytes in 3 attempts, expected 2
+- Failed: ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(header: [133, 1], limit: 0, read: 2) -- Invalid header read 3 bytes in 3 attempts, expected 2
+- Failed: ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(header: [134, 1], limit: 0, read: 2) -- Invalid header read 3 bytes in 3 attempts, expected 2
+- Failed: ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(header: [135, 1], limit: 0, read: 2) -- Invalid header read 3 bytes in 3 attempts, expected 2
+- Failed: ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(header: [137, 126, 0, 200], limit: 0, read: 2) -- Invalid header read 3 bytes in 3 attempts, expected 2
+- Failed: ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(header: [139, 1], limit: 0, read: 2) -- Invalid header read 3 bytes in 3 attempts, expected 2
+- Failed: ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(header: [140, 1], limit: 0, read: 2) -- Invalid header read 3 bytes in 3 attempts, expected 2
+- Failed: ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(header: [141, 1], limit: 0, read: 2) -- Invalid header read 3 bytes in 3 attempts, expected 2
+- Failed: ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(header: [142, 1], limit: 0, read: 2) -- Invalid header read 3 bytes in 3 attempts, expected 2
+- Failed: ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(header: [143, 1], limit: 0, read: 2) -- Invalid header read 3 bytes in 3 attempts, expected 2
+- Failed: ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(header: [145, 1], limit: 0, read: 2) -- Invalid header read 3 bytes in 3 attempts, expected 2
+- Failed: ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(header: [161, 1], limit: 0, read: 2) -- Invalid header read 3 bytes in 3 attempts, expected 2
+- Failed: ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(header: [193, 1], limit: 0, read: 2) -- Invalid header read 3 bytes in 3 attempts, expected 2
+- Failed: ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(header: [9, 1], limit: 0, read: 2) -- Invalid header read 3 bytes in 3 attempts, expected 2
+## failing-first/rsv2-rsv3: 47 of 51 passed
+- Failed: ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(header: [145, 1], limit: 0, read: 2) -- Assert.Throws() Failure: No exception was thrown
+- Failed: ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(header: [161, 1], limit: 0, read: 2) -- Assert.Throws() Failure: No exception was thrown
+- Failed: PayloadParsingTests.RejectsMalformedFrames(bytes: [145, 0]) -- Assert.Throws() Failure: No exception was thrown
+- Failed: PayloadParsingTests.RejectsMalformedFrames(bytes: [161, 0]) -- Assert.Throws() Failure: No exception was thrown
+## failing-first/size-limit: 43 of 51 passed
+- Failed: ParserRetentionTests.ConfiguredLimitAcceptsLimitAndRejectsSuccessorFromHeader(limit: 1) -- Assert.Throws() Failure: No exception was thrown
+- Failed: ParserRetentionTests.ConfiguredLimitAcceptsLimitAndRejectsSuccessorFromHeader(limit: 100) -- Assert.Throws() Failure: No exception was thrown
+- Failed: ParserRetentionTests.ConfiguredLimitAcceptsLimitAndRejectsSuccessorFromHeader(limit: 125) -- Assert.Throws() Failure: No exception was thrown
+- Failed: ParserRetentionTests.ConfiguredLimitAcceptsLimitAndRejectsSuccessorFromHeader(limit: 200) -- Assert.Throws() Failure: No exception was thrown
+- Failed: ParserRetentionTests.ConfiguredLimitAcceptsLimitAndRejectsSuccessorFromHeader(limit: 65535) -- Assert.Throws() Failure: No exception was thrown
+- Failed: ParserRetentionTests.ConfiguredLimitAcceptsLimitAndRejectsSuccessorFromHeader(limit: 65536) -- Assert.Throws() Failure: No exception was thrown
+- Failed: ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(header: [130, 126, 0, 200], limit: 100, read: 4) -- Assert.Throws() Failure: No exception was thrown
+- Failed: PayloadParsingTests.Parse_FrameExceedingMaxFrameSize_Throws -- Assert.Throws() Failure: No exception was thrown
+## failing-first/unknown-opcodes-sequence: 33 of 51 passed
+- Failed: ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(header: [132, 1], limit: 0, read: 2) -- Assert.Throws() Failure: No exception was thrown
+- Failed: ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(header: [133, 1], limit: 0, read: 2) -- Assert.Throws() Failure: No exception was thrown
+- Failed: ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(header: [134, 1], limit: 0, read: 2) -- Assert.Throws() Failure: No exception was thrown
+- Failed: ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(header: [135, 1], limit: 0, read: 2) -- Assert.Throws() Failure: No exception was thrown
+- Failed: ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(header: [139, 1], limit: 0, read: 2) -- Assert.Throws() Failure: No exception was thrown
+- Failed: ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(header: [140, 1], limit: 0, read: 2) -- Assert.Throws() Failure: No exception was thrown
+- Failed: ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(header: [141, 1], limit: 0, read: 2) -- Assert.Throws() Failure: No exception was thrown
+- Failed: ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(header: [142, 1], limit: 0, read: 2) -- Assert.Throws() Failure: No exception was thrown
+- Failed: ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(header: [143, 1], limit: 0, read: 2) -- Assert.Throws() Failure: No exception was thrown
+- Failed: PayloadParsingTests.RejectsMalformedFrames(bytes: [132, 0]) -- Assert.Throws() Failure: No exception was thrown
+- Failed: PayloadParsingTests.RejectsMalformedFrames(bytes: [133, 0]) -- Assert.Throws() Failure: No exception was thrown
+- Failed: PayloadParsingTests.RejectsMalformedFrames(bytes: [134, 0]) -- Assert.Throws() Failure: No exception was thrown
+- Failed: PayloadParsingTests.RejectsMalformedFrames(bytes: [135, 0]) -- Assert.Throws() Failure: No exception was thrown
+- Failed: PayloadParsingTests.RejectsMalformedFrames(bytes: [139, 0]) -- Assert.Throws() Failure: No exception was thrown
+- Failed: PayloadParsingTests.RejectsMalformedFrames(bytes: [140, 0]) -- Assert.Throws() Failure: No exception was thrown
+- Failed: PayloadParsingTests.RejectsMalformedFrames(bytes: [141, 0]) -- Assert.Throws() Failure: No exception was thrown
+- Failed: PayloadParsingTests.RejectsMalformedFrames(bytes: [142, 0]) -- Assert.Throws() Failure: No exception was thrown
+- Failed: PayloadParsingTests.RejectsMalformedFrames(bytes: [143, 0]) -- Assert.Throws() Failure: No exception was thrown
+## failing-first/unknown-opcodes: 41 of 51 passed
+- Failed: ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(header: [139, 1], limit: 0, read: 2) -- Assert.Throws() Failure: No exception was thrown
+- Failed: ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(header: [140, 1], limit: 0, read: 2) -- Assert.Throws() Failure: No exception was thrown
+- Failed: ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(header: [141, 1], limit: 0, read: 2) -- Assert.Throws() Failure: No exception was thrown
+- Failed: ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(header: [142, 1], limit: 0, read: 2) -- Assert.Throws() Failure: No exception was thrown
+- Failed: ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(header: [143, 1], limit: 0, read: 2) -- Assert.Throws() Failure: No exception was thrown
+- Failed: PayloadParsingTests.RejectsMalformedFrames(bytes: [139, 0]) -- Assert.Throws() Failure: No exception was thrown
+- Failed: PayloadParsingTests.RejectsMalformedFrames(bytes: [140, 0]) -- Assert.Throws() Failure: No exception was thrown
+- Failed: PayloadParsingTests.RejectsMalformedFrames(bytes: [141, 0]) -- Assert.Throws() Failure: No exception was thrown
+- Failed: PayloadParsingTests.RejectsMalformedFrames(bytes: [142, 0]) -- Assert.Throws() Failure: No exception was thrown
+- Failed: PayloadParsingTests.RejectsMalformedFrames(bytes: [143, 0]) -- Assert.Throws() Failure: No exception was thrown
