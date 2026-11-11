@@ -1,0 +1,11 @@
+  Determining projects to restore...
+  Restored /tmp/s8-seed-none-0kpOiN/src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj (in 127 ms).
+  Restored /tmp/s8-seed-none-0kpOiN/src/interface/IWebsocketClientLite/IWebsocketClientLite.csproj (in 127 ms).
+  Restored /tmp/s8-seed-none-0kpOiN/src/main/WebsocketClientLite/WebsocketClientLite.csproj (in 129 ms).
+  IWebsocketClientLite -> /tmp/s8-seed-none-0kpOiN/src/interface/IWebsocketClientLite/bin/Release/netstandard2.0/IWebsocketClientLite.dll
+  WebsocketClientLite -> /tmp/s8-seed-none-0kpOiN/src/main/WebsocketClientLite/bin/Release/net10.0/WebsocketClientLite.dll
+  WebsocketClientLiteTest -> /tmp/s8-seed-none-0kpOiN/src/main/WebsocketClientLiteTest/bin/Release/net10.0/WebsocketClientLiteTest.dll
+Test run for /tmp/s8-seed-none-0kpOiN/src/main/WebsocketClientLiteTest/bin/Release/net10.0/WebsocketClientLiteTest.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+
+Passed!  - Failed:     0, Passed:    11, Skipped:     0, Total:    11, Duration: 26 ms - WebsocketClientLiteTest.dll (net10.0)
