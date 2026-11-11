@@ -1,9 +1,11 @@
 # 10.3 session plan: header traceability, test parity and two boundary experiments
 
-Written 2026-11-11. The work is too large for one session, so it runs as ten
-steps, S1 to S10, each in a new session started with the prompt given below. Run
+Written 2026-11-11. The work is too large for one session, so it runs as eleven
+steps, S1 to S11, each in a new session started with the prompt given below. Run
 them in the order of the table. S10 was added after the #136 review and is numbered
-last so that the other step numbers stay the same; it runs after M1 and before S9. The owner merges pull requests between steps at the merge points.
+last so that the other step numbers stay the same; it runs after M1 and before S9.
+S11 was added after S4 found a Stryker kill that depends on a race (lesson 10); it
+runs after M2 and before S9. The owner merges pull requests between steps at the merge points.
 Releasing stays the owner's step.
 
 | Step | Work | Branch | Pull request | Needs | Model, effort |
@@ -22,7 +24,9 @@ Releasing stays the owner's step.
 | M4 | **Owner decides adopt or not adopt and merges or closes** | | | S8 | review: optional |
 | S10 | Pdd classifier and fixture hardening: #136 review findings 4 to 7, CI mutant timing | `chore/pdd-classifier-hardening` | new draft | M1 | Opus 5.5, high |
 | M6 | **Owner reviews and merges the hardening PR** | | | S10 | review: optional |
-| S9 | Release readiness on `releases/10.3.0.0`, README draft | `docs/readme-10.3.0` | new | M1 to M4, M6 | Sonnet 5.5, high |
+| S11 | Rejected-handshake test that kills the `throw handshakeException;` mutant every time | `fix/handshake-rejection-test` | new draft | M2 | Opus 5.5, high |
+| M7 | **Owner reviews and merges the rejected-handshake test PR** | | | S11 | review: optional |
+| S9 | Release readiness on `releases/10.3.0.0`, README draft | `docs/readme-10.3.0` | new | M1 to M4, M6, M7 | Sonnet 5.5, high |
 | M5 | **Owner releases**: `GitVersion.yml`, publish, release branch into `main` | | | S9 | |
 
 Start each session with `/model` and `/effort` set as the table says, using the
@@ -31,14 +35,15 @@ refactors the concurrency-sensitive P3-D lifecycle code without changing its
 behaviour; xhigh gives more margin there if the extra cost is acceptable. S9 mostly runs known checks and drafts
 the README, so Sonnet is enough.
 
-Before each merge point M1 to M4 and M6, you may run `/code-review` on the step's
+Before each merge point M1 to M4, M6 and M7, you may run `/code-review` on the step's
 pull request in a fresh session, so that the review is not anchored on the session
 that did the work. Findings are posted on the pull request and fixed on its branch
 before merging. The review is optional and does not replace the step's own checks.
 At the same merge point, dispatch CI on the step's branch (lesson 2 below).
 
 S5 and S6 do not depend on the header work and may run while M1 or M2 is
-pending. S10 does not depend on S3 to S8 and may run beside them after M1. Every other step checks its "Needs" column first and ends
+pending. S10 does not depend on S3 to S8 and may run beside them after M1. S11 does not
+depend on S5 to S8 or S10 and may run beside them after M2. Every other step checks its "Needs" column first and ends
 `STATUS: BLOCKED` when it is not met.
 
 ## Owner decisions (2026-11-11)
@@ -71,7 +76,7 @@ pending. S10 does not depend on S3 to S8 and may run beside them after M1. Every
 Later owner decisions are posted as a comment headed "Owner decision <date>" on
 the pull request of the step they affect. Sessions read those comments.
 
-## Lessons from S1, S2 and the #136 review (2026-11-11)
+## Lessons from S1, S2, the #136 review and S4 (2026-11-11)
 
 Apply these in every later step.
 
@@ -117,12 +122,29 @@ Apply these in every later step.
    did not report. S2 stopped and asked instead of tuning the mutant, which was
    right. Keep doing that.
 
+10. **A kill can be a race.** In S4 the Stryker mutant that removes
+    `throw handshakeException;` (`WebsocketConnectionHandler.cs`, line 95) survived,
+    although S2 had killed it and no production code had changed. Nobody had
+    asked why, so it was investigated after S4 ended. The mutant is a real
+    defect: a rejected handshake goes on to install the sender. But the subscriber
+    has already received the error through the `Aborted` status, so the tests
+    that check the message pass. Only
+    `ReconnectTests.FailedConnectTerminatesAndRemovesRegistration` can see it, and
+    only if `Sender` is set before its assertion. On copies of `c9701aa`, with the
+    mutant: 0 of 15 plain runs failed and 11 of 30 failed with all cores loaded.
+    Without it: 0 of 15 loaded runs failed. The evidence is in PR #140, decision 5
+    and the receipt. When a Stryker outcome changes and the code did not, run the
+    covering tests against an isolated copy with the mutant, plain and under load,
+    before calling the change noise. A test that waits for nothing it can observe
+    is a race, not a detection. S11 replaces it with a test that awaits the
+    connect call.
+
 ## Common rules for every step
 
 These apply to every session in addition to AGENTS.md and CONTRIBUTING.md, which
 are binding.
 
-- **Lessons.** Apply "Lessons from S1, S2 and the #136 review" above.
+- **Lessons.** Apply "Lessons from S1, S2, the #136 review and S4" above.
 
 - **Attribution.** No `Co-Authored-By` trailer naming an agent, model or vendor,
   and no "generated with" or 🤖 line in commits, pull request titles or pull
@@ -769,10 +791,95 @@ PR against releases/10.3.0.0 with no attribution line, post the receipt on it an
 end with the receipt as the Common rules describe. Never merge.
 ```
 
+### S11. A rejected-handshake test that does not race
+
+Branch `fix/handshake-rejection-test`, made from `origin/releases/10.3.0.0` after M2.
+Test code only: no change to production code, public behaviour, Dafny contracts or
+`tools/Pdd`. Anything beyond that is asked first.
+
+Found on 2026-11-11 after S4 (lesson 10, PR #140 decision 5):
+
+- `WebsocketConnectionHandler.ConnectWebsocket` throws `handshakeException` when
+  the handshake reports one. Without the `throw`, the first branch is empty, the
+  `else if`/`else` are skipped, and the method reaches `setSenderAction`, which
+  installs `Sender`, marks the client connected and starts the client ping.
+- `HandshakeParser.cs`, lines 40 and 41, reports a rejected response twice: as the
+  handshake result and as an `Aborted` status, which
+  `WebsocketClientFactory.cs`, line 59, turns into `OnError`. The subscriber
+  therefore has the original error before `ConnectWebsocket` reaches line 95.
+  `Non101HandshakeResponse_FailsFast_WithStatusCode` and
+  `InvalidAcceptNeverConnectsEvenWhenServerStaysOpen` pass under the mutant.
+- `ReconnectTests.FailedConnectTerminatesAndRemovesRegistration` asserts
+  `client.Sender` is null right after the terminal error. Under the mutant it fails
+  only when the connect code sets `Sender` first. Stryker killed the mutant in S2
+  and not in either S4 run.
+- The test project sees internals, and `PayloadLeaseTests`, `ControlledCloseTests`
+  and `CloseBoundaryTests` already build handlers directly.
+
+What to do:
+
+1. Baseline, from a clean tree, kept under
+   `docs/evidence/handshake-rejection/`. In an isolated `git archive` copy with
+   only the `throw` removed, run the four covering tests 15 times plain and 15
+   times with every core loaded, and once more in an unchanged copy under load.
+   Record each run. This repeats the post-S4 measurement as kept evidence.
+2. Add a test that awaits `ConnectWebsocket` directly against a loopback server that
+   answers 404. It passes a `setSenderAction` that records each call, and asserts
+   that the call throws the rejection error and that `setSenderAction` never ran.
+   If the handshake timeout or the invalid-accept response reaches line 95 the same
+   way, check that first and add it as a row. Do not change the double report in
+   `HandshakeParser`: the status sequence is public behaviour.
+3. Show it failing first: in the mutant copy, the new test fails in every one of 15
+   plain and 15 loaded runs. In the unchanged copy it passes in every one of 15
+   loaded runs. A run that passes in the mutant copy is kept and reported, and the
+   step asks.
+4. Leave `FailedConnectTerminatesAndRemovesRegistration` as it is, and say in the
+   PR that it still races against this mutant.
+5. Run every check: the five-target matrix, the coverage gate, the Pdd tests,
+   `pdd.sh validate` and the four capture jobs with `aggregate`, and dispatch CI on
+   the branch (lesson 2). In the Stryker capture the line 95 statement mutant must
+   be killed, with the new test among its killers. Report every other Stryker
+   change as in S2, and do not edit `verification/stryker-close-dispositions.json`.
+6. Open a draft pull request against `releases/10.3.0.0`.
+
+Done when:
+
+1. The baseline runs are kept.
+2. The new test fails in every run against the mutant and passes in every run
+   without it.
+3. Stryker reports the line 95 mutant killed by the new test.
+4. Every check is reported with its result word.
+5. The draft PR is open and the receipt is posted on it.
+
+Estimate, not measured: 150K to 250K tokens.
+
+```text
+Run step S11 of the 10.3 session plan in repository 1iveowl/WebsocketClientLite.PCL
+(checkout /workspaces/WebsocketClientLite.PCL).
+
+First: git fetch -q origin, then read the plan in full:
+git show origin/releases/10.3.0.0:docs/pdd-10.3-session-plan.md.
+Read AGENTS.md and CONTRIBUTING.md; they are binding, as are the plan's "Common
+rules for every step", "Owner decisions" and "Lessons". Do step S11 and nothing
+else.
+
+Check S11's "Needs": gh pr view 140 --json state must say MERGED, and
+src/main/WebsocketClientLiteTest/ParserRetentionTests.cs on
+origin/releases/10.3.0.0 must contain
+ConfiguredLimitAcceptsLimitAndRejectsSuccessorFromHeader. If not, end
+STATUS: BLOCKED. Then confirm git status is clean and create
+fix/handshake-rejection-test from origin/releases/10.3.0.0. Read PR #140's
+decision 5 and its receipt.
+
+Do the work under "What to do", meet every "Done when" item, push, open the draft
+PR against releases/10.3.0.0 with no attribution line, post the receipt on it and
+end with the receipt as the Common rules describe. Never merge.
+```
+
 ### S9. Release readiness
 
-Branch `docs/readme-10.3.0`, made from `origin/releases/10.3.0.0` after M1 to M4
-and M6.
+Branch `docs/readme-10.3.0`, made from `origin/releases/10.3.0.0` after M1 to M4,
+M6 and M7.
 
 What to do:
 
@@ -808,7 +915,7 @@ does not exist yet, git show origin/docs/pdd-10.3-session-plan:docs/pdd-10.3-ses
 Read AGENTS.md and CONTRIBUTING.md; they are binding, as are the plan's "Common
 rules for every step" and "Owner decisions". Do step S9 and nothing else.
 
-Check S9's "Needs": the pull requests of S2, S4, S6, S8 and S10 are each MERGED or
+Check S9's "Needs": the pull requests of S2, S4, S6, S8, S10 and S11 are each MERGED or
 CLOSED (gh pr list --base releases/10.3.0.0 --state all). If one is still open,
 end STATUS: BLOCKED. Then confirm git status is clean and create
 docs/readme-10.3.0 from origin/releases/10.3.0.0.
