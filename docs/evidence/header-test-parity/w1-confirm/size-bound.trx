@@ -1,0 +1,88 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="cec3d433-5b52-4017-a05d-48d26e5615bd" name="@a920b7ae3df2 2026-11-11 16:17:32" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-11-11T16:17:32.7235721+00:00" queuing="2026-11-11T16:17:32.7235721+00:00" start="2026-11-11T16:17:32.3894224+00:00" finish="2026-11-11T16:17:32.7429108+00:00" />
+  <TestSettings name="default" id="5ad848f7-0796-4c68-9008-c69f5b29877c">
+    <Deployment runDeploymentRoot="_a920b7ae3df2_2026-11-11_16_17_32" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="f1983447-0819-4649-a6a1-b72ba01f4661" testId="866eaaf1-edef-8014-b43d-20e3dd2a3530" testName="WebsocketClientLiteTest.PayloadParsingTests.RejectsMalformedFrames(bytes: [129, 127, 128, 0, 0, ···])" computerName="a920b7ae3df2" duration="00:00:00.0000099" startTime="2026-11-11T16:17:32.7025674+00:00" endTime="2026-11-11T16:17:32.7025916+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f1983447-0819-4649-a6a1-b72ba01f4661" />
+    <UnitTestResult executionId="96799e4e-7ef5-41cd-8d33-6b4c679e1bc5" testId="9e1a88ae-d560-b286-1933-bb27b6783123" testName="WebsocketClientLiteTest.PayloadParsingTests.RejectsMalformedFrames(bytes: [136, 2, 3, 237])" computerName="a920b7ae3df2" duration="00:00:00.0000681" startTime="2026-11-11T16:17:32.7026255+00:00" endTime="2026-11-11T16:17:32.7026458+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="96799e4e-7ef5-41cd-8d33-6b4c679e1bc5" />
+    <UnitTestResult executionId="1c1ccf20-f637-4bf6-9fe5-5ebab2d3ca3a" testId="52e3baef-65b5-ecd2-b8b8-a1038b5fdcf4" testName="WebsocketClientLiteTest.PayloadParsingTests.RejectsMalformedFrames(bytes: [129, 127, 0, 0, 0, ···])" computerName="a920b7ae3df2" duration="00:00:00.0006216" startTime="2026-11-11T16:17:32.7020268+00:00" endTime="2026-11-11T16:17:32.7020682+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="1c1ccf20-f637-4bf6-9fe5-5ebab2d3ca3a" />
+    <UnitTestResult executionId="a3556751-447d-459e-988d-e2339c6a93cc" testId="5528de3b-2e9f-6a2b-c963-3c77d4cca024" testName="WebsocketClientLiteTest.PayloadParsingTests.RejectsMalformedFrames(bytes: [136, 1, 0])" computerName="a920b7ae3df2" duration="00:00:00.0048940" startTime="2026-11-11T16:17:32.6886458+00:00" endTime="2026-11-11T16:17:32.6970791+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="a3556751-447d-459e-988d-e2339c6a93cc" />
+    <UnitTestResult executionId="c22e8e35-d9fa-4212-a6db-6d51767af486" testId="64840f57-0bf4-52f8-d711-117560e53bcf" testName="WebsocketClientLiteTest.PayloadParsingTests.RejectsMalformedFrames(bytes: [136, 3, 3, 232, 255])" computerName="a920b7ae3df2" duration="00:00:00.0001428" startTime="2026-11-11T16:17:32.7026767+00:00" endTime="2026-11-11T16:17:32.7026963+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="c22e8e35-d9fa-4212-a6db-6d51767af486" />
+    <UnitTestResult executionId="d3a61481-fdda-4667-b14e-e574da67895d" testId="244896fa-b261-19f7-ec99-fa849638bd46" testName="WebsocketClientLiteTest.PayloadParsingTests.Parse_OversizedControlFrame_Throws" computerName="a920b7ae3df2" duration="00:00:00.0002802" startTime="2026-11-11T16:17:32.7030901+00:00" endTime="2026-11-11T16:17:32.7031140+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d3a61481-fdda-4667-b14e-e574da67895d" />
+    <UnitTestResult executionId="55aef3b8-2610-4067-ab66-7f27cb2535fc" testId="824a921e-d713-4e3e-b975-c6173aca1c23" testName="WebsocketClientLiteTest.PayloadParsingTests.RejectsMalformedFrames(bytes: [129, 126, 0, 125])" computerName="a920b7ae3df2" duration="00:00:00.0000251" startTime="2026-11-11T16:17:32.7023008+00:00" endTime="2026-11-11T16:17:32.7023237+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="55aef3b8-2610-4067-ab66-7f27cb2535fc" />
+    <UnitTestResult executionId="b5290a4a-830d-4c09-8e3e-daf6106fb690" testId="94e9aea0-091c-74fc-22bd-90e7619f3fd4" testName="WebsocketClientLiteTest.PayloadParsingTests.RejectsMalformedFrames(bytes: [193, 0])" computerName="a920b7ae3df2" duration="00:00:00.0000122" startTime="2026-11-11T16:17:32.7023647+00:00" endTime="2026-11-11T16:17:32.7023849+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="b5290a4a-830d-4c09-8e3e-daf6106fb690" />
+    <UnitTestResult executionId="34d00535-b3da-43ff-a5a5-6743266e2389" testId="b19648ac-836b-d0f1-c5f8-1cc511db7e35" testName="WebsocketClientLiteTest.PayloadParsingTests.RejectsMalformedFrames(bytes: [131, 0])" computerName="a920b7ae3df2" duration="00:00:00.0000093" startTime="2026-11-11T16:17:32.7024172+00:00" endTime="2026-11-11T16:17:32.7024945+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="34d00535-b3da-43ff-a5a5-6743266e2389" />
+    <UnitTestResult executionId="b18e3119-efbc-460b-8c20-1b5df558b68e" testId="a626510b-b185-2240-e39d-eb2fdf25282e" testName="WebsocketClientLiteTest.PayloadParsingTests.Parse_FrameExceedingMaxFrameSize_Throws" computerName="a920b7ae3df2" duration="00:00:00.0002919" startTime="2026-11-11T16:17:32.7083308+00:00" endTime="2026-11-11T16:17:32.7083625+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="b18e3119-efbc-460b-8c20-1b5df558b68e" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="WebsocketClientLiteTest.PayloadParsingTests.RejectsMalformedFrames(bytes: [136, 2, 3, 237])" storage="/tmp/claude-1000/-workspaces-websocketclientlite-pcl/6212eedc-1c62-4d8d-b543-832060c07737/scratchpad/copies/w1-confirm-size-bound/src/main/websocketclientlitetest/bin/release/net10.0/websocketclientlitetest.dll" id="9e1a88ae-d560-b286-1933-bb27b6783123">
+      <Execution id="96799e4e-7ef5-41cd-8d33-6b4c679e1bc5" />
+      <TestMethod codeBase="/tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/6212eedc-1c62-4d8d-b543-832060c07737/scratchpad/copies/w1-confirm-size-bound/src/main/WebsocketClientLiteTest/bin/Release/net10.0/WebsocketClientLiteTest.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="WebsocketClientLiteTest.PayloadParsingTests" name="RejectsMalformedFrames" />
+    </UnitTest>
+    <UnitTest name="WebsocketClientLiteTest.PayloadParsingTests.RejectsMalformedFrames(bytes: [131, 0])" storage="/tmp/claude-1000/-workspaces-websocketclientlite-pcl/6212eedc-1c62-4d8d-b543-832060c07737/scratchpad/copies/w1-confirm-size-bound/src/main/websocketclientlitetest/bin/release/net10.0/websocketclientlitetest.dll" id="b19648ac-836b-d0f1-c5f8-1cc511db7e35">
+      <Execution id="34d00535-b3da-43ff-a5a5-6743266e2389" />
+      <TestMethod codeBase="/tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/6212eedc-1c62-4d8d-b543-832060c07737/scratchpad/copies/w1-confirm-size-bound/src/main/WebsocketClientLiteTest/bin/Release/net10.0/WebsocketClientLiteTest.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="WebsocketClientLiteTest.PayloadParsingTests" name="RejectsMalformedFrames" />
+    </UnitTest>
+    <UnitTest name="WebsocketClientLiteTest.PayloadParsingTests.RejectsMalformedFrames(bytes: [136, 1, 0])" storage="/tmp/claude-1000/-workspaces-websocketclientlite-pcl/6212eedc-1c62-4d8d-b543-832060c07737/scratchpad/copies/w1-confirm-size-bound/src/main/websocketclientlitetest/bin/release/net10.0/websocketclientlitetest.dll" id="5528de3b-2e9f-6a2b-c963-3c77d4cca024">
+      <Execution id="a3556751-447d-459e-988d-e2339c6a93cc" />
+      <TestMethod codeBase="/tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/6212eedc-1c62-4d8d-b543-832060c07737/scratchpad/copies/w1-confirm-size-bound/src/main/WebsocketClientLiteTest/bin/Release/net10.0/WebsocketClientLiteTest.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="WebsocketClientLiteTest.PayloadParsingTests" name="RejectsMalformedFrames" />
+    </UnitTest>
+    <UnitTest name="WebsocketClientLiteTest.PayloadParsingTests.RejectsMalformedFrames(bytes: [129, 127, 128, 0, 0, ···])" storage="/tmp/claude-1000/-workspaces-websocketclientlite-pcl/6212eedc-1c62-4d8d-b543-832060c07737/scratchpad/copies/w1-confirm-size-bound/src/main/websocketclientlitetest/bin/release/net10.0/websocketclientlitetest.dll" id="866eaaf1-edef-8014-b43d-20e3dd2a3530">
+      <Execution id="f1983447-0819-4649-a6a1-b72ba01f4661" />
+      <TestMethod codeBase="/tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/6212eedc-1c62-4d8d-b543-832060c07737/scratchpad/copies/w1-confirm-size-bound/src/main/WebsocketClientLiteTest/bin/Release/net10.0/WebsocketClientLiteTest.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="WebsocketClientLiteTest.PayloadParsingTests" name="RejectsMalformedFrames" />
+    </UnitTest>
+    <UnitTest name="WebsocketClientLiteTest.PayloadParsingTests.RejectsMalformedFrames(bytes: [193, 0])" storage="/tmp/claude-1000/-workspaces-websocketclientlite-pcl/6212eedc-1c62-4d8d-b543-832060c07737/scratchpad/copies/w1-confirm-size-bound/src/main/websocketclientlitetest/bin/release/net10.0/websocketclientlitetest.dll" id="94e9aea0-091c-74fc-22bd-90e7619f3fd4">
+      <Execution id="b5290a4a-830d-4c09-8e3e-daf6106fb690" />
+      <TestMethod codeBase="/tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/6212eedc-1c62-4d8d-b543-832060c07737/scratchpad/copies/w1-confirm-size-bound/src/main/WebsocketClientLiteTest/bin/Release/net10.0/WebsocketClientLiteTest.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="WebsocketClientLiteTest.PayloadParsingTests" name="RejectsMalformedFrames" />
+    </UnitTest>
+    <UnitTest name="WebsocketClientLiteTest.PayloadParsingTests.RejectsMalformedFrames(bytes: [129, 127, 0, 0, 0, ···])" storage="/tmp/claude-1000/-workspaces-websocketclientlite-pcl/6212eedc-1c62-4d8d-b543-832060c07737/scratchpad/copies/w1-confirm-size-bound/src/main/websocketclientlitetest/bin/release/net10.0/websocketclientlitetest.dll" id="52e3baef-65b5-ecd2-b8b8-a1038b5fdcf4">
+      <Execution id="1c1ccf20-f637-4bf6-9fe5-5ebab2d3ca3a" />
+      <TestMethod codeBase="/tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/6212eedc-1c62-4d8d-b543-832060c07737/scratchpad/copies/w1-confirm-size-bound/src/main/WebsocketClientLiteTest/bin/Release/net10.0/WebsocketClientLiteTest.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="WebsocketClientLiteTest.PayloadParsingTests" name="RejectsMalformedFrames" />
+    </UnitTest>
+    <UnitTest name="WebsocketClientLiteTest.PayloadParsingTests.Parse_OversizedControlFrame_Throws" storage="/tmp/claude-1000/-workspaces-websocketclientlite-pcl/6212eedc-1c62-4d8d-b543-832060c07737/scratchpad/copies/w1-confirm-size-bound/src/main/websocketclientlitetest/bin/release/net10.0/websocketclientlitetest.dll" id="244896fa-b261-19f7-ec99-fa849638bd46">
+      <Execution id="d3a61481-fdda-4667-b14e-e574da67895d" />
+      <TestMethod codeBase="/tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/6212eedc-1c62-4d8d-b543-832060c07737/scratchpad/copies/w1-confirm-size-bound/src/main/WebsocketClientLiteTest/bin/Release/net10.0/WebsocketClientLiteTest.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="WebsocketClientLiteTest.PayloadParsingTests" name="Parse_OversizedControlFrame_Throws" />
+    </UnitTest>
+    <UnitTest name="WebsocketClientLiteTest.PayloadParsingTests.Parse_FrameExceedingMaxFrameSize_Throws" storage="/tmp/claude-1000/-workspaces-websocketclientlite-pcl/6212eedc-1c62-4d8d-b543-832060c07737/scratchpad/copies/w1-confirm-size-bound/src/main/websocketclientlitetest/bin/release/net10.0/websocketclientlitetest.dll" id="a626510b-b185-2240-e39d-eb2fdf25282e">
+      <Execution id="b18e3119-efbc-460b-8c20-1b5df558b68e" />
+      <TestMethod codeBase="/tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/6212eedc-1c62-4d8d-b543-832060c07737/scratchpad/copies/w1-confirm-size-bound/src/main/WebsocketClientLiteTest/bin/Release/net10.0/WebsocketClientLiteTest.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="WebsocketClientLiteTest.PayloadParsingTests" name="Parse_FrameExceedingMaxFrameSize_Throws" />
+    </UnitTest>
+    <UnitTest name="WebsocketClientLiteTest.PayloadParsingTests.RejectsMalformedFrames(bytes: [136, 3, 3, 232, 255])" storage="/tmp/claude-1000/-workspaces-websocketclientlite-pcl/6212eedc-1c62-4d8d-b543-832060c07737/scratchpad/copies/w1-confirm-size-bound/src/main/websocketclientlitetest/bin/release/net10.0/websocketclientlitetest.dll" id="64840f57-0bf4-52f8-d711-117560e53bcf">
+      <Execution id="c22e8e35-d9fa-4212-a6db-6d51767af486" />
+      <TestMethod codeBase="/tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/6212eedc-1c62-4d8d-b543-832060c07737/scratchpad/copies/w1-confirm-size-bound/src/main/WebsocketClientLiteTest/bin/Release/net10.0/WebsocketClientLiteTest.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="WebsocketClientLiteTest.PayloadParsingTests" name="RejectsMalformedFrames" />
+    </UnitTest>
+    <UnitTest name="WebsocketClientLiteTest.PayloadParsingTests.RejectsMalformedFrames(bytes: [129, 126, 0, 125])" storage="/tmp/claude-1000/-workspaces-websocketclientlite-pcl/6212eedc-1c62-4d8d-b543-832060c07737/scratchpad/copies/w1-confirm-size-bound/src/main/websocketclientlitetest/bin/release/net10.0/websocketclientlitetest.dll" id="824a921e-d713-4e3e-b975-c6173aca1c23">
+      <Execution id="55aef3b8-2610-4067-ab66-7f27cb2535fc" />
+      <TestMethod codeBase="/tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/6212eedc-1c62-4d8d-b543-832060c07737/scratchpad/copies/w1-confirm-size-bound/src/main/WebsocketClientLiteTest/bin/Release/net10.0/WebsocketClientLiteTest.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="WebsocketClientLiteTest.PayloadParsingTests" name="RejectsMalformedFrames" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="866eaaf1-edef-8014-b43d-20e3dd2a3530" executionId="f1983447-0819-4649-a6a1-b72ba01f4661" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="9e1a88ae-d560-b286-1933-bb27b6783123" executionId="96799e4e-7ef5-41cd-8d33-6b4c679e1bc5" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="52e3baef-65b5-ecd2-b8b8-a1038b5fdcf4" executionId="1c1ccf20-f637-4bf6-9fe5-5ebab2d3ca3a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="5528de3b-2e9f-6a2b-c963-3c77d4cca024" executionId="a3556751-447d-459e-988d-e2339c6a93cc" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="64840f57-0bf4-52f8-d711-117560e53bcf" executionId="c22e8e35-d9fa-4212-a6db-6d51767af486" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="244896fa-b261-19f7-ec99-fa849638bd46" executionId="d3a61481-fdda-4667-b14e-e574da67895d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="824a921e-d713-4e3e-b975-c6173aca1c23" executionId="55aef3b8-2610-4067-ab66-7f27cb2535fc" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="94e9aea0-091c-74fc-22bd-90e7619f3fd4" executionId="b5290a4a-830d-4c09-8e3e-daf6106fb690" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b19648ac-836b-d0f1-c5f8-1cc511db7e35" executionId="34d00535-b3da-43ff-a5a5-6743266e2389" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="a626510b-b185-2240-e39d-eb2fdf25282e" executionId="b18e3119-efbc-460b-8c20-1b5df558b68e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Completed">
+    <Counters total="10" executed="10" passed="10" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v4.0.1+0f7d528729 (64-bit .NET 10.0.14)
+[xUnit.net 00:00:00.04]   Discovering: WebsocketClientLiteTest
+[xUnit.net 00:00:00.09]   Discovered:  WebsocketClientLiteTest
+[xUnit.net 00:00:00.11]   Starting:    WebsocketClientLiteTest
+[xUnit.net 00:00:00.14]   Finished:    WebsocketClientLiteTest
+</StdOut>
+    </Output>
+  </ResultSummary>
+</TestRun>

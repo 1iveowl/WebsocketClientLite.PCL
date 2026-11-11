@@ -1,0 +1,30 @@
+diff -ruN failing-first-unknown-opcodes-sequence/verification/generated/Masking.g.cs copy/verification/generated/Masking.g.cs
+--- failing-first-unknown-opcodes-sequence/verification/generated/Masking.g.cs	2026-11-11 16:49:07.000000000 +0000
++++ copy/verification/generated/Masking.g.cs	2026-11-11 16:51:06.463162630 +0000
+@@ -696,7 +696,7 @@
+     public static bool PrefixValid(byte first, byte second)
+     {
+       byte _0_op = (byte)((first) & ((byte)(15)));
+-      return (((((byte)((first) & ((byte)(112)))) == ((byte)(0))) && (((byte)((second) & ((byte)(128)))) == ((byte)(0)))) && (WebsocketClientLite.VerifiedProtocol.Protocol.Known(_0_op))) && (((_0_op) < ((byte)(8))) || ((((byte)((first) & ((byte)(128)))) != ((byte)(0))) && (((byte)((second) & ((byte)(127)))) <= ((byte)(125)))));
++      return (((((byte)((first) & ((byte)(112)))) == ((byte)(0))) && (((byte)((second) & ((byte)(128)))) == ((byte)(0)))) && ((WebsocketClientLite.VerifiedProtocol.Protocol.Known(_0_op)) || ((_0_op) != ((byte)(3))))) && (((_0_op) < ((byte)(8))) || ((((byte)((first) & ((byte)(128)))) != ((byte)(0))) && (((byte)((second) & ((byte)(127)))) <= ((byte)(125)))));
+     }
+     public static bool HeaderValid(byte first, byte second, ulong length, ulong limit)
+     {
+@@ -756,7 +756,7 @@
+       next = _rhs1;
+       size = _rhs2;
+       emit = _rhs3;
+-      if (((state) == ((byte)(8))) || (!(WebsocketClientLite.VerifiedProtocol.Protocol.Known(op)))) {
++      if (((state) == ((byte)(8))) || (!((WebsocketClientLite.VerifiedProtocol.Protocol.Known(op)) || ((op) != ((byte)(3)))))) {
+         return ;
+       }
+       if ((op) >= ((byte)(8))) {
+@@ -772,7 +772,7 @@
+         }
+         return ;
+       }
+-      if (((((state) == ((byte)(0))) && ((op) != ((byte)(1)))) && ((op) != ((byte)(2)))) || (((state) != ((byte)(0))) && ((op) != ((byte)(0))))) {
++      if ((((((state) == ((byte)(0))) && ((op) != ((byte)(1)))) && ((op) != ((byte)(2)))) && (((op) < ((byte)(4))) || ((op) > ((byte)(7))))) || (((state) != ((byte)(0))) && ((op) != ((byte)(0))))) {
+         return ;
+       }
+       uint _0_prior;

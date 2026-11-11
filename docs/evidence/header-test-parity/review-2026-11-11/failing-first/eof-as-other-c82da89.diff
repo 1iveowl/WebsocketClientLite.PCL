@@ -1,0 +1,12 @@
+diff -ruN eof-as-other-c82da89/src/main/WebsocketClientLite/Service/TcpConnectionService.cs copy/src/main/WebsocketClientLite/Service/TcpConnectionService.cs
+--- eof-as-other-c82da89/src/main/WebsocketClientLite/Service/TcpConnectionService.cs	2026-11-11 21:43:00.000000000 +0000
++++ copy/src/main/WebsocketClientLite/Service/TcpConnectionService.cs	2026-11-11 22:10:06.440380459 +0000
+@@ -133,7 +133,7 @@
+                 if (read == 0)
+                 {
+                     // Unexpected EOF
+-                    throw new WebsocketClientLiteException(AbortedUnexpectedlyMessage);
++                    throw new InvalidOperationException("end of stream (eof-as-other)");
+                 }
+ 
+                 totalRead += read;

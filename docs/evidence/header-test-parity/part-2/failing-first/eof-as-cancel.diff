@@ -1,0 +1,12 @@
+diff -ruN failing-first-eof-as-cancel/src/main/WebsocketClientLite/Service/TcpConnectionService.cs copy/src/main/WebsocketClientLite/Service/TcpConnectionService.cs
+--- failing-first-eof-as-cancel/src/main/WebsocketClientLite/Service/TcpConnectionService.cs	2026-11-11 16:49:07.000000000 +0000
++++ copy/src/main/WebsocketClientLite/Service/TcpConnectionService.cs	2026-11-11 16:51:18.704683199 +0000
+@@ -133,7 +133,7 @@
+                 if (read == 0)
+                 {
+                     // Unexpected EOF
+-                    throw new WebsocketClientLiteException(AbortedUnexpectedlyMessage);
++                    return false;
+                 }
+ 
+                 totalRead += read;

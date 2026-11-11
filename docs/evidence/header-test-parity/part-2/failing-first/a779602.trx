@@ -1,0 +1,911 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="5fa20ecd-8180-4c10-b127-94b5ed44e0fd" name="@a920b7ae3df2 2026-11-11 16:51:25" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-11-11T16:51:25.5508338+00:00" queuing="2026-11-11T16:51:25.5508338+00:00" start="2026-11-11T16:51:25.2143611+00:00" finish="2026-11-11T16:51:25.5741169+00:00" />
+  <TestSettings name="default" id="e452210e-e6a7-43da-8a5b-12ff96e64837">
+    <Deployment runDeploymentRoot="_a920b7ae3df2_2026-11-11_16_51_25" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="dedd3b13-32d7-42e3-8e87-05760fd41b36" testId="3757b0f7-d27d-9749-39be-8a69c7d8ebbe" testName="WebsocketClientLiteTest.ParserRetentionTests.ConfiguredLimitAcceptsLimitAndRejectsSuccessorFromHeader(limit: 1)" computerName="a920b7ae3df2" duration="00:00:00.0001387" startTime="2026-11-11T16:51:25.5386139+00:00" endTime="2026-11-11T16:51:25.5386316+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="dedd3b13-32d7-42e3-8e87-05760fd41b36" />
+    <UnitTestResult executionId="fc6c9963-29e6-407e-b801-09b0c95be27a" testId="7ba426c6-5c8f-7cbb-61de-0db9b5462682" testName="WebsocketClientLiteTest.ParserRetentionTests.RejectsMalformedFrames(bytes: [129, 127, 0, 0, 0, ···])" computerName="a920b7ae3df2" duration="00:00:00.0000178" startTime="2026-11-11T16:51:25.5436090+00:00" endTime="2026-11-11T16:51:25.5436261+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="fc6c9963-29e6-407e-b801-09b0c95be27a">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: No exception was thrown
+Expected: typeof(WebsocketClientLite.CustomException.WebsocketClientLiteException)</Message>
+          <StackTrace>   at WebsocketClientLiteTest.ParserRetentionTests.RejectsMalformedFrames(Byte[] bytes) in /tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/WebsocketClientLiteTest/ParserRetentionTests.cs:line 96
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="3f610da9-3fa6-48e0-82d8-14a671266645" testId="92333dae-eb55-2998-fde6-cbac7a20d39a" testName="WebsocketClientLiteTest.ParserRetentionTests.RejectsMalformedFrames(bytes: [145, 0])" computerName="a920b7ae3df2" duration="00:00:00.0000086" startTime="2026-11-11T16:51:25.5436849+00:00" endTime="2026-11-11T16:51:25.5437016+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="3f610da9-3fa6-48e0-82d8-14a671266645">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: No exception was thrown
+Expected: typeof(WebsocketClientLite.CustomException.WebsocketClientLiteException)</Message>
+          <StackTrace>   at WebsocketClientLiteTest.ParserRetentionTests.RejectsMalformedFrames(Byte[] bytes) in /tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/WebsocketClientLiteTest/ParserRetentionTests.cs:line 96
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="4f5d48bd-a1d6-4a9b-98a1-d6b14efe462c" testId="8e1a1280-75ff-8707-b8e3-d2e972f66c2d" testName="WebsocketClientLiteTest.ParserRetentionTests.RejectsMalformedFrames(bytes: [131, 0])" computerName="a920b7ae3df2" duration="00:00:00.0000089" startTime="2026-11-11T16:51:25.5430137+00:00" endTime="2026-11-11T16:51:25.5430306+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="4f5d48bd-a1d6-4a9b-98a1-d6b14efe462c">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: No exception was thrown
+Expected: typeof(WebsocketClientLite.CustomException.WebsocketClientLiteException)</Message>
+          <StackTrace>   at WebsocketClientLiteTest.ParserRetentionTests.RejectsMalformedFrames(Byte[] bytes) in /tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/WebsocketClientLiteTest/ParserRetentionTests.cs:line 96
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="76aec3c7-9b6a-4795-85e6-6cda7c9fb2c1" testId="0f5a69ca-a04b-f92e-9ef4-2f805fed78f8" testName="WebsocketClientLiteTest.ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(header: [135, 1], limit: 0, read: 2)" computerName="a920b7ae3df2" duration="00:00:00.0000218" startTime="2026-11-11T16:51:25.5313740+00:00" endTime="2026-11-11T16:51:25.5313947+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="76aec3c7-9b6a-4795-85e6-6cda7c9fb2c1">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: No exception was thrown
+Expected: typeof(WebsocketClientLite.CustomException.WebsocketClientLiteException)</Message>
+          <StackTrace>   at WebsocketClientLiteTest.ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(Byte[] header, Int32 limit, Int32 read) in /tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/WebsocketClientLiteTest/ParserRetentionTests.cs:line 149
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="7cf32693-083f-4146-a289-68a3a008d41d" testId="fb98649f-f635-99d3-b53d-ab0f05cad119" testName="WebsocketClientLiteTest.ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(header: [161, 1], limit: 0, read: 2)" computerName="a920b7ae3df2" duration="00:00:00.0000111" startTime="2026-11-11T16:51:25.5374080+00:00" endTime="2026-11-11T16:51:25.5374291+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="7cf32693-083f-4146-a289-68a3a008d41d">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: No exception was thrown
+Expected: typeof(WebsocketClientLite.CustomException.WebsocketClientLiteException)</Message>
+          <StackTrace>   at WebsocketClientLiteTest.ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(Byte[] header, Int32 limit, Int32 read) in /tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/WebsocketClientLiteTest/ParserRetentionTests.cs:line 149
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="94400322-40f3-4f5b-b406-752a31bd5a3b" testId="31f0a45d-d16c-816e-2301-30023a738746" testName="WebsocketClientLiteTest.ParserRetentionTests.RejectsMalformedFrames(bytes: [142, 0])" computerName="a920b7ae3df2" duration="00:00:00.0000087" startTime="2026-11-11T16:51:25.5420519+00:00" endTime="2026-11-11T16:51:25.5420718+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="94400322-40f3-4f5b-b406-752a31bd5a3b">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: No exception was thrown
+Expected: typeof(WebsocketClientLite.CustomException.WebsocketClientLiteException)</Message>
+          <StackTrace>   at WebsocketClientLiteTest.ParserRetentionTests.RejectsMalformedFrames(Byte[] bytes) in /tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/WebsocketClientLiteTest/ParserRetentionTests.cs:line 96
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="bdf503ca-bd1a-4c23-8d29-ff3fc0c39661" testId="a61f222c-0b7c-7ee4-1a74-d7273a07b4e1" testName="WebsocketClientLiteTest.ParserRetentionTests.ConfiguredLimitAcceptsLimitAndRejectsSuccessorFromHeader(limit: 200)" computerName="a920b7ae3df2" duration="00:00:00.0025855" startTime="2026-11-11T16:51:25.5385656+00:00" endTime="2026-11-11T16:51:25.5385846+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="bdf503ca-bd1a-4c23-8d29-ff3fc0c39661" />
+    <UnitTestResult executionId="cf5a06b6-fb6f-4112-a405-4825c6b5c59e" testId="fa68367a-df5d-8a00-12c1-6f47dfe0db1b" testName="WebsocketClientLiteTest.ParserRetentionTests.RejectsMalformedFrames(bytes: [193, 0])" computerName="a920b7ae3df2" duration="00:00:00.0000089" startTime="2026-11-11T16:51:25.5435294+00:00" endTime="2026-11-11T16:51:25.5435478+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="cf5a06b6-fb6f-4112-a405-4825c6b5c59e">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: No exception was thrown
+Expected: typeof(WebsocketClientLite.CustomException.WebsocketClientLiteException)</Message>
+          <StackTrace>   at WebsocketClientLiteTest.ParserRetentionTests.RejectsMalformedFrames(Byte[] bytes) in /tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/WebsocketClientLiteTest/ParserRetentionTests.cs:line 96
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="b560d94f-5351-4532-9038-a09ecd5afdbf" testId="605c4411-0fe5-d989-83aa-930a12728787" testName="WebsocketClientLiteTest.ParserRetentionTests.RejectsMalformedFrames(bytes: [161, 0])" computerName="a920b7ae3df2" duration="00:00:00.0002822" startTime="2026-11-11T16:51:25.5412668+00:00" endTime="2026-11-11T16:51:25.5416439+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="b560d94f-5351-4532-9038-a09ecd5afdbf">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: No exception was thrown
+Expected: typeof(WebsocketClientLite.CustomException.WebsocketClientLiteException)</Message>
+          <StackTrace>   at WebsocketClientLiteTest.ParserRetentionTests.RejectsMalformedFrames(Byte[] bytes) in /tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/WebsocketClientLiteTest/ParserRetentionTests.cs:line 96
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="94ef3ded-bb36-4507-afa9-3e25138d878c" testId="a587ce48-8cf7-8ace-7e17-e780da5fbb45" testName="WebsocketClientLiteTest.ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(header: [145, 1], limit: 0, read: 2)" computerName="a920b7ae3df2" duration="00:00:00.0000186" startTime="2026-11-11T16:51:25.5310232+00:00" endTime="2026-11-11T16:51:25.5310461+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="94ef3ded-bb36-4507-afa9-3e25138d878c">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: No exception was thrown
+Expected: typeof(WebsocketClientLite.CustomException.WebsocketClientLiteException)</Message>
+          <StackTrace>   at WebsocketClientLiteTest.ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(Byte[] header, Int32 limit, Int32 read) in /tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/WebsocketClientLiteTest/ParserRetentionTests.cs:line 149
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="c62b81e1-20dd-44ef-bb71-94fa73cd1ffe" testId="dfd68ded-add7-2fe5-ad0a-a93c1e7b1189" testName="WebsocketClientLiteTest.ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(header: [134, 1], limit: 0, read: 2)" computerName="a920b7ae3df2" duration="00:00:00.0000105" startTime="2026-11-11T16:51:25.5377730+00:00" endTime="2026-11-11T16:51:25.5377954+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="c62b81e1-20dd-44ef-bb71-94fa73cd1ffe">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: No exception was thrown
+Expected: typeof(WebsocketClientLite.CustomException.WebsocketClientLiteException)</Message>
+          <StackTrace>   at WebsocketClientLiteTest.ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(Byte[] header, Int32 limit, Int32 read) in /tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/WebsocketClientLiteTest/ParserRetentionTests.cs:line 149
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="770a09f2-12e5-44ea-82ac-00fdd2205e1f" testId="7334a8bf-0f57-314d-aaad-187e3c36c52e" testName="WebsocketClientLiteTest.ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(header: [140, 1], limit: 0, read: 2)" computerName="a920b7ae3df2" duration="00:00:00.0000118" startTime="2026-11-11T16:51:25.5374990+00:00" endTime="2026-11-11T16:51:25.5375192+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="770a09f2-12e5-44ea-82ac-00fdd2205e1f">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: No exception was thrown
+Expected: typeof(WebsocketClientLite.CustomException.WebsocketClientLiteException)</Message>
+          <StackTrace>   at WebsocketClientLiteTest.ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(Byte[] header, Int32 limit, Int32 read) in /tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/WebsocketClientLiteTest/ParserRetentionTests.cs:line 149
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="90dc7756-d081-49d8-a119-d4965309d237" testId="e2f0d3ec-fbfd-59ab-7154-9850a3928ea4" testName="WebsocketClientLiteTest.ParserRetentionTests.RejectsMalformedFrames(bytes: [134, 0])" computerName="a920b7ae3df2" duration="00:00:00.0000099" startTime="2026-11-11T16:51:25.5430895+00:00" endTime="2026-11-11T16:51:25.5431067+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="90dc7756-d081-49d8-a119-d4965309d237">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: No exception was thrown
+Expected: typeof(WebsocketClientLite.CustomException.WebsocketClientLiteException)</Message>
+          <StackTrace>   at WebsocketClientLiteTest.ParserRetentionTests.RejectsMalformedFrames(Byte[] bytes) in /tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/WebsocketClientLiteTest/ParserRetentionTests.cs:line 96
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="12ac9390-64fc-4f92-8579-cc1bf8bcbcf0" testId="a310880f-7ea7-6d64-46fb-1936c13b0d5a" testName="WebsocketClientLiteTest.ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(header: [143, 1], limit: 0, read: 2)" computerName="a920b7ae3df2" duration="00:00:00.0022474" startTime="2026-11-11T16:51:25.5251377+00:00" endTime="2026-11-11T16:51:25.5283136+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="12ac9390-64fc-4f92-8579-cc1bf8bcbcf0">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: No exception was thrown
+Expected: typeof(WebsocketClientLite.CustomException.WebsocketClientLiteException)</Message>
+          <StackTrace>   at WebsocketClientLiteTest.ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(Byte[] header, Int32 limit, Int32 read) in /tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/WebsocketClientLiteTest/ParserRetentionTests.cs:line 149
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="cd448183-3a87-4cd0-8d8f-48ad3b525817" testId="be2f2d35-6efa-328f-1e87-08820e7b662e" testName="WebsocketClientLiteTest.ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(header: [129, 128, 1, 2, 3, ···], limit: 0, read: 2)" computerName="a920b7ae3df2" duration="00:00:00.0000979" startTime="2026-11-11T16:51:25.5375892+00:00" endTime="2026-11-11T16:51:25.5376094+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="cd448183-3a87-4cd0-8d8f-48ad3b525817">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: No exception was thrown
+Expected: typeof(WebsocketClientLite.CustomException.WebsocketClientLiteException)</Message>
+          <StackTrace>   at WebsocketClientLiteTest.ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(Byte[] header, Int32 limit, Int32 read) in /tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/WebsocketClientLiteTest/ParserRetentionTests.cs:line 149
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="78b7785b-562d-4384-9429-16dd96681662" testId="91dc572e-33d3-d529-6d35-a1fb8f00dae8" testName="WebsocketClientLiteTest.ParserRetentionTests.TruncatedHeadersNeverProduceFrames(header: [130, 126, 1, 0])" computerName="a920b7ae3df2" duration="00:00:00.0009120" startTime="2026-11-11T16:51:25.5403599+00:00" endTime="2026-11-11T16:51:25.5409951+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="78b7785b-562d-4384-9429-16dd96681662" />
+    <UnitTestResult executionId="8c8f115b-6962-45e7-871a-d62f02870015" testId="08c20f2b-8d7a-6bdf-9dc6-c04b15a94267" testName="WebsocketClientLiteTest.ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(header: [142, 1], limit: 0, read: 2)" computerName="a920b7ae3df2" duration="00:00:00.0000137" startTime="2026-11-11T16:51:25.5311510+00:00" endTime="2026-11-11T16:51:25.5311771+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="8c8f115b-6962-45e7-871a-d62f02870015">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: No exception was thrown
+Expected: typeof(WebsocketClientLite.CustomException.WebsocketClientLiteException)</Message>
+          <StackTrace>   at WebsocketClientLiteTest.ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(Byte[] header, Int32 limit, Int32 read) in /tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/WebsocketClientLiteTest/ParserRetentionTests.cs:line 149
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="8ce1fe7b-e454-401b-9f2c-10badc33d908" testId="9d400482-3684-ad2f-382f-c6f43a7bbd95" testName="WebsocketClientLiteTest.ParserRetentionTests.RejectsMalformedFrames(bytes: [140, 0])" computerName="a920b7ae3df2" duration="00:00:00.0000087" startTime="2026-11-11T16:51:25.5421296+00:00" endTime="2026-11-11T16:51:25.5421470+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="8ce1fe7b-e454-401b-9f2c-10badc33d908">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: No exception was thrown
+Expected: typeof(WebsocketClientLite.CustomException.WebsocketClientLiteException)</Message>
+          <StackTrace>   at WebsocketClientLiteTest.ParserRetentionTests.RejectsMalformedFrames(Byte[] bytes) in /tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/WebsocketClientLiteTest/ParserRetentionTests.cs:line 96
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="3f2f25e7-5419-42ed-a9e3-2e0eac996da2" testId="550d0665-f3db-7e0f-3b06-3d4ddaab954b" testName="WebsocketClientLiteTest.ParserRetentionTests.RejectsMalformedFrames(bytes: [136, 2, 3, 237])" computerName="a920b7ae3df2" duration="00:00:00.0000093" startTime="2026-11-11T16:51:25.5426278+00:00" endTime="2026-11-11T16:51:25.5426492+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="3f2f25e7-5419-42ed-a9e3-2e0eac996da2">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: No exception was thrown
+Expected: typeof(WebsocketClientLite.CustomException.WebsocketClientLiteException)</Message>
+          <StackTrace>   at WebsocketClientLiteTest.ParserRetentionTests.RejectsMalformedFrames(Byte[] bytes) in /tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/WebsocketClientLiteTest/ParserRetentionTests.cs:line 96
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="3ca9ea43-df3c-486a-9d3f-3d3dc230bd02" testId="74b43eef-b6d8-8aab-5938-18b6a8f297bb" testName="WebsocketClientLiteTest.ParserRetentionTests.RejectsMalformedFrames(bytes: [136, 3, 3, 232, 255])" computerName="a920b7ae3df2" duration="00:00:00.0000851" startTime="2026-11-11T16:51:25.5417193+00:00" endTime="2026-11-11T16:51:25.5418254+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="3ca9ea43-df3c-486a-9d3f-3d3dc230bd02">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: No exception was thrown
+Expected: typeof(WebsocketClientLite.CustomException.WebsocketClientLiteException)</Message>
+          <StackTrace>   at WebsocketClientLiteTest.ParserRetentionTests.RejectsMalformedFrames(Byte[] bytes) in /tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/WebsocketClientLiteTest/ParserRetentionTests.cs:line 96
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="4e7aa7e1-9c38-4d60-bbba-014248c7d3c1" testId="7d20a602-961f-b9a9-50c4-e21524f1af29" testName="WebsocketClientLiteTest.ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(header: [129, 127, 0, 0, 0, ···], limit: 0, read: 10)" computerName="a920b7ae3df2" duration="00:00:00.0033713" startTime="2026-11-11T16:51:25.5370691+00:00" endTime="2026-11-11T16:51:25.5370927+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="4e7aa7e1-9c38-4d60-bbba-014248c7d3c1">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: No exception was thrown
+Expected: typeof(WebsocketClientLite.CustomException.WebsocketClientLiteException)</Message>
+          <StackTrace>   at WebsocketClientLiteTest.ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(Byte[] header, Int32 limit, Int32 read) in /tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/WebsocketClientLiteTest/ParserRetentionTests.cs:line 149
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="0331e318-1c14-410b-8521-44b3a165cfd2" testId="66bb0a40-74e7-e8a0-a55d-8a7eb4ccfa75" testName="WebsocketClientLiteTest.ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(header: [133, 1], limit: 0, read: 2)" computerName="a920b7ae3df2" duration="00:00:00.0000580" startTime="2026-11-11T16:51:25.5308182+00:00" endTime="2026-11-11T16:51:25.5308576+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="0331e318-1c14-410b-8521-44b3a165cfd2">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: No exception was thrown
+Expected: typeof(WebsocketClientLite.CustomException.WebsocketClientLiteException)</Message>
+          <StackTrace>   at WebsocketClientLiteTest.ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(Byte[] header, Int32 limit, Int32 read) in /tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/WebsocketClientLiteTest/ParserRetentionTests.cs:line 149
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="397875d9-259c-42ab-8d39-d574be13829b" testId="c65956cd-5814-bf78-87a6-dd11a1948396" testName="WebsocketClientLiteTest.ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(header: [137, 126, 0, 200], limit: 0, read: 2)" computerName="a920b7ae3df2" duration="00:00:00.0004980" startTime="2026-11-11T16:51:25.5312675+00:00" endTime="2026-11-11T16:51:25.5312890+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="397875d9-259c-42ab-8d39-d574be13829b">
+      <Output>
+        <ErrorInfo>
+          <Message>Invalid header read 4 bytes in 4 attempts, expected 2</Message>
+          <StackTrace>   at WebsocketClientLiteTest.ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(Byte[] header, Int32 limit, Int32 read) in /tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/WebsocketClientLiteTest/ParserRetentionTests.cs:line 150
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="7edc5f43-9b7c-4b17-9f6b-ecd4e7e76e8f" testId="952a0e47-d732-ca03-7e0c-cc982a50658b" testName="WebsocketClientLiteTest.ParserRetentionTests.ConfiguredLimitAcceptsLimitAndRejectsSuccessorFromHeader(limit: 65536)" computerName="a920b7ae3df2" duration="00:00:00.0018892" startTime="2026-11-11T16:51:25.5386601+00:00" endTime="2026-11-11T16:51:25.5386787+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="7edc5f43-9b7c-4b17-9f6b-ecd4e7e76e8f" />
+    <UnitTestResult executionId="baa20adb-717f-4205-9560-79d380964969" testId="6ea650c2-8977-12ea-671a-af7ccf6ea69d" testName="WebsocketClientLiteTest.ParserRetentionTests.RejectsMalformedFrames(bytes: [139, 0])" computerName="a920b7ae3df2" duration="00:00:00.0000098" startTime="2026-11-11T16:51:25.5429394+00:00" endTime="2026-11-11T16:51:25.5429567+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="baa20adb-717f-4205-9560-79d380964969">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: No exception was thrown
+Expected: typeof(WebsocketClientLite.CustomException.WebsocketClientLiteException)</Message>
+          <StackTrace>   at WebsocketClientLiteTest.ParserRetentionTests.RejectsMalformedFrames(Byte[] bytes) in /tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/WebsocketClientLiteTest/ParserRetentionTests.cs:line 96
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="240ca811-64fd-4282-ad7d-eb41670d5bd6" testId="5e846821-e8f0-f834-f8d8-e2658f9f2296" testName="WebsocketClientLiteTest.ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(header: [193, 1], limit: 0, read: 2)" computerName="a920b7ae3df2" duration="00:00:00.0000209" startTime="2026-11-11T16:51:25.5372161+00:00" endTime="2026-11-11T16:51:25.5372389+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="240ca811-64fd-4282-ad7d-eb41670d5bd6">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: No exception was thrown
+Expected: typeof(WebsocketClientLite.CustomException.WebsocketClientLiteException)</Message>
+          <StackTrace>   at WebsocketClientLiteTest.ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(Byte[] header, Int32 limit, Int32 read) in /tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/WebsocketClientLiteTest/ParserRetentionTests.cs:line 149
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="6f122883-9350-40bb-95a6-3ef9cf596015" testId="ae0c36b1-9ff6-7dd8-b602-fd8117386da9" testName="WebsocketClientLiteTest.ParserRetentionTests.RejectsMalformedFrames(bytes: [133, 0])" computerName="a920b7ae3df2" duration="00:00:00.0000093" startTime="2026-11-11T16:51:25.5419747+00:00" endTime="2026-11-11T16:51:25.5419939+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="6f122883-9350-40bb-95a6-3ef9cf596015">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: No exception was thrown
+Expected: typeof(WebsocketClientLite.CustomException.WebsocketClientLiteException)</Message>
+          <StackTrace>   at WebsocketClientLiteTest.ParserRetentionTests.RejectsMalformedFrames(Byte[] bytes) in /tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/WebsocketClientLiteTest/ParserRetentionTests.cs:line 96
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="16f92cc8-442f-44fe-bb8d-46e2c1309d65" testId="35f3c2d4-cf63-60ce-254b-d7232394e82a" testName="WebsocketClientLiteTest.ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(header: [132, 1], limit: 0, read: 2)" computerName="a920b7ae3df2" duration="00:00:00.0000124" startTime="2026-11-11T16:51:25.5376818+00:00" endTime="2026-11-11T16:51:25.5377030+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="16f92cc8-442f-44fe-bb8d-46e2c1309d65">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: No exception was thrown
+Expected: typeof(WebsocketClientLite.CustomException.WebsocketClientLiteException)</Message>
+          <StackTrace>   at WebsocketClientLiteTest.ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(Byte[] header, Int32 limit, Int32 read) in /tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/WebsocketClientLiteTest/ParserRetentionTests.cs:line 149
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="3e84a104-8b81-4347-bb33-184657f7f510" testId="f03b22e6-7cc7-cae1-546f-40c9f5dd7098" testName="WebsocketClientLiteTest.ParserRetentionTests.ConfiguredLimitAcceptsLimitAndRejectsSuccessorFromHeader(limit: 125)" computerName="a920b7ae3df2" duration="00:00:00.0000212" startTime="2026-11-11T16:51:25.5387071+00:00" endTime="2026-11-11T16:51:25.5387250+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="3e84a104-8b81-4347-bb33-184657f7f510" />
+    <UnitTestResult executionId="5109145b-d3e5-471d-8c7c-c401a4f49fab" testId="c2c584a0-916e-dd72-b8d0-6e7a722912da" testName="WebsocketClientLiteTest.ParserRetentionTests.RejectsMalformedFrames(bytes: [141, 0])" computerName="a920b7ae3df2" duration="00:00:00.0000085" startTime="2026-11-11T16:51:25.5431637+00:00" endTime="2026-11-11T16:51:25.5431812+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="5109145b-d3e5-471d-8c7c-c401a4f49fab">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: No exception was thrown
+Expected: typeof(WebsocketClientLite.CustomException.WebsocketClientLiteException)</Message>
+          <StackTrace>   at WebsocketClientLiteTest.ParserRetentionTests.RejectsMalformedFrames(Byte[] bytes) in /tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/WebsocketClientLiteTest/ParserRetentionTests.cs:line 96
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="326372ea-d336-4e45-8231-5fded4237d39" testId="eb8a9c7f-7819-aa25-2011-16b3c19cd3f7" testName="WebsocketClientLiteTest.ParserRetentionTests.RejectsMalformedFrames(bytes: [129, 127, 128, 0, 0, ···])" computerName="a920b7ae3df2" duration="00:00:00.0000835" startTime="2026-11-11T16:51:25.5428150+00:00" endTime="2026-11-11T16:51:25.5428331+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="326372ea-d336-4e45-8231-5fded4237d39" />
+    <UnitTestResult executionId="7d21399f-9493-4d2d-bb4d-a81a8d95c16b" testId="b14a3772-0deb-6cdd-35b9-ab1b878616c7" testName="WebsocketClientLiteTest.ParserRetentionTests.RejectsMalformedFrames(bytes: [132, 0])" computerName="a920b7ae3df2" duration="00:00:00.0000089" startTime="2026-11-11T16:51:25.5432379+00:00" endTime="2026-11-11T16:51:25.5432550+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="7d21399f-9493-4d2d-bb4d-a81a8d95c16b">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: No exception was thrown
+Expected: typeof(WebsocketClientLite.CustomException.WebsocketClientLiteException)</Message>
+          <StackTrace>   at WebsocketClientLiteTest.ParserRetentionTests.RejectsMalformedFrames(Byte[] bytes) in /tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/WebsocketClientLiteTest/ParserRetentionTests.cs:line 96
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="d48d5184-42fc-43f4-8b9a-a6491eb0a3ad" testId="d777575a-fc4c-e7a4-9eda-9c7949f52add" testName="WebsocketClientLiteTest.ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(header: [9, 1], limit: 0, read: 2)" computerName="a920b7ae3df2" duration="00:00:00.0000071" startTime="2026-11-11T16:51:25.5384805+00:00" endTime="2026-11-11T16:51:25.5385006+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d48d5184-42fc-43f4-8b9a-a6491eb0a3ad" />
+    <UnitTestResult executionId="25f4e8ef-b10c-4fe4-9a5e-06a40be3645b" testId="58068d8c-ab57-cd1c-e749-f971220068c3" testName="WebsocketClientLiteTest.ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(header: [130, 126, 0, 200], limit: 100, read: 4)" computerName="a920b7ae3df2" duration="00:00:00.0044890" startTime="2026-11-11T16:51:25.5127377+00:00" endTime="2026-11-11T16:51:25.5218981+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="25f4e8ef-b10c-4fe4-9a5e-06a40be3645b" />
+    <UnitTestResult executionId="f9520176-8c87-4352-b20c-978397e6eb95" testId="c4b38732-e989-e830-20a3-24935dd24bbb" testName="WebsocketClientLiteTest.ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(header: [141, 1], limit: 0, read: 2)" computerName="a920b7ae3df2" duration="00:00:00.0000124" startTime="2026-11-11T16:51:25.5314738+00:00" endTime="2026-11-11T16:51:25.5314955+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f9520176-8c87-4352-b20c-978397e6eb95">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: No exception was thrown
+Expected: typeof(WebsocketClientLite.CustomException.WebsocketClientLiteException)</Message>
+          <StackTrace>   at WebsocketClientLiteTest.ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(Byte[] header, Int32 limit, Int32 read) in /tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/WebsocketClientLiteTest/ParserRetentionTests.cs:line 149
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="ddde1aa2-e4e8-493b-85dd-c2e10c82175f" testId="104443b4-0ecf-0b8c-ec27-24e035cb76ed" testName="WebsocketClientLiteTest.ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(header: [129, 126, 0, 125], limit: 0, read: 4)" computerName="a920b7ae3df2" duration="00:00:00.0000195" startTime="2026-11-11T16:51:25.5373135+00:00" endTime="2026-11-11T16:51:25.5373351+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="ddde1aa2-e4e8-493b-85dd-c2e10c82175f">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: No exception was thrown
+Expected: typeof(WebsocketClientLite.CustomException.WebsocketClientLiteException)</Message>
+          <StackTrace>   at WebsocketClientLiteTest.ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(Byte[] header, Int32 limit, Int32 read) in /tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/WebsocketClientLiteTest/ParserRetentionTests.cs:line 149
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="d27a6f38-100f-4fd6-88a5-f9fe43b6a5a3" testId="4b46379d-5879-852f-eb0c-06db90a3e655" testName="WebsocketClientLiteTest.ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(header: [139, 1], limit: 0, read: 2)" computerName="a920b7ae3df2" duration="00:00:00.0000097" startTime="2026-11-11T16:51:25.5368495+00:00" endTime="2026-11-11T16:51:25.5368833+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d27a6f38-100f-4fd6-88a5-f9fe43b6a5a3">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: No exception was thrown
+Expected: typeof(WebsocketClientLite.CustomException.WebsocketClientLiteException)</Message>
+          <StackTrace>   at WebsocketClientLiteTest.ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(Byte[] header, Int32 limit, Int32 read) in /tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/WebsocketClientLiteTest/ParserRetentionTests.cs:line 149
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="3b9030d0-3fef-47d6-83d3-3d729b463e8e" testId="79b8c333-ac94-140e-1ada-70e4966d18b0" testName="WebsocketClientLiteTest.ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(header: [131, 1], limit: 0, read: 2)" computerName="a920b7ae3df2" duration="00:00:00.0000108" startTime="2026-11-11T16:51:25.5382910+00:00" endTime="2026-11-11T16:51:25.5383156+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="3b9030d0-3fef-47d6-83d3-3d729b463e8e">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: No exception was thrown
+Expected: typeof(WebsocketClientLite.CustomException.WebsocketClientLiteException)</Message>
+          <StackTrace>   at WebsocketClientLiteTest.ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(Byte[] header, Int32 limit, Int32 read) in /tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/WebsocketClientLiteTest/ParserRetentionTests.cs:line 149
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="e730b2bf-7563-494b-9364-a0ec87c72d6f" testId="f5d42a4d-0a68-299e-5185-8dc094259046" testName="WebsocketClientLiteTest.ParserRetentionTests.TruncatedHeadersNeverProduceFrames(header: [130, 127, 0, 0, 0, ···])" computerName="a920b7ae3df2" duration="00:00:00.0002085" startTime="2026-11-11T16:51:25.5410268+00:00" endTime="2026-11-11T16:51:25.5412248+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e730b2bf-7563-494b-9364-a0ec87c72d6f" />
+    <UnitTestResult executionId="1287b5e1-4b1a-4793-a7cb-923a3cf80c9e" testId="d8743c74-bee0-85d0-3e47-87c95eb09b6f" testName="WebsocketClientLiteTest.ParserRetentionTests.ConfiguredLimitAcceptsLimitAndRejectsSuccessorFromHeader(limit: 65535)" computerName="a920b7ae3df2" duration="00:00:00.0014263" startTime="2026-11-11T16:51:25.5387531+00:00" endTime="2026-11-11T16:51:25.5400448+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="1287b5e1-4b1a-4793-a7cb-923a3cf80c9e" />
+    <UnitTestResult executionId="da241a90-f524-47dc-bd8d-719364243e93" testId="a626510b-b185-2240-e39d-eb2fdf25282e" testName="WebsocketClientLiteTest.PayloadParsingTests.Parse_FrameExceedingMaxFrameSize_Throws" computerName="a920b7ae3df2" duration="00:00:00.0044317" startTime="2026-11-11T16:51:25.5120257+00:00" endTime="2026-11-11T16:51:25.5200847+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="da241a90-f524-47dc-bd8d-719364243e93" />
+    <UnitTestResult executionId="6515499b-3d3c-4cc1-8160-f77da122bee4" testId="9aae9e10-daff-af6f-3016-286c19f1d042" testName="WebsocketClientLiteTest.ParserRetentionTests.ConfiguredLimitAcceptsLimitAndRejectsSuccessorFromHeader(limit: 100)" computerName="a920b7ae3df2" duration="00:00:00.0000143" startTime="2026-11-11T16:51:25.5400782+00:00" endTime="2026-11-11T16:51:25.5400962+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="6515499b-3d3c-4cc1-8160-f77da122bee4" />
+    <UnitTestResult executionId="39230478-47f9-4399-b5d6-16c6a69b2e63" testId="c68f11d4-45a6-80cf-35dc-327e041e600f" testName="WebsocketClientLiteTest.ParserRetentionTests.RejectsMalformedFrames(bytes: [129, 126, 0, 125])" computerName="a920b7ae3df2" duration="00:00:00.0000135" startTime="2026-11-11T16:51:25.5418857+00:00" endTime="2026-11-11T16:51:25.5419151+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="39230478-47f9-4399-b5d6-16c6a69b2e63">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: No exception was thrown
+Expected: typeof(WebsocketClientLite.CustomException.WebsocketClientLiteException)</Message>
+          <StackTrace>   at WebsocketClientLiteTest.ParserRetentionTests.RejectsMalformedFrames(Byte[] bytes) in /tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/WebsocketClientLiteTest/ParserRetentionTests.cs:line 96
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="c759b3ef-390c-4042-82ff-9b989c12a2cb" testId="dc588e43-afde-ade0-3e81-740f75723e9c" testName="WebsocketClientLiteTest.ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(header: [129, 127, 128, 0, 0, ···], limit: 0, read: 10)" computerName="a920b7ae3df2" duration="00:00:00.0000119" startTime="2026-11-11T16:51:25.5384085+00:00" endTime="2026-11-11T16:51:25.5384364+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="c759b3ef-390c-4042-82ff-9b989c12a2cb" />
+    <UnitTestResult executionId="4b15296d-36fa-420b-bb76-0aad755e9218" testId="42196343-fc35-900a-3ece-5dd991d58561" testName="WebsocketClientLiteTest.ParserRetentionTests.RejectsMalformedFrames(bytes: [136, 1, 0])" computerName="a920b7ae3df2" duration="00:00:00.0000166" startTime="2026-11-11T16:51:25.5428628+00:00" endTime="2026-11-11T16:51:25.5428799+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="4b15296d-36fa-420b-bb76-0aad755e9218">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: No exception was thrown
+Expected: typeof(WebsocketClientLite.CustomException.WebsocketClientLiteException)</Message>
+          <StackTrace>   at WebsocketClientLiteTest.ParserRetentionTests.RejectsMalformedFrames(Byte[] bytes) in /tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/WebsocketClientLiteTest/ParserRetentionTests.cs:line 96
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="1029b86f-b9b4-4555-92b9-27e1cfd190f1" testId="1f56ea4a-56c2-048c-94ce-cc04cc77a3e6" testName="WebsocketClientLiteTest.ParserRetentionTests.RejectsMalformedFrames(bytes: [143, 0])" computerName="a920b7ae3df2" duration="00:00:00.0000083" startTime="2026-11-11T16:51:25.5422034+00:00" endTime="2026-11-11T16:51:25.5422230+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="1029b86f-b9b4-4555-92b9-27e1cfd190f1">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: No exception was thrown
+Expected: typeof(WebsocketClientLite.CustomException.WebsocketClientLiteException)</Message>
+          <StackTrace>   at WebsocketClientLiteTest.ParserRetentionTests.RejectsMalformedFrames(Byte[] bytes) in /tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/WebsocketClientLiteTest/ParserRetentionTests.cs:line 96
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="2a243fc4-c578-46a0-bbab-cbad42f18a38" testId="ae4bfbbc-4461-3ad0-1ae5-00ab560cbac2" testName="WebsocketClientLiteTest.ParserRetentionTests.RejectsMalformedFrames(bytes: [135, 0])" computerName="a920b7ae3df2" duration="00:00:00.0000089" startTime="2026-11-11T16:51:25.5427325+00:00" endTime="2026-11-11T16:51:25.5427507+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="2a243fc4-c578-46a0-bbab-cbad42f18a38">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: No exception was thrown
+Expected: typeof(WebsocketClientLite.CustomException.WebsocketClientLiteException)</Message>
+          <StackTrace>   at WebsocketClientLiteTest.ParserRetentionTests.RejectsMalformedFrames(Byte[] bytes) in /tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/WebsocketClientLiteTest/ParserRetentionTests.cs:line 96
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="WebsocketClientLiteTest.ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(header: [161, 1], limit: 0, read: 2)" storage="/tmp/claude-1000/-workspaces-websocketclientlite-pcl/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/websocketclientlitetest/bin/release/net10.0/websocketclientlitetest.dll" id="fb98649f-f635-99d3-b53d-ab0f05cad119">
+      <Execution id="7cf32693-083f-4146-a289-68a3a008d41d" />
+      <TestMethod codeBase="/tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/WebsocketClientLiteTest/bin/Release/net10.0/WebsocketClientLiteTest.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="WebsocketClientLiteTest.ParserRetentionTests" name="InvalidHeadersRejectBeforePayloadRead" />
+    </UnitTest>
+    <UnitTest name="WebsocketClientLiteTest.ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(header: [131, 1], limit: 0, read: 2)" storage="/tmp/claude-1000/-workspaces-websocketclientlite-pcl/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/websocketclientlitetest/bin/release/net10.0/websocketclientlitetest.dll" id="79b8c333-ac94-140e-1ada-70e4966d18b0">
+      <Execution id="3b9030d0-3fef-47d6-83d3-3d729b463e8e" />
+      <TestMethod codeBase="/tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/WebsocketClientLiteTest/bin/Release/net10.0/WebsocketClientLiteTest.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="WebsocketClientLiteTest.ParserRetentionTests" name="InvalidHeadersRejectBeforePayloadRead" />
+    </UnitTest>
+    <UnitTest name="WebsocketClientLiteTest.ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(header: [9, 1], limit: 0, read: 2)" storage="/tmp/claude-1000/-workspaces-websocketclientlite-pcl/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/websocketclientlitetest/bin/release/net10.0/websocketclientlitetest.dll" id="d777575a-fc4c-e7a4-9eda-9c7949f52add">
+      <Execution id="d48d5184-42fc-43f4-8b9a-a6491eb0a3ad" />
+      <TestMethod codeBase="/tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/WebsocketClientLiteTest/bin/Release/net10.0/WebsocketClientLiteTest.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="WebsocketClientLiteTest.ParserRetentionTests" name="InvalidHeadersRejectBeforePayloadRead" />
+    </UnitTest>
+    <UnitTest name="WebsocketClientLiteTest.ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(header: [143, 1], limit: 0, read: 2)" storage="/tmp/claude-1000/-workspaces-websocketclientlite-pcl/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/websocketclientlitetest/bin/release/net10.0/websocketclientlitetest.dll" id="a310880f-7ea7-6d64-46fb-1936c13b0d5a">
+      <Execution id="12ac9390-64fc-4f92-8579-cc1bf8bcbcf0" />
+      <TestMethod codeBase="/tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/WebsocketClientLiteTest/bin/Release/net10.0/WebsocketClientLiteTest.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="WebsocketClientLiteTest.ParserRetentionTests" name="InvalidHeadersRejectBeforePayloadRead" />
+    </UnitTest>
+    <UnitTest name="WebsocketClientLiteTest.ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(header: [133, 1], limit: 0, read: 2)" storage="/tmp/claude-1000/-workspaces-websocketclientlite-pcl/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/websocketclientlitetest/bin/release/net10.0/websocketclientlitetest.dll" id="66bb0a40-74e7-e8a0-a55d-8a7eb4ccfa75">
+      <Execution id="0331e318-1c14-410b-8521-44b3a165cfd2" />
+      <TestMethod codeBase="/tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/WebsocketClientLiteTest/bin/Release/net10.0/WebsocketClientLiteTest.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="WebsocketClientLiteTest.ParserRetentionTests" name="InvalidHeadersRejectBeforePayloadRead" />
+    </UnitTest>
+    <UnitTest name="WebsocketClientLiteTest.ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(header: [140, 1], limit: 0, read: 2)" storage="/tmp/claude-1000/-workspaces-websocketclientlite-pcl/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/websocketclientlitetest/bin/release/net10.0/websocketclientlitetest.dll" id="7334a8bf-0f57-314d-aaad-187e3c36c52e">
+      <Execution id="770a09f2-12e5-44ea-82ac-00fdd2205e1f" />
+      <TestMethod codeBase="/tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/WebsocketClientLiteTest/bin/Release/net10.0/WebsocketClientLiteTest.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="WebsocketClientLiteTest.ParserRetentionTests" name="InvalidHeadersRejectBeforePayloadRead" />
+    </UnitTest>
+    <UnitTest name="WebsocketClientLiteTest.ParserRetentionTests.RejectsMalformedFrames(bytes: [140, 0])" storage="/tmp/claude-1000/-workspaces-websocketclientlite-pcl/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/websocketclientlitetest/bin/release/net10.0/websocketclientlitetest.dll" id="9d400482-3684-ad2f-382f-c6f43a7bbd95">
+      <Execution id="8ce1fe7b-e454-401b-9f2c-10badc33d908" />
+      <TestMethod codeBase="/tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/WebsocketClientLiteTest/bin/Release/net10.0/WebsocketClientLiteTest.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="WebsocketClientLiteTest.ParserRetentionTests" name="RejectsMalformedFrames" />
+    </UnitTest>
+    <UnitTest name="WebsocketClientLiteTest.ParserRetentionTests.RejectsMalformedFrames(bytes: [136, 1, 0])" storage="/tmp/claude-1000/-workspaces-websocketclientlite-pcl/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/websocketclientlitetest/bin/release/net10.0/websocketclientlitetest.dll" id="42196343-fc35-900a-3ece-5dd991d58561">
+      <Execution id="4b15296d-36fa-420b-bb76-0aad755e9218" />
+      <TestMethod codeBase="/tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/WebsocketClientLiteTest/bin/Release/net10.0/WebsocketClientLiteTest.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="WebsocketClientLiteTest.ParserRetentionTests" name="RejectsMalformedFrames" />
+    </UnitTest>
+    <UnitTest name="WebsocketClientLiteTest.ParserRetentionTests.ConfiguredLimitAcceptsLimitAndRejectsSuccessorFromHeader(limit: 125)" storage="/tmp/claude-1000/-workspaces-websocketclientlite-pcl/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/websocketclientlitetest/bin/release/net10.0/websocketclientlitetest.dll" id="f03b22e6-7cc7-cae1-546f-40c9f5dd7098">
+      <Execution id="3e84a104-8b81-4347-bb33-184657f7f510" />
+      <TestMethod codeBase="/tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/WebsocketClientLiteTest/bin/Release/net10.0/WebsocketClientLiteTest.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="WebsocketClientLiteTest.ParserRetentionTests" name="ConfiguredLimitAcceptsLimitAndRejectsSuccessorFromHeader" />
+    </UnitTest>
+    <UnitTest name="WebsocketClientLiteTest.ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(header: [132, 1], limit: 0, read: 2)" storage="/tmp/claude-1000/-workspaces-websocketclientlite-pcl/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/websocketclientlitetest/bin/release/net10.0/websocketclientlitetest.dll" id="35f3c2d4-cf63-60ce-254b-d7232394e82a">
+      <Execution id="16f92cc8-442f-44fe-bb8d-46e2c1309d65" />
+      <TestMethod codeBase="/tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/WebsocketClientLiteTest/bin/Release/net10.0/WebsocketClientLiteTest.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="WebsocketClientLiteTest.ParserRetentionTests" name="InvalidHeadersRejectBeforePayloadRead" />
+    </UnitTest>
+    <UnitTest name="WebsocketClientLiteTest.ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(header: [139, 1], limit: 0, read: 2)" storage="/tmp/claude-1000/-workspaces-websocketclientlite-pcl/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/websocketclientlitetest/bin/release/net10.0/websocketclientlitetest.dll" id="4b46379d-5879-852f-eb0c-06db90a3e655">
+      <Execution id="d27a6f38-100f-4fd6-88a5-f9fe43b6a5a3" />
+      <TestMethod codeBase="/tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/WebsocketClientLiteTest/bin/Release/net10.0/WebsocketClientLiteTest.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="WebsocketClientLiteTest.ParserRetentionTests" name="InvalidHeadersRejectBeforePayloadRead" />
+    </UnitTest>
+    <UnitTest name="WebsocketClientLiteTest.ParserRetentionTests.ConfiguredLimitAcceptsLimitAndRejectsSuccessorFromHeader(limit: 65536)" storage="/tmp/claude-1000/-workspaces-websocketclientlite-pcl/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/websocketclientlitetest/bin/release/net10.0/websocketclientlitetest.dll" id="952a0e47-d732-ca03-7e0c-cc982a50658b">
+      <Execution id="7edc5f43-9b7c-4b17-9f6b-ecd4e7e76e8f" />
+      <TestMethod codeBase="/tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/WebsocketClientLiteTest/bin/Release/net10.0/WebsocketClientLiteTest.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="WebsocketClientLiteTest.ParserRetentionTests" name="ConfiguredLimitAcceptsLimitAndRejectsSuccessorFromHeader" />
+    </UnitTest>
+    <UnitTest name="WebsocketClientLiteTest.ParserRetentionTests.RejectsMalformedFrames(bytes: [129, 127, 0, 0, 0, ···])" storage="/tmp/claude-1000/-workspaces-websocketclientlite-pcl/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/websocketclientlitetest/bin/release/net10.0/websocketclientlitetest.dll" id="7ba426c6-5c8f-7cbb-61de-0db9b5462682">
+      <Execution id="fc6c9963-29e6-407e-b801-09b0c95be27a" />
+      <TestMethod codeBase="/tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/WebsocketClientLiteTest/bin/Release/net10.0/WebsocketClientLiteTest.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="WebsocketClientLiteTest.ParserRetentionTests" name="RejectsMalformedFrames" />
+    </UnitTest>
+    <UnitTest name="WebsocketClientLiteTest.ParserRetentionTests.ConfiguredLimitAcceptsLimitAndRejectsSuccessorFromHeader(limit: 1)" storage="/tmp/claude-1000/-workspaces-websocketclientlite-pcl/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/websocketclientlitetest/bin/release/net10.0/websocketclientlitetest.dll" id="3757b0f7-d27d-9749-39be-8a69c7d8ebbe">
+      <Execution id="dedd3b13-32d7-42e3-8e87-05760fd41b36" />
+      <TestMethod codeBase="/tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/WebsocketClientLiteTest/bin/Release/net10.0/WebsocketClientLiteTest.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="WebsocketClientLiteTest.ParserRetentionTests" name="ConfiguredLimitAcceptsLimitAndRejectsSuccessorFromHeader" />
+    </UnitTest>
+    <UnitTest name="WebsocketClientLiteTest.ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(header: [130, 126, 0, 200], limit: 100, read: 4)" storage="/tmp/claude-1000/-workspaces-websocketclientlite-pcl/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/websocketclientlitetest/bin/release/net10.0/websocketclientlitetest.dll" id="58068d8c-ab57-cd1c-e749-f971220068c3">
+      <Execution id="25f4e8ef-b10c-4fe4-9a5e-06a40be3645b" />
+      <TestMethod codeBase="/tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/WebsocketClientLiteTest/bin/Release/net10.0/WebsocketClientLiteTest.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="WebsocketClientLiteTest.ParserRetentionTests" name="InvalidHeadersRejectBeforePayloadRead" />
+    </UnitTest>
+    <UnitTest name="WebsocketClientLiteTest.ParserRetentionTests.ConfiguredLimitAcceptsLimitAndRejectsSuccessorFromHeader(limit: 65535)" storage="/tmp/claude-1000/-workspaces-websocketclientlite-pcl/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/websocketclientlitetest/bin/release/net10.0/websocketclientlitetest.dll" id="d8743c74-bee0-85d0-3e47-87c95eb09b6f">
+      <Execution id="1287b5e1-4b1a-4793-a7cb-923a3cf80c9e" />
+      <TestMethod codeBase="/tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/WebsocketClientLiteTest/bin/Release/net10.0/WebsocketClientLiteTest.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="WebsocketClientLiteTest.ParserRetentionTests" name="ConfiguredLimitAcceptsLimitAndRejectsSuccessorFromHeader" />
+    </UnitTest>
+    <UnitTest name="WebsocketClientLiteTest.ParserRetentionTests.ConfiguredLimitAcceptsLimitAndRejectsSuccessorFromHeader(limit: 200)" storage="/tmp/claude-1000/-workspaces-websocketclientlite-pcl/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/websocketclientlitetest/bin/release/net10.0/websocketclientlitetest.dll" id="a61f222c-0b7c-7ee4-1a74-d7273a07b4e1">
+      <Execution id="bdf503ca-bd1a-4c23-8d29-ff3fc0c39661" />
+      <TestMethod codeBase="/tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/WebsocketClientLiteTest/bin/Release/net10.0/WebsocketClientLiteTest.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="WebsocketClientLiteTest.ParserRetentionTests" name="ConfiguredLimitAcceptsLimitAndRejectsSuccessorFromHeader" />
+    </UnitTest>
+    <UnitTest name="WebsocketClientLiteTest.ParserRetentionTests.RejectsMalformedFrames(bytes: [132, 0])" storage="/tmp/claude-1000/-workspaces-websocketclientlite-pcl/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/websocketclientlitetest/bin/release/net10.0/websocketclientlitetest.dll" id="b14a3772-0deb-6cdd-35b9-ab1b878616c7">
+      <Execution id="7d21399f-9493-4d2d-bb4d-a81a8d95c16b" />
+      <TestMethod codeBase="/tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/WebsocketClientLiteTest/bin/Release/net10.0/WebsocketClientLiteTest.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="WebsocketClientLiteTest.ParserRetentionTests" name="RejectsMalformedFrames" />
+    </UnitTest>
+    <UnitTest name="WebsocketClientLiteTest.ParserRetentionTests.ConfiguredLimitAcceptsLimitAndRejectsSuccessorFromHeader(limit: 100)" storage="/tmp/claude-1000/-workspaces-websocketclientlite-pcl/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/websocketclientlitetest/bin/release/net10.0/websocketclientlitetest.dll" id="9aae9e10-daff-af6f-3016-286c19f1d042">
+      <Execution id="6515499b-3d3c-4cc1-8160-f77da122bee4" />
+      <TestMethod codeBase="/tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/WebsocketClientLiteTest/bin/Release/net10.0/WebsocketClientLiteTest.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="WebsocketClientLiteTest.ParserRetentionTests" name="ConfiguredLimitAcceptsLimitAndRejectsSuccessorFromHeader" />
+    </UnitTest>
+    <UnitTest name="WebsocketClientLiteTest.ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(header: [129, 128, 1, 2, 3, ···], limit: 0, read: 2)" storage="/tmp/claude-1000/-workspaces-websocketclientlite-pcl/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/websocketclientlitetest/bin/release/net10.0/websocketclientlitetest.dll" id="be2f2d35-6efa-328f-1e87-08820e7b662e">
+      <Execution id="cd448183-3a87-4cd0-8d8f-48ad3b525817" />
+      <TestMethod codeBase="/tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/WebsocketClientLiteTest/bin/Release/net10.0/WebsocketClientLiteTest.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="WebsocketClientLiteTest.ParserRetentionTests" name="InvalidHeadersRejectBeforePayloadRead" />
+    </UnitTest>
+    <UnitTest name="WebsocketClientLiteTest.ParserRetentionTests.RejectsMalformedFrames(bytes: [135, 0])" storage="/tmp/claude-1000/-workspaces-websocketclientlite-pcl/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/websocketclientlitetest/bin/release/net10.0/websocketclientlitetest.dll" id="ae4bfbbc-4461-3ad0-1ae5-00ab560cbac2">
+      <Execution id="2a243fc4-c578-46a0-bbab-cbad42f18a38" />
+      <TestMethod codeBase="/tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/WebsocketClientLiteTest/bin/Release/net10.0/WebsocketClientLiteTest.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="WebsocketClientLiteTest.ParserRetentionTests" name="RejectsMalformedFrames" />
+    </UnitTest>
+    <UnitTest name="WebsocketClientLiteTest.ParserRetentionTests.RejectsMalformedFrames(bytes: [145, 0])" storage="/tmp/claude-1000/-workspaces-websocketclientlite-pcl/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/websocketclientlitetest/bin/release/net10.0/websocketclientlitetest.dll" id="92333dae-eb55-2998-fde6-cbac7a20d39a">
+      <Execution id="3f610da9-3fa6-48e0-82d8-14a671266645" />
+      <TestMethod codeBase="/tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/WebsocketClientLiteTest/bin/Release/net10.0/WebsocketClientLiteTest.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="WebsocketClientLiteTest.ParserRetentionTests" name="RejectsMalformedFrames" />
+    </UnitTest>
+    <UnitTest name="WebsocketClientLiteTest.ParserRetentionTests.RejectsMalformedFrames(bytes: [141, 0])" storage="/tmp/claude-1000/-workspaces-websocketclientlite-pcl/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/websocketclientlitetest/bin/release/net10.0/websocketclientlitetest.dll" id="c2c584a0-916e-dd72-b8d0-6e7a722912da">
+      <Execution id="5109145b-d3e5-471d-8c7c-c401a4f49fab" />
+      <TestMethod codeBase="/tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/WebsocketClientLiteTest/bin/Release/net10.0/WebsocketClientLiteTest.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="WebsocketClientLiteTest.ParserRetentionTests" name="RejectsMalformedFrames" />
+    </UnitTest>
+    <UnitTest name="WebsocketClientLiteTest.ParserRetentionTests.RejectsMalformedFrames(bytes: [133, 0])" storage="/tmp/claude-1000/-workspaces-websocketclientlite-pcl/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/websocketclientlitetest/bin/release/net10.0/websocketclientlitetest.dll" id="ae0c36b1-9ff6-7dd8-b602-fd8117386da9">
+      <Execution id="6f122883-9350-40bb-95a6-3ef9cf596015" />
+      <TestMethod codeBase="/tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/WebsocketClientLiteTest/bin/Release/net10.0/WebsocketClientLiteTest.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="WebsocketClientLiteTest.ParserRetentionTests" name="RejectsMalformedFrames" />
+    </UnitTest>
+    <UnitTest name="WebsocketClientLiteTest.ParserRetentionTests.RejectsMalformedFrames(bytes: [131, 0])" storage="/tmp/claude-1000/-workspaces-websocketclientlite-pcl/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/websocketclientlitetest/bin/release/net10.0/websocketclientlitetest.dll" id="8e1a1280-75ff-8707-b8e3-d2e972f66c2d">
+      <Execution id="4f5d48bd-a1d6-4a9b-98a1-d6b14efe462c" />
+      <TestMethod codeBase="/tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/WebsocketClientLiteTest/bin/Release/net10.0/WebsocketClientLiteTest.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="WebsocketClientLiteTest.ParserRetentionTests" name="RejectsMalformedFrames" />
+    </UnitTest>
+    <UnitTest name="WebsocketClientLiteTest.ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(header: [129, 127, 0, 0, 0, ···], limit: 0, read: 10)" storage="/tmp/claude-1000/-workspaces-websocketclientlite-pcl/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/websocketclientlitetest/bin/release/net10.0/websocketclientlitetest.dll" id="7d20a602-961f-b9a9-50c4-e21524f1af29">
+      <Execution id="4e7aa7e1-9c38-4d60-bbba-014248c7d3c1" />
+      <TestMethod codeBase="/tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/WebsocketClientLiteTest/bin/Release/net10.0/WebsocketClientLiteTest.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="WebsocketClientLiteTest.ParserRetentionTests" name="InvalidHeadersRejectBeforePayloadRead" />
+    </UnitTest>
+    <UnitTest name="WebsocketClientLiteTest.ParserRetentionTests.RejectsMalformedFrames(bytes: [143, 0])" storage="/tmp/claude-1000/-workspaces-websocketclientlite-pcl/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/websocketclientlitetest/bin/release/net10.0/websocketclientlitetest.dll" id="1f56ea4a-56c2-048c-94ce-cc04cc77a3e6">
+      <Execution id="1029b86f-b9b4-4555-92b9-27e1cfd190f1" />
+      <TestMethod codeBase="/tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/WebsocketClientLiteTest/bin/Release/net10.0/WebsocketClientLiteTest.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="WebsocketClientLiteTest.ParserRetentionTests" name="RejectsMalformedFrames" />
+    </UnitTest>
+    <UnitTest name="WebsocketClientLiteTest.ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(header: [141, 1], limit: 0, read: 2)" storage="/tmp/claude-1000/-workspaces-websocketclientlite-pcl/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/websocketclientlitetest/bin/release/net10.0/websocketclientlitetest.dll" id="c4b38732-e989-e830-20a3-24935dd24bbb">
+      <Execution id="f9520176-8c87-4352-b20c-978397e6eb95" />
+      <TestMethod codeBase="/tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/WebsocketClientLiteTest/bin/Release/net10.0/WebsocketClientLiteTest.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="WebsocketClientLiteTest.ParserRetentionTests" name="InvalidHeadersRejectBeforePayloadRead" />
+    </UnitTest>
+    <UnitTest name="WebsocketClientLiteTest.ParserRetentionTests.RejectsMalformedFrames(bytes: [161, 0])" storage="/tmp/claude-1000/-workspaces-websocketclientlite-pcl/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/websocketclientlitetest/bin/release/net10.0/websocketclientlitetest.dll" id="605c4411-0fe5-d989-83aa-930a12728787">
+      <Execution id="b560d94f-5351-4532-9038-a09ecd5afdbf" />
+      <TestMethod codeBase="/tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/WebsocketClientLiteTest/bin/Release/net10.0/WebsocketClientLiteTest.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="WebsocketClientLiteTest.ParserRetentionTests" name="RejectsMalformedFrames" />
+    </UnitTest>
+    <UnitTest name="WebsocketClientLiteTest.ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(header: [129, 127, 128, 0, 0, ···], limit: 0, read: 10)" storage="/tmp/claude-1000/-workspaces-websocketclientlite-pcl/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/websocketclientlitetest/bin/release/net10.0/websocketclientlitetest.dll" id="dc588e43-afde-ade0-3e81-740f75723e9c">
+      <Execution id="c759b3ef-390c-4042-82ff-9b989c12a2cb" />
+      <TestMethod codeBase="/tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/WebsocketClientLiteTest/bin/Release/net10.0/WebsocketClientLiteTest.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="WebsocketClientLiteTest.ParserRetentionTests" name="InvalidHeadersRejectBeforePayloadRead" />
+    </UnitTest>
+    <UnitTest name="WebsocketClientLiteTest.ParserRetentionTests.RejectsMalformedFrames(bytes: [129, 126, 0, 125])" storage="/tmp/claude-1000/-workspaces-websocketclientlite-pcl/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/websocketclientlitetest/bin/release/net10.0/websocketclientlitetest.dll" id="c68f11d4-45a6-80cf-35dc-327e041e600f">
+      <Execution id="39230478-47f9-4399-b5d6-16c6a69b2e63" />
+      <TestMethod codeBase="/tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/WebsocketClientLiteTest/bin/Release/net10.0/WebsocketClientLiteTest.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="WebsocketClientLiteTest.ParserRetentionTests" name="RejectsMalformedFrames" />
+    </UnitTest>
+    <UnitTest name="WebsocketClientLiteTest.PayloadParsingTests.Parse_FrameExceedingMaxFrameSize_Throws" storage="/tmp/claude-1000/-workspaces-websocketclientlite-pcl/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/websocketclientlitetest/bin/release/net10.0/websocketclientlitetest.dll" id="a626510b-b185-2240-e39d-eb2fdf25282e">
+      <Execution id="da241a90-f524-47dc-bd8d-719364243e93" />
+      <TestMethod codeBase="/tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/WebsocketClientLiteTest/bin/Release/net10.0/WebsocketClientLiteTest.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="WebsocketClientLiteTest.PayloadParsingTests" name="Parse_FrameExceedingMaxFrameSize_Throws" />
+    </UnitTest>
+    <UnitTest name="WebsocketClientLiteTest.ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(header: [142, 1], limit: 0, read: 2)" storage="/tmp/claude-1000/-workspaces-websocketclientlite-pcl/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/websocketclientlitetest/bin/release/net10.0/websocketclientlitetest.dll" id="08c20f2b-8d7a-6bdf-9dc6-c04b15a94267">
+      <Execution id="8c8f115b-6962-45e7-871a-d62f02870015" />
+      <TestMethod codeBase="/tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/WebsocketClientLiteTest/bin/Release/net10.0/WebsocketClientLiteTest.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="WebsocketClientLiteTest.ParserRetentionTests" name="InvalidHeadersRejectBeforePayloadRead" />
+    </UnitTest>
+    <UnitTest name="WebsocketClientLiteTest.ParserRetentionTests.RejectsMalformedFrames(bytes: [136, 2, 3, 237])" storage="/tmp/claude-1000/-workspaces-websocketclientlite-pcl/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/websocketclientlitetest/bin/release/net10.0/websocketclientlitetest.dll" id="550d0665-f3db-7e0f-3b06-3d4ddaab954b">
+      <Execution id="3f2f25e7-5419-42ed-a9e3-2e0eac996da2" />
+      <TestMethod codeBase="/tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/WebsocketClientLiteTest/bin/Release/net10.0/WebsocketClientLiteTest.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="WebsocketClientLiteTest.ParserRetentionTests" name="RejectsMalformedFrames" />
+    </UnitTest>
+    <UnitTest name="WebsocketClientLiteTest.ParserRetentionTests.TruncatedHeadersNeverProduceFrames(header: [130, 127, 0, 0, 0, ···])" storage="/tmp/claude-1000/-workspaces-websocketclientlite-pcl/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/websocketclientlitetest/bin/release/net10.0/websocketclientlitetest.dll" id="f5d42a4d-0a68-299e-5185-8dc094259046">
+      <Execution id="e730b2bf-7563-494b-9364-a0ec87c72d6f" />
+      <TestMethod codeBase="/tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/WebsocketClientLiteTest/bin/Release/net10.0/WebsocketClientLiteTest.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="WebsocketClientLiteTest.ParserRetentionTests" name="TruncatedHeadersNeverProduceFrames" />
+    </UnitTest>
+    <UnitTest name="WebsocketClientLiteTest.ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(header: [137, 126, 0, 200], limit: 0, read: 2)" storage="/tmp/claude-1000/-workspaces-websocketclientlite-pcl/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/websocketclientlitetest/bin/release/net10.0/websocketclientlitetest.dll" id="c65956cd-5814-bf78-87a6-dd11a1948396">
+      <Execution id="397875d9-259c-42ab-8d39-d574be13829b" />
+      <TestMethod codeBase="/tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/WebsocketClientLiteTest/bin/Release/net10.0/WebsocketClientLiteTest.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="WebsocketClientLiteTest.ParserRetentionTests" name="InvalidHeadersRejectBeforePayloadRead" />
+    </UnitTest>
+    <UnitTest name="WebsocketClientLiteTest.ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(header: [135, 1], limit: 0, read: 2)" storage="/tmp/claude-1000/-workspaces-websocketclientlite-pcl/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/websocketclientlitetest/bin/release/net10.0/websocketclientlitetest.dll" id="0f5a69ca-a04b-f92e-9ef4-2f805fed78f8">
+      <Execution id="76aec3c7-9b6a-4795-85e6-6cda7c9fb2c1" />
+      <TestMethod codeBase="/tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/WebsocketClientLiteTest/bin/Release/net10.0/WebsocketClientLiteTest.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="WebsocketClientLiteTest.ParserRetentionTests" name="InvalidHeadersRejectBeforePayloadRead" />
+    </UnitTest>
+    <UnitTest name="WebsocketClientLiteTest.ParserRetentionTests.RejectsMalformedFrames(bytes: [136, 3, 3, 232, 255])" storage="/tmp/claude-1000/-workspaces-websocketclientlite-pcl/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/websocketclientlitetest/bin/release/net10.0/websocketclientlitetest.dll" id="74b43eef-b6d8-8aab-5938-18b6a8f297bb">
+      <Execution id="3ca9ea43-df3c-486a-9d3f-3d3dc230bd02" />
+      <TestMethod codeBase="/tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/WebsocketClientLiteTest/bin/Release/net10.0/WebsocketClientLiteTest.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="WebsocketClientLiteTest.ParserRetentionTests" name="RejectsMalformedFrames" />
+    </UnitTest>
+    <UnitTest name="WebsocketClientLiteTest.ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(header: [193, 1], limit: 0, read: 2)" storage="/tmp/claude-1000/-workspaces-websocketclientlite-pcl/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/websocketclientlitetest/bin/release/net10.0/websocketclientlitetest.dll" id="5e846821-e8f0-f834-f8d8-e2658f9f2296">
+      <Execution id="240ca811-64fd-4282-ad7d-eb41670d5bd6" />
+      <TestMethod codeBase="/tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/WebsocketClientLiteTest/bin/Release/net10.0/WebsocketClientLiteTest.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="WebsocketClientLiteTest.ParserRetentionTests" name="InvalidHeadersRejectBeforePayloadRead" />
+    </UnitTest>
+    <UnitTest name="WebsocketClientLiteTest.ParserRetentionTests.RejectsMalformedFrames(bytes: [129, 127, 128, 0, 0, ···])" storage="/tmp/claude-1000/-workspaces-websocketclientlite-pcl/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/websocketclientlitetest/bin/release/net10.0/websocketclientlitetest.dll" id="eb8a9c7f-7819-aa25-2011-16b3c19cd3f7">
+      <Execution id="326372ea-d336-4e45-8231-5fded4237d39" />
+      <TestMethod codeBase="/tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/WebsocketClientLiteTest/bin/Release/net10.0/WebsocketClientLiteTest.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="WebsocketClientLiteTest.ParserRetentionTests" name="RejectsMalformedFrames" />
+    </UnitTest>
+    <UnitTest name="WebsocketClientLiteTest.ParserRetentionTests.RejectsMalformedFrames(bytes: [142, 0])" storage="/tmp/claude-1000/-workspaces-websocketclientlite-pcl/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/websocketclientlitetest/bin/release/net10.0/websocketclientlitetest.dll" id="31f0a45d-d16c-816e-2301-30023a738746">
+      <Execution id="94400322-40f3-4f5b-b406-752a31bd5a3b" />
+      <TestMethod codeBase="/tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/WebsocketClientLiteTest/bin/Release/net10.0/WebsocketClientLiteTest.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="WebsocketClientLiteTest.ParserRetentionTests" name="RejectsMalformedFrames" />
+    </UnitTest>
+    <UnitTest name="WebsocketClientLiteTest.ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(header: [134, 1], limit: 0, read: 2)" storage="/tmp/claude-1000/-workspaces-websocketclientlite-pcl/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/websocketclientlitetest/bin/release/net10.0/websocketclientlitetest.dll" id="dfd68ded-add7-2fe5-ad0a-a93c1e7b1189">
+      <Execution id="c62b81e1-20dd-44ef-bb71-94fa73cd1ffe" />
+      <TestMethod codeBase="/tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/WebsocketClientLiteTest/bin/Release/net10.0/WebsocketClientLiteTest.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="WebsocketClientLiteTest.ParserRetentionTests" name="InvalidHeadersRejectBeforePayloadRead" />
+    </UnitTest>
+    <UnitTest name="WebsocketClientLiteTest.ParserRetentionTests.RejectsMalformedFrames(bytes: [139, 0])" storage="/tmp/claude-1000/-workspaces-websocketclientlite-pcl/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/websocketclientlitetest/bin/release/net10.0/websocketclientlitetest.dll" id="6ea650c2-8977-12ea-671a-af7ccf6ea69d">
+      <Execution id="baa20adb-717f-4205-9560-79d380964969" />
+      <TestMethod codeBase="/tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/WebsocketClientLiteTest/bin/Release/net10.0/WebsocketClientLiteTest.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="WebsocketClientLiteTest.ParserRetentionTests" name="RejectsMalformedFrames" />
+    </UnitTest>
+    <UnitTest name="WebsocketClientLiteTest.ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(header: [145, 1], limit: 0, read: 2)" storage="/tmp/claude-1000/-workspaces-websocketclientlite-pcl/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/websocketclientlitetest/bin/release/net10.0/websocketclientlitetest.dll" id="a587ce48-8cf7-8ace-7e17-e780da5fbb45">
+      <Execution id="94ef3ded-bb36-4507-afa9-3e25138d878c" />
+      <TestMethod codeBase="/tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/WebsocketClientLiteTest/bin/Release/net10.0/WebsocketClientLiteTest.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="WebsocketClientLiteTest.ParserRetentionTests" name="InvalidHeadersRejectBeforePayloadRead" />
+    </UnitTest>
+    <UnitTest name="WebsocketClientLiteTest.ParserRetentionTests.TruncatedHeadersNeverProduceFrames(header: [130, 126, 1, 0])" storage="/tmp/claude-1000/-workspaces-websocketclientlite-pcl/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/websocketclientlitetest/bin/release/net10.0/websocketclientlitetest.dll" id="91dc572e-33d3-d529-6d35-a1fb8f00dae8">
+      <Execution id="78b7785b-562d-4384-9429-16dd96681662" />
+      <TestMethod codeBase="/tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/WebsocketClientLiteTest/bin/Release/net10.0/WebsocketClientLiteTest.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="WebsocketClientLiteTest.ParserRetentionTests" name="TruncatedHeadersNeverProduceFrames" />
+    </UnitTest>
+    <UnitTest name="WebsocketClientLiteTest.ParserRetentionTests.RejectsMalformedFrames(bytes: [193, 0])" storage="/tmp/claude-1000/-workspaces-websocketclientlite-pcl/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/websocketclientlitetest/bin/release/net10.0/websocketclientlitetest.dll" id="fa68367a-df5d-8a00-12c1-6f47dfe0db1b">
+      <Execution id="cf5a06b6-fb6f-4112-a405-4825c6b5c59e" />
+      <TestMethod codeBase="/tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/WebsocketClientLiteTest/bin/Release/net10.0/WebsocketClientLiteTest.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="WebsocketClientLiteTest.ParserRetentionTests" name="RejectsMalformedFrames" />
+    </UnitTest>
+    <UnitTest name="WebsocketClientLiteTest.ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(header: [129, 126, 0, 125], limit: 0, read: 4)" storage="/tmp/claude-1000/-workspaces-websocketclientlite-pcl/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/websocketclientlitetest/bin/release/net10.0/websocketclientlitetest.dll" id="104443b4-0ecf-0b8c-ec27-24e035cb76ed">
+      <Execution id="ddde1aa2-e4e8-493b-85dd-c2e10c82175f" />
+      <TestMethod codeBase="/tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/WebsocketClientLiteTest/bin/Release/net10.0/WebsocketClientLiteTest.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="WebsocketClientLiteTest.ParserRetentionTests" name="InvalidHeadersRejectBeforePayloadRead" />
+    </UnitTest>
+    <UnitTest name="WebsocketClientLiteTest.ParserRetentionTests.RejectsMalformedFrames(bytes: [134, 0])" storage="/tmp/claude-1000/-workspaces-websocketclientlite-pcl/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/websocketclientlitetest/bin/release/net10.0/websocketclientlitetest.dll" id="e2f0d3ec-fbfd-59ab-7154-9850a3928ea4">
+      <Execution id="90dc7756-d081-49d8-a119-d4965309d237" />
+      <TestMethod codeBase="/tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/WebsocketClientLiteTest/bin/Release/net10.0/WebsocketClientLiteTest.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="WebsocketClientLiteTest.ParserRetentionTests" name="RejectsMalformedFrames" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="3757b0f7-d27d-9749-39be-8a69c7d8ebbe" executionId="dedd3b13-32d7-42e3-8e87-05760fd41b36" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="7ba426c6-5c8f-7cbb-61de-0db9b5462682" executionId="fc6c9963-29e6-407e-b801-09b0c95be27a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="92333dae-eb55-2998-fde6-cbac7a20d39a" executionId="3f610da9-3fa6-48e0-82d8-14a671266645" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="8e1a1280-75ff-8707-b8e3-d2e972f66c2d" executionId="4f5d48bd-a1d6-4a9b-98a1-d6b14efe462c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="0f5a69ca-a04b-f92e-9ef4-2f805fed78f8" executionId="76aec3c7-9b6a-4795-85e6-6cda7c9fb2c1" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="fb98649f-f635-99d3-b53d-ab0f05cad119" executionId="7cf32693-083f-4146-a289-68a3a008d41d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="31f0a45d-d16c-816e-2301-30023a738746" executionId="94400322-40f3-4f5b-b406-752a31bd5a3b" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="a61f222c-0b7c-7ee4-1a74-d7273a07b4e1" executionId="bdf503ca-bd1a-4c23-8d29-ff3fc0c39661" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="fa68367a-df5d-8a00-12c1-6f47dfe0db1b" executionId="cf5a06b6-fb6f-4112-a405-4825c6b5c59e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="605c4411-0fe5-d989-83aa-930a12728787" executionId="b560d94f-5351-4532-9038-a09ecd5afdbf" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="a587ce48-8cf7-8ace-7e17-e780da5fbb45" executionId="94ef3ded-bb36-4507-afa9-3e25138d878c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="dfd68ded-add7-2fe5-ad0a-a93c1e7b1189" executionId="c62b81e1-20dd-44ef-bb71-94fa73cd1ffe" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="7334a8bf-0f57-314d-aaad-187e3c36c52e" executionId="770a09f2-12e5-44ea-82ac-00fdd2205e1f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="e2f0d3ec-fbfd-59ab-7154-9850a3928ea4" executionId="90dc7756-d081-49d8-a119-d4965309d237" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="a310880f-7ea7-6d64-46fb-1936c13b0d5a" executionId="12ac9390-64fc-4f92-8579-cc1bf8bcbcf0" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="be2f2d35-6efa-328f-1e87-08820e7b662e" executionId="cd448183-3a87-4cd0-8d8f-48ad3b525817" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="91dc572e-33d3-d529-6d35-a1fb8f00dae8" executionId="78b7785b-562d-4384-9429-16dd96681662" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="08c20f2b-8d7a-6bdf-9dc6-c04b15a94267" executionId="8c8f115b-6962-45e7-871a-d62f02870015" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="9d400482-3684-ad2f-382f-c6f43a7bbd95" executionId="8ce1fe7b-e454-401b-9f2c-10badc33d908" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="550d0665-f3db-7e0f-3b06-3d4ddaab954b" executionId="3f2f25e7-5419-42ed-a9e3-2e0eac996da2" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="74b43eef-b6d8-8aab-5938-18b6a8f297bb" executionId="3ca9ea43-df3c-486a-9d3f-3d3dc230bd02" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="7d20a602-961f-b9a9-50c4-e21524f1af29" executionId="4e7aa7e1-9c38-4d60-bbba-014248c7d3c1" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="66bb0a40-74e7-e8a0-a55d-8a7eb4ccfa75" executionId="0331e318-1c14-410b-8521-44b3a165cfd2" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="c65956cd-5814-bf78-87a6-dd11a1948396" executionId="397875d9-259c-42ab-8d39-d574be13829b" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="952a0e47-d732-ca03-7e0c-cc982a50658b" executionId="7edc5f43-9b7c-4b17-9f6b-ecd4e7e76e8f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="6ea650c2-8977-12ea-671a-af7ccf6ea69d" executionId="baa20adb-717f-4205-9560-79d380964969" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="5e846821-e8f0-f834-f8d8-e2658f9f2296" executionId="240ca811-64fd-4282-ad7d-eb41670d5bd6" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="ae0c36b1-9ff6-7dd8-b602-fd8117386da9" executionId="6f122883-9350-40bb-95a6-3ef9cf596015" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="35f3c2d4-cf63-60ce-254b-d7232394e82a" executionId="16f92cc8-442f-44fe-bb8d-46e2c1309d65" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="f03b22e6-7cc7-cae1-546f-40c9f5dd7098" executionId="3e84a104-8b81-4347-bb33-184657f7f510" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="c2c584a0-916e-dd72-b8d0-6e7a722912da" executionId="5109145b-d3e5-471d-8c7c-c401a4f49fab" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="eb8a9c7f-7819-aa25-2011-16b3c19cd3f7" executionId="326372ea-d336-4e45-8231-5fded4237d39" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b14a3772-0deb-6cdd-35b9-ab1b878616c7" executionId="7d21399f-9493-4d2d-bb4d-a81a8d95c16b" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="d777575a-fc4c-e7a4-9eda-9c7949f52add" executionId="d48d5184-42fc-43f4-8b9a-a6491eb0a3ad" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="58068d8c-ab57-cd1c-e749-f971220068c3" executionId="25f4e8ef-b10c-4fe4-9a5e-06a40be3645b" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="c4b38732-e989-e830-20a3-24935dd24bbb" executionId="f9520176-8c87-4352-b20c-978397e6eb95" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="104443b4-0ecf-0b8c-ec27-24e035cb76ed" executionId="ddde1aa2-e4e8-493b-85dd-c2e10c82175f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="4b46379d-5879-852f-eb0c-06db90a3e655" executionId="d27a6f38-100f-4fd6-88a5-f9fe43b6a5a3" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="79b8c333-ac94-140e-1ada-70e4966d18b0" executionId="3b9030d0-3fef-47d6-83d3-3d729b463e8e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="f5d42a4d-0a68-299e-5185-8dc094259046" executionId="e730b2bf-7563-494b-9364-a0ec87c72d6f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="d8743c74-bee0-85d0-3e47-87c95eb09b6f" executionId="1287b5e1-4b1a-4793-a7cb-923a3cf80c9e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="a626510b-b185-2240-e39d-eb2fdf25282e" executionId="da241a90-f524-47dc-bd8d-719364243e93" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="9aae9e10-daff-af6f-3016-286c19f1d042" executionId="6515499b-3d3c-4cc1-8160-f77da122bee4" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="c68f11d4-45a6-80cf-35dc-327e041e600f" executionId="39230478-47f9-4399-b5d6-16c6a69b2e63" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="dc588e43-afde-ade0-3e81-740f75723e9c" executionId="c759b3ef-390c-4042-82ff-9b989c12a2cb" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="42196343-fc35-900a-3ece-5dd991d58561" executionId="4b15296d-36fa-420b-bb76-0aad755e9218" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="1f56ea4a-56c2-048c-94ce-cc04cc77a3e6" executionId="1029b86f-b9b4-4555-92b9-27e1cfd190f1" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="ae4bfbbc-4461-3ad0-1ae5-00ab560cbac2" executionId="2a243fc4-c578-46a0-bbab-cbad42f18a38" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="48" executed="48" passed="13" failed="35" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v4.0.1+0f7d528729 (64-bit .NET 10.0.14)
+[xUnit.net 00:00:00.04]   Discovering: WebsocketClientLiteTest
+[xUnit.net 00:00:00.08]   Discovered:  WebsocketClientLiteTest
+[xUnit.net 00:00:00.10]   Starting:    WebsocketClientLiteTest
+[xUnit.net 00:00:00.13]       Assert.Throws() Failure: No exception was thrown
+[xUnit.net 00:00:00.13]       Expected: typeof(WebsocketClientLite.CustomException.WebsocketClientLiteException)
+[xUnit.net 00:00:00.13]       Stack Trace:
+[xUnit.net 00:00:00.13]         /tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/WebsocketClientLiteTest/ParserRetentionTests.cs(149,0): at WebsocketClientLiteTest.ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(Byte[] header, Int32 limit, Int32 read)
+[xUnit.net 00:00:00.13]         --- End of stack trace from previous location ---
+[xUnit.net 00:00:00.13]       Assert.Throws() Failure: No exception was thrown
+[xUnit.net 00:00:00.13]       Expected: typeof(WebsocketClientLite.CustomException.WebsocketClientLiteException)
+[xUnit.net 00:00:00.13]       Stack Trace:
+[xUnit.net 00:00:00.13]         /tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/WebsocketClientLiteTest/ParserRetentionTests.cs(149,0): at WebsocketClientLiteTest.ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(Byte[] header, Int32 limit, Int32 read)
+[xUnit.net 00:00:00.13]         --- End of stack trace from previous location ---
+[xUnit.net 00:00:00.13]       Assert.Throws() Failure: No exception was thrown
+[xUnit.net 00:00:00.13]       Expected: typeof(WebsocketClientLite.CustomException.WebsocketClientLiteException)
+[xUnit.net 00:00:00.13]       Stack Trace:
+[xUnit.net 00:00:00.13]         /tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/WebsocketClientLiteTest/ParserRetentionTests.cs(149,0): at WebsocketClientLiteTest.ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(Byte[] header, Int32 limit, Int32 read)
+[xUnit.net 00:00:00.13]         --- End of stack trace from previous location ---
+[xUnit.net 00:00:00.13]       Assert.Throws() Failure: No exception was thrown
+[xUnit.net 00:00:00.13]       Expected: typeof(WebsocketClientLite.CustomException.WebsocketClientLiteException)
+[xUnit.net 00:00:00.13]       Stack Trace:
+[xUnit.net 00:00:00.13]         /tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/WebsocketClientLiteTest/ParserRetentionTests.cs(149,0): at WebsocketClientLiteTest.ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(Byte[] header, Int32 limit, Int32 read)
+[xUnit.net 00:00:00.13]         --- End of stack trace from previous location ---
+[xUnit.net 00:00:00.13]       Invalid header read 4 bytes in 4 attempts, expected 2
+[xUnit.net 00:00:00.13]       Stack Trace:
+[xUnit.net 00:00:00.13]         /tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/WebsocketClientLiteTest/ParserRetentionTests.cs(150,0): at WebsocketClientLiteTest.ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(Byte[] header, Int32 limit, Int32 read)
+[xUnit.net 00:00:00.13]         --- End of stack trace from previous location ---
+[xUnit.net 00:00:00.13]       Assert.Throws() Failure: No exception was thrown
+[xUnit.net 00:00:00.13]       Expected: typeof(WebsocketClientLite.CustomException.WebsocketClientLiteException)
+[xUnit.net 00:00:00.13]       Stack Trace:
+[xUnit.net 00:00:00.13]         /tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/WebsocketClientLiteTest/ParserRetentionTests.cs(149,0): at WebsocketClientLiteTest.ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(Byte[] header, Int32 limit, Int32 read)
+[xUnit.net 00:00:00.13]         --- End of stack trace from previous location ---
+[xUnit.net 00:00:00.13]       Assert.Throws() Failure: No exception was thrown
+[xUnit.net 00:00:00.13]       Expected: typeof(WebsocketClientLite.CustomException.WebsocketClientLiteException)
+[xUnit.net 00:00:00.13]       Stack Trace:
+[xUnit.net 00:00:00.13]         /tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/WebsocketClientLiteTest/ParserRetentionTests.cs(149,0): at WebsocketClientLiteTest.ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(Byte[] header, Int32 limit, Int32 read)
+[xUnit.net 00:00:00.13]         --- End of stack trace from previous location ---
+[xUnit.net 00:00:00.14]       Assert.Throws() Failure: No exception was thrown
+[xUnit.net 00:00:00.14]       Expected: typeof(WebsocketClientLite.CustomException.WebsocketClientLiteException)
+[xUnit.net 00:00:00.14]       Stack Trace:
+[xUnit.net 00:00:00.14]         /tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/WebsocketClientLiteTest/ParserRetentionTests.cs(149,0): at WebsocketClientLiteTest.ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(Byte[] header, Int32 limit, Int32 read)
+[xUnit.net 00:00:00.14]         --- End of stack trace from previous location ---
+[xUnit.net 00:00:00.14]       Assert.Throws() Failure: No exception was thrown
+[xUnit.net 00:00:00.14]       Expected: typeof(WebsocketClientLite.CustomException.WebsocketClientLiteException)
+[xUnit.net 00:00:00.14]       Stack Trace:
+[xUnit.net 00:00:00.14]         /tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/WebsocketClientLiteTest/ParserRetentionTests.cs(149,0): at WebsocketClientLiteTest.ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(Byte[] header, Int32 limit, Int32 read)
+[xUnit.net 00:00:00.14]         --- End of stack trace from previous location ---
+[xUnit.net 00:00:00.14]       Assert.Throws() Failure: No exception was thrown
+[xUnit.net 00:00:00.14]       Expected: typeof(WebsocketClientLite.CustomException.WebsocketClientLiteException)
+[xUnit.net 00:00:00.14]       Stack Trace:
+[xUnit.net 00:00:00.14]         /tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/WebsocketClientLiteTest/ParserRetentionTests.cs(149,0): at WebsocketClientLiteTest.ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(Byte[] header, Int32 limit, Int32 read)
+[xUnit.net 00:00:00.14]         --- End of stack trace from previous location ---
+[xUnit.net 00:00:00.14]       Assert.Throws() Failure: No exception was thrown
+[xUnit.net 00:00:00.14]       Expected: typeof(WebsocketClientLite.CustomException.WebsocketClientLiteException)
+[xUnit.net 00:00:00.14]       Stack Trace:
+[xUnit.net 00:00:00.14]         /tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/WebsocketClientLiteTest/ParserRetentionTests.cs(149,0): at WebsocketClientLiteTest.ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(Byte[] header, Int32 limit, Int32 read)
+[xUnit.net 00:00:00.14]         --- End of stack trace from previous location ---
+[xUnit.net 00:00:00.14]       Assert.Throws() Failure: No exception was thrown
+[xUnit.net 00:00:00.14]       Expected: typeof(WebsocketClientLite.CustomException.WebsocketClientLiteException)
+[xUnit.net 00:00:00.14]       Stack Trace:
+[xUnit.net 00:00:00.14]         /tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/WebsocketClientLiteTest/ParserRetentionTests.cs(149,0): at WebsocketClientLiteTest.ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(Byte[] header, Int32 limit, Int32 read)
+[xUnit.net 00:00:00.14]         --- End of stack trace from previous location ---
+[xUnit.net 00:00:00.14]       Assert.Throws() Failure: No exception was thrown
+[xUnit.net 00:00:00.14]       Expected: typeof(WebsocketClientLite.CustomException.WebsocketClientLiteException)
+[xUnit.net 00:00:00.14]       Stack Trace:
+[xUnit.net 00:00:00.14]         /tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/WebsocketClientLiteTest/ParserRetentionTests.cs(149,0): at WebsocketClientLiteTest.ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(Byte[] header, Int32 limit, Int32 read)
+[xUnit.net 00:00:00.14]         --- End of stack trace from previous location ---
+[xUnit.net 00:00:00.14]       Assert.Throws() Failure: No exception was thrown
+[xUnit.net 00:00:00.14]       Expected: typeof(WebsocketClientLite.CustomException.WebsocketClientLiteException)
+[xUnit.net 00:00:00.14]       Stack Trace:
+[xUnit.net 00:00:00.14]         /tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/WebsocketClientLiteTest/ParserRetentionTests.cs(149,0): at WebsocketClientLiteTest.ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(Byte[] header, Int32 limit, Int32 read)
+[xUnit.net 00:00:00.14]         --- End of stack trace from previous location ---
+[xUnit.net 00:00:00.14]       Assert.Throws() Failure: No exception was thrown
+[xUnit.net 00:00:00.14]       Expected: typeof(WebsocketClientLite.CustomException.WebsocketClientLiteException)
+[xUnit.net 00:00:00.14]       Stack Trace:
+[xUnit.net 00:00:00.14]         /tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/WebsocketClientLiteTest/ParserRetentionTests.cs(149,0): at WebsocketClientLiteTest.ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(Byte[] header, Int32 limit, Int32 read)
+[xUnit.net 00:00:00.14]         --- End of stack trace from previous location ---
+[xUnit.net 00:00:00.14]       Assert.Throws() Failure: No exception was thrown
+[xUnit.net 00:00:00.14]       Expected: typeof(WebsocketClientLite.CustomException.WebsocketClientLiteException)
+[xUnit.net 00:00:00.14]       Stack Trace:
+[xUnit.net 00:00:00.14]         /tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/WebsocketClientLiteTest/ParserRetentionTests.cs(149,0): at WebsocketClientLiteTest.ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(Byte[] header, Int32 limit, Int32 read)
+[xUnit.net 00:00:00.14]         --- End of stack trace from previous location ---
+[xUnit.net 00:00:00.14]       Assert.Throws() Failure: No exception was thrown
+[xUnit.net 00:00:00.14]       Expected: typeof(WebsocketClientLite.CustomException.WebsocketClientLiteException)
+[xUnit.net 00:00:00.14]       Stack Trace:
+[xUnit.net 00:00:00.14]         /tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/WebsocketClientLiteTest/ParserRetentionTests.cs(149,0): at WebsocketClientLiteTest.ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(Byte[] header, Int32 limit, Int32 read)
+[xUnit.net 00:00:00.14]         --- End of stack trace from previous location ---
+[xUnit.net 00:00:00.14]       Assert.Throws() Failure: No exception was thrown
+[xUnit.net 00:00:00.14]       Expected: typeof(WebsocketClientLite.CustomException.WebsocketClientLiteException)
+[xUnit.net 00:00:00.14]       Stack Trace:
+[xUnit.net 00:00:00.14]         /tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/WebsocketClientLiteTest/ParserRetentionTests.cs(96,0): at WebsocketClientLiteTest.ParserRetentionTests.RejectsMalformedFrames(Byte[] bytes)
+[xUnit.net 00:00:00.14]         --- End of stack trace from previous location ---
+[xUnit.net 00:00:00.14]       Assert.Throws() Failure: No exception was thrown
+[xUnit.net 00:00:00.14]       Expected: typeof(WebsocketClientLite.CustomException.WebsocketClientLiteException)
+[xUnit.net 00:00:00.14]       Stack Trace:
+[xUnit.net 00:00:00.15]         /tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/WebsocketClientLiteTest/ParserRetentionTests.cs(96,0): at WebsocketClientLiteTest.ParserRetentionTests.RejectsMalformedFrames(Byte[] bytes)
+[xUnit.net 00:00:00.15]         --- End of stack trace from previous location ---
+[xUnit.net 00:00:00.15]       Assert.Throws() Failure: No exception was thrown
+[xUnit.net 00:00:00.15]       Expected: typeof(WebsocketClientLite.CustomException.WebsocketClientLiteException)
+[xUnit.net 00:00:00.15]       Stack Trace:
+[xUnit.net 00:00:00.15]         /tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/WebsocketClientLiteTest/ParserRetentionTests.cs(96,0): at WebsocketClientLiteTest.ParserRetentionTests.RejectsMalformedFrames(Byte[] bytes)
+[xUnit.net 00:00:00.15]         --- End of stack trace from previous location ---
+[xUnit.net 00:00:00.15]       Assert.Throws() Failure: No exception was thrown
+[xUnit.net 00:00:00.15]       Expected: typeof(WebsocketClientLite.CustomException.WebsocketClientLiteException)
+[xUnit.net 00:00:00.15]       Stack Trace:
+[xUnit.net 00:00:00.15]         /tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/WebsocketClientLiteTest/ParserRetentionTests.cs(96,0): at WebsocketClientLiteTest.ParserRetentionTests.RejectsMalformedFrames(Byte[] bytes)
+[xUnit.net 00:00:00.15]         --- End of stack trace from previous location ---
+[xUnit.net 00:00:00.15]       Assert.Throws() Failure: No exception was thrown
+[xUnit.net 00:00:00.15]       Expected: typeof(WebsocketClientLite.CustomException.WebsocketClientLiteException)
+[xUnit.net 00:00:00.15]       Stack Trace:
+[xUnit.net 00:00:00.15]         /tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/WebsocketClientLiteTest/ParserRetentionTests.cs(96,0): at WebsocketClientLiteTest.ParserRetentionTests.RejectsMalformedFrames(Byte[] bytes)
+[xUnit.net 00:00:00.15]         --- End of stack trace from previous location ---
+[xUnit.net 00:00:00.15]       Assert.Throws() Failure: No exception was thrown
+[xUnit.net 00:00:00.15]       Expected: typeof(WebsocketClientLite.CustomException.WebsocketClientLiteException)
+[xUnit.net 00:00:00.15]       Stack Trace:
+[xUnit.net 00:00:00.15]         /tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/WebsocketClientLiteTest/ParserRetentionTests.cs(96,0): at WebsocketClientLiteTest.ParserRetentionTests.RejectsMalformedFrames(Byte[] bytes)
+[xUnit.net 00:00:00.15]         --- End of stack trace from previous location ---
+[xUnit.net 00:00:00.15]       Assert.Throws() Failure: No exception was thrown
+[xUnit.net 00:00:00.15]       Expected: typeof(WebsocketClientLite.CustomException.WebsocketClientLiteException)
+[xUnit.net 00:00:00.15]       Stack Trace:
+[xUnit.net 00:00:00.15]         /tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/WebsocketClientLiteTest/ParserRetentionTests.cs(96,0): at WebsocketClientLiteTest.ParserRetentionTests.RejectsMalformedFrames(Byte[] bytes)
+[xUnit.net 00:00:00.15]         --- End of stack trace from previous location ---
+[xUnit.net 00:00:00.15]       Assert.Throws() Failure: No exception was thrown
+[xUnit.net 00:00:00.15]       Expected: typeof(WebsocketClientLite.CustomException.WebsocketClientLiteException)
+[xUnit.net 00:00:00.15]       Stack Trace:
+[xUnit.net 00:00:00.15]         /tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/WebsocketClientLiteTest/ParserRetentionTests.cs(96,0): at WebsocketClientLiteTest.ParserRetentionTests.RejectsMalformedFrames(Byte[] bytes)
+[xUnit.net 00:00:00.15]         --- End of stack trace from previous location ---
+[xUnit.net 00:00:00.15]       Assert.Throws() Failure: No exception was thrown
+[xUnit.net 00:00:00.15]       Expected: typeof(WebsocketClientLite.CustomException.WebsocketClientLiteException)
+[xUnit.net 00:00:00.15]       Stack Trace:
+[xUnit.net 00:00:00.15]         /tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/WebsocketClientLiteTest/ParserRetentionTests.cs(96,0): at WebsocketClientLiteTest.ParserRetentionTests.RejectsMalformedFrames(Byte[] bytes)
+[xUnit.net 00:00:00.15]         --- End of stack trace from previous location ---
+[xUnit.net 00:00:00.15]       Assert.Throws() Failure: No exception was thrown
+[xUnit.net 00:00:00.15]       Expected: typeof(WebsocketClientLite.CustomException.WebsocketClientLiteException)
+[xUnit.net 00:00:00.15]       Stack Trace:
+[xUnit.net 00:00:00.15]         /tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/WebsocketClientLiteTest/ParserRetentionTests.cs(96,0): at WebsocketClientLiteTest.ParserRetentionTests.RejectsMalformedFrames(Byte[] bytes)
+[xUnit.net 00:00:00.15]         --- End of stack trace from previous location ---
+[xUnit.net 00:00:00.15]       Assert.Throws() Failure: No exception was thrown
+[xUnit.net 00:00:00.15]       Expected: typeof(WebsocketClientLite.CustomException.WebsocketClientLiteException)
+[xUnit.net 00:00:00.15]       Stack Trace:
+[xUnit.net 00:00:00.15]         /tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/WebsocketClientLiteTest/ParserRetentionTests.cs(96,0): at WebsocketClientLiteTest.ParserRetentionTests.RejectsMalformedFrames(Byte[] bytes)
+[xUnit.net 00:00:00.15]         --- End of stack trace from previous location ---
+[xUnit.net 00:00:00.15]       Assert.Throws() Failure: No exception was thrown
+[xUnit.net 00:00:00.15]       Expected: typeof(WebsocketClientLite.CustomException.WebsocketClientLiteException)
+[xUnit.net 00:00:00.15]       Stack Trace:
+[xUnit.net 00:00:00.15]         /tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/WebsocketClientLiteTest/ParserRetentionTests.cs(96,0): at WebsocketClientLiteTest.ParserRetentionTests.RejectsMalformedFrames(Byte[] bytes)
+[xUnit.net 00:00:00.15]         --- End of stack trace from previous location ---
+[xUnit.net 00:00:00.15]       Assert.Throws() Failure: No exception was thrown
+[xUnit.net 00:00:00.15]       Expected: typeof(WebsocketClientLite.CustomException.WebsocketClientLiteException)
+[xUnit.net 00:00:00.15]       Stack Trace:
+[xUnit.net 00:00:00.15]         /tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/WebsocketClientLiteTest/ParserRetentionTests.cs(96,0): at WebsocketClientLiteTest.ParserRetentionTests.RejectsMalformedFrames(Byte[] bytes)
+[xUnit.net 00:00:00.15]         --- End of stack trace from previous location ---
+[xUnit.net 00:00:00.15]       Assert.Throws() Failure: No exception was thrown
+[xUnit.net 00:00:00.15]       Expected: typeof(WebsocketClientLite.CustomException.WebsocketClientLiteException)
+[xUnit.net 00:00:00.15]       Stack Trace:
+[xUnit.net 00:00:00.15]         /tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/WebsocketClientLiteTest/ParserRetentionTests.cs(96,0): at WebsocketClientLiteTest.ParserRetentionTests.RejectsMalformedFrames(Byte[] bytes)
+[xUnit.net 00:00:00.15]         --- End of stack trace from previous location ---
+[xUnit.net 00:00:00.15]       Assert.Throws() Failure: No exception was thrown
+[xUnit.net 00:00:00.15]       Expected: typeof(WebsocketClientLite.CustomException.WebsocketClientLiteException)
+[xUnit.net 00:00:00.15]       Stack Trace:
+[xUnit.net 00:00:00.15]         /tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/WebsocketClientLiteTest/ParserRetentionTests.cs(96,0): at WebsocketClientLiteTest.ParserRetentionTests.RejectsMalformedFrames(Byte[] bytes)
+[xUnit.net 00:00:00.15]         --- End of stack trace from previous location ---
+[xUnit.net 00:00:00.15]       Assert.Throws() Failure: No exception was thrown
+[xUnit.net 00:00:00.15]       Expected: typeof(WebsocketClientLite.CustomException.WebsocketClientLiteException)
+[xUnit.net 00:00:00.15]       Stack Trace:
+[xUnit.net 00:00:00.15]         /tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/WebsocketClientLiteTest/ParserRetentionTests.cs(96,0): at WebsocketClientLiteTest.ParserRetentionTests.RejectsMalformedFrames(Byte[] bytes)
+[xUnit.net 00:00:00.15]         --- End of stack trace from previous location ---
+[xUnit.net 00:00:00.15]       Assert.Throws() Failure: No exception was thrown
+[xUnit.net 00:00:00.15]       Expected: typeof(WebsocketClientLite.CustomException.WebsocketClientLiteException)
+[xUnit.net 00:00:00.15]       Stack Trace:
+[xUnit.net 00:00:00.15]         /tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/WebsocketClientLiteTest/ParserRetentionTests.cs(96,0): at WebsocketClientLiteTest.ParserRetentionTests.RejectsMalformedFrames(Byte[] bytes)
+[xUnit.net 00:00:00.15]         --- End of stack trace from previous location ---
+[xUnit.net 00:00:00.15]       Assert.Throws() Failure: No exception was thrown
+[xUnit.net 00:00:00.15]       Expected: typeof(WebsocketClientLite.CustomException.WebsocketClientLiteException)
+[xUnit.net 00:00:00.15]       Stack Trace:
+[xUnit.net 00:00:00.15]         /tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/ce292298-d831-4ecc-81a7-b7baff43302d/scratchpad/copies/failing-first-a779602/src/main/WebsocketClientLiteTest/ParserRetentionTests.cs(96,0): at WebsocketClientLiteTest.ParserRetentionTests.RejectsMalformedFrames(Byte[] bytes)
+[xUnit.net 00:00:00.15]         --- End of stack trace from previous location ---
+[xUnit.net 00:00:00.15]   Finished:    WebsocketClientLiteTest
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="a920b7ae3df2" outcome="Error" timestamp="2026-11-11T16:51:25.5296718+00:00">
+        <Text>[xUnit.net 00:00:00.13]     WebsocketClientLiteTest.ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(header: [143, 1], limit: 0, read: 2) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="a920b7ae3df2" outcome="Error" timestamp="2026-11-11T16:51:25.5309670+00:00">
+        <Text>[xUnit.net 00:00:00.13]     WebsocketClientLiteTest.ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(header: [133, 1], limit: 0, read: 2) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="a920b7ae3df2" outcome="Error" timestamp="2026-11-11T16:51:25.5310848+00:00">
+        <Text>[xUnit.net 00:00:00.13]     WebsocketClientLiteTest.ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(header: [145, 1], limit: 0, read: 2) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="a920b7ae3df2" outcome="Error" timestamp="2026-11-11T16:51:25.5312041+00:00">
+        <Text>[xUnit.net 00:00:00.13]     WebsocketClientLiteTest.ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(header: [142, 1], limit: 0, read: 2) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="a920b7ae3df2" outcome="Error" timestamp="2026-11-11T16:51:25.5313188+00:00">
+        <Text>[xUnit.net 00:00:00.13]     WebsocketClientLiteTest.ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(header: [137, 126, 0, 200], limit: 0, read: 2) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="a920b7ae3df2" outcome="Error" timestamp="2026-11-11T16:51:25.5314147+00:00">
+        <Text>[xUnit.net 00:00:00.13]     WebsocketClientLiteTest.ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(header: [135, 1], limit: 0, read: 2) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="a920b7ae3df2" outcome="Error" timestamp="2026-11-11T16:51:25.5315143+00:00">
+        <Text>[xUnit.net 00:00:00.13]     WebsocketClientLiteTest.ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(header: [141, 1], limit: 0, read: 2) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="a920b7ae3df2" outcome="Error" timestamp="2026-11-11T16:51:25.5545095+00:00">
+        <Text>[xUnit.net 00:00:00.14]     WebsocketClientLiteTest.ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(header: [139, 1], limit: 0, read: 2) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="a920b7ae3df2" outcome="Error" timestamp="2026-11-11T16:51:25.5545408+00:00">
+        <Text>[xUnit.net 00:00:00.14]     WebsocketClientLiteTest.ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(header: [129, 127, 0, 0, 0, ···], limit: 0, read: 10) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="a920b7ae3df2" outcome="Error" timestamp="2026-11-11T16:51:25.5545712+00:00">
+        <Text>[xUnit.net 00:00:00.14]     WebsocketClientLiteTest.ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(header: [193, 1], limit: 0, read: 2) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="a920b7ae3df2" outcome="Error" timestamp="2026-11-11T16:51:25.5545935+00:00">
+        <Text>[xUnit.net 00:00:00.14]     WebsocketClientLiteTest.ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(header: [129, 126, 0, 125], limit: 0, read: 4) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="a920b7ae3df2" outcome="Error" timestamp="2026-11-11T16:51:25.5546156+00:00">
+        <Text>[xUnit.net 00:00:00.14]     WebsocketClientLiteTest.ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(header: [161, 1], limit: 0, read: 2) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="a920b7ae3df2" outcome="Error" timestamp="2026-11-11T16:51:25.5546463+00:00">
+        <Text>[xUnit.net 00:00:00.14]     WebsocketClientLiteTest.ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(header: [140, 1], limit: 0, read: 2) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="a920b7ae3df2" outcome="Error" timestamp="2026-11-11T16:51:25.5546657+00:00">
+        <Text>[xUnit.net 00:00:00.14]     WebsocketClientLiteTest.ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(header: [129, 128, 1, 2, 3, ···], limit: 0, read: 2) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="a920b7ae3df2" outcome="Error" timestamp="2026-11-11T16:51:25.5546861+00:00">
+        <Text>[xUnit.net 00:00:00.14]     WebsocketClientLiteTest.ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(header: [132, 1], limit: 0, read: 2) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="a920b7ae3df2" outcome="Error" timestamp="2026-11-11T16:51:25.5547047+00:00">
+        <Text>[xUnit.net 00:00:00.14]     WebsocketClientLiteTest.ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(header: [134, 1], limit: 0, read: 2) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="a920b7ae3df2" outcome="Error" timestamp="2026-11-11T16:51:25.5551183+00:00">
+        <Text>[xUnit.net 00:00:00.14]     WebsocketClientLiteTest.ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(header: [131, 1], limit: 0, read: 2) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="a920b7ae3df2" outcome="Error" timestamp="2026-11-11T16:51:25.5553111+00:00">
+        <Text>[xUnit.net 00:00:00.14]     WebsocketClientLiteTest.ParserRetentionTests.RejectsMalformedFrames(bytes: [161, 0]) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="a920b7ae3df2" outcome="Error" timestamp="2026-11-11T16:51:25.5553318+00:00">
+        <Text>[xUnit.net 00:00:00.14]     WebsocketClientLiteTest.ParserRetentionTests.RejectsMalformedFrames(bytes: [136, 3, 3, 232, 255]) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="a920b7ae3df2" outcome="Error" timestamp="2026-11-11T16:51:25.5553550+00:00">
+        <Text>[xUnit.net 00:00:00.15]     WebsocketClientLiteTest.ParserRetentionTests.RejectsMalformedFrames(bytes: [129, 126, 0, 125]) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="a920b7ae3df2" outcome="Error" timestamp="2026-11-11T16:51:25.5553780+00:00">
+        <Text>[xUnit.net 00:00:00.15]     WebsocketClientLiteTest.ParserRetentionTests.RejectsMalformedFrames(bytes: [133, 0]) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="a920b7ae3df2" outcome="Error" timestamp="2026-11-11T16:51:25.5553990+00:00">
+        <Text>[xUnit.net 00:00:00.15]     WebsocketClientLiteTest.ParserRetentionTests.RejectsMalformedFrames(bytes: [142, 0]) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="a920b7ae3df2" outcome="Error" timestamp="2026-11-11T16:51:25.5554183+00:00">
+        <Text>[xUnit.net 00:00:00.15]     WebsocketClientLiteTest.ParserRetentionTests.RejectsMalformedFrames(bytes: [140, 0]) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="a920b7ae3df2" outcome="Error" timestamp="2026-11-11T16:51:25.5554352+00:00">
+        <Text>[xUnit.net 00:00:00.15]     WebsocketClientLiteTest.ParserRetentionTests.RejectsMalformedFrames(bytes: [143, 0]) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="a920b7ae3df2" outcome="Error" timestamp="2026-11-11T16:51:25.5556815+00:00">
+        <Text>[xUnit.net 00:00:00.15]     WebsocketClientLiteTest.ParserRetentionTests.RejectsMalformedFrames(bytes: [136, 2, 3, 237]) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="a920b7ae3df2" outcome="Error" timestamp="2026-11-11T16:51:25.5556977+00:00">
+        <Text>[xUnit.net 00:00:00.15]     WebsocketClientLiteTest.ParserRetentionTests.RejectsMalformedFrames(bytes: [135, 0]) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="a920b7ae3df2" outcome="Error" timestamp="2026-11-11T16:51:25.5557125+00:00">
+        <Text>[xUnit.net 00:00:00.15]     WebsocketClientLiteTest.ParserRetentionTests.RejectsMalformedFrames(bytes: [136, 1, 0]) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="a920b7ae3df2" outcome="Error" timestamp="2026-11-11T16:51:25.5557306+00:00">
+        <Text>[xUnit.net 00:00:00.15]     WebsocketClientLiteTest.ParserRetentionTests.RejectsMalformedFrames(bytes: [139, 0]) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="a920b7ae3df2" outcome="Error" timestamp="2026-11-11T16:51:25.5557466+00:00">
+        <Text>[xUnit.net 00:00:00.15]     WebsocketClientLiteTest.ParserRetentionTests.RejectsMalformedFrames(bytes: [131, 0]) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="a920b7ae3df2" outcome="Error" timestamp="2026-11-11T16:51:25.5557632+00:00">
+        <Text>[xUnit.net 00:00:00.15]     WebsocketClientLiteTest.ParserRetentionTests.RejectsMalformedFrames(bytes: [134, 0]) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="a920b7ae3df2" outcome="Error" timestamp="2026-11-11T16:51:25.5557810+00:00">
+        <Text>[xUnit.net 00:00:00.15]     WebsocketClientLiteTest.ParserRetentionTests.RejectsMalformedFrames(bytes: [141, 0]) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="a920b7ae3df2" outcome="Error" timestamp="2026-11-11T16:51:25.5557956+00:00">
+        <Text>[xUnit.net 00:00:00.15]     WebsocketClientLiteTest.ParserRetentionTests.RejectsMalformedFrames(bytes: [132, 0]) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="a920b7ae3df2" outcome="Error" timestamp="2026-11-11T16:51:25.5560437+00:00">
+        <Text>[xUnit.net 00:00:00.15]     WebsocketClientLiteTest.ParserRetentionTests.RejectsMalformedFrames(bytes: [193, 0]) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="a920b7ae3df2" outcome="Error" timestamp="2026-11-11T16:51:25.5560624+00:00">
+        <Text>[xUnit.net 00:00:00.15]     WebsocketClientLiteTest.ParserRetentionTests.RejectsMalformedFrames(bytes: [129, 127, 0, 0, 0, ···]) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="a920b7ae3df2" outcome="Error" timestamp="2026-11-11T16:51:25.5560776+00:00">
+        <Text>[xUnit.net 00:00:00.15]     WebsocketClientLiteTest.ParserRetentionTests.RejectsMalformedFrames(bytes: [145, 0]) [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

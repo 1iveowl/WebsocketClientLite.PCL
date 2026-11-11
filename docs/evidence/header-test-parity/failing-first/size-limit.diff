@@ -1,0 +1,21 @@
+diff -ruN failing-first-size-limit/verification/generated/Masking.g.cs copy/verification/generated/Masking.g.cs
+--- failing-first-size-limit/verification/generated/Masking.g.cs	2026-11-11 16:15:49.000000000 +0000
++++ copy/verification/generated/Masking.g.cs	2026-11-11 16:17:41.431589330 +0000
+@@ -702,7 +702,7 @@
+     {
+       byte _0_op = (byte)((first) & ((byte)(15)));
+       byte _1_marker = (byte)((second) & ((byte)(127)));
+-      return (((((WebsocketClientLite.VerifiedProtocol.Protocol.PrefixValid(first, second)) && ((length) <= (limit))) && ((length) <= (2147483647UL))) && (((length) & (9223372036854775808UL)) == (0UL))) && ((((_1_marker) < ((byte)(126))) ? ((length) == ((ulong)(_1_marker))) : ((((_1_marker) == ((byte)(126))) ? (((126UL) <= (length)) && ((length) <= (65535UL))) : ((length) >= (65536UL))))))) && (((_0_op) < ((byte)(8))) || ((((byte)((first) & ((byte)(128)))) != ((byte)(0))) && ((length) <= (125UL))));
++      return (((((WebsocketClientLite.VerifiedProtocol.Protocol.PrefixValid(first, second)) && (true)) && ((length) <= (2147483647UL))) && (((length) & (9223372036854775808UL)) == (0UL))) && ((((_1_marker) < ((byte)(126))) ? ((length) == ((ulong)(_1_marker))) : ((((_1_marker) == ((byte)(126))) ? (((126UL) <= (length)) && ((length) <= (65535UL))) : ((length) >= (65536UL))))))) && (((_0_op) < ((byte)(8))) || ((((byte)((first) & ((byte)(128)))) != ((byte)(0))) && ((length) <= (125UL))));
+     }
+     public static void DecodeHeader(byte first, byte second, byte[] extended, uint available, ulong limit, out byte status, out ulong length, out uint headerSize)
+     {
+@@ -781,7 +781,7 @@
+       } else {
+         _0_prior = total;
+       }
+-      if ((length) > ((limit) - (_0_prior))) {
++      if (((state) != ((byte)(0))) && ((length) > ((limit) - (_0_prior)))) {
+         return ;
+       }
+       bool _rhs6 = true;
