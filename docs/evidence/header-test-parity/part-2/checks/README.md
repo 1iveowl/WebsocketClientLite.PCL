@@ -52,7 +52,11 @@ passed. `controlled-close` failed at the same step (`retention: failed`), so
 Compared by file, mutator and location with S2's capture (`capture-911f2d4.zip` in
 `docs/evidence/header-traceability/`), 248 of 249 outcomes are the same. One differs: the
 statement mutation that removes `throw handshakeException;` in
-`WebsocketConnectionHandler.cs`, line 95, was killed in S2 and survived here. The
-production code is unchanged since S2, and S4 changed only parser tests, so the cause is
-not established. The mutant has no recorded disposition, so the Stryker job passes.
-`stryker-close-dispositions.json` was not edited.
+`WebsocketConnectionHandler.cs`, line 95, was killed in S2 and survived here. The mutant
+has no recorded disposition, so the Stryker job passes. `stryker-close-dispositions.json`
+was not edited.
+
+When this run was made, the cause was not established. It was investigated after S4's
+receipt: the only test that can detect the mutant does so through a race, so whether it
+is killed depends on timing, not on S4. See
+[../checks-90c156f/README.md](../checks-90c156f/README.md#why-the-line-95-mutant-survived).
