@@ -1271,7 +1271,7 @@
           "id": "HEADER-001-TEST",
           "kind": "test",
           "delivery": "existing",
-          "description": "Require these independent byte, adapter or loopback tests on every supported library target; tests do not prove all inputs. The non-minimal length rows of RejectsMalformedFrames were replayed on 2026-11-11, failing on a779602 and passing on the current source (docs/header-length-validation.md).",
+          "description": "Require these independent byte, adapter or loopback tests on every supported library target; tests do not prove all inputs. The non-minimal length rows of RejectsMalformedFrames were replayed on 2026-11-11, failing on a779602 and passing on the current source (docs/header-length-validation.md). The limit boundary and the 16-bit and 64-bit header truncations were shown failing first on 2026-11-11 (docs/header-test-parity-validation.md).",
           "references": [
             {
               "file": "src/main/WebsocketClientLiteTest/PayloadParsingTests.cs",
@@ -1280,6 +1280,14 @@
             {
               "file": "src/main/WebsocketClientLiteTest/PayloadParsingTests.cs",
               "symbol": "WebsocketClientLiteTest.PayloadParsingTests.ParsesCanonicalServerLengths"
+            },
+            {
+              "file": "src/main/WebsocketClientLiteTest/PayloadParsingTests.cs",
+              "symbol": "WebsocketClientLiteTest.PayloadParsingTests.TruncatedHeadersNeverProduceFrames"
+            },
+            {
+              "file": "src/main/WebsocketClientLiteTest/ParserRetentionTests.cs",
+              "symbol": "WebsocketClientLiteTest.ParserRetentionTests.ConfiguredLimitAcceptsLimitAndRejectsSuccessorFromHeader"
             },
             {
               "file": "src/main/WebsocketClientLiteTest/ParserRetentionTests.cs",
@@ -1372,7 +1380,7 @@
           "id": "HEADER-002-TEST",
           "kind": "test",
           "delivery": "existing",
-          "description": "Require these independent byte, adapter or loopback tests on every supported library target; tests do not prove all inputs.",
+          "description": "Require these independent byte, adapter or loopback tests on every supported library target; tests do not prove all inputs. The header-only read order of every invalid header row and of the limit successor was shown failing first on 2026-11-11 (docs/header-test-parity-validation.md).",
           "references": [
             {
               "file": "src/main/WebsocketClientLiteTest/ParserRetentionTests.cs",
@@ -1381,6 +1389,14 @@
             {
               "file": "src/main/WebsocketClientLiteTest/PayloadParsingTests.cs",
               "symbol": "WebsocketClientLiteTest.PayloadParsingTests.RejectsSequenceBeforeAttemptingPayloadRead"
+            },
+            {
+              "file": "src/main/WebsocketClientLiteTest/ParserRetentionTests.cs",
+              "symbol": "WebsocketClientLiteTest.ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead"
+            },
+            {
+              "file": "src/main/WebsocketClientLiteTest/ParserRetentionTests.cs",
+              "symbol": "WebsocketClientLiteTest.ParserRetentionTests.ConfiguredLimitAcceptsLimitAndRejectsSuccessorFromHeader"
             }
           ]
         },
