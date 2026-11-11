@@ -24,8 +24,11 @@ A local session log of the 7 November work shows the order. `DataframeParsing.cs
 was switched to the verified core at 12:17:40 UTC. `RejectsMalformedFrames` was
 added at 12:20:45. Its only test failures that session were in an unrelated
 handshake test. The test was never run against the old parser, and replay 1 below
-shows it would not have failed. Whether to archive an extract of that log is an
-open owner decision; nothing from it is in this repository.
+shows it would not have failed. The log stays local.
+[original-session-timeline.json](evidence/header-length/original-session-timeline.json)
+is an extract made on 2026-11-11: timestamps, files changed and the result line of
+every test and proof run, with the log's SHA-256 and size so the extract can be
+checked against it.
 
 ## Baseline
 
