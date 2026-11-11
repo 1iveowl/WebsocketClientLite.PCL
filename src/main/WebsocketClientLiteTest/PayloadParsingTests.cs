@@ -166,8 +166,10 @@ public class PayloadParsingTests
     [Fact]
     public async Task Parse_FrameExceedingMaxFrameSize_Throws()
     {
-        // Binary frame, masked, 16-bit length declaring 200 bytes.
-        var frame = new byte[] { 0x82, 0x7E, 0x00, 0xC8 };
+        // Binary frame, unmasked, 16-bit length declaring 200 bytes, against a limit of 100.
+        // The 200 payload bytes are sent, so a parser without the size check would return
+        // the frame instead of failing on EOF with the same exception type.
+        var frame = new byte[] { 0x82, 0x7E, 0x00, 0xC8 }.Concat(new byte[200]).ToArray();
 
         await Assert.ThrowsAsync<WebsocketClientLiteException>(
             () => Parse(frame, maxFrameSize: 100));
@@ -176,8 +178,10 @@ public class PayloadParsingTests
     [Fact]
     public async Task Parse_OversizedControlFrame_Throws()
     {
-        // Ping (control) frame declaring a 200-byte payload (> 125 is illegal).
-        var frame = new byte[] { 0x89, 0x7E, 0x00, 0xC8 };
+        // Ping (control) frame declaring a 200-byte payload (> 125 is illegal). The 200
+        // payload bytes are sent, so a parser without the control length check would return
+        // the frame instead of failing on EOF with the same exception type.
+        var frame = new byte[] { 0x89, 0x7E, 0x00, 0xC8 }.Concat(new byte[200]).ToArray();
 
         await Assert.ThrowsAsync<WebsocketClientLiteException>(() => Parse(frame));
     }
@@ -217,6 +221,9 @@ public class PayloadParsingTests
     [InlineData(new byte[] { 0x83, 0 })]
     [InlineData(new byte[] { 0x81, 126, 0, 125 })]
     [InlineData(new byte[] { 0x81, 127, 0, 0, 0, 0, 0, 0, 255, 255 })]
+    // Combined coverage: bit 63 set, and so also above int.MaxValue and the default limit.
+    // Removing either the bit-63 rule or the size limit leaves this row rejected by the
+    // other, so it cannot show that the bit-63 rule alone is enforced.
     [InlineData(new byte[] { 0x81, 127, 128, 0, 0, 0, 0, 0, 0, 0 })]
     [InlineData(new byte[] { 0x88, 1, 0 })]
     [InlineData(new byte[] { 0x88, 2, 3, 237 })] // forbidden 1005
@@ -232,8 +239,8 @@ public class PayloadParsingTests
     }
 
     // Payload bytes the header announces but the row does not carry. A length above 64 KiB
-    // (the row with bit 63 set) is not padded: the header is refused on that bit alone.
-    private static int MissingPayload(byte[] bytes)
+    // (the row with bit 63 set) is not padded: the header is refused from its length alone.
+    internal static int MissingPayload(byte[] bytes)
     {
         int marker = bytes[1] & 127;
         int headerSize = marker <= 125 ? 2 : marker == 126 ? 4 : 10;

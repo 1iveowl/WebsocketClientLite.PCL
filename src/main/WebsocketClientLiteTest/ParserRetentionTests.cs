@@ -154,6 +154,31 @@ public class ParserRetentionTests
         Assert.True(input.BytesRead == 10 && input.Attempts == 10, "Large admission attempted payload allocation/read");
     }
 
+    // Every invalid header of PayloadParsingTests, sent with the payload it announces, is
+    // refused after exactly the header bytes the decision needs: 2 when the first two bytes
+    // already decide (RSV bits, opcode, mask, control FIN or a control length marker above
+    // 125), otherwise the full 4- or 10-byte header. Attempts equal to the bytes read means
+    // no further read was tried, so no payload byte was read and the stream did not end.
+    // Rows of length 0 there announce one byte here, so that a payload read would show.
+    [Theory]
+    [InlineData(new byte[] { 0xC1, 1 }, 0, 2)] // RSV1
+    [InlineData(new byte[] { 0x83, 1 }, 0, 2)] // reserved opcode 3
+    [InlineData(new byte[] { 0x81, 0x80, 1, 2, 3, 4 }, 0, 2)] // masked server frame
+    [InlineData(new byte[] { 0x09, 1 }, 0, 2)] // fragmented control frame
+    [InlineData(new byte[] { 0x89, 126, 0, 200 }, 0, 2)] // control length above 125
+    [InlineData(new byte[] { 0x81, 126, 0, 125 }, 0, 4)] // non-minimal 16-bit length
+    [InlineData(new byte[] { 0x82, 126, 0, 200 }, 100, 4)] // above the configured limit
+    [InlineData(new byte[] { 0x81, 127, 0, 0, 0, 0, 0, 0, 255, 255 }, 0, 10)] // non-minimal 64-bit length
+    [InlineData(new byte[] { 0x81, 127, 128, 0, 0, 0, 0, 0, 0, 0 }, 0, 10)] // bit 63, not padded
+    public async Task InvalidHeadersRejectBeforePayloadRead(byte[] header, int limit, int read)
+    {
+        using var input = new Input(header.Concat(new byte[PayloadParsingTests.MissingPayload(header)]).ToArray());
+        using var connection = Connection(input, limit);
+        await Assert.ThrowsAsync<WebsocketClientLiteException>(() => connection.ReadDataframeAsync(CancellationToken.None));
+        Assert.True(input.BytesRead == read && input.Attempts == read,
+            $"Invalid header read {input.BytesRead} bytes in {input.Attempts} attempts, expected {read}");
+    }
+
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
