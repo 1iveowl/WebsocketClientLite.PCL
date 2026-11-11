@@ -13,8 +13,18 @@ Outcomes per run: "failed" (the run completed and at least one test failed),
 "passed" (every test passed), "inconclusive" (timeout, no TRX, build failure or
 no test ran). A defect counts as detected by a suite only if every one of its
 runs failed, survived only if every run passed; anything else is reported as it
-is. Nothing is retried."""
-import difflib, hashlib, json, os, subprocess, sys, time
+is. Nothing is retried.
+
+Changed 2026-11-11 after the M3 review of PR #142 (finding 9), after every recorded
+run: a timeout now kills the command's whole process group (MSBuild nodes, testhost
+and its loopback servers), not only the direct dotnet process, and MSBuild node reuse
+is off, so no build node outlives its command. A test the TRX reports as NotExecuted
+(skipped) is counted as skipped, not as a failure, and a run in which no test passed
+is inconclusive. The recorded results in before/, after-function/ and after-shell/
+were made by the earlier version (commit c1d978b). None of their 103 test runs or
+their builds timed out, and no test had an outcome other than Passed or Failed, so neither
+change alters a recorded result."""
+import difflib, hashlib, json, os, signal, subprocess, sys, time
 import xml.etree.ElementTree as ET
 
 catalog_path, side, copy, out = sys.argv[1:5]
@@ -39,15 +49,25 @@ def sha(path):
     return hashlib.sha256(open(path, "rb").read()).hexdigest()
 
 
+env = dict(os.environ, MSBUILDDISABLENODEREUSE="1")
+
+
 def run(cmd, log, timeout):
     start = time.time()
     with open(log, "w") as f:
         f.write("$ " + " ".join(cmd) + "\n")
         f.flush()
+        # A new session, so that a timeout can kill every process the command started.
+        proc = subprocess.Popen(cmd, cwd=copy, stdout=f, stderr=subprocess.STDOUT, env=env, start_new_session=True)
         try:
-            code = subprocess.run(cmd, cwd=copy, stdout=f, stderr=subprocess.STDOUT, timeout=timeout).returncode
+            code = proc.wait(timeout=timeout)
             timed_out = False
         except subprocess.TimeoutExpired:
+            try:
+                os.killpg(proc.pid, signal.SIGKILL)
+            except ProcessLookupError:
+                pass
+            proc.wait()
             code, timed_out = None, True
     return {"command": cmd, "exit": code, "timed_out": timed_out, "seconds": round(time.time() - start, 2), "log": os.path.relpath(log, out)}
 
@@ -57,13 +77,16 @@ def trx(path):
         return None
     root = ET.parse(path).getroot()
     results = root.findall(".//t:UnitTestResult", ns)
-    failed = []
+    failed, skipped = [], []
     for r in results:
-        if r.get("outcome") != "Passed":
+        if r.get("outcome") == "NotExecuted":
+            skipped.append(r.get("testName"))
+        elif r.get("outcome") != "Passed":
             msg = r.find(".//t:Message", ns)
             first = (msg.text or "").strip().splitlines()[0] if msg is not None and msg.text else ""
             failed.append({"test": r.get("testName"), "outcome": r.get("outcome"), "message": first[:300]})
-    return {"total": len(results), "passed": sum(r.get("outcome") == "Passed" for r in results), "not_passed": failed}
+    return {"total": len(results), "passed": sum(r.get("outcome") == "Passed" for r in results),
+            "skipped": skipped, "not_passed": failed}
 
 
 def suite_runs(label):
@@ -83,7 +106,7 @@ def suite_runs(label):
                     os.path.join(d, name + ".log"), 600)
             t = trx(os.path.join(d, name + ".trx"))
             r["trx"] = t
-            if r["timed_out"] or t is None or t["total"] == 0:
+            if r["timed_out"] or t is None or t["passed"] + len(t["not_passed"]) == 0:
                 r["outcome"] = "inconclusive"
             elif r["exit"] != 0 and t["not_passed"]:
                 r["outcome"] = "failed"

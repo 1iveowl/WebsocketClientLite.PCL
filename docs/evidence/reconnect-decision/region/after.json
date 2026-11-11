@@ -1,0 +1,54 @@
+{
+ "made": "2026-11-11",
+ "commit": "bd743b3",
+ "copied_from": "after/count_region_after.py",
+ "file": "src/main/WebsocketClientLite/ClientWebSocketRx.cs",
+ "anchors": {
+  "25": "private readonly object _lifecycleGate",
+  "27": "private LifecycleState _lifecycle;",
+  "159": "// The lifecycle decision is the pure ReconnectDecision.Decide",
+  "162": "private LifecycleEffect Advance(",
+  "167": "}",
+  "259": "return Observable.Create<(IDataframe? dataframe, ConnectionStatus state)>",
+  "320": "});",
+  "340": "protected virtual void Dispose(bool disposing)",
+  "360": "}",
+  "380": "public async ValueTask DisposeAsync()",
+  "393": "}"
+ },
+ "parts": [
+  [
+   "fields",
+   25,
+   27
+  ],
+  [
+   "Advance (new)",
+   159,
+   167
+  ],
+  [
+   "connect observable",
+   259,
+   320
+  ],
+  [
+   "Dispose(bool)",
+   340,
+   360
+  ],
+  [
+   "DisposeAsync",
+   380,
+   393
+  ]
+ ],
+ "state_patterns": {
+  "S5 pattern": "_lifecycleGate|_disposed|_generation|\\bgeneration\\b",
+  "after pattern": "_lifecycleGate|_lifecycle\\b|_disposed|_generation|\\bgeneration\\b|Advance\\(|ReconnectDecision\\."
+ },
+ "new_files": [
+  "src/main/WebsocketClientLite/Helper/ReconnectDecision.cs",
+  "src/main/WebsocketClientLiteTest/ReconnectDecisionTests.cs"
+ ]
+}

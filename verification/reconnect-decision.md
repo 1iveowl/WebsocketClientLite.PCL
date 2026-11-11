@@ -127,7 +127,7 @@ Intent sentences, quoted from `verification/reconnect-intent.md`:
 | 14 | Connect(g) | Og | Og | Install | 265 to 268 | I5 |
 | 15 | Connect(g) | Ox | Ox | Install | 265 to 268 | U1 and U2. Today the generation is not checked: `g`'s sender replaces the current one and `IsConnected` becomes true |
 | 16 | Connect(g) | D0 | D0 | Reject | 265 | Unreachable, as row 7 |
-| 17 | Connect(g) | Dg | Dg | Reject | 265 | I1: disposal is permanent. `SetupAdmissionIsOwnedUntilTeardown` asserts `Sender` is null after disposal during setup |
+| 17 | Connect(g) | Dg | Dg | Reject | 265 | I1: disposal is permanent. No test reaches this row. `SetupAdmissionIsOwnedUntilTeardown` asserts `Sender` is null while its handshake is still held, so before any Connect, and the held handshake then fails on the closed transport (see "Counts" below) |
 | 18 | Connect(g) | Dx | Dx | Reject | 265 | I1 |
 | 19 | Terminate(g) | O0 | O0 | Nothing | 303 | Unreachable, as row 7. `ReferenceEquals(null, g)` is false |
 | 20 | Terminate(g) | Og | Og | NotifyNotConnected | 303 | I6; teardown reports not-connected |
@@ -138,7 +138,7 @@ Intent sentences, quoted from `verification/reconnect-intent.md`:
 | 25 | Dispose | O0 | D0 | CloseAdmission | 331, 368 | I1 |
 | 26 | Dispose | Og | Dg | CloseAdmission | 331, 368 | I1, I2 |
 | 27 | Dispose | Ox | Dx | CloseAdmission | 331, 368 | I1, I2. Dispose has no generation, so rows 26 and 27 are the same row |
-| 28 | Dispose | D0 | D0 | Nothing | 331, 368 | I1: idempotent. `DisposeAsync` always reaches this row once, through `Dispose(true)` |
+| 28 | Dispose | D0 | D0 | Nothing | 331, 368 | I1: idempotent. `DisposeAsync` reaches one of rows 28 to 30 once, through `Dispose(true)`: this row when no subscription was ever admitted, row 29 or 30 otherwise |
 | 29 | Dispose | Dg | Dg | Nothing | 331, 368 | As row 28 |
 | 30 | Dispose | Dx | Dx | Nothing | 331, 368 | As row 28 |
 
@@ -322,7 +322,8 @@ numbers, their commands and raw output are in
 `docs/evidence/reconnect-decision/after/` (its `README.md` lists every file). All
 numbers are local measurements on one host, with other step sessions running at the
 same time. Every timed run held the shared timing lock, and the processes running
-before each timed command are recorded beside it.
+before each timed command are recorded beside it, reduced to process names on
+2026-11-11 (see the evidence README).
 
 ### The change
 
@@ -391,9 +392,10 @@ the successor's echo. They all stay in place.
 
 Timed with S5's commands (`after/timing/measure.sh`). The after copy and the base copy
 ran back to back under one hold of the lock, from 22:31:57 to 22:35:23 UTC. During
-both, another session ran a Dafny protocol capture with mutations
-(`processes.txt`), so these runs had more load than S5's (load average 3 to 5 on 32
-CPUs, against 0.1 to 1.6).
+both, another session ran a Dafny protocol capture with mutations (`processes.txt`,
+where they now show as `dotnet Pdd.dll` because the lists were reduced to process
+names on 2026-11-11), so these runs had more load than S5's (load average 3 to 5 on
+32 CPUs, against 0.1 to 1.6).
 
 | Run | S5, `fa96d59`, alone | S6 rerun, `fa96d59`, under the lock | S6 after, `bd743b3`, under the lock |
 | --- | ---: | ---: | ---: |
@@ -405,10 +407,26 @@ CPUs, against 0.1 to 1.6).
 | `pdd.sh reconnect-defect` | 16.93 | 16.72 | 17.00 |
 | `ReconnectDecisionTests`, net10.0, `--no-build`, three runs | | | 0.70, 0.70, 0.70 (cases sum to 0.012 to 0.013) |
 
-All values are wall seconds. The reconnect suite takes the same time after the change:
-the differences are at most 0.07 seconds, within the spread of each column. The three
-cases of about 3.05 seconds each still account for 9.2 of the 9.2 seconds; the
-decision was never where the time went. The build is faster in both S6 runs than in
+All values are wall seconds. Corrected on 2026-11-11 after the M3 review (finding 3):
+an earlier version said the differences were at most 0.07 seconds, which holds for some
+rows only. The largest differences are:
+
+- after against the S6 rerun, made under the same hold of the lock: 0.05 seconds for
+  the three `--no-build` runs (9.92 to 9.97 against 9.92 to 9.94), 0.06 seconds with
+  build (netstandard2.1, net8.0, net9.0), and 0.28 seconds for `pdd.sh reconnect-defect`
+  (17.00 against 16.72);
+- after against S5, made alone: 0.06 seconds for `--no-build` (9.92 against 9.98),
+  0.23 seconds with build (netstandard2.0, 10.57 against 10.80), and 0.07 seconds for
+  `reconnect-defect`.
+
+Only the `--no-build` row has three runs per column; there the after runs and the rerun
+overlap, and the sums of case durations differ by at most 0.02 seconds. Every other row
+is one run per column, so its differences, up to 0.28 seconds and in both directions,
+cannot be told apart from run-to-run noise. The S5 rerun on the same commit differs from
+S5 by as much (0.26 seconds for netstandard2.1, 0.21 for `reconnect-defect`). These runs
+therefore show no change in the reconnect suite's run time that they can resolve; they
+do not show that the times are equal. The three cases of about 3.05 seconds each account
+for 9.2 of the 9.2 seconds of case time, so the decision was not where the time went. The build is faster in both S6 runs than in
 S5's because the compiler server was already running; the two S6 runs compare with
 each other, not with S5's build.
 
@@ -533,7 +551,7 @@ The criterion is additional assurance per unit of maintained machinery.
 - What it does not change: the function mirrors the six lock sites one to one. Each
   site still branches once on the decision, so the shell has 8 such lines in place of
   7. No lock site, stateful line, expensive test or shell guarantee is removed, and
-  the reconnect suite takes the same time. The defects that matter here survive every
+  the timing runs resolve no change in the reconnect suite's run time. The defects that matter here survive every
   test in the shell's form just as they did before. The four conditions and three
   assignments of today's rule are not where the risk is; their use by the shell is.
 - Cost: two new files (38 code lines, 138 test code lines), five new internal types
@@ -548,7 +566,12 @@ with the report.
 Two findings stand without the function and are listed for the owner, not acted on
 here: no test checks that `IsConnected` becomes false when a connection ends, and rows
 11 and 17 (Register or Connect after disposal) are reached by no test. A loopback
-assertion on the final `IsConnected` value would, by reading, catch the surviving
-"does not store the generation" and "passes no identity" defects in either code
-shape; that was not run. Rows 11 and 17 need a controlled schedule either way. If U1
+assertion that `IsConnected` is false after a connection ends would, by reading, catch
+two of the surviving defects: "does not store the generation"
+(`subscribe-keeps-generation`, rows 1 to 3), which survives before the change and in the
+function, and "passes no identity" (`terminate-passes-no-identity`, rows 20 and 23),
+which exists only on the shell's side. The shell's form of the first, `shell-skips-store`,
+is already detected by `DisposedClientRejectsAdmission`, because it also loses the
+disposal. Corrected on 2026-11-11 after the M3 review (finding 5): an earlier version
+said the assertion would catch both defects "in either code shape". It was not run. Rows 11 and 17 need a controlled schedule either way. If U1
 is decided later, the function and its tests in `bd743b3` are the starting point.
