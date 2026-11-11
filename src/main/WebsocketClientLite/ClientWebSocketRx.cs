@@ -14,7 +14,6 @@ using System.Threading;
 using System.Net.Sockets;
 using WebsocketClientLite.Factory;
 using IWebsocketClientLite;
-using WebsocketClientLite.Helper;
 using WebsocketClientLite.Service;
 
 namespace WebsocketClientLite;
@@ -23,8 +22,8 @@ public class ClientWebSocketRx : IWebSocketClientRx, IDisposable, IAsyncDisposab
 {
     private readonly CompositeDisposable _disposables = [];
     private readonly object _lifecycleGate = new();
-    // Read and written only under _lifecycleGate, through Advance.
-    private LifecycleState _lifecycle;
+    private bool _disposed;
+    private object? _generation;
     private readonly IObserver<bool> _observerIsConnected;
 
     // Connections created by active subscriptions. Tracked so DisposeAsync can
@@ -156,16 +155,6 @@ public class ClientWebSocketRx : IWebSocketClientRx, IDisposable, IAsyncDisposab
         }
     }
 
-    // The lifecycle decision is the pure ReconnectDecision.Decide
-    // (verification/reconnect-decision.md). The caller holds _lifecycleGate and
-    // performs the returned effect before it releases the lock.
-    private LifecycleEffect Advance(LifecycleEvent lifecycleEvent, object? subscription)
-    {
-        var step = ReconnectDecision.Decide(_lifecycle, lifecycleEvent, subscription);
-        _lifecycle = step.Next;
-        return step.Effect;
-    }
-
 
     /// <summary>
     /// Is using a secure connection scheme. Override for anything but default behavior.
@@ -261,19 +250,19 @@ public class ClientWebSocketRx : IWebSocketClientRx, IDisposable, IAsyncDisposab
             var generation = new object();
             lock (_lifecycleGate)
             {
-                if (Advance(LifecycleEvent.Subscribe, generation) != LifecycleEffect.Admit)
+                if (_disposed)
                 {
                     obsTuple.OnError(new ObjectDisposedException(nameof(ClientWebSocketRx)));
                     return Disposable.Empty;
                 }
+                _generation = generation;
             }
 
             void InitSender(ISender sender, IEnumerable<string>? negotiatedSubprotocols)
             {
                 lock (_lifecycleGate)
                 {
-                    if (Advance(LifecycleEvent.Connect, generation) != LifecycleEffect.Install)
-                        throw new ObjectDisposedException(nameof(ClientWebSocketRx));
+                    if (_disposed) throw new ObjectDisposedException(nameof(ClientWebSocketRx));
                     Sender = sender;
                     NegotiatedSubprotocols = negotiatedSubprotocols;
                     SetIsConnected(true);
@@ -289,8 +278,7 @@ public class ClientWebSocketRx : IWebSocketClientRx, IDisposable, IAsyncDisposab
                     {
                         lock (_lifecycleGate)
                         {
-                            if (Advance(LifecycleEvent.Register, generation) != LifecycleEffect.Register)
-                                throw new ObjectDisposedException(nameof(ClientWebSocketRx));
+                            if (_disposed) throw new ObjectDisposedException(nameof(ClientWebSocketRx));
                             service = WebsocketClientFactory.Create(
                                 () => IsSecureConnectionScheme(uri), ValidateServerCertificate, obsStatus, this);
                             _activeConnections.TryAdd(service, 0);
@@ -312,8 +300,7 @@ public class ClientWebSocketRx : IWebSocketClientRx, IDisposable, IAsyncDisposab
             {
                 lock (_lifecycleGate)
                 {
-                    if (Advance(LifecycleEvent.Terminate, generation) == LifecycleEffect.NotifyNotConnected)
-                        SetIsConnected(false);
+                    if (ReferenceEquals(_generation, generation)) SetIsConnected(false);
                 }
             })
             .Subscribe(state => obsTuple.OnNext((null, state)), obsTuple.OnError, obsTuple.OnCompleted);
@@ -341,8 +328,7 @@ public class ClientWebSocketRx : IWebSocketClientRx, IDisposable, IAsyncDisposab
     {
         if (disposing)
         {
-            // Closes admission. The drain below runs on every call, whatever the effect.
-            lock (_lifecycleGate) _ = Advance(LifecycleEvent.Dispose, null);
+            lock (_lifecycleGate) _disposed = true;
             // Abrupt teardown of any still-active connection: the close
             // handshake is attempted best-effort within a bound (see
             // WebsocketConnectionHandler.Dispose). Prefer DisposeAsync /
@@ -379,7 +365,7 @@ public class ClientWebSocketRx : IWebSocketClientRx, IDisposable, IAsyncDisposab
     /// </summary>
     public async ValueTask DisposeAsync()
     {
-        lock (_lifecycleGate) _ = Advance(LifecycleEvent.Dispose, null);
+        lock (_lifecycleGate) _disposed = true;
         foreach (var ws in _activeConnections.Keys)
         {
             if (_activeConnections.TryRemove(ws, out _))
