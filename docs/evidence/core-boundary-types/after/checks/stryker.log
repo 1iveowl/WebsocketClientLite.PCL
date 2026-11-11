@@ -1,0 +1,48 @@
+Tool 'dotnet-stryker' (version '5.0.0') was restored. Available commands: dotnet-stryker
+
+Restore was successful.
+Stryker log: /home/vscode/worktrees/s7/artifacts/s8/pdd/stryker/reports/run-4E9dAk.log
+
+   _____ _              _               _   _ ______ _______  
+  / ____| |            | |             | \ | |  ____|__   __| 
+ | (___ | |_ _ __ _   _| | _____ _ __  |  \| | |__     | |    
+  \___ \| __| '__| | | | |/ / _ \ '__| | . ` |  __|    | |    
+  ____) | |_| |  | |_| |   <  __/ |    | |\  | |____   | |    
+ |_____/ \__|_|   \__, |_|\_\___|_| (_)|_| \_|______|  |_|    
+                   __/ |                                      
+                  |___/                                       
+
+
+Version: 5.0.0
+
+[22:39:12 INF] Stryker will use a max of 8 parallel testsessions.
+[22:39:12 INF] Analysis starting.
+[22:39:12 INF] Using project configuration/platform 'Release|`default`'.
+[22:39:12 INF] Analyzing 1 test project(s).
+[22:39:14 INF] Found project /home/vscode/worktrees/s7/src/main/WebsocketClientLite/WebsocketClientLite.csproj to mutate.
+[22:39:14 INF] Analysis complete.
+[22:39:14 INF] Building test project /home/vscode/worktrees/s7/src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj (1/1)
+[22:39:14 INF] Building project WebsocketClientLiteTest.csproj using dotnet build WebsocketClientLiteTest.csproj -c Release --property:Platform=AnyCPU (directory /home/vscode/worktrees/s7/src/main/WebsocketClientLiteTest.)
+[22:39:16 INF] Number of tests found: 280 for project /home/vscode/worktrees/s7/src/main/WebsocketClientLite/WebsocketClientLite.csproj. Initial test run started.
+[22:40:14 INF] 954 mutants created
+[22:40:14 INF] Capture mutant coverage using 'CoverageBasedTest, DisableMixMutants' mode.
+Hint: by passing "--open-report or -o" the report will open automatically and 
+update the report in real-time.
+[22:41:11 INF] 48    mutants got status CompileError. Reason: Mutant caused compile errors
+[22:41:11 INF] 7     mutants got status NoCoverage.   Reason: Not covered by any test.
+[22:41:11 INF] 26    mutants got status Ignored.      Reason: Removed by block already covered filter
+[22:41:11 INF] 804   mutants got status Ignored.      Reason: Removed by mutate filter
+[22:41:11 INF] 885   total mutants are skipped for the above mentioned reasons
+[22:41:11 INF] 69    total mutants will be tested
+........S.SS.S...SSSSSSS.S.S..SS.S.S...S..S...SS.........S....S.SS.SS
+
+Your json report has been generated at:
+file:///home/vscode/worktrees/s7/artifacts/s8/pdd/stryker/reports/reports/mutati
+on-report.json
+
+Your html report has been generated at:
+file:///home/vscode/worktrees/s7/artifacts/s8/pdd/stryker/reports/reports/mutati
+on-report.html
+You can open it in your browser of choice.
+[22:45:24 INF] Time Elapsed 00:06:11.6910291
+[22:45:24 INF] The final mutation score is 55.26 %

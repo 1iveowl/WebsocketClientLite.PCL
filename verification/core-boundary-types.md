@@ -1,9 +1,10 @@
 # Experiment 2: named types at the boundary of the verified core
 
 Written 2026-11-11 in step S7 of [the 10.3 session plan](../docs/pdd-10.3-session-plan.md)
-(Appendix B, Experiment 2, items 1 and 3, before numbers only). This is the baseline.
-The adapter, the after numbers, the per-entry result and the recommendation belong to
-S8. No production, test, Dafny or generated file was changed in S7.
+(Appendix B, Experiment 2, items 1 and 3, before numbers only). Sections 1 to 3 are
+the baseline; no production, test, Dafny or generated file was changed in S7. Step S8
+added sections 4 to 8 on the same day: the adapter, the after numbers, the per-entry
+result and the recommendation (adopt).
 
 Base commit: `fa96d59` (`origin/releases/10.3.0.0` when S7 started, after #136 was
 merged). Evidence: [`docs/evidence/core-boundary-types/baseline/`](../docs/evidence/core-boundary-types/baseline/).
@@ -229,7 +230,7 @@ comment.
 | `./scripts/pdd.sh validate` | run and passed, 16 requirements |
 | Five-target matrix, coverage gate, Pdd tests, `dafny-masking.sh --check`, mutation suite, capture jobs | not run: S7 changes no code, and its brief asks for the before numbers only |
 
-## Decisions for owner review
+## Decisions for owner review (S7)
 
 1. **Three benchmark runs, not one.** The README describes one run. S7 ran the same
    command three times so that S8 has a spread to compare its after numbers against
@@ -257,3 +258,326 @@ comment.
 6. **The double transition (observation).** `Admit` computes the same `Step` that
    `WebsocketParserHandler` then computes again. Nothing was changed. It matters to S8
    only if an adapter would wrap both calls.
+
+## 4. The adapter (S8)
+
+Written 2026-11-11 in step S8 (Appendix B, Experiment 2, items 2, 3 after and 4).
+Production commit: `13ed44f`, on top of S7's `d5c648d`. It holds the production change
+and its plain tests only, so that it can be reverted on its own. The Dafny sources and
+the generated file are unchanged. Evidence:
+[`docs/evidence/core-boundary-types/after/`](../docs/evidence/core-boundary-types/after/)
+and [`decision-path/`](../docs/evidence/core-boundary-types/decision-path/).
+
+### What it is
+
+`src/main/WebsocketClientLite/Helper/CoreBoundaryTypes.cs` adds four internal
+`readonly struct`s. Each holds one `readonly byte`, has one private constructor and no
+conversion into the type:
+
+| Type | Codes | Values come only from | Wrapper that forwards to the generated method |
+| --- | --- | --- | --- |
+| `ReceiveState` | 0, 1, 2, 8 | `Idle` (= `default`), `FromCode` (throws for any other byte), `Step`'s ensured `next` | `ReceiveState.Step` → `Protocol.Step`. The two `Protocol.Admit` calls take a `ReceiveState` through an implicit conversion to `byte`. |
+| `TransmitState` | 0, 1, 2, 8, 15 (`TxState`) | `Idle` (= `default`), `SendStep`'s ensured `next`, `SendFailed`'s result (8 or 15) | `TransmitState.SendStep`, `TransmitState.SendFailed` |
+| `CloseState` | 0..7 | `Open` (= `default`), `CloseStep`'s ensured `next` | `CloseState.Step` → `Protocol.CloseStep` |
+| `CloseEvent` | 0, 1, 2 | `Send` (= `default`), `Received`, `TimeoutOrFailure` | (argument of `CloseState.Step`) |
+
+The call sites after the change, by S7's IDs:
+
+| ID | Before | After |
+| --- | --- | --- |
+| D1, D2 | `Protocol.Admit(..., state, total, ...)` with `byte state` | Same text. `state` is a `ReceiveState` parameter of `DataframeParsing.ReadDataframeAsync(ReceiveState, uint, CancellationToken)`. |
+| D3 | `Protocol.Step(state, ...)`, `byte state` | `ReceiveState.Step(state, ..., out ReceiveState next, ...)`; `state == 8` and `state == 0` become `state.IsClosed` and `state.IsIdle` |
+| D4 | `AdvanceClose(byte action)`, callers pass 0, 1, 2, 2 | `AdvanceClose(CloseEvent action)`, callers pass `CloseEvent.Send`, `Received`, `TimeoutOrFailure`, `TimeoutOrFailure`; `_closeState` is a `CloseState`; `(_closeState & 6) != 0` and `_closeState != 0` become `ReceivedOrTerminal` and `Started` |
+| D5 | `Protocol.SendStep(_sendState, ...)`, `byte _sendState` | `TransmitState.SendStep(...)`, `_sendState` is a `TransmitState` |
+| D6, D7 | `Protocol.SendFailed(_sendState)` | `TransmitState.SendFailed(_sendState)` |
+| D8, D9, D10, D11 | `Outgoing`, `CloseValid`, `HandshakeValid` | Unchanged: these have no `requires`, so there is no illegal call to make unrepresentable. A type over their opcode, fragment or boolean inputs would only rename them. |
+| E1, H1-H4, X1 | header encoding and byte loops | Unchanged, as the brief says |
+
+Tests call `ReadDataframeAsync(ct, 2, retained)` and `ReadDataframeAsync(ct)` with raw
+codes (`ParserRetentionTests`, `PayloadParsingTests`) and must stay unchanged. That
+entry point is kept in its own class, `DataframeParsingRawState`. It converts with
+`ReceiveState.FromCode`, so an illegal code throws `ArgumentOutOfRangeException` before
+any byte is read. Production does not call it. It is in its own class so that
+`DataframeParsing.ReadDataframeAsync`, which `requirements.json` and `boundaries.json`
+name, stays one declaration (section 8, decision 6).
+
+### Can a caller construct an out-of-range state or event? (Done when 1)
+
+No, in safe C#. The evidence is in the plain tests in
+`src/main/WebsocketClientLiteTest/CoreBoundaryTypesTests.cs`:
+
+- `OnlyPrivateConstructorsAndOneByteField`: each type is a readonly struct with one
+  private constructor, one readonly `byte` field and no conversion into the type.
+- `DefaultIsCodeZeroAndNamedZeroInstances`: `default(T)` is code 0, which is legal for
+  each of the four ranges.
+- `FromCodeAcceptsExactlyTheReceiveStates`: all 256 bytes; exactly 0, 1, 2 and 8 convert.
+- `ReceiveStepMatchesStepAndReachesExactlyTheReceiveStates`,
+  `TransmitStepMatchesSendStepAndReachesExactlyTxState`,
+  `CloseStepMatchesCloseStepAndStaysWithinSevenBits`: from the zero value, every
+  wrapper is applied to every reachable state with every opcode, FIN flag and event
+  (and several totals and lengths for `Step`). Every result equals the generated
+  method's, and the reachable codes are exactly {0, 1, 2, 8}, exactly `TxState`'s
+  {0, 1, 2, 8, 15}, and within 0..7.
+- `RawReadRejectsAnIllegalStateBeforeReadingAnyByte`: state 3 through the raw entry
+  throws and the stream position stays 0; state 0 reads the frame.
+- `WrappersDoNotAllocate`: 10,000 rounds of every wrapper allocate 0 bytes on the thread.
+
+What the types do not stop, stated exactly:
+
+- **Outside safe C#.** Reflection (`FieldInfo.SetValue` on a boxed value),
+  `Unsafe.As` or unsafe code can write any byte into the field. The library has no
+  unsafe code and no `AllowUnsafeBlocks`; its tests use reflection only to set
+  `TcpConnectionService._stream`.
+- **`default(CloseEvent)` is `Send`.** It is a legal event, so a forgotten argument
+  cannot become illegal, but it is the event that requests a Close.
+- **Relations, not ranges.** `total <= limit` (D1-D3), `available <= extended.Length`
+  (D2), the `Merge` total (H3) and every `Size` range stay as they were: the type
+  holds a code, not a relation between two values. See decision 4 for a cursor that
+  would cover `total <= limit`.
+- **The raw entry point.** `DataframeParsingRawState.ReadDataframeAsync` takes a byte
+  and checks it at run time. That is a check, not a type.
+
+### Seeded defects in the adapter
+
+`after/seeded/seed.sh` copies `13ed44f` with `git archive`, changes one line of
+`CoreBoundaryTypes.cs` and runs only `CoreBoundaryTypesTests` (Release, net10.0). Each
+`.meta` has the source and mutant hashes.
+
+| Defect | Edit | Result |
+| --- | --- | --- |
+| none (control) | no change | 11 of 11 passed |
+| `fromcode-accepts-3` | `FromCode` also accepts 3 | 2 failed: `FromCodeAccepts...`, `RawReadRejects...` |
+| `received-is-event-2` | `CloseEvent.Received` is code 2 | 2 failed: `DefaultIsCodeZero...`, `WrappersDoNotAllocate` (its value check) |
+| `sendstep-keeps-state` | `SendStep` returns the old state | 1 failed: `TransmitStepMatches...` |
+| `step-drops-state` | `Step` passes state 0 to the core | 2 failed: `ReceiveStepMatches...`, `WrappersDoNotAllocate` (its value check) |
+
+The plain tests alone catch each one. The existing seeded-defect checks (`pdd.sh
+capture --job controlled`) still patch the same text: the `late-scratch` anchor
+`Protocol.Admit(b0, b1, ext, (uint)count, state, total, ...` and the `control-total`
+anchor `total = size;` / `obs.OnNext(frame);` each still occur exactly once.
+
+## 5. `boundaries.json` after the adapter
+
+Not edited. Proposed wording only.
+
+| Entry | Now enforced by the types | Unchanged | Proposed wording |
+| --- | --- | --- | --- |
+| CLOSE-LOCK | "initial state is zero and events are 0..2": `_closeState` is a `CloseState` whose default is 0 and whose other values come only from `CloseStep`; an event is a `CloseEvent`, which has three values. `AdvanceClose(3)` no longer compiles. | All `CloseStep` calls serialize under `_stateLock`. | "All CloseStep calls serialize access to the same sender state under _stateLock. The state and event ranges are carried by CloseState and CloseEvent (Helper/CoreBoundaryTypes.cs); they rely on the C# type system, not on callers." |
+| HEADER-ADAPTER | "the parser's message state": a `ReceiveState`, so in {0, 1, 2, 8}. | The retained total and `total <= limit`; "exactly the extended-length bytes read after them with their count"; the configured limit; read order on status 0 and 2. | "ReadDataframeAsync passes Admit the two prefix bytes, exactly the extended-length bytes read after them with their count, the configured limit, the parser's message state as a ReceiveState and its retained total, which does not exceed the limit; it reads more header bytes only on status 0 and reads or allocates the payload only on status 2." |
+| REASSEMBLY-TOTALS | Nothing. `Step`, which computes the total, now takes a typed state. | The total equals the sum of the segment lengths: a relation. | None |
+| MASK-ADAPTER | Nothing (byte loops, out of scope). | All | None |
+| PAYLOAD-OWNERSHIP, NATIVE-COPY | Nothing | All (aliasing, ownership, `Buffer.BlockCopy`) | None |
+| CLOSE-WRITE, CLOSE-FAILURE, CLOSE-TIMER, CLOSE-OBSERVER | Nothing: their assumptions have no value part (section 2). | All | None |
+| WRITE-PROGRESS, EPOCH-PROGRESS | Untouched: they cover no core call. | All | None |
+
+Section 2 found that no entry states D5's `TxState` precondition. It is now a property
+of `TransmitState`, so it no longer needs an entry. D7, D8, D10 and D11 still have no
+owner. D8, D10 and D11 have no precondition, and the adapter does not change D7's owner.
+
+## 6. After numbers
+
+Local measurements on the same machine as section 3, `DOTNET_TieredCompilation=0`,
+Release. Every timed run used `flock ~/worktrees/.timing.lock`. Each `.meta` holds the
+`ps -eo pid,etime,args | grep -E 'claude -p|dotnet' | grep -v grep` output and the
+load taken inside the lock just before the run. Other sessions (S6 and the #140 fix
+session) were running; the one-minute load average was 0.65 to 1.60, against 0.58 to
+0.73 for the baseline. Every run is reported. The first after runs measured
+`6646466`, an earlier version of the production commit. They are kept in
+`after/superseded-6646466/` with a note (section 8, decision 8).
+
+### The README benchmark, three runs (`after/benchmark-run-N.*`)
+
+The benchmark compiles `VerifiedNativeCopy.cs`, `Masking.g.cs` and
+`WebsocketMasking.cs`. None of them differs between `d5c648d` and `13ed44f`
+(`git diff --stat` is empty), so the change cannot affect these numbers. They were
+rerun as the brief asks. Verified medians in ns, runs 1 / 2 / 3; "previous" is the
+benchmark's unchanged scalar reference in the same run.
+
+| Kernel | Bytes | Verified before (S7) | Verified after | Previous, after runs | Allocated after |
+| --- | ---: | --- | --- | --- | --- |
+| `Masking.Apply` | 0 | 2.61 / 2.58 / 2.58 | 2.75 / 2.75 / 2.58 | 1.90 / 1.90 / 1.78 | 0 |
+| `Masking.Apply` | 4 | 3.29 / 3.21 / 3.25 | 3.34 / 3.59 / 3.33 | 2.54 / 2.53 / 2.37 | 0 |
+| `Masking.Apply` | 125 | 35.43 / 35.86 / 35.01 | 37.25 / 37.42 / 34.94 | 36.28 / 36.24 / 33.94 | 0 |
+| `Masking.Apply` | 1024 | 284.32 / 282.48 / 281.66 | 299.63 / 301.65 / 281.45 | 297.64 / 297.60 / 278.87 | 0 |
+| `Masking.Apply` | 65536 | 17402.09 / 17385.86 / 17345.90 | 18469.14 / 18463.30 / 17305.01 | 18468.92 / 18461.46 / 17289.59 | 0 |
+| `Masking.Apply` | 1048576 | 277896.28 / 277893.31 / 277662.95 | 295140.52 / 295523.65 / 276429.48 | 295111.55 / 295484.35 / 276528.48 | 0 |
+| `CopyMasked` | 125 | 44.16 / 44.15 / 44.24 | 46.97 / 46.97 / 44.18 | 54.48 / 54.49 / 51.34 | 0 |
+| `CopyMasked` | 1024 | 369.07 / 372.59 / 366.08 | 388.92 / 391.65 / 367.49 | 441.48 / 441.72 / 416.96 | 0 |
+| `CopyMasked` | 65536 | 22994.08 / 22973.08 / 22956.65 | 24446.05 / 24466.11 / 22964.74 | 27671.12 / 27714.82 / 25960.54 | 0 |
+| `MaskSlice` | 125 | 51.62 / 51.70 / 51.60 | 54.86 / 54.96 / 51.56 | 58.16 / 58.21 / 59.76 | 0 |
+| `MaskSlice` | 1024 | 427.83 / 425.46 / 428.88 | 455.38 / 452.53 / 426.44 | 484.19 / 487.08 / 454.96 | 0 |
+| `MaskSlice` | 65536 | 26533.27 / 26551.39 / 26532.98 | 28202.36 / 26574.97 / 26547.70 | 30112.44 / 28239.99 / 28304.65 | 0 |
+| `Merge` (bulk) | 1024 | 40.17 / 40.21 / 39.93 | 43.34 / 41.76 / 41.23 | `BlockCopy` 41.06 / 39.59 / 38.92 | not reported |
+| `Merge` (bulk) | 65536 | 1071.55 / 1077.77 / 1068.76 | 1136.04 / 1096.60 / 1081.88 | `BlockCopy` 1153.51 / 1087.61 / 1065.37 | not reported |
+| `MergeScalar` | 1024 | 306.16 / 303.46 / 299.09 | 312.59 / 306.43 / 304.49 | | not reported |
+| `MergeScalar` | 65536 | 14836.42 / 14892.28 / 14835.32 | 15790.08 / 14939.75 / 14894.43 | | not reported |
+
+After runs 1 and 2 are 5 to 7% slower than the baseline in almost every row, and the
+unchanged previous-scalar reference is slower by the same amount in the same runs,
+so the verified-to-previous ratios match the baseline (for example 1.000 at
+1 MiB, 0.883 for `CopyMasked` at 65536). Run 3 is within 0.5% of the baseline in
+every masking row. The shift is the machine under the parallel sessions' load, not the
+code, whose inputs are identical. Every masking row allocated 0 bytes. S8 compares
+medians run by run, as section 3 asks.
+
+### The decision path (`decision-path/`)
+
+The README benchmark runs only the byte loops (section 8, decision 1). To measure the
+per-frame paths that the typed calls sit on, `decision-path/Program.cs` compiles the
+library source into a probe. It reads 20,000 frames from a `MemoryStream` through
+`WebsocketParserHandler.DataframeObservable` (D1-D3, H3), and sends 20,000 frames
+through `WebsocketSenderHandler` with a write delegate that does nothing (D5, D9, E1,
+H1, H2). Each scenario has one warm-up and seven trials; the median is reported.
+Allocation is `GC.GetTotalAllocatedBytes(true)` over a trial divided by the frames,
+setup included. `run.sh` built the probe against a `git archive` of `d5c648d`
+(before, recorded before any code change) and of `13ed44f` (after), and ran each
+three times.
+
+| Scenario | ns/frame before, runs 1 / 2 / 3 | ns/frame after | Bytes/frame before | Bytes/frame after |
+| --- | --- | --- | ---: | ---: |
+| receive binary 16 B | 136.2 / 135.4 / 115.6 | 111.0 / 110.7 / 119.2 | 208.26 | 208.26 |
+| receive text 125 B | 151.4 / 122.8 / 127.3 | 122.2 / 123.5 / 125.6 | 320.28 | 320.28 |
+| receive binary 200 B (16-bit length) | 163.7 / 160.8 / 168.7 | 158.3 / 159.9 / 162.5 | 392.28 | 392.28 |
+| receive fragmented 2 × 8 B | 125.1 / 126.3 / 130.8 | 126.6 / 123.9 / 123.9 | 216.28 | 216.28 |
+| receive Ping + text 16 B | 106.2 / 108.1 / 112.2 | 107.6 / 105.6 / 107.6 | 180.28 | 180.28 |
+| send binary 16 B | 688.5 / 689.9 / 734.0 | 683.4 / 706.2 / 692.6 | 104.12 | 104.12 |
+| send text 125 B | 783.7 / 787.0 / 831.7 | 777.4 / 780.7 / 778.4 | 104.14 | 104.14 |
+
+Bytes per frame are identical before and after in every scenario and in every trial
+(minimum equals maximum in each `.out`). So the change adds no allocation on these
+per-frame paths. The times overlap: the run-to-run spread, up to 19% before, is larger
+than any difference between before and after. The probe does not isolate the
+decision calls; it bounds their cost inside the real path.
+
+### Lines
+
+| Scope | Total lines | Code lines |
+| --- | ---: | ---: |
+| `Helper/CoreBoundaryTypes.cs` (new) | 111 | 56 |
+| `Helper/DataframeParsing.cs` | 90 → 102 | 75 → 82 |
+| `Service/WebsocketParserHandler.cs` | 73 → 73 | 65 → 65 |
+| `Service/WebsocketSenderHandler.cs` | 492 → 492 | 417 → 417 |
+| Production, net | +124 | +63 |
+| `CoreBoundaryTypesTests.cs` (new) | 190 | 177 |
+
+"Code" counts lines that are neither blank nor only a `//` or `///` comment, as in
+section 3. Calls from production straight into a typed generated method
+(`Step`, `Admit`, `SendStep`, `SendFailed`, `CloseStep`) went from 7 call expressions
+(D1-D7) in 3 files to the 2 `Admit` lines, which take a `ReceiveState`, plus the 4
+forwarding calls inside the wrappers.
+
+### Redundant tests
+
+None. No existing test passed an out-of-range state or event to production code;
+the preconditions made that undefined. `ProtocolCoreTests` and `ProtocolStateTests`
+call the generated core with raw codes on purpose and still test the core itself.
+`ParserRetentionTests` and `PayloadParsingTests` use the raw entry point, which still
+exists. No test was changed or deleted.
+
+### Checks in S8
+
+Run on `76564f1`, a clean tree (`git status --porcelain` empty before and after), in
+this order, as `artifacts/s8/checks.txt` records (copied to `after/checks/`). These
+were not timed measurements and did not take the timing lock; no duration from them
+is reported as a measurement.
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Build | `dotnet build src/main/WebsocketClientLite.sln -c Release` | run and passed, 0 warnings, 0 errors |
+| Pdd tests | `dotnet test tools/Pdd.Tests/Pdd.Tests.csproj -c Release` | run and passed |
+| Requirement map | `./scripts/pdd.sh validate` | run and passed, 16 requirements |
+| Verifier and generated-code check | `capture --job protocol` (`./scripts/dafny-masking.sh --check`) | run and passed. Last line: `Dafny program verifier finished with 41 verified, 0 errors` |
+| Dafny mutations | `capture --job protocol` (`./scripts/pdd.sh mutations`) | run and passed: baseline passed, 17 of 17 detected. No mutant took more than a third of its budget (lesson 3). |
+| Five-target matrix | `capture --job tests` (`./test-all-tfms.sh Release`) | run and passed, 280 of 280 on each of the five library builds (host .NET 10.0.14) |
+| Coverage gate | `capture --job tests` (`./scripts/check-coverage.sh ... 70`) | run and passed, line coverage 83.5% |
+| Controlled and seeded-defect checks | `capture --job controlled` | run and passed: controlled defect, 13 boundary defects, queued defect, 3 lease defects, 2 retention defects (`control-total`, `late-scratch`), reconnect defect |
+| Stryker | `capture --job stryker` | run and passed against the recorded dispositions. 42 killed, 27 survived, 7 no coverage, 10 compile errors, 163 ignored; score 55.26%. Stryker mutates only `WebsocketConnectionHandler.cs`, which S8 does not change. No Stryker run was made on the base of this branch, so S8 cannot show whether any outcome changed. The line 95 `throw handshakeException;` mutant was killed in this run; lesson 10 says that kill can be a race, so this one run does not show it is reliably killed. |
+| Aggregate | `./scripts/pdd.sh aggregate` | run and passed: "Machine evidence gate: passed" |
+| Plain tests of the adapter | inside the matrix; also alone in each seeded copy | run and passed (11 of 11) |
+| Benchmark | README command, three runs under the lock | run and passed (completed; numbers above) |
+| CI | `gh workflow run ci.yml` | not run by S8 (decision 11) |
+
+## 7. Recommendation
+
+**Adopt.** The criterion is additional assurance per unit of maintained machinery.
+
+Assurance gained:
+
+- Five value preconditions of the generated core no longer rest on a data-flow
+  argument nobody checks: the receive state of `Step` and both `Admit` calls, the
+  transmit state of `SendStep` and `SendFailed`, and the close state and event of
+  `CloseStep`. They now hold for any code that compiles in safe C#. Before, they held
+  too, by the argument in section 1, so no defect was found. The gain is that a later
+  edit cannot break them silently: `AdvanceClose(3)`, `_closeState = 9`,
+  `_sendState = 4` or `ReadDataframeAsync` with state 5 from production no longer
+  compile.
+- The value part of CLOSE-LOCK and the message-state part of HEADER-ADAPTER can leave
+  the assumption register (section 5), and the `TxState` gap S7 found is closed
+  without a new entry.
+- It is not only a renaming: the reflection test and the closure tests show that an
+  out-of-range value cannot be constructed and that every wrapper returns what the
+  core returns.
+
+Machinery: one 111-line file of 56 code lines, 7 code lines for the raw entry point, 177
+code lines of plain tests that run in about 30 ms. No allocation, no measurable time
+change, no new dependency, no change to the Dafny source, the generated file, any
+existing test, `tools/Pdd` or the seeded-defect anchors. The wrappers mirror five
+generated signatures; a change to one of those signatures fails the build at the
+wrapper, which is where it would need attention anyway.
+
+Weaker than the brief hoped:
+
+- Only ranges are enforced. REASSEMBLY-TOTALS and MASK-ADAPTER, two of the brief's
+  three examples, are relations and are untouched, as S7 predicted. So is
+  `total <= limit` in HEADER-ADAPTER.
+- The raw entry point stays for the tests, with a run-time check.
+- `ReceiveState` converts implicitly to `byte`, so that the `Admit` lines keep the text
+  a seeded defect patches.
+- `default(CloseEvent)` is the legal event `Send`.
+
+## 8. Decisions for owner review (S8)
+
+1. **The benchmark covers only the byte loops (S7 decision 3).** Decided, not asked.
+   The README benchmark ran three times unchanged, matching S7. In addition,
+   `docs/evidence/core-boundary-types/decision-path/` is an evidence-only probe of the
+   per-frame receive and send paths, before and after, under the timing lock. It is
+   not repository tooling: no script, CI job, `tools/Pdd` code or check uses it, and
+   it builds in a temporary directory. Deleting the directory removes it. The probe
+   measures the paths, not the decision calls in isolation.
+2. **Which calls are typed.** `Step`, `Admit`, `SendStep`, `SendFailed` and `CloseStep`,
+   the five with a value range in `requires`. `Outgoing`, `CloseValid` and
+   `HandshakeValid` have no `requires`; typing them would only rename.
+3. **Results are typed only where they are fed back as inputs** (the next states).
+   `Admit`'s status stays a byte compared with 0 and 2; `status <= 2` is ensured, so a
+   type would only rename it.
+4. **`total <= limit` is not typed.** A `ReceiveCursor` holding state, total and limit,
+   made only by a start value and by `Step`, would enforce it by construction. It
+   would replace the `total = size;` line that the `control-total` seeded defect in
+   `tools/Pdd/RetentionDefects.cs` patches, and it would make that defect
+   unrepresentable. Changing a seeded-defect anchor is a tooling change the plan does
+   not authorize, so it is proposed here, not done.
+5. **The implicit conversion `ReceiveState` → `byte`** exists so that the two
+   `Protocol.Admit` lines keep their exact text, the `late-scratch` anchor. A
+   conversion out of the type is always legal; there is none into it.
+6. **The raw-code entry point.** `ParserRetentionTests` passes `(ct, 2, retained)` and
+   `PayloadParsingTests` passes `(ct)`. Tests stay unchanged, so
+   `DataframeParsingRawState.ReadDataframeAsync` keeps that signature and checks the
+   code at run time. It is a separate class because an overload in `DataframeParsing`
+   made `pdd.sh validate` fail ("2 declarations") and 79 Pdd tests with it. No
+   requirement entry was edited.
+7. **The plain tests are in the production commit**, so that the revert at M4 (owner
+   decision 2026-11-11, item 3), if any, leaves a tree that builds.
+8. **The production commit was rewritten once before the first push.** `6646466` had
+   the overload of decision 6 inside `DataframeParsing`. The fix was folded in, giving
+   `13ed44f`, and every after run was repeated. The runs on `6646466` are kept in
+   `after/superseded-6646466/`. Their three benchmark `.meta` files were overwritten
+   by mistake; the note there records what the console showed and that the `ps`
+   output is lost.
+9. **Named members replace raw reads**: `IsIdle`, `IsClosed`, `ReceivedOrTerminal`,
+   `Started`. Each has the same expression as before. They are hand-written, not
+   verified.
+10. **Not proposed in `requirements.json`:** the new tests are not obligations of any
+    entry. If the owner adopts the boundary wording in section 5, CLOSE-001 and
+    HEADER-002 could name `CoreBoundaryTypesTests`. That is the owner's change.
+11. **CI was not dispatched by S8.** The controller dispatches it on the final commit at
+    M4 (owner decision 2026-11-11, item 2).
