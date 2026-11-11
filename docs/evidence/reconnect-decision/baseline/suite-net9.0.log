@@ -1,0 +1,11 @@
+$ dotnet test src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj -c Release -p:LibTfm=net9.0 --nologo --filter FullyQualifiedName~WebsocketClientLiteTest.ReconnectTests --logger trx;LogFileName=suite-net9.0.trx --results-directory /tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/59ab5014-b189-4286-91c4-eee051d950c7/scratchpad/baseline-out/trx
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  IWebsocketClientLite -> /tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/59ab5014-b189-4286-91c4-eee051d950c7/scratchpad/wt-base/src/interface/IWebsocketClientLite/bin/Release/netstandard2.0/IWebsocketClientLite.dll
+  WebsocketClientLite -> /tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/59ab5014-b189-4286-91c4-eee051d950c7/scratchpad/wt-base/src/main/WebsocketClientLite/bin/Release/net9.0/WebsocketClientLite.dll
+  WebsocketClientLiteTest -> /tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/59ab5014-b189-4286-91c4-eee051d950c7/scratchpad/wt-base/src/main/WebsocketClientLiteTest/bin/Release/net10.0/WebsocketClientLiteTest.dll
+Test run for /tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/59ab5014-b189-4286-91c4-eee051d950c7/scratchpad/wt-base/src/main/WebsocketClientLiteTest/bin/Release/net10.0/WebsocketClientLiteTest.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+Results File: /tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/59ab5014-b189-4286-91c4-eee051d950c7/scratchpad/baseline-out/trx/suite-net9.0.trx
+
+Passed!  - Failed:     0, Passed:     9, Skipped:     0, Total:     9, Duration: 9 s - WebsocketClientLiteTest.dll (net10.0)

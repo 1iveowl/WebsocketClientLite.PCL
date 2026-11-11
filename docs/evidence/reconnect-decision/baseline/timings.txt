@@ -1,0 +1,10 @@
+build exit=0 seconds=4.56
+suite-netstandard2.0 exit=0 seconds=10.80
+suite-netstandard2.1 exit=0 seconds=10.84
+suite-net8.0 exit=0 seconds=10.65
+suite-net9.0 exit=0 seconds=10.65
+suite-net10.0 exit=0 seconds=10.63
+suite-net10.0-repeat-1 exit=0 seconds=9.98
+suite-net10.0-repeat-2 exit=0 seconds=9.98
+suite-net10.0-repeat-3 exit=0 seconds=9.97
+reconnect-defect exit=0 seconds=16.93
