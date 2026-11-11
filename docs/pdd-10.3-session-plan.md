@@ -1,8 +1,9 @@
 # 10.3 session plan: header traceability, test parity and two boundary experiments
 
-Written 2026-11-11. The work is too large for one session, so it runs as nine
-steps, S1 to S9, each in a new session started with the prompt given below. Run
-them in order. The owner merges pull requests between steps at the merge points.
+Written 2026-11-11. The work is too large for one session, so it runs as ten
+steps, S1 to S10, each in a new session started with the prompt given below. Run
+them in the order of the table. S10 was added after the #136 review and is numbered
+last so that the other step numbers stay the same; it runs after M1 and before S9. The owner merges pull requests between steps at the merge points.
 Releasing stays the owner's step.
 
 | Step | Work | Branch | Pull request | Needs | Model, effort |
@@ -19,7 +20,9 @@ Releasing stays the owner's step.
 | S7 | Experiment 2 baseline: core call inventory and before numbers | `chore/core-boundary-types` | new draft | M1 | Opus 5.5, high |
 | S8 | Experiment 2: typed adapter, after numbers, recommendation | same | same | S7 | Opus 5.5, high |
 | M4 | **Owner decides adopt or not adopt and merges or closes** | | | S8 | review: optional |
-| S9 | Release readiness on `releases/10.3.0.0`, README draft | `docs/readme-10.3.0` | new | M1 to M4 | Sonnet 5.5, high |
+| S10 | Pdd classifier and fixture hardening: #136 review findings 4 to 7, CI mutant timing | `chore/pdd-classifier-hardening` | new draft | M1 | Opus 5.5, high |
+| M6 | **Owner reviews and merges the hardening PR** | | | S10 | review: optional |
+| S9 | Release readiness on `releases/10.3.0.0`, README draft | `docs/readme-10.3.0` | new | M1 to M4, M6 | Sonnet 5.5, high |
 | M5 | **Owner releases**: `GitVersion.yml`, publish, release branch into `main` | | | S9 | |
 
 Start each session with `/model` and `/effort` set as the table says, using the
@@ -28,13 +31,14 @@ refactors the concurrency-sensitive P3-D lifecycle code without changing its
 behaviour; xhigh gives more margin there if the extra cost is acceptable. S9 mostly runs known checks and drafts
 the README, so Sonnet is enough.
 
-Before each merge point M1 to M4, you may run `/code-review` on the step's pull
-request in a fresh session, so that the review is not anchored on the session that
-did the work. Findings are posted on the pull request and fixed on its branch
+Before each merge point M1 to M4 and M6, you may run `/code-review` on the step's
+pull request in a fresh session, so that the review is not anchored on the session
+that did the work. Findings are posted on the pull request and fixed on its branch
 before merging. The review is optional and does not replace the step's own checks.
+At the same merge point, dispatch CI on the step's branch (lesson 2 below).
 
 S5 and S6 do not depend on the header work and may run while M1 or M2 is
-pending. Every other step checks its "Needs" column first and ends
+pending. S10 does not depend on S3 to S8 and may run beside them after M1. Every other step checks its "Needs" column first and ends
 `STATUS: BLOCKED` when it is not met.
 
 ## Owner decisions (2026-11-11)
@@ -60,14 +64,65 @@ pending. Every other step checks its "Needs" column first and ends
    opcodes 4 to 7 and 11 to 15.
 5. The 7 November session log stays local. Its timeline extract is archived in
    `docs/evidence/header-length/original-session-timeline.json`.
+6. After the #136 code review: findings 1, 2, 3, 8 and 9 are fixed on #136, before
+   M1. Findings 4 to 7 and the CI mutant timing go to S10, which may make the
+   tooling changes its "What to do" lists and nothing more.
 
 Later owner decisions are posted as a comment headed "Owner decision <date>" on
 the pull request of the step they affect. Sessions read those comments.
+
+## Lessons from S1, S2 and the #136 review (2026-11-11)
+
+Apply these in every later step.
+
+1. **A comments-only edit to a `.dfy` file is not free.** The Pdd fixtures pin
+   `Protocol.dfy` line numbers, and S1's citation comments broke 11 Pdd tests. S1's
+   receipt said "Pdd tests: not run (S2)", so S2 found it. Run the Pdd tests in the
+   same step after any `.dfy` edit, comments included. S10 removes the pinned lines.
+2. **A green check on a pull request into a release branch is not evidence.** CI
+   runs only the `scope` job there unless the pull request changes
+   `GitVersion.yml`. Before a merge point, dispatch CI on the branch with
+   `gh workflow run ci.yml --ref <branch>`. A manual run runs every job except
+   `contract-change-report`. Report that run, not the pull request check.
+3. **Local time budget headroom is not CI headroom.** On a GitHub-hosted runner
+   (run 43041451305) mutants took about 2.4 times as long as locally, and
+   `CLOSE-003-premature-release`, 8.8 seconds locally, exhausted its 90-second
+   budget. In the next run (43046774633) the same mutant took 21.0 seconds, so one
+   run is not enough to call a timing safe or unsafe. Report any mutant above a
+   third of its budget locally as a CI risk.
+4. **Mutate by adding one case, not by copying the specification.** The first
+   header mutants were a hand copy of `HeaderValid`'s body with the length rule
+   weakened. They took 61 and 85 seconds, and a later change to `HeaderValid`
+   could have made them fail on another conjunct and still count as detected.
+   `Spec(...) || <one case that breaks only the rule under test>` takes about 9
+   seconds, and Dafny's related location points at that rule's conjunct.
+5. **Make the input complete instead of checking the error message.** A test that
+   sends a header without its payload also passes when the parser accepts the
+   header and then hits end of stream. Asserting that the message is not the EOF
+   message holds only until the message is reworded. Send the payload the header
+   announces, so an accepting parser returns a frame and the test fails on its
+   own. `RejectsMalformedFrames` does this since the review; W1 in S3 applies it.
+6. **Share the literals tests compare against.** Production text that a test
+   asserts on is an internal constant both sides use, for example
+   `TcpConnectionService.AbortedUnexpectedlyMessage`.
+7. **The fresh-session review earned its cost.** The optional `/code-review` before
+   M1 found the budget risk, the message-text dependency and the copy-based
+   mutants, all of which the step's own checks had passed. Run it before every
+   merge point, together with the CI run of lesson 2.
+8. **A "Needs" check that greps code breaks when the code improves.** S3's check
+   looked for the literal that the review then replaced with a constant. Check
+   for a symbol the earlier step owns, and update the plan in the same change as
+   the code.
+9. **The plan's predictions are hypotheses.** S2's brief named a clause that Dafny
+   did not report. S2 stopped and asked instead of tuning the mutant, which was
+   right. Keep doing that.
 
 ## Common rules for every step
 
 These apply to every session in addition to AGENTS.md and CONTRIBUTING.md, which
 are binding.
+
+- **Lessons.** Apply "Lessons from S1, S2 and the #136 review" above.
 
 - **Attribution.** No `Co-Authored-By` trailer naming an agent, model or vendor,
   and no "generated with" or 🤖 line in commits, pull request titles or pull
@@ -315,8 +370,8 @@ rules for every step" and "Owner decisions". Do step S3 and nothing else. Its
 brief is Appendix C, W1 and W2 item 2.
 
 Check S3's "Needs": gh pr view 136 --json state must say MERGED, and
-origin/releases/10.3.0.0 must contain "aborted unexpectedly" in
-RejectsMalformedFrames. If not, end STATUS: BLOCKED. Then confirm git status is
+RejectsMalformedFrames on origin/releases/10.3.0.0 must use MissingPayload and
+TcpConnectionService.AbortedUnexpectedlyMessage. If not, end STATUS: BLOCKED. Then confirm git status is
 clean and create fix/header-test-parity from origin/releases/10.3.0.0. Read the
 #136 description and its comments for the requirement entries S2 added.
 
@@ -615,9 +670,109 @@ receipt on the PR and end with the receipt as the Common rules describe. Never
 merge.
 ```
 
+### S10. Pdd classifier and fixture hardening
+
+Branch `chore/pdd-classifier-hardening`, made from `origin/releases/10.3.0.0` after
+M1. Brief: findings 4 to 7 of the #136 code review and the CI timing below. Owner
+decision 6 authorizes changes to `tools/Pdd/Mutations.cs`, `tools/Pdd/Requirements.cs`
+(only to share one declaration lookup), `tools/Pdd.Tests` and
+`verification/tests/fixtures`, with every existing mutant keeping its
+classification. Anything beyond that is asked first. Budgets and `--cores` do not
+change without an owner decision.
+
+Found on 2026-11-11 at `34c2421` (#136 after the review fixes):
+
+- Finding 4. `NamedPredicateLines` in `tools/Pdd/Mutations.cs` takes the first `{`
+  after a function or predicate name as its body. For a function without a body
+  (abstract or `{:extern}`), or with a `{` in its `requires` or `ensures` (a set
+  display), it reads another declaration's body, and a related location there is
+  accepted. `Requirements.Body` can throw `InvalidDataException`, which `Classify`
+  does not catch there, so `Suite` stops instead of recording an inconclusive
+  result. No declaration in today's source triggers either.
+- Finding 5. Its declaration pattern does not allow attributes such as
+  `function {:opaque} F(`, which `Bounds` allows for methods, and it matches a bare
+  name in every module and class.
+- Finding 6. The classifier test S2 added in `tools/Pdd.Tests/PayloadEvidenceTests.cs`
+  moves the related location only to `DecodeHeader`'s signature line, outside every
+  function. No case puts it inside a predicate the target clause does not name, and
+  the test does not assert that its line lookup found the line: a rename makes it
+  pass without testing anything.
+- Finding 7. `tools/Pdd.Tests/MutationTests.cs` and
+  `verification/tests/fixtures/mutation-cases.json` hard-code `Protocol.dfy` line
+  numbers (lesson 1).
+- CI timing. In run 43041451305 (`9673862`, before the review fixes) mutants took
+  about 21 seconds against about 9 locally, and `CLOSE-003-premature-release`
+  exhausted the 90-second budget although it reported the expected error, so
+  `verify-protocol` and `evidence-gate` failed. The run is kept in
+  `docs/evidence/header-review-fixes/ci-43041451305/`. In the next manual run,
+  43046774633 on `34a8950` (after the review fixes), every job passed: all 17
+  mutants were detected in 20.4 to 21.6 seconds each, `CLOSE-003-premature-release`
+  in 21.0 seconds. So the timeout did not repeat, and its cause is not established:
+  a slow runner, solver variance or something else. With runs of about 21 seconds,
+  CI has about four times headroom under the 90-second budget when no outlier occurs.
+
+What to do:
+
+1. On a clean tree, run the Pdd tests and the mutation suite, and dispatch CI on
+   the branch. Keep the output and the per-mutant times of the CI run's
+   `pdd-protocol` artifact under `docs/evidence/pdd-classifier-hardening/`.
+2. Finding 4: find predicate bodies with the declaration lookup `Bounds` uses,
+   skip a declaration without a body, and return inconclusive when the body cannot
+   be read. A test for each case.
+3. Finding 5: allow attributes, and limit the match to the module and class of the
+   mutant's symbol. A test for each.
+4. Finding 6: add a case with the location inside the body of a predicate the
+   target clause does not name (`Known` or `PrefixValid`), which must be
+   inconclusive, and assert that the line lookup found its line.
+5. Finding 7: derive the lines from the source (`Bounds` and the line of the
+   body's `{`) and build the fixture records relative to them. Show it with a kept
+   run: a comment line added above `CloseStep` in an isolated copy leaves the Pdd
+   tests passing.
+6. Dispatch CI again on the final commit and compare the per-mutant times with
+   43041451305 and 43046774633. One passing run does not show that the outlier is
+   gone. If a budget is exhausted, report the numbers and ask; do not change
+   budgets.
+7. Run every check: Pdd tests, `pdd.sh validate`, `scripts/dafny-masking.sh --check`,
+   the mutation suite, the five-target matrix, the coverage gate and the four
+   capture jobs with `aggregate`. Open a draft pull request against
+   `releases/10.3.0.0`.
+
+Done when:
+
+1. Each of findings 4 to 7 has a test, or for finding 7 a kept run, that fails on
+   the baseline source and passes after the change.
+2. Every existing mutant has the same classification as in the baseline run.
+3. Every check is reported with its result word.
+4. Both CI runs are reported with their per-mutant times.
+5. The draft PR is open and the receipt is posted on it.
+
+Estimate, not measured: 200K to 300K tokens.
+
+```text
+Run step S10 of the 10.3 session plan in repository 1iveowl/WebsocketClientLite.PCL
+(checkout /workspaces/WebsocketClientLite.PCL).
+
+First: git fetch -q origin, then read the plan in full:
+git show origin/releases/10.3.0.0:docs/pdd-10.3-session-plan.md.
+Read AGENTS.md and CONTRIBUTING.md; they are binding, as are the plan's "Common
+rules for every step", "Owner decisions" and "Lessons". Do step S10 and nothing
+else.
+
+Check S10's "Needs": gh pr view 136 --json state must say MERGED, and
+tools/Pdd/Mutations.cs on origin/releases/10.3.0.0 must contain
+NamedPredicateLines. If not, end STATUS: BLOCKED. Then confirm git status is
+clean and create chore/pdd-classifier-hardening from origin/releases/10.3.0.0.
+Read the #136 description and its comments, including the review findings.
+
+Do the work under "What to do", meet every "Done when" item, push, open the draft
+PR against releases/10.3.0.0 with no attribution line, post the receipt on it and
+end with the receipt as the Common rules describe. Never merge.
+```
+
 ### S9. Release readiness
 
-Branch `docs/readme-10.3.0`, made from `origin/releases/10.3.0.0` after M1 to M4.
+Branch `docs/readme-10.3.0`, made from `origin/releases/10.3.0.0` after M1 to M4
+and M6.
 
 What to do:
 
@@ -653,7 +808,7 @@ does not exist yet, git show origin/docs/pdd-10.3-session-plan:docs/pdd-10.3-ses
 Read AGENTS.md and CONTRIBUTING.md; they are binding, as are the plan's "Common
 rules for every step" and "Owner decisions". Do step S9 and nothing else.
 
-Check S9's "Needs": the pull requests of S2, S4, S6 and S8 are each MERGED or
+Check S9's "Needs": the pull requests of S2, S4, S6, S8 and S10 are each MERGED or
 CLOSED (gh pr list --base releases/10.3.0.0 --state all). If one is still open,
 end STATUS: BLOCKED. Then confirm git status is clean and create
 docs/readme-10.3.0 from origin/releases/10.3.0.0.
@@ -941,7 +1096,9 @@ shows that the other rows of `RejectsMalformedFrames` already discriminate on
 | `RejectsMalformedFrames`, high-bit row | `81 7F 80 00 …` | Cannot be told apart from the size limit, because any length with bit 63 set exceeds `int.MaxValue`; keep it as combined coverage and say so in a comment |
 
 `TruncatedHeadersNeverProduceFrames` expects end of stream on purpose and is not
-affected. `a779602` already had the size and control length checks, so the
+affected. Strengthen the others by sending the payload the header announces, as
+`RejectsMalformedFrames` does since the #136 review (lesson 5), rather than by
+checking the message text. `a779602` already had the size and control length checks, so the
 failing-first run for these uses an isolated copy of the current source with only
 that check removed, as the P3-A assertion challenges do.
 
