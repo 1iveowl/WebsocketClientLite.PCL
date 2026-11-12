@@ -1,0 +1,100 @@
+Test run for /tmp/s11-handshake-scratch/copies/new-mutant/src/main/WebsocketClientLiteTest/bin/Release/net10.0/WebsocketClientLiteTest.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v4.0.1+0f7d528729 (64-bit .NET 10.0.14)
+[xUnit.net 00:00:00.16]   Discovering: WebsocketClientLiteTest
+[xUnit.net 00:00:00.33]   Discovered:  WebsocketClientLiteTest
+[xUnit.net 00:00:00.40]   Starting:    WebsocketClientLiteTest
+[xUnit.net 00:00:00.56]     WebsocketClientLiteTest.HandshakeRejectionTests.RejectedHandshakeThrowsAndNeverInstallsSender(rejection: SendFailed) [FAIL]
+[xUnit.net 00:00:00.57]       Assert.Equal() Failure: Values differ
+[xUnit.net 00:00:00.57]       Expected: 0
+[xUnit.net 00:00:00.57]       Actual:   1
+[xUnit.net 00:00:00.57]       Stack Trace:
+[xUnit.net 00:00:00.57]         /tmp/s11-handshake-scratch/copies/new-mutant/src/main/WebsocketClientLiteTest/HandshakeRejectionTests.cs(84,0): at WebsocketClientLiteTest.HandshakeRejectionTests.RejectedHandshakeThrowsAndNeverInstallsSender(Rejection rejection)
+[xUnit.net 00:00:00.57]         /tmp/s11-handshake-scratch/copies/new-mutant/src/main/WebsocketClientLiteTest/HandshakeRejectionTests.cs(106,0): at WebsocketClientLiteTest.HandshakeRejectionTests.RejectedHandshakeThrowsAndNeverInstallsSender(Rejection rejection)
+[xUnit.net 00:00:00.57]         --- End of stack trace from previous location ---
+  Passed WebsocketClientLiteTest.IntegrationTests.InvalidAcceptNeverConnectsEvenWhenServerStaysOpen(connection: "Upgrade") [107 ms]
+  Failed WebsocketClientLiteTest.HandshakeRejectionTests.RejectedHandshakeThrowsAndNeverInstallsSender(rejection: SendFailed) [104 ms]
+  Error Message:
+   Assert.Equal() Failure: Values differ
+Expected: 0
+Actual:   1
+  Stack Trace:
+     at WebsocketClientLiteTest.HandshakeRejectionTests.RejectedHandshakeThrowsAndNeverInstallsSender(Rejection rejection) in /tmp/s11-handshake-scratch/copies/new-mutant/src/main/WebsocketClientLiteTest/HandshakeRejectionTests.cs:line 84
+   at WebsocketClientLiteTest.HandshakeRejectionTests.RejectedHandshakeThrowsAndNeverInstallsSender(Rejection rejection) in /tmp/s11-handshake-scratch/copies/new-mutant/src/main/WebsocketClientLiteTest/HandshakeRejectionTests.cs:line 106
+--- End of stack trace from previous location ---
+  Passed WebsocketClientLiteTest.IntegrationTests.InvalidAcceptNeverConnectsEvenWhenServerStaysOpen(connection: "close") [17 ms]
+  Passed WebsocketClientLiteTest.IntegrationTests.Non101HandshakeResponse_FailsFast_WithStatusCode [12 ms]
+[xUnit.net 00:00:03.54]     WebsocketClientLiteTest.ReconnectTests.FailedConnectTerminatesAndRemovesRegistration [FAIL]
+[xUnit.net 00:00:03.54]       Assert.Null() Failure: Value is not null
+[xUnit.net 00:00:03.54]       Expected: null
+[xUnit.net 00:00:03.54]       Actual:   WebsocketSenderHandler { }
+[xUnit.net 00:00:03.54]       Stack Trace:
+[xUnit.net 00:00:03.54]         /tmp/s11-handshake-scratch/copies/new-mutant/src/main/WebsocketClientLiteTest/ReconnectTests.cs(189,0): at WebsocketClientLiteTest.ReconnectTests.FailedConnectTerminatesAndRemovesRegistration()
+[xUnit.net 00:00:03.54]         --- End of stack trace from previous location ---
+  Failed WebsocketClientLiteTest.ReconnectTests.FailedConnectTerminatesAndRemovesRegistration [3 s]
+  Error Message:
+   Assert.Null() Failure: Value is not null
+Expected: null
+Actual:   WebsocketSenderHandler { }
+  Stack Trace:
+     at WebsocketClientLiteTest.ReconnectTests.FailedConnectTerminatesAndRemovesRegistration() in /tmp/s11-handshake-scratch/copies/new-mutant/src/main/WebsocketClientLiteTest/ReconnectTests.cs:line 189
+--- End of stack trace from previous location ---
+[xUnit.net 00:00:05.57]     WebsocketClientLiteTest.HandshakeRejectionTests.RejectedHandshakeThrowsAndNeverInstallsSender(rejection: NotFound) [FAIL]
+[xUnit.net 00:00:05.57]       Assert.Equal() Failure: Values differ
+[xUnit.net 00:00:05.57]       Expected: 0
+[xUnit.net 00:00:05.57]       Actual:   1
+[xUnit.net 00:00:05.57]       Stack Trace:
+[xUnit.net 00:00:05.57]         /tmp/s11-handshake-scratch/copies/new-mutant/src/main/WebsocketClientLiteTest/HandshakeRejectionTests.cs(84,0): at WebsocketClientLiteTest.HandshakeRejectionTests.RejectedHandshakeThrowsAndNeverInstallsSender(Rejection rejection)
+[xUnit.net 00:00:05.57]         /tmp/s11-handshake-scratch/copies/new-mutant/src/main/WebsocketClientLiteTest/HandshakeRejectionTests.cs(106,0): at WebsocketClientLiteTest.HandshakeRejectionTests.RejectedHandshakeThrowsAndNeverInstallsSender(Rejection rejection)
+[xUnit.net 00:00:05.57]         --- End of stack trace from previous location ---
+  Failed WebsocketClientLiteTest.HandshakeRejectionTests.RejectedHandshakeThrowsAndNeverInstallsSender(rejection: NotFound) [5 s]
+  Error Message:
+   Assert.Equal() Failure: Values differ
+Expected: 0
+Actual:   1
+  Stack Trace:
+     at WebsocketClientLiteTest.HandshakeRejectionTests.RejectedHandshakeThrowsAndNeverInstallsSender(Rejection rejection) in /tmp/s11-handshake-scratch/copies/new-mutant/src/main/WebsocketClientLiteTest/HandshakeRejectionTests.cs:line 84
+   at WebsocketClientLiteTest.HandshakeRejectionTests.RejectedHandshakeThrowsAndNeverInstallsSender(Rejection rejection) in /tmp/s11-handshake-scratch/copies/new-mutant/src/main/WebsocketClientLiteTest/HandshakeRejectionTests.cs:line 106
+--- End of stack trace from previous location ---
+[xUnit.net 00:00:11.11]     WebsocketClientLiteTest.HandshakeRejectionTests.RejectedHandshakeThrowsAndNeverInstallsSender(rejection: Timeout) [FAIL]
+[xUnit.net 00:00:11.11]       Assert.Equal() Failure: Values differ
+[xUnit.net 00:00:11.11]       Expected: 0
+[xUnit.net 00:00:11.11]       Actual:   1
+[xUnit.net 00:00:11.11]       Stack Trace:
+[xUnit.net 00:00:11.11]         /tmp/s11-handshake-scratch/copies/new-mutant/src/main/WebsocketClientLiteTest/HandshakeRejectionTests.cs(84,0): at WebsocketClientLiteTest.HandshakeRejectionTests.RejectedHandshakeThrowsAndNeverInstallsSender(Rejection rejection)
+[xUnit.net 00:00:11.11]         /tmp/s11-handshake-scratch/copies/new-mutant/src/main/WebsocketClientLiteTest/HandshakeRejectionTests.cs(106,0): at WebsocketClientLiteTest.HandshakeRejectionTests.RejectedHandshakeThrowsAndNeverInstallsSender(Rejection rejection)
+[xUnit.net 00:00:11.11]         --- End of stack trace from previous location ---
+  Failed WebsocketClientLiteTest.HandshakeRejectionTests.RejectedHandshakeThrowsAndNeverInstallsSender(rejection: Timeout) [5 s]
+  Error Message:
+   Assert.Equal() Failure: Values differ
+Expected: 0
+Actual:   1
+  Stack Trace:
+     at WebsocketClientLiteTest.HandshakeRejectionTests.RejectedHandshakeThrowsAndNeverInstallsSender(Rejection rejection) in /tmp/s11-handshake-scratch/copies/new-mutant/src/main/WebsocketClientLiteTest/HandshakeRejectionTests.cs:line 84
+   at WebsocketClientLiteTest.HandshakeRejectionTests.RejectedHandshakeThrowsAndNeverInstallsSender(Rejection rejection) in /tmp/s11-handshake-scratch/copies/new-mutant/src/main/WebsocketClientLiteTest/HandshakeRejectionTests.cs:line 106
+--- End of stack trace from previous location ---
+[xUnit.net 00:00:16.13]     WebsocketClientLiteTest.HandshakeRejectionTests.RejectedHandshakeThrowsAndNeverInstallsSender(rejection: InvalidAccept) [FAIL]
+[xUnit.net 00:00:16.13]       Assert.Equal() Failure: Values differ
+[xUnit.net 00:00:16.13]       Expected: 0
+[xUnit.net 00:00:16.13]       Actual:   1
+[xUnit.net 00:00:16.13]       Stack Trace:
+[xUnit.net 00:00:16.13]         /tmp/s11-handshake-scratch/copies/new-mutant/src/main/WebsocketClientLiteTest/HandshakeRejectionTests.cs(84,0): at WebsocketClientLiteTest.HandshakeRejectionTests.RejectedHandshakeThrowsAndNeverInstallsSender(Rejection rejection)
+[xUnit.net 00:00:16.13]         /tmp/s11-handshake-scratch/copies/new-mutant/src/main/WebsocketClientLiteTest/HandshakeRejectionTests.cs(106,0): at WebsocketClientLiteTest.HandshakeRejectionTests.RejectedHandshakeThrowsAndNeverInstallsSender(Rejection rejection)
+[xUnit.net 00:00:16.13]         --- End of stack trace from previous location ---
+[xUnit.net 00:00:16.13]   Finished:    WebsocketClientLiteTest
+  Failed WebsocketClientLiteTest.HandshakeRejectionTests.RejectedHandshakeThrowsAndNeverInstallsSender(rejection: InvalidAccept) [5 s]
+  Error Message:
+   Assert.Equal() Failure: Values differ
+Expected: 0
+Actual:   1
+  Stack Trace:
+     at WebsocketClientLiteTest.HandshakeRejectionTests.RejectedHandshakeThrowsAndNeverInstallsSender(Rejection rejection) in /tmp/s11-handshake-scratch/copies/new-mutant/src/main/WebsocketClientLiteTest/HandshakeRejectionTests.cs:line 84
+   at WebsocketClientLiteTest.HandshakeRejectionTests.RejectedHandshakeThrowsAndNeverInstallsSender(Rejection rejection) in /tmp/s11-handshake-scratch/copies/new-mutant/src/main/WebsocketClientLiteTest/HandshakeRejectionTests.cs:line 106
+--- End of stack trace from previous location ---
+Results File: /home/vscode/worktrees/s11/docs/evidence/handshake-rejection/runs/new-mutant-loaded/run-15.trx
+
+Test Run Failed.
+Total tests: 8
+     Passed: 3
+     Failed: 5
+ Total time: 16.7500 Seconds
