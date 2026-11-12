@@ -1,0 +1,110 @@
+# grep -rnE for every reference to the generated namespaces and classes in hand-written C# (production)
+src/main/WebsocketClientLite/Helper/DataframeParsing.cs:2:using Protocol = WebsocketClientLite.VerifiedProtocol.Protocol;
+src/main/WebsocketClientLite/Helper/DataframeParsing.cs:39:        Protocol.Admit(b0, b1, Array.Empty<byte>(), 0, state, total, (uint)tcpConnection.MaxFrameSize,
+src/main/WebsocketClientLite/Helper/DataframeParsing.cs:46:            Protocol.Admit(b0, b1, ext, (uint)count, state, total, (uint)tcpConnection.MaxFrameSize,
+src/main/WebsocketClientLite/Helper/ProtocolPayload.cs:30:        if (!Protocol.CloseValid((uint)bytes.Length, code, utf8))
+src/main/WebsocketClientLite/Helper/ProtocolPayload.cs:4:using Protocol = WebsocketClientLite.VerifiedProtocol.Protocol;
+src/main/WebsocketClientLite/Helper/VerifiedNativeCopy.cs:3:namespace WebsocketClientLite.VerifiedProtocol;
+src/main/WebsocketClientLite/Helper/VerifiedNativeCopy.cs:5:// Explicit trusted primitive for Protocol.Merge, specified in Protocol.dfy.
+src/main/WebsocketClientLite/Helper/VerifiedNativeCopy.cs:8:internal partial class NativeCopy
+src/main/WebsocketClientLite/Helper/WebsocketMasking.cs:26:        Verified.Masking.Apply(data, key, (uint)data.Length);
+src/main/WebsocketClientLite/Parser/HandshakeParser.cs:33:        bool accepted = Protocol.HandshakeValid(parserDelegate.StatusCode == 101 && parserHandler.MajorVersion == 1 && parserHandler.MinorVersion == 1,
+src/main/WebsocketClientLite/Parser/HandshakeParser.cs:7:using Protocol = WebsocketClientLite.VerifiedProtocol.Protocol;
+src/main/WebsocketClientLite/Service/WebsocketParserHandler.cs:31:                    Protocol.Step(state, (byte)frame.Opcode, frame.FIN, total, (uint)payload.Length,
+src/main/WebsocketClientLite/Service/WebsocketParserHandler.cs:58:                        merged = Protocol.Merge(segments.ToArray(), total);
+src/main/WebsocketClientLite/Service/WebsocketParserHandler.cs:9:using Protocol = WebsocketClientLite.VerifiedProtocol.Protocol;
+src/main/WebsocketClientLite/Service/WebsocketSenderHandler.cs:286:            Protocol.Outgoing((byte)opcode, 255, (uint)getLength(item), out bool valid, out _, out _, out _);
+src/main/WebsocketClientLite/Service/WebsocketSenderHandler.cs:308:                lock (_stateLock) _sendState = Protocol.SendFailed(_sendState);
+src/main/WebsocketClientLite/Service/WebsocketSenderHandler.cs:356:        Protocol.Outgoing((byte)opcode, (byte)fragment, (uint)payloadLength,
+src/main/WebsocketClientLite/Service/WebsocketSenderHandler.cs:368:            Protocol.WriteHeader(buffer, first, (uint)payloadLength, header);
+src/main/WebsocketClientLite/Service/WebsocketSenderHandler.cs:390:                    Protocol.CopyMasked(content, buffer, (uint)payloadOffset, (uint)payloadLength,
+src/main/WebsocketClientLite/Service/WebsocketSenderHandler.cs:398:                    Protocol.MaskSlice(buffer, (uint)payloadOffset, (uint)payloadLength, (uint)maskOffset);
+src/main/WebsocketClientLite/Service/WebsocketSenderHandler.cs:3:using Protocol = WebsocketClientLite.VerifiedProtocol.Protocol;
+src/main/WebsocketClientLite/Service/WebsocketSenderHandler.cs:429:                Protocol.SendStep(_sendState, op, (buffer[0] & 128) != 0, out bool ok, out byte next);
+src/main/WebsocketClientLite/Service/WebsocketSenderHandler.cs:44:        Protocol.CloseStep(_closeState, action, out _closeState, out bool send, out bool release);
+src/main/WebsocketClientLite/Service/WebsocketSenderHandler.cs:58:            _sendState = Protocol.SendFailed(_sendState);
+
+# Dafny requires clauses (Protocol.dfy, Masking.dfy) and newtype ranges
+verification/Masking.dfy:3:  newtype {:nativeType "uint"} Index = n: int | 0 <= n <= 0x7fffffff
+verification/Masking.dfy:7:    static method Apply(data: array<bv8>, key: array<bv8>, count: Index)
+verification/Masking.dfy:8:      requires data != key
+verification/Masking.dfy:9:      requires key.Length >= 4
+verification/Masking.dfy:10:      requires count as int == data.Length
+verification/Masking.dfy:33:      requires |key| >= 4
+verification/Protocol.dfy:2:  newtype {:nativeType "uint"} Size = n: int | 0 <= n <= 0x7fffffff
+verification/Protocol.dfy:12:    static method ReadLength(bytes: array<bv8>, count: Size) returns (value: bv64)
+verification/Protocol.dfy:13:      requires count <= 8 && count as int <= bytes.Length
+verification/Protocol.dfy:27:    static function Known(op: bv8): bool { op == 0 || op == 1 || op == 2 || op == 8 || op == 9 || op == 10 }
+verification/Protocol.dfy:34:    static function PrefixValid(first: bv8, second: bv8): bool {
+verification/Protocol.dfy:47:    static function HeaderValid(first: bv8, second: bv8, length: bv64, limit: bv64): bool {
+verification/Protocol.dfy:62:    static method DecodeHeader(first: bv8, second: bv8, extended: array<bv8>, available: Size, limit: bv64)
+verification/Protocol.dfy:64:      requires available as int <= extended.Length
+verification/Protocol.dfy:91:    static method Step(state: bv8, op: bv8, fin: bool, total: Size, length: Size, limit: Size)
+verification/Protocol.dfy:93:      requires state == 0 || state == 1 || state == 2 || state == 8
+verification/Protocol.dfy:94:      requires total <= limit
+verification/Protocol.dfy:126:    static method {:isolate_assertions} Admit(first: bv8, second: bv8, extended: array<bv8>, available: Size,
+verification/Protocol.dfy:129:      requires available as int <= extended.Length
+verification/Protocol.dfy:130:      requires state == 0 || state == 1 || state == 2 || state == 8
+verification/Protocol.dfy:131:      requires total <= limit
+verification/Protocol.dfy:159:    static function TxState(state: bv8): bool { state == 0 || state == 1 || state == 2 || state == 8 || state == 15 }
+verification/Protocol.dfy:167:    static method SendStep(state: bv8, op: bv8, fin: bool) returns (ok: bool, next: bv8)
+verification/Protocol.dfy:168:      requires TxState(state)
+verification/Protocol.dfy:188:    static function SendFailed(state: bv8): bv8 { if state == 8 then 8 else 15 }
+verification/Protocol.dfy:197:    static method CloseStep(state: bv8, event: bv8) returns (next: bv8, send: bool, release: bool)
+verification/Protocol.dfy:198:      requires state <= 7 && event <= 2
+verification/Protocol.dfy:216:      requires n <= parts.Length
+verification/Protocol.dfy:228:    static method Merge(parts: array<array<bv8>>, total: Size) returns (result: array<bv8>)
+verification/Protocol.dfy:229:      requires parts.Length <= 0x7fffffff
+verification/Protocol.dfy:230:      requires |Parts(parts, parts.Length)| == total as int
+verification/Protocol.dfy:256:    static method MergeScalar(parts: array<array<bv8>>, total: Size) returns (result: array<bv8>)
+verification/Protocol.dfy:257:      requires parts.Length <= 0x7fffffff
+verification/Protocol.dfy:258:      requires |Parts(parts, parts.Length)| == total as int
+verification/Protocol.dfy:293:      requires n <= end <= parts.Length
+verification/Protocol.dfy:353:    static method {:isolate_assertions} {:timeLimit 120} HeaderRoundTrip(length: bv32) returns (decoded: bv64, serverHeader: Size)
+verification/Protocol.dfy:354:      requires length <= 0x7fffffff - 14
+verification/Protocol.dfy:398:    static function CloseCode(code: bv16): bool {
+verification/Protocol.dfy:405:    static function CloseValid(length: Size, code: bv16, utf8: bool): bool {
+verification/Protocol.dfy:413:    // requires HTTP/1.1. The proof covers the conjunction, not how the inputs are computed.
+verification/Protocol.dfy:414:    static function HandshakeValid(status101: bool, upgrade: bool, connection: bool,
+verification/Protocol.dfy:426:    static method Outgoing(op: bv8, fragment: bv8, length: Size)
+verification/Protocol.dfy:453:    static method {:isolate_assertions} WriteHeader(buffer: array<bv8>, first: bv8, length: bv32, header: Size)
+verification/Protocol.dfy:454:      requires header == (if length <= 125 then 6 else if length <= 65535 then 8 else 14)
+verification/Protocol.dfy:455:      requires buffer.Length >= header as int
+verification/Protocol.dfy:487:    static method {:isolate_assertions} CopyMasked(source: array<bv8>, dest: array<bv8>, offset: Size, count: Size,
+verification/Protocol.dfy:489:      requires source != dest
+verification/Protocol.dfy:490:      requires count as int <= source.Length
+verification/Protocol.dfy:491:      requires offset as int + count as int <= dest.Length
+verification/Protocol.dfy:492:      requires offset as int + count as int <= 0x7fffffff
+verification/Protocol.dfy:542:    static method MaskSlice(dest: array<bv8>, offset: Size, count: Size, keyOffset: Size)
+verification/Protocol.dfy:543:      requires keyOffset as int + 4 <= offset as int
+verification/Protocol.dfy:544:      requires offset as int + count as int <= dest.Length
+verification/Protocol.dfy:545:      requires offset as int + count as int <= 0x7fffffff
+verification/Protocol.dfy:566:    static method {:extern} CopySlice(source: array<bv8>, dest: array<bv8>, offset: Size)
+verification/Protocol.dfy:567:      requires source != dest
+verification/Protocol.dfy:568:      requires offset as int + source.Length <= dest.Length
+
+# Generated method signatures (verification/generated/Masking.g.cs)
+639:    public static bool _Is(uint __source) {
+648:    public static void Apply(byte[] data, byte[] key, uint count)
+670:    public static bool _Is(uint __source) {
+679:    public static ulong ReadLength(byte[] bytes, uint count)
+693:    public static bool Known(byte op) {
+696:    public static bool PrefixValid(byte first, byte second)
+701:    public static bool HeaderValid(byte first, byte second, ulong length, ulong limit)
+707:    public static void DecodeHeader(byte first, byte second, byte[] extended, uint available, ulong limit, out byte status, out ulong length, out uint headerSize)
+745:    public static void Step(byte state, byte op, bool fin, uint total, uint length, uint limit, out bool ok, out byte next, out uint size, out bool emit)
+801:    public static void Admit(byte first, byte second, byte[] extended, uint available, byte state, uint total, uint limit, out byte status, out ulong length, out uint headerSize, out byte next, out uint size, out bool emit)
+839:    public static bool TxState(byte state) {
+842:    public static void SendStep(byte state, byte op, bool fin, out bool ok, out byte next)
+862:    public static byte SendFailed(byte state) {
+869:    public static void CloseStep(byte state, byte @event, out byte next, out bool send, out bool release)
+888:    public static byte[] Merge(byte[][] parts, uint total)
+908:    public static byte[] MergeScalar(byte[][] parts, uint total)
+936:    public static void HeaderRoundTrip(uint length, out ulong decoded, out uint serverHeader)
+979:    public static bool CloseCode(ushort code) {
+982:    public static bool CloseValid(uint length, ushort code, bool utf8)
+986:    public static bool HandshakeValid(bool status101, bool upgrade, bool connection, bool accept, bool protocol, bool noExtensions)
+990:    public static void Outgoing(byte op, byte fragment, uint length, out bool ok, out byte first, out uint header, out uint total)
+1024:    public static void WriteHeader(byte[] buffer, byte first, uint length, uint header)
+1079:    public static void CopyMasked(byte[] source, byte[] dest, uint offset, uint count, byte k0, byte k1, byte k2, byte k3)
+1110:    public static void MaskSlice(byte[] dest, uint offset, uint count, uint keyOffset)

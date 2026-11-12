@@ -1,0 +1,10 @@
+head=74153690f519590a42d02c47d4916f57a427f694 dirty=0 start=2026-11-11T23:19:47Z
+solution-build exit=0 start=2026-11-11T23:19:47Z end=2026-11-11T23:24:17Z
+pdd-tests exit=0 start=2026-11-11T23:24:17Z end=2026-11-11T23:30:03Z
+pdd-validate exit=0 start=2026-11-11T23:30:03Z end=2026-11-11T23:32:37Z
+capture-protocol exit=0 start=2026-11-11T23:32:37Z end=2026-11-11T23:47:40Z
+capture-tests exit=0 start=2026-11-11T23:47:40Z end=2026-11-11T23:53:06Z
+capture-controlled exit=0 start=2026-11-11T23:53:06Z end=2026-11-12T00:17:09Z
+capture-stryker exit=0 start=2026-11-12T00:17:09Z end=2026-11-12T00:47:52Z
+aggregate interrupted: waited for the lock from 2026-11-12T00:47:52Z; the 7200 s background limit stopped the script at about 2026-11-12T01:19:47Z, before aggregate ran; log kept as aggregate-interrupted.log
+aggregate (second run, no lock: not timed) exit=0 start=2026-11-12T01:20:01Z end=2026-11-12T01:20:02Z dirty_after=0

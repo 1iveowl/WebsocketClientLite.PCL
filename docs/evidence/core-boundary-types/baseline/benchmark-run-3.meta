@@ -1,0 +1,17 @@
+run: 3
+date (UTC) before lock: 2026-11-11T22:02:25Z
+lock acquired (UTC): 2026-11-11T22:02:25Z
+ps -eo pid,etime,args | grep -E "claude -p|dotnet" | grep -v grep (taken just before the run):
+ 568353       19:26 VBCSCompiler
+ 569809       14:44 MSBuild.dll
+ 569810       14:44 MSBuild.dll
+ 569811       14:44 MSBuild.dll
+ 569887       14:43 MSBuild.dll
+ 569904       14:43 MSBuild.dll
+ 569905       14:43 MSBuild.dll
+ 569906       14:43 MSBuild.dll
+ 574966       03:26 claude
+uptime:  22:02:25 up 13 days, 13:46,  0 user,  load average: 0.73, 0.70, 0.56
+command: DOTNET_TieredCompilation=0 dotnet run --project verification/benchmark/MaskingBenchmark.csproj -c Release
+exit=0 wall_seconds=8.38
+finished (UTC): 2026-11-11T22:02:33Z

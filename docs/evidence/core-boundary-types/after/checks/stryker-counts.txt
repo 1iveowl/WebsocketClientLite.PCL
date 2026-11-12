@@ -1,0 +1,3 @@
+S8 2026-11-11, from artifacts/s8/pdd/stryker/reports/reports/mutation-report.json at 76564f1
+{"Ignored": 163, "CompileError": 10, "Killed": 42, "NoCoverage": 7, "Survived": 27}
+line 95: [('WebsocketConnectionHandler.cs', 95, 'Statement mutation', 'Killed')]

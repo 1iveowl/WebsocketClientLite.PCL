@@ -1,0 +1,7 @@
+id=default-event-is-send
+commit=3519275
+before=        : throw new InvalidOperationException("default(CloseEvent) is not a close event.");
+after=        : (byte)0;
+source_sha256=1a3445d1034abf18459a3107a418c1ec1e45ce39fa93b9d20036b35b17c98086
+mutant_sha256=e82184ffdd8eeafc124295f89f335d42f90e744f2988eda1412b4c12ea81d5f6
+exit=1

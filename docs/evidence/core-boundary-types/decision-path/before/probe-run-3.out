@@ -1,0 +1,8 @@
+runtime=.NET 10.0.14 tiered=0
+receive binary 16 B	frames=20000	median_ns_per_frame=115.6	median_bytes_per_frame=208.26	min_bytes=208.26	max_bytes=208.26
+receive text 125 B	frames=20000	median_ns_per_frame=127.3	median_bytes_per_frame=320.28	min_bytes=320.28	max_bytes=320.28
+receive binary 200 B (16-bit length)	frames=20000	median_ns_per_frame=168.7	median_bytes_per_frame=392.28	min_bytes=392.28	max_bytes=392.28
+receive fragmented 2 x 8 B	frames=20000	median_ns_per_frame=130.8	median_bytes_per_frame=216.28	min_bytes=216.28	max_bytes=216.28
+receive ping + text 16 B	frames=20000	median_ns_per_frame=112.2	median_bytes_per_frame=180.28	min_bytes=180.28	max_bytes=180.28
+send binary 16 B	frames=20000	median_ns_per_frame=734.0	median_bytes_per_frame=104.12	min_bytes=104.12	max_bytes=104.12
+send text 125 B	frames=20000	median_ns_per_frame=831.7	median_bytes_per_frame=104.14	min_bytes=104.14	max_bytes=104.14

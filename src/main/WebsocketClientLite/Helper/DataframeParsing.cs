@@ -18,8 +18,10 @@ internal static class DataframeParsing
     /// </summary>
     internal static async Task<Dataframe?> ReadDataframeAsync(
         this TcpConnectionService tcpConnection,
-        CancellationToken ct, byte state = 0, uint total = 0)
+        ReceiveState messageState, uint total, CancellationToken ct)
     {
+        // The receive state leaves its type here, once, as the byte both Admit calls take.
+        byte state = messageState.Code;
         var header = await tcpConnection.ReadHeaderBytesAsync(2, ct).ConfigureAwait(false);
         if (header is null)
         {

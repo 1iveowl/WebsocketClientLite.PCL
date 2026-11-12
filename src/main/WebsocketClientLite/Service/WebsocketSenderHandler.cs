@@ -33,30 +33,30 @@ internal class WebsocketSenderHandler : ISender
     // gate and still serialize at the connection's frame-write gate.
     private readonly SemaphoreSlim _messageGate = new(1, 1);
     private readonly object _stateLock = new();
-    private byte _sendState;
-    private byte _closeState;
+    private TransmitState _sendState;
+    private CloseState _closeState;
     private readonly TaskCompletionSource<bool> _closeReady = new(TaskCreationOptions.RunContinuationsAsynchronously);
 
     // Caller holds _stateLock. Only the verified release decision wakes the
     // graceful-close waiter; DisconnectWebsocket also awaits the actual write.
-    private bool AdvanceClose(byte action)
+    private bool AdvanceClose(CloseEvent action)
     {
-        Protocol.CloseStep(_closeState, action, out _closeState, out bool send, out bool release);
+        CloseState.Step(_closeState, action, out _closeState, out bool send, out bool release);
         if (release) _closeReady.TrySetResult(true);
         return send;
     }
 
     internal void NotifyPeerClose()
     {
-        lock (_stateLock) AdvanceClose(1);
+        lock (_stateLock) AdvanceClose(CloseEvent.Received);
     }
 
     internal void NotifyReadFailure()
     {
         lock (_stateLock)
         {
-            _sendState = Protocol.SendFailed(_sendState);
-            AdvanceClose(2);
+            _sendState = TransmitState.SendFailed(_sendState);
+            AdvanceClose(CloseEvent.TimeoutOrFailure);
         }
     }
 
@@ -66,7 +66,7 @@ internal class WebsocketSenderHandler : ISender
         var delay = _peerDelay(timeout, timer.Token);
         if (await Task.WhenAny(_closeReady.Task, delay).ConfigureAwait(false) == delay)
         {
-            lock (_stateLock) AdvanceClose(2);
+            lock (_stateLock) AdvanceClose(CloseEvent.TimeoutOrFailure);
         }
         else
         {
@@ -305,7 +305,7 @@ internal class WebsocketSenderHandler : ISender
         {
             // A failed list must never leave a reusable, incomplete message.
             if (started)
-                lock (_stateLock) _sendState = Protocol.SendFailed(_sendState);
+                lock (_stateLock) _sendState = TransmitState.SendFailed(_sendState);
             throw;
         }
         finally { _messageGate.Release(); }
@@ -419,14 +419,14 @@ internal class WebsocketSenderHandler : ISender
             {
                 if (op == 8)
                 {
-                    if (!AdvanceClose(0)) return;
+                    if (!AdvanceClose(CloseEvent.Send)) return;
                 }
                 // A queued Pong is no longer required after receiving Close.
                 // Before the peer replies, Pong is still allowed after our Close.
-                else if (op == 10 && (_closeState & 6) != 0) return;
-                else if (op != 10 && _closeState != 0)
+                else if (op == 10 && _closeState.ReceivedOrTerminal) return;
+                else if (op != 10 && _closeState.Started)
                     throw new WebsocketClientLiteException("The closing handshake has started.");
-                Protocol.SendStep(_sendState, op, (buffer[0] & 128) != 0, out bool ok, out byte next);
+                TransmitState.SendStep(_sendState, op, (buffer[0] & 128) != 0, out bool ok, out TransmitState next);
                 if (!ok) throw new WebsocketClientLiteException("Invalid outgoing message sequence or sender is closed/failed.");
                 _sendState = next;
             }

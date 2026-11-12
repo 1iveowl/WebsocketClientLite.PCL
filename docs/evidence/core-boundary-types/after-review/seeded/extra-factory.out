@@ -1,0 +1,23 @@
+  Determining projects to restore...
+  Restored /tmp/m4-seed-extra-factory-bg0MF1/src/interface/IWebsocketClientLite/IWebsocketClientLite.csproj (in 123 ms).
+  Restored /tmp/m4-seed-extra-factory-bg0MF1/src/main/WebsocketClientLite/WebsocketClientLite.csproj (in 125 ms).
+  Restored /tmp/m4-seed-extra-factory-bg0MF1/src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj (in 123 ms).
+  IWebsocketClientLite -> /tmp/m4-seed-extra-factory-bg0MF1/src/interface/IWebsocketClientLite/bin/Release/netstandard2.0/IWebsocketClientLite.dll
+  WebsocketClientLite -> /tmp/m4-seed-extra-factory-bg0MF1/src/main/WebsocketClientLite/bin/Release/net10.0/WebsocketClientLite.dll
+  WebsocketClientLiteTest -> /tmp/m4-seed-extra-factory-bg0MF1/src/main/WebsocketClientLiteTest/bin/Release/net10.0/WebsocketClientLiteTest.dll
+Test run for /tmp/m4-seed-extra-factory-bg0MF1/src/main/WebsocketClientLiteTest/bin/Release/net10.0/WebsocketClientLiteTest.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.15]     WebsocketClientLiteTest.CoreBoundaryTypesTests.OnlyTheListedMembersCallThePrivateConstructor(type: typeof(WebsocketClientLite.Helper.CloseState)) [FAIL]
+  Failed WebsocketClientLiteTest.CoreBoundaryTypesTests.OnlyTheListedMembersCallThePrivateConstructor(type: typeof(WebsocketClientLite.Helper.CloseState)) [1 ms]
+  Error Message:
+   Assert.Equal() Failure: Collections differ
+           ↓ (pos 0)
+Expected: ["Step"]
+Actual:   ["From", "Step"]
+           ↑ (pos 0)
+  Stack Trace:
+     at WebsocketClientLiteTest.CoreBoundaryTypesTests.OnlyTheListedMembersCallThePrivateConstructor(Type type) in /tmp/m4-seed-extra-factory-bg0MF1/src/main/WebsocketClientLiteTest/CoreBoundaryTypesTests.cs:line 90
+   at InvokeStub_CoreBoundaryTypesTests.OnlyTheListedMembersCallThePrivateConstructor(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+
+Failed!  - Failed:     1, Passed:    16, Skipped:     0, Total:    17, Duration: 34 ms - WebsocketClientLiteTest.dll (net10.0)

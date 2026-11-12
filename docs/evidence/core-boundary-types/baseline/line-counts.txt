@@ -1,0 +1,59 @@
+# Production files with a call into the generated core
+src/main/WebsocketClientLite/Helper/DataframeParsing.cs                total=   90 code=   75
+src/main/WebsocketClientLite/Service/WebsocketParserHandler.cs         total=   73 code=   65
+src/main/WebsocketClientLite/Service/WebsocketSenderHandler.cs         total=  492 code=  417
+src/main/WebsocketClientLite/Helper/ProtocolPayload.cs                 total=   33 code=   29
+src/main/WebsocketClientLite/Parser/HandshakeParser.cs                 total=   44 code=   38
+src/main/WebsocketClientLite/Helper/WebsocketMasking.cs                total=   43 code=   33
+# Hand-written extern implementation called by the generated core
+src/main/WebsocketClientLite/Helper/VerifiedNativeCopy.cs              total=   12 code=    7
+# Generated core and Dafny sources
+verification/generated/Masking.g.cs                                    total= 1129 code= 1076
+verification/Protocol.dfy                                              total=  574 code=  433
+verification/Masking.dfy                                               total=   42 code=   38
+# Benchmark
+verification/benchmark/Program.cs                                      total=  154 code=  142
+# Test files that call the generated core directly
+src/main/WebsocketClientLiteTest/ProtocolCoreTests.cs                  total=  117 code=  110
+src/main/WebsocketClientLiteTest/ProtocolStateTests.cs                 total=  225 code=  209
+src/main/WebsocketClientLiteTest/PayloadBoundaryTests.cs               total=   70 code=   65
+src/main/WebsocketClientLiteTest/MaskingTests.cs                       total=   93 code=   82
+# Totals (*.cs, excluding obj/ and bin/)
+src/main/WebsocketClientLite                                           files= 24 total=  2733 code=  1992
+src/main/WebsocketClientLiteTest                                       files= 23 total=  3906 code=  3358
+# Production call statements into the generated core (one line per call expression start)
+src/main/WebsocketClientLite/Helper/DataframeParsing.cs:39:        Protocol.Admit(b0, b1, Array.Empty<byte>(), 0, state, total, (uint)tcpConnection.MaxFrameSize,
+src/main/WebsocketClientLite/Helper/DataframeParsing.cs:46:            Protocol.Admit(b0, b1, ext, (uint)count, state, total, (uint)tcpConnection.MaxFrameSize,
+src/main/WebsocketClientLite/Helper/ProtocolPayload.cs:30:        if (!Protocol.CloseValid((uint)bytes.Length, code, utf8))
+src/main/WebsocketClientLite/Helper/WebsocketMasking.cs:26:        Verified.Masking.Apply(data, key, (uint)data.Length);
+src/main/WebsocketClientLite/Parser/HandshakeParser.cs:33:        bool accepted = Protocol.HandshakeValid(parserDelegate.StatusCode == 101 && parserHandler.MajorVersion == 1 && parserHandler.MinorVersion == 1,
+src/main/WebsocketClientLite/Service/WebsocketParserHandler.cs:31:                    Protocol.Step(state, (byte)frame.Opcode, frame.FIN, total, (uint)payload.Length,
+src/main/WebsocketClientLite/Service/WebsocketParserHandler.cs:58:                        merged = Protocol.Merge(segments.ToArray(), total);
+src/main/WebsocketClientLite/Service/WebsocketSenderHandler.cs:286:            Protocol.Outgoing((byte)opcode, 255, (uint)getLength(item), out bool valid, out _, out _, out _);
+src/main/WebsocketClientLite/Service/WebsocketSenderHandler.cs:308:                lock (_stateLock) _sendState = Protocol.SendFailed(_sendState);
+src/main/WebsocketClientLite/Service/WebsocketSenderHandler.cs:356:        Protocol.Outgoing((byte)opcode, (byte)fragment, (uint)payloadLength,
+src/main/WebsocketClientLite/Service/WebsocketSenderHandler.cs:368:            Protocol.WriteHeader(buffer, first, (uint)payloadLength, header);
+src/main/WebsocketClientLite/Service/WebsocketSenderHandler.cs:390:                    Protocol.CopyMasked(content, buffer, (uint)payloadOffset, (uint)payloadLength,
+src/main/WebsocketClientLite/Service/WebsocketSenderHandler.cs:398:                    Protocol.MaskSlice(buffer, (uint)payloadOffset, (uint)payloadLength, (uint)maskOffset);
+src/main/WebsocketClientLite/Service/WebsocketSenderHandler.cs:429:                Protocol.SendStep(_sendState, op, (buffer[0] & 128) != 0, out bool ok, out byte next);
+src/main/WebsocketClientLite/Service/WebsocketSenderHandler.cs:44:        Protocol.CloseStep(_closeState, action, out _closeState, out bool send, out bool release);
+src/main/WebsocketClientLite/Service/WebsocketSenderHandler.cs:58:            _sendState = Protocol.SendFailed(_sendState);
+count=16
+# Direct test calls into the generated core, per file
+      1 src/main/WebsocketClientLiteTest/PayloadBoundaryTests.cs CopyMasked
+      1 src/main/WebsocketClientLiteTest/PayloadBoundaryTests.cs MaskSlice
+      1 src/main/WebsocketClientLiteTest/PayloadBoundaryTests.cs Merge
+      1 src/main/WebsocketClientLiteTest/PayloadBoundaryTests.cs MergeScalar
+      1 src/main/WebsocketClientLiteTest/ProtocolCoreTests.cs CloseValid
+      1 src/main/WebsocketClientLiteTest/ProtocolCoreTests.cs CopyMasked
+      2 src/main/WebsocketClientLiteTest/ProtocolCoreTests.cs DecodeHeader
+      1 src/main/WebsocketClientLiteTest/ProtocolCoreTests.cs HandshakeValid
+      1 src/main/WebsocketClientLiteTest/ProtocolCoreTests.cs MaskSlice
+      1 src/main/WebsocketClientLiteTest/ProtocolCoreTests.cs Outgoing
+      1 src/main/WebsocketClientLiteTest/ProtocolCoreTests.cs Step
+      1 src/main/WebsocketClientLiteTest/ProtocolCoreTests.cs WriteHeader
+      7 src/main/WebsocketClientLiteTest/ProtocolStateTests.cs CloseStep
+      1 src/main/WebsocketClientLiteTest/ProtocolStateTests.cs CopySlice
+      1 src/main/WebsocketClientLiteTest/ProtocolStateTests.cs HeaderRoundTrip
+      3 src/main/WebsocketClientLiteTest/ProtocolStateTests.cs Merge
+      1 src/main/WebsocketClientLiteTest/ProtocolStateTests.cs MergeScalar

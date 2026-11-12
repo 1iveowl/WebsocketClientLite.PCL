@@ -1,0 +1,19 @@
+  Determining projects to restore...
+  Restored /tmp/m4-seed-implicit-conversion-cM1PjS/src/main/WebsocketClientLite/WebsocketClientLite.csproj (in 109 ms).
+  Restored /tmp/m4-seed-implicit-conversion-cM1PjS/src/interface/IWebsocketClientLite/IWebsocketClientLite.csproj (in 107 ms).
+  Restored /tmp/m4-seed-implicit-conversion-cM1PjS/src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj (in 107 ms).
+  IWebsocketClientLite -> /tmp/m4-seed-implicit-conversion-cM1PjS/src/interface/IWebsocketClientLite/bin/Release/netstandard2.0/IWebsocketClientLite.dll
+  WebsocketClientLite -> /tmp/m4-seed-implicit-conversion-cM1PjS/src/main/WebsocketClientLite/bin/Release/net10.0/WebsocketClientLite.dll
+  WebsocketClientLiteTest -> /tmp/m4-seed-implicit-conversion-cM1PjS/src/main/WebsocketClientLiteTest/bin/Release/net10.0/WebsocketClientLiteTest.dll
+Test run for /tmp/m4-seed-implicit-conversion-cM1PjS/src/main/WebsocketClientLiteTest/bin/Release/net10.0/WebsocketClientLiteTest.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.14]     WebsocketClientLiteTest.CoreBoundaryTypesTests.OnlyPrivateConstructorsAndOneByteField(type: typeof(WebsocketClientLite.Helper.ReceiveState)) [FAIL]
+  Failed WebsocketClientLiteTest.CoreBoundaryTypesTests.OnlyPrivateConstructorsAndOneByteField(type: typeof(WebsocketClientLite.Helper.ReceiveState)) [< 1 ms]
+  Error Message:
+   ReceiveState has a conversion operator; leaving the type is .Code
+  Stack Trace:
+     at WebsocketClientLiteTest.CoreBoundaryTypesTests.OnlyPrivateConstructorsAndOneByteField(Type type) in /tmp/m4-seed-implicit-conversion-cM1PjS/src/main/WebsocketClientLiteTest/CoreBoundaryTypesTests.cs:line 51
+   at InvokeStub_CoreBoundaryTypesTests.OnlyPrivateConstructorsAndOneByteField(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+
+Failed!  - Failed:     1, Passed:    16, Skipped:     0, Total:    17, Duration: 33 ms - WebsocketClientLiteTest.dll (net10.0)

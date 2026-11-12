@@ -1,0 +1,9 @@
+id=extra-factory
+commit=3519275
+before=    internal static CloseState Open => default;
+after=    internal static CloseState Open => default;
+
+    internal static CloseState From(byte code) => new(code);
+source_sha256=1a3445d1034abf18459a3107a418c1ec1e45ce39fa93b9d20036b35b17c98086
+mutant_sha256=f2f6551ce7e93055229c45ab17e2610466ca1a6d3ce4e36dc3861e46d9fca6e3
+exit=1

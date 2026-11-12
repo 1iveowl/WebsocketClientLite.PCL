@@ -1,0 +1,73 @@
+{
+  "recorded": "2026-11-11. Step S7 of docs/pdd-10.3-session-plan.md. Local measurements on one dev container, not CI and not portable timing guarantees.",
+  "base_commit": "fa96d59af838e7aa57071de1712a02c7065a6aab (origin/releases/10.3.0.0 when S7 started; see base-commit.txt)",
+  "tree": "Clean checkout of the base commit in the git worktree ~/worktrees/s7. No production, test, Dafny or generated file differs from the base commit; only this evidence directory and verification/core-boundary-types.md were added, and they are not inputs to any command below.",
+  "timing_lock": "Every timed run used the shared timing lock `flock ~/worktrees/.timing.lock` (controller decision 2026-11-11), so no other session's timed run overlapped it. Each benchmark-run-N.meta holds the process list taken inside the lock just before the run, and the load average. The S7 and S8 runs recorded `ps -eo pid,etime,args | grep -E 'claude -p|dotnet' | grep -v grep`; on 2026-11-11 those lines were reduced to pid, etime and the process name, because the full command lines exposed other sessions' prompts (see ../README.md). bench.sh records `ps -eo pid,etime,comm | grep -E 'claude|dotnet|VBCSCompiler'` from then on.",
+  "runs": [
+    {
+      "run": "benchmark-build",
+      "command": "dotnet build verification/benchmark/MaskingBenchmark.csproj -c Release",
+      "log": "benchmark-build.log",
+      "timed": false,
+      "exit": "exit=0",
+      "outcome": "Built, 0 warnings, 0 errors."
+    },
+    {
+      "run": "benchmark-run-1",
+      "command": "bench.sh docs/evidence/core-boundary-types/baseline 1, which runs: flock ~/worktrees/.timing.lock ... DOTNET_TieredCompilation=0 dotnet run --project verification/benchmark/MaskingBenchmark.csproj -c Release",
+      "log": "benchmark-run-1.out",
+      "meta": "benchmark-run-1.meta",
+      "timed": true,
+      "exit": "exit=0",
+      "outcome": "Completed. The wall time was not recorded: the first version of bench.sh used bc, which is not installed. The benchmark's own output is complete. bench.sh was then changed to use awk; runs 2 and 3 record it."
+    },
+    {
+      "run": "benchmark-run-2",
+      "command": "bench.sh docs/evidence/core-boundary-types/baseline 2 (same command)",
+      "log": "benchmark-run-2.out",
+      "meta": "benchmark-run-2.meta",
+      "timed": true,
+      "exit": "exit=0 wall_seconds=8.45",
+      "outcome": "Completed."
+    },
+    {
+      "run": "benchmark-run-3",
+      "command": "bench.sh docs/evidence/core-boundary-types/baseline 3 (same command)",
+      "log": "benchmark-run-3.out",
+      "meta": "benchmark-run-3.meta",
+      "timed": true,
+      "exit": "exit=0 wall_seconds=8.38",
+      "outcome": "Completed."
+    },
+    {
+      "run": "line-counts",
+      "command": "line-counts.sh (run from the repository root)",
+      "log": "line-counts.txt",
+      "timed": false,
+      "outcome": "16 production call expressions into the generated core in 6 files; counts per file and totals."
+    },
+    {
+      "run": "call-sites",
+      "command": "grep commands written at the top of each section of call-sites.txt",
+      "log": "call-sites.txt",
+      "timed": false,
+      "outcome": "Every reference to the generated namespaces in production C#, every Dafny requires clause and newtype range, and every generated method signature."
+    },
+    {
+      "run": "solution-build",
+      "command": "dotnet build src/main/WebsocketClientLite.sln -c Release",
+      "log": "solution-build.log",
+      "timed": false,
+      "exit": "exit=0",
+      "outcome": "0 warnings, 0 errors."
+    },
+    {
+      "run": "pdd-validate",
+      "command": "./scripts/pdd.sh validate",
+      "log": "pdd-validate.log",
+      "timed": false,
+      "exit": "exit=0",
+      "outcome": "Validated 16 requirements (structure and references only; no evidence executed)."
+    }
+  ]
+}

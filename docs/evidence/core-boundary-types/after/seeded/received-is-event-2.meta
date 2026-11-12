@@ -1,0 +1,7 @@
+id=received-is-event-2
+commit=13ed44f94035e339ff10197b43f850a2176afc8b
+before=internal static CloseEvent Received => new(1);
+after=internal static CloseEvent Received => new(2);
+source_sha256=6160f2daccfd16904d545c503ac3733db9e8359d71498a199439206b5e97a1c8
+mutant_sha256=11e70650c305619dc5767eb44ebb9b457241fde6ab8383242a02f781a0e9ba1f
+exit=1
