@@ -1,0 +1,25 @@
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:01.10
+baseline: passed (21.012s)
+CLOSE-001-duplicate-send: detected (21.107s)
+CLOSE-001-suppressed-send: detected (20.871s)
+CLOSE-002-state-bit-loss: detected (21.151s)
+CLOSE-003-premature-release: detected (21.301s)
+CLOSE-003-suppressed-release: detected (21.061s)
+REASSEMBLY-001-offset-stall: detected (21.177s)
+REASSEMBLY-002-offset-stall: detected (21.108s)
+REASSEMBLY-001-oversized-result: detected (21.348s)
+MASK-001-xor-to-or: detected (21.396s)
+MASK-001-key-write: detected (21.466s)
+MASK-002-tail-xor-to-or: detected (21.364s)
+MASK-002-corrupt-bulk-byte: detected (21.711s)
+MASK-002-preserve-prefix: detected (21.547s)
+MASK-003-xor-to-or: detected (21.255s)
+MASK-003-preserve-prefix: detected (21.531s)
+HEADER-001-short-sixteen-bit: detected (21.419s)
+HEADER-001-short-sixty-four-bit: detected (21.297s)
+Evidence: /home/runner/work/WebsocketClientLite.PCL/WebsocketClientLite.PCL/artifacts/pdd/protocol/mutations

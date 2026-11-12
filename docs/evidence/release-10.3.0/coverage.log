@@ -1,0 +1,13 @@
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  IWebsocketClientLite -> /home/vscode/worktrees/s9/src/interface/IWebsocketClientLite/bin/Release/netstandard2.0/IWebsocketClientLite.dll
+  WebsocketClientLite -> /home/vscode/worktrees/s9/src/main/WebsocketClientLite/bin/Release/net10.0/WebsocketClientLite.dll
+  WebsocketClientLiteTest -> /home/vscode/worktrees/s9/src/main/WebsocketClientLiteTest/bin/Release/net10.0/WebsocketClientLiteTest.dll
+Test run for /home/vscode/worktrees/s9/src/main/WebsocketClientLiteTest/bin/Release/net10.0/WebsocketClientLiteTest.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+
+Passed!  - Failed:     0, Passed:   328, Skipped:     0, Total:   328, Duration: 24 s - WebsocketClientLiteTest.dll (net10.0)
+
+Attachments:
+  /home/vscode/worktrees/s9/artifacts/s9-coverage/e0070c7d-759e-4704-89e5-25daf399da8c/coverage.cobertura.xml
+exit=0 elapsed=27234ms

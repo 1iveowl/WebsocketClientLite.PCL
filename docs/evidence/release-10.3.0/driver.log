@@ -1,0 +1,17 @@
+commit: 38a5405e80aaf39dd1dc5c17cc517c14bdc9e520  tip of origin/releases/10.3.0.0: 38a5405e80aaf39dd1dc5c17cc517c14bdc9e520
+build:
+build rc=0
+test-all-tfms rc=0
+coverage run rc=0
+coverage gate rc=0
+pdd tests rc=0
+validate rc=0
+dafny-masking --check rc=0
+mutations rc=0
+capture protocol rc=0
+capture tests rc=0
+capture controlled rc=0
+capture stryker rc=0
+aggregate rc=0
+commit after: 38a5405e80aaf39dd1dc5c17cc517c14bdc9e520
+ALL-DONE

@@ -41,6 +41,20 @@ This work has brought earlier rejection of malformed frames, safer fragmented se
 
 The result is stronger assurance with explicit limits. Explore the [layers, guarantees and boundaries](docs/protocol-verification.md#layers-of-proof-driven-development).
 
+## New in Version 10.3.0
+
+Version 10.3.0 adds no feature and changes no public behaviour. It ties the header length rule to RFC 6455, makes the header tests fail when the check they name is removed, and records two experiments about the boundary between the C# client and the verified protocol core. One is adopted and one is not.
+
+- Every contract-bearing method and lemma in the Dafny core now names the RFC 6455 section it implements, or says that it is library policy. The comments are not embedded in the generated C#, so `Masking.g.cs` is unchanged.
+- The rule that a frame length must use the fewest bytes (RFC 6455 section 5.2) is a traced requirement (`HEADER-001`, with `HEADER-002` for refusing a frame from its header before any payload is read) with two Dafny mutants. The test for it used to pass on a parser that accepted non-minimal lengths, because the frames carried no payload and the old parser threw at end of stream. Tests now send the payload a header announces, so an accepting parser fails on its own. The [header length note](docs/header-length-validation.md) has the replay.
+- Test parity for the header rules: a row for every reserved value (RSV2, RSV3, opcodes 4 to 7 and 11 to 15), a frame of exactly the configured limit is read and one byte more is refused from its header, and a truncated header ends in the end-of-stream error at every prefix. The [validation note](docs/header-test-parity-validation.md) lists every claim, its test, its failing-first run and what stays unbacked.
+- A test for a rejected handshake awaits the connect call and checks that no sender is installed. It replaces a kill that depended on a race: the Stryker mutant that removes `throw handshakeException;` was only caught when a test happened to run first.
+- **Adopted:** named types at the verified core boundary. The receive, transmit and close states and the close event are small internal structs that cannot hold a value outside the range the generated core requires, so an out-of-range code cannot be passed from C#. The measured per-frame paths allocate the same number of bytes and show no measurable change in time. The report is [`verification/core-boundary-types.md`](verification/core-boundary-types.md).
+- **Not adopted:** the reconnect lifecycle decision as a pure function. It was built, measured and reverted. It mirrored the six lock sites one to one and removed nothing from the expensive part of the tests, so the production change is not in this release. The report and its evidence stay: [`verification/reconnect-decision.md`](verification/reconnect-decision.md).
+- The Pdd tooling reads Dafny declarations more carefully (attributes, bodiless functions, set displays in contracts), and its fixtures name a declaration and an offset instead of an absolute line, so a comment in `Protocol.dfy` no longer breaks eleven tests.
+
+All five library targets remain supported. These changes add no public API and no new production dependency. The only production C# changes are the internal boundary types above and one internal constant for the end-of-stream message. The Dafny proofs retain their scope: the new mutants show that the contract catches a decoder that accepts one refused header, not that the whole decoder is covered. See the [verification guide](verification/README.md) and the [10.3 session plan](docs/pdd-10.3-session-plan.md) for the evidence and its limits.
+
 ## New in Version 10.2.0
 
 Version 10.2.0 strengthens cancellation, teardown and sequential reconnect behavior, and expands the evidence for the C# boundaries around the verified protocol core.
