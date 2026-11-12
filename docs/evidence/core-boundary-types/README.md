@@ -7,7 +7,8 @@ report is [`verification/core-boundary-types.md`](../../../verification/core-bou
 - `after/`: S8, on the production commit `13ed44f`. `after/superseded-6646466/` holds
   the runs on an earlier version of that commit.
 - `decision-path/`: S8's evidence-only probe of the per-frame receive and send paths.
-- `after-review/`: the M4 review fixes, 2026-11-11.
+- `after-review/`: the M4 review fixes, 2026-11-11 and 2026-11-12: benchmark, probe and
+  seeded defects on `3519275`, and every check on `7415369` (`after-review/checks/`).
 
 ## Process lists reduced to process names (2026-11-11)
 

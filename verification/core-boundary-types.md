@@ -702,6 +702,30 @@ The plain tests alone catch each one. S8's four anchors still occur exactly once
 so do the `tools/Pdd` anchors (`late-scratch`, `control-total`), which the controlled
 capture job below patched.
 
+### Checks at M4
+
+Run on `7415369`, a clean tree (`git status --porcelain` empty before and after), each
+command under `flock ~/worktrees/.timing.lock`, as `after-review/checks/checks.txt`
+records. These were not timed measurements; no duration from them is reported as one.
+A first attempt was stopped by this session 16 seconds in, during the build, because
+its background time limit was too short; no check had completed (kept locally as
+`artifacts/m4-stopped-1`).
+
+| Check | Result |
+| --- | --- |
+| Build, Release | run and passed, 0 warnings, 0 errors |
+| Pdd tests | run and passed, 262 of 262 |
+| `./scripts/pdd.sh validate` | run and passed, 16 requirements |
+| Verifier and generated-code check (`capture --job protocol`, `dafny-masking.sh --check`) | run and passed: `Dafny program verifier finished with 41 verified, 0 errors` |
+| Dafny mutations (`capture --job protocol`) | run and passed: baseline passed, 17 of 17 detected; the slowest took 9.8 s, below a third of its budget (lesson 3) |
+| Five-target matrix (`capture --job tests`) | run and passed, 286 of 286 on each of the five library builds |
+| Coverage gate (`capture --job tests`) | run and passed, line coverage 83.5% |
+| Controlled and seeded-defect checks (`capture --job controlled`) | run and passed: controlled defect, boundary, queued, lease, retention (`control-total`, `late-scratch`) and reconnect defects |
+| Seeded adapter defects (`after-review/seeded/`) | run and passed: 7 of 7 caught by the plain tests alone, control 17 of 17 |
+| Stryker (`capture --job stryker`) | run and passed against the recorded dispositions: 41 killed, 28 survived, 7 no coverage, 10 compile errors, 163 ignored; score 53.95%. S8's run had 42 killed. The difference is the line 95 `throw handshakeException;` mutant in `WebsocketConnectionHandler.cs`: killed in S8's run, survived here. That file and `ReconnectTests.cs` are identical to `c9701aa`, where lesson 10 found the kill to be a race. As lesson 10 asks, the covering test `ReconnectTests.FailedConnectTerminatesAndRemovesRegistration` ran 10 times, plain and under the lock, against a `git archive` copy of `7415369` with the statement removed (`after-review/checks/line95-mutant/`): 1 of 10 failed (`Sender` was set), 9 passed. The kill depends on timing, as lesson 10 found (0 of 15 plain there). This branch does not touch the file; S11 owns the fix. The loaded runs of lesson 10 were not repeated |
+| Aggregate | first run interrupted: it waited for the lock from 00:47:52Z and the session's 2-hour background limit stopped the script at about 01:19:47Z, before it ran (log kept). Second run, without the lock because it is not timed: run and passed, "Machine evidence gate: passed" |
+| CI | dispatched with `gh workflow run ci.yml --ref chore/core-boundary-types` on the branch head that adds this table; its run ID and conclusion are in the M4 receipt on #143, not here, so that the measured commit stays the head |
+
 ### Recommendation after the review
 
 **Unchanged: adopt.** No finding weakens the result. Findings 1, 2, 7 and 8 remove three
@@ -736,3 +760,6 @@ measurable time on the measured paths.
    a programming error reaches it; every legal event behaves as before.
 7. **Measured under load.** The after-review runs ran while other sessions did untimed
    work (one-minute load up to 39.19). The lock kept other timed runs out, not other work.
+8. **Stryker line 95 survived in this run**, where S8's run killed it. It is lesson 10's
+   race in a file this branch does not change; 1 of 10 plain runs of the covering test caught the mutant. It is
+   not counted as a regression of this branch, and S11 replaces the racing test.
