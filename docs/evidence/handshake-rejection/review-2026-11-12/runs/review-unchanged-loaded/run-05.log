@@ -1,0 +1,21 @@
+Test run for /tmp/s11-review-scratch/copies/review-unchanged/src/main/WebsocketClientLiteTest/bin/Release/net10.0/WebsocketClientLiteTest.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v4.0.1+0f7d528729 (64-bit .NET 10.0.14)
+[xUnit.net 00:00:00.10]   Discovering: WebsocketClientLiteTest
+[xUnit.net 00:00:00.23]   Discovered:  WebsocketClientLiteTest
+[xUnit.net 00:00:00.26]   Starting:    WebsocketClientLiteTest
+[xUnit.net 00:00:00.98]   Finished:    WebsocketClientLiteTest
+  Passed WebsocketClientLiteTest.ReconnectTests.FailedConnectTerminatesAndRemovesRegistration [96 ms]
+  Passed WebsocketClientLiteTest.HandshakeRejectionTests.RejectedHandshakeThrowsAndNeverInstallsSender(rejection: SendFailed) [102 ms]
+  Passed WebsocketClientLiteTest.IntegrationTests.InvalidAcceptNeverConnectsEvenWhenServerStaysOpen(connection: "Upgrade") [97 ms]
+  Passed WebsocketClientLiteTest.IntegrationTests.InvalidAcceptNeverConnectsEvenWhenServerStaysOpen(connection: "close") [13 ms]
+  Passed WebsocketClientLiteTest.HandshakeRejectionTests.RejectedHandshakeThrowsAndNeverInstallsSender(rejection: NotFound) [17 ms]
+  Passed WebsocketClientLiteTest.IntegrationTests.Non101HandshakeResponse_FailsFast_WithStatusCode [16 ms]
+  Passed WebsocketClientLiteTest.HandshakeRejectionTests.RejectedHandshakeThrowsAndNeverInstallsSender(rejection: Timeout) [520 ms]
+  Passed WebsocketClientLiteTest.HandshakeRejectionTests.RejectedHandshakeThrowsAndNeverInstallsSender(rejection: InvalidAccept) [10 ms]
+Results File: /home/vscode/worktrees/s11/docs/evidence/handshake-rejection/review-2026-11-12/runs/review-unchanged-loaded/run-05.trx
+
+Test Run Successful.
+Total tests: 8
+     Passed: 8
+ Total time: 1.6270 Seconds

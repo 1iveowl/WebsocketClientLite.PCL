@@ -79,3 +79,13 @@ have run during a batch.
 ## Checks
 
 See `checks/README.md`.
+
+## After the review (2026-11-12)
+
+`/code-review high` on #144 changed the test (findings 1, 2, 3 and 6, commit `46ca940`), so
+the failing-first batches above measure the S11 version, `4f3c6f0`, not the final test. The
+runs on the final test are in `review-2026-11-12/`, and the checks on the final tree in
+`review-2026-11-12/checks/`. The build and run logs cited above were excluded by
+`.gitignore` (`*.log`) until the review; they are now committed with `git add -f`, unchanged.
+`tools/summarize.py` now counts a run without a trx as inconclusive (finding 5);
+`review-2026-11-12/summary-all-batches.txt` reruns it over every batch.
