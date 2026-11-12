@@ -1,0 +1,25 @@
+== build start 2026-11-12T02:07:41Z commit 393144181e59edd82c316afec9175abe04858bba dirty=0 lock=no
+== build exit=0 seconds=3
+== pdd-validate start 2026-11-12T02:07:44Z commit 393144181e59edd82c316afec9175abe04858bba dirty=0 lock=no
+== pdd-validate exit=0 seconds=1
+== pdd-tests start 2026-11-12T02:07:45Z commit 393144181e59edd82c316afec9175abe04858bba dirty=0 lock=no
+== pdd-tests exit=0 seconds=15
+== test-all-tfms start 2026-11-12T02:08:00Z commit 393144181e59edd82c316afec9175abe04858bba dirty=0 lock=yes, waited 0s
+== test-all-tfms exit=0 seconds=131
+== coverage-tests start 2026-11-12T02:10:11Z commit 393144181e59edd82c316afec9175abe04858bba dirty=0 lock=yes, waited 0s
+== coverage-tests exit=0 seconds=27
+== coverage-gate start 2026-11-12T02:10:38Z commit 393144181e59edd82c316afec9175abe04858bba dirty=0 lock=no
+== coverage-gate exit=0 seconds=0
+== capture-protocol start 2026-11-12T02:10:38Z commit 393144181e59edd82c316afec9175abe04858bba dirty=0 lock=yes, waited 0s
+== capture-protocol exit=0 seconds=190
+== capture-tests start 2026-11-12T02:13:48Z commit 393144181e59edd82c316afec9175abe04858bba dirty=0 lock=yes, waited 0s
+== capture-tests exit=0 seconds=163
+== capture-controlled start 2026-11-12T02:16:31Z commit 393144181e59edd82c316afec9175abe04858bba dirty=0 lock=yes, waited 0s
+== capture-controlled exit=0 seconds=70
+== capture-stryker start 2026-11-12T02:17:41Z commit 393144181e59edd82c316afec9175abe04858bba dirty=0 lock=yes, waited 0s
+== capture-stryker exit=0 seconds=368
+== aggregate start 2026-11-12T02:23:49Z commit 393144181e59edd82c316afec9175abe04858bba dirty=0 lock=no
+== aggregate exit=0 seconds=1
+== final dirty=0
+CHECKS-DONE
+checks.sh exit=0

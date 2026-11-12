@@ -58,3 +58,9 @@ Loaded means 32 `yes > /dev/null` loops, one per core, for the whole batch
 `runs/<batch>/processes-start.txt` and `processes-end.txt`. They show 4 or 5 `claude`
 sessions and no `dotnet` process at any batch start or end. Builds by other sessions do
 not take the lock, so they may have run during a batch.
+
+## Checks
+
+See `checks/README.md`. Every check ran on `3931441` and passed. The line 95 mutant is
+killed, but Stryker records only the racing test as its killer. The reason is explained
+there.
