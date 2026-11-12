@@ -53,10 +53,10 @@ jobs:
         with:
           useConfigFile: true
 
-      # The release text is the README's "New in Version <x.y.z>" section for this
+      # The release text is the CHANGELOG's "New in Version <x.y.z>" section for this
       # version. It runs before anything is built or published, so a release without
       # that section stops here instead of after the packages reach NuGet.org.
-      - name: Release notes from README
+      - name: Release notes from CHANGELOG
         env:
           VERSION: ${{ steps.gitversion.outputs.MajorMinorPatch }}
         run: |
@@ -64,9 +64,9 @@ jobs:
             $0 == heading { found = 1; next }
             found && /^## / { exit }
             found { print }
-          ' README.md > release-notes.md
+          ' CHANGELOG.md > release-notes.md
           if ! grep -q '[^[:space:]]' release-notes.md; then
-            echo "::error file=README.md::README.md has no '## New in Version ${VERSION}' section. Add it before releasing."
+            echo "::error file=CHANGELOG.md::CHANGELOG.md has no '## New in Version ${VERSION}' section. Add it before releasing."
             exit 1
           fi
           cat release-notes.md
