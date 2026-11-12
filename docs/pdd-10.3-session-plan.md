@@ -139,6 +139,52 @@ Apply these in every later step.
     is a race, not a detection. S11 replaces it with a test that awaits the
     connect call.
 
+## Lessons from the overnight chain (2026-11-11 to 2026-11-12)
+
+The steps after S5 ran unattended. A controller session started each one as its
+own headless session in its own git worktree, under the owner decision posted on
+each pull request as "Owner decision 2026-11-11 (overnight chain)". Apply these in
+every later step.
+
+11. **Every fresh-session review found real problems.** `/code-review high` found
+    8 to 10 issues on each of #140, #142, #143, #144 and #145, after each step's
+    own checks had passed. They included a false claim in a report (#143), a
+    timing claim its own table contradicted (#142), and a test that could fail for
+    the wrong reason (#144). Lesson 7 holds: review before every merge point.
+12. **A claim about what a tool checks names the check that does it.** #140 said
+    the aggregate requires both new theories. Only `HostEvidence` and the HEADER
+    test obligations require that they are present. Derive a count from its table
+    instead of writing it down: the literal 14 broke CI once (run 43062905406).
+13. **`*.log` is gitignored.** On #142 and #144 the evidence READMEs cited logs that
+    were never committed. Force-add every cited log (`git add -f`), and run
+    `git status --ignored` on the evidence folder before posting the receipt.
+14. **Record process names, never command lines.** This repository is public. A
+    process list taken with `ps -eo args` put other headless sessions' prompts into
+    committed evidence on #142 and #143. They were reduced before the merges, but
+    they remain in those branches' history. Use `ps -eo pid,etime,comm`.
+15. **One timeout must not limit several phases.** In #144's first version, the
+    500 ms meant for the handshake also limited the TCP connect, so the row could
+    fail on a loaded host without the mutant. A test's own wait limit must be
+    longer than every timeout inside it, or a row that hangs keeps running after
+    disposal.
+16. **`killedBy` lists who failed first, not who detects.** Stryker stops a
+    mutant's test run at the first failure (the bail option is not disabled), so
+    `killedBy` lists only the tests that failed before it stopped. On #144 the
+    local capture credited only the racing test and CI credited the new one too,
+    while the new test failed in 30 of 30 isolated mutant runs. Judge detection
+    from isolated, repeated runs.
+17. **A lock taken around a build is inherited.** `VBCSCompiler` and the MSBuild
+    reuse nodes started under `flock` keep the lock file open, so the lock stays
+    held after the command ends (#145). Use `flock -o`, or build with
+    `--disable-build-servers` (`-nodeReuse:false`), when a build runs under a lock.
+    The proposed fix is in
+    `docs/evidence/pdd-classifier-hardening/review-fixes/after/lock-leak-2026-11-12.txt`.
+18. **Parallel steps on one machine need matched load.** S6 reran S5's timing on
+    the base commit right beside its own after measurement, under the same lock.
+    That made a fair pair although S5 had run alone (9.92 to 9.97 s against 9.92
+    to 9.94 s). When a before and an after are measured at different times, rerun
+    the before next to the after.
+
 ## Common rules for every step
 
 These apply to every session in addition to AGENTS.md and CONTRIBUTING.md, which
