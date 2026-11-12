@@ -1,0 +1,1 @@
+python3 -I anchor-fixtures.py /home/vscode/worktrees/s10 convert   # 2026-11-11, HEAD 29697a4, before the fixture files changed

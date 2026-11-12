@@ -1,0 +1,34 @@
+{
+  "dafny": {
+    "command": [
+      "/home/vscode/.cache/websocketclientlite/dafny-4.11.0/dafny/dafny",
+      "--version"
+    ],
+    "budget_seconds": 15,
+    "started_at": "2026-11-11T23:47:41.3426436+00:00",
+    "exit_code": 0,
+    "timed_out": false,
+    "interrupted": false,
+    "cleanup_incomplete": false,
+    "cleanup_seconds": 0,
+    "elapsed_seconds": 0.087,
+    "stdout": "4.11.0+fcb2042d6d043a2634f0854338c08feeaaaf4ae2\n",
+    "stderr": ""
+  },
+  "z3": {
+    "command": [
+      "/home/vscode/.cache/websocketclientlite/dafny-4.11.0/dafny/z3/bin/z3-4.12.1",
+      "--version"
+    ],
+    "budget_seconds": 15,
+    "started_at": "2026-11-11T23:47:41.4301129+00:00",
+    "exit_code": 0,
+    "timed_out": false,
+    "interrupted": false,
+    "cleanup_incomplete": false,
+    "cleanup_seconds": 0,
+    "elapsed_seconds": 0.002,
+    "stdout": "Z3 version 4.12.1 - 64 bit\n",
+    "stderr": ""
+  }
+}

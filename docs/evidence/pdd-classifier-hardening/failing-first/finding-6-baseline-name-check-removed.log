@@ -1,0 +1,16 @@
+source: git archive 29697a494053f8376ad30fae3895055901c97fd6
+copy: /tmp/s10-experiment.5fm9xo7z
+edited tools/Pdd/Mutations.cs:
+  - '            if (!Regex.IsMatch(clause, @"\\b" + Regex.Escape(d.Groups[1].Value) + @"\\s*\\(")) continue;\n'
+  + ''
+command: dotnet test tools/Pdd.Tests/Pdd.Tests.csproj -c Release --filter FullyQualifiedName~PropositionLocationMustLieInAPredicateTheTargetNames
+  Determining projects to restore...
+  Restored /tmp/s10-experiment.5fm9xo7z/tools/Pdd/Pdd.csproj (in 39 ms).
+  Restored /tmp/s10-experiment.5fm9xo7z/tools/Pdd.Tests/Pdd.Tests.csproj (in 112 ms).
+  Pdd -> /tmp/s10-experiment.5fm9xo7z/tools/Pdd/bin/Release/net10.0/Pdd.dll
+  Pdd.Tests -> /tmp/s10-experiment.5fm9xo7z/tools/Pdd.Tests/bin/Release/net10.0/Pdd.Tests.dll
+Test run for /tmp/s10-experiment.5fm9xo7z/tools/Pdd.Tests/bin/Release/net10.0/Pdd.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+
+Passed!  - Failed:     0, Passed:     1, Skipped:     0, Total:     1, Duration: 128 ms - Pdd.Tests.dll (net10.0)
+exit=0 elapsed=2663ms

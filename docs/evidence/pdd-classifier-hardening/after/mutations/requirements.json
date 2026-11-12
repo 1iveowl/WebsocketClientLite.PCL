@@ -1,0 +1,1419 @@
+{
+  "schema_version": 2,
+  "requirements": [
+    {
+      "id": "CLOSE-001",
+      "intent": "Reserve at most one Close send attempt over serialized transitions from zero; return send exactly for event 0 when neither the reservation nor terminal bit is set.",
+      "origin": [
+        "Library policy: sequential Close state model",
+        "https://www.rfc-editor.org/rfc/rfc6455.html#section-5.5.1"
+      ],
+      "contracts": [
+        {
+          "file": "verification/Protocol.dfy",
+          "symbol": "ProtocolCore.Protocol.CloseStep",
+          "clauses": [
+            "requires state <= 7 && event <= 2",
+            "ensures send <==> event == 0 && (state & 5) == 0",
+            "ensures send ==> (next & 1) == 1",
+            "ensures (state & 1) != 0 ==> !send"
+          ]
+        }
+      ],
+      "production_paths": [
+        {
+          "reference": {
+            "file": "src/main/WebsocketClientLite/Service/WebsocketSenderHandler.cs",
+            "symbol": "WebsocketClientLite.Service.WebsocketSenderHandler.AdvanceClose"
+          },
+          "responsibility": "Apply the transition under _stateLock and persist next state."
+        },
+        {
+          "reference": {
+            "file": "src/main/WebsocketClientLite/Service/WebsocketSenderHandler.cs",
+            "symbol": "WebsocketClientLite.Service.WebsocketSenderHandler.WriteFrameSerializedAsync"
+          },
+          "responsibility": "Reserve inside the frame gate before invoking the write delegate."
+        }
+      ],
+      "assumptions": [
+        "CLOSE-LOCK",
+        "CLOSE-WRITE",
+        "CLOSE-FAILURE"
+      ],
+      "obligations": [
+        {
+          "id": "CLOSE-001-PROOF",
+          "kind": "proof",
+          "delivery": "existing",
+          "description": "Verify CloseStep preconditions and the listed postconditions with scripts/dafny-masking.sh --check.",
+          "references": [
+            {
+              "file": "verification/Protocol.dfy",
+              "symbol": "ProtocolCore.Protocol.CloseStep"
+            }
+          ]
+        },
+        {
+          "id": "CLOSE-001-TEST",
+          "kind": "test",
+          "delivery": "existing",
+          "description": "Exercise compiled Close decisions; selected cases, not exhaustive exploration.",
+          "references": [
+            {
+              "file": "src/main/WebsocketClientLiteTest/ProtocolStateTests.cs",
+              "symbol": "WebsocketClientLiteTest.ProtocolStateTests.ClosingRequiresBothDirectionsOrTerminalEvent"
+            }
+          ]
+        },
+        {
+          "id": "CLOSE-001-MUTATION",
+          "kind": "mutation",
+          "delivery": "existing",
+          "description": "Reject duplicate send and suppressed eligible send decisions. Run scripts/pdd.sh mutations; verification/mutations/close.json maps this obligation to exact edits and target clauses.",
+          "references": []
+        },
+        {
+          "id": "CLOSE-001-REVIEW",
+          "kind": "review",
+          "delivery": "existing",
+          "description": "Review intent decision CLOSE-001 and its boundary assumptions in verification/close-intent-review.md; acceptance is recorded in PR review, not this manifest.",
+          "references": []
+        }
+      ],
+      "exclusions": [
+        "Reservation does not prove a completed wire write or peer receipt.",
+        "No proof of C# synchronization or generated C#."
+      ]
+    },
+    {
+      "id": "CLOSE-002",
+      "intent": "Preserve every previously set Close state bit on each valid transition.",
+      "origin": [
+        "Library policy: sequential Close state model",
+        "https://www.rfc-editor.org/rfc/rfc6455.html#section-7.1.2"
+      ],
+      "contracts": [
+        {
+          "file": "verification/Protocol.dfy",
+          "symbol": "ProtocolCore.Protocol.CloseStep",
+          "clauses": [
+            "requires state <= 7 && event <= 2",
+            "ensures next <= 7 && (next & state) == state"
+          ]
+        }
+      ],
+      "production_paths": [
+        {
+          "reference": {
+            "file": "src/main/WebsocketClientLite/Service/WebsocketSenderHandler.cs",
+            "symbol": "WebsocketClientLite.Service.WebsocketSenderHandler.AdvanceClose"
+          },
+          "responsibility": "Persist next state without resetting previously set bits."
+        }
+      ],
+      "assumptions": [
+        "CLOSE-LOCK"
+      ],
+      "obligations": [
+        {
+          "id": "CLOSE-002-PROOF",
+          "kind": "proof",
+          "delivery": "existing",
+          "description": "Verify CloseStep preconditions and the listed postconditions with scripts/dafny-masking.sh --check.",
+          "references": [
+            {
+              "file": "verification/Protocol.dfy",
+              "symbol": "ProtocolCore.Protocol.CloseStep"
+            }
+          ]
+        },
+        {
+          "id": "CLOSE-002-TEST",
+          "kind": "test",
+          "delivery": "existing",
+          "description": "Exercise compiled Close decisions; selected cases, not exhaustive exploration.",
+          "references": [
+            {
+              "file": "src/main/WebsocketClientLiteTest/ProtocolStateTests.cs",
+              "symbol": "WebsocketClientLiteTest.ProtocolStateTests.ClosingRequiresBothDirectionsOrTerminalEvent"
+            }
+          ]
+        },
+        {
+          "id": "CLOSE-002-MUTATION",
+          "kind": "mutation",
+          "delivery": "existing",
+          "description": "Reject loss of a previously set state bit. Run scripts/pdd.sh mutations; verification/mutations/close.json maps this obligation to exact edits and target clauses.",
+          "references": []
+        },
+        {
+          "id": "CLOSE-002-REVIEW",
+          "kind": "review",
+          "delivery": "existing",
+          "description": "Review intent decision CLOSE-002 and its boundary assumptions in verification/close-intent-review.md; acceptance is recorded in PR review, not this manifest.",
+          "references": []
+        }
+      ],
+      "exclusions": [
+        "No asynchronous interleaving proof or successful write guarantee."
+      ]
+    },
+    {
+      "id": "CLOSE-003",
+      "intent": "Return the release decision exactly when the next modeled state has both reservation and receive bits, or its terminal timeout/failure bit.",
+      "origin": [
+        "Library policy: sequential Close state model",
+        "https://www.rfc-editor.org/rfc/rfc6455.html#section-7.1.2"
+      ],
+      "contracts": [
+        {
+          "file": "verification/Protocol.dfy",
+          "symbol": "ProtocolCore.Protocol.CloseStep",
+          "clauses": [
+            "requires state <= 7 && event <= 2",
+            "ensures release <==> (next & 4) != 0 || (next & 3) == 3"
+          ]
+        }
+      ],
+      "production_paths": [
+        {
+          "reference": {
+            "file": "src/main/WebsocketClientLite/Service/WebsocketSenderHandler.cs",
+            "symbol": "WebsocketClientLite.Service.WebsocketSenderHandler.AdvanceClose"
+          },
+          "responsibility": "Complete _closeReady on release; this signal alone does not authorize transport disposal."
+        },
+        {
+          "reference": {
+            "file": "src/main/WebsocketClientLite/Service/WebsocketSenderHandler.cs",
+            "symbol": "WebsocketClientLite.Service.WebsocketSenderHandler.WaitForPeerCloseAsync"
+          },
+          "responsibility": "Translate peer-wait expiry to event 2."
+        }
+      ],
+      "assumptions": [
+        "CLOSE-LOCK",
+        "CLOSE-WRITE",
+        "CLOSE-TIMER"
+      ],
+      "obligations": [
+        {
+          "id": "CLOSE-003-PROOF",
+          "kind": "proof",
+          "delivery": "existing",
+          "description": "Verify CloseStep preconditions and the listed postconditions with scripts/dafny-masking.sh --check.",
+          "references": [
+            {
+              "file": "verification/Protocol.dfy",
+              "symbol": "ProtocolCore.Protocol.CloseStep"
+            }
+          ]
+        },
+        {
+          "id": "CLOSE-003-TEST",
+          "kind": "test",
+          "delivery": "existing",
+          "description": "Exercise compiled Close decisions; selected cases, not exhaustive exploration.",
+          "references": [
+            {
+              "file": "src/main/WebsocketClientLiteTest/ProtocolStateTests.cs",
+              "symbol": "WebsocketClientLiteTest.ProtocolStateTests.ClosingRequiresBothDirectionsOrTerminalEvent"
+            }
+          ]
+        },
+        {
+          "id": "CLOSE-003-MUTATION",
+          "kind": "mutation",
+          "delivery": "existing",
+          "description": "Reject premature release and suppressed eligible release. Run scripts/pdd.sh mutations; verification/mutations/close.json maps this obligation to exact edits and target clauses.",
+          "references": []
+        },
+        {
+          "id": "CLOSE-003-REVIEW",
+          "kind": "review",
+          "delivery": "existing",
+          "description": "Review intent decision CLOSE-003 and its boundary assumptions in verification/close-intent-review.md; acceptance is recorded in PR review, not this manifest.",
+          "references": []
+        }
+      ],
+      "exclusions": [
+        "Release is a readiness signal, not a completed handshake or direct transport release."
+      ]
+    },
+    {
+      "id": "CLOSE-004",
+      "intent": "On an established graceful DisposeAsync path, await successful Close write completion before releasing the transport, subject to the write and observer assumptions.",
+      "origin": [
+        "Library policy: bounded best-effort asynchronous teardown",
+        "https://www.rfc-editor.org/rfc/rfc6455.html#section-7.1.2"
+      ],
+      "contracts": [],
+      "production_paths": [
+        {
+          "reference": {
+            "file": "src/main/WebsocketClientLite/Service/WebsocketConnectionHandler.cs",
+            "symbol": "WebsocketClientLite.Service.WebsocketConnectionHandler.DisconnectWebsocket"
+          },
+          "responsibility": "Await Close send before waiting for the peer; catch send timeout/failure."
+        },
+        {
+          "reference": {
+            "file": "src/main/WebsocketClientLite/Service/WebsocketConnectionHandler.cs",
+            "symbol": "WebsocketClientLite.Service.WebsocketConnectionHandler.DisposeAsync"
+          },
+          "responsibility": "Await the shared close task before disposing parser and transport."
+        },
+        {
+          "reference": {
+            "file": "src/main/WebsocketClientLite/Service/WebsocketSenderHandler.cs",
+            "symbol": "WebsocketClientLite.Service.WebsocketSenderHandler.WriteFrameSerializedAsync"
+          },
+          "responsibility": "Await the serialized delegate write."
+        }
+      ],
+      "assumptions": [
+        "CLOSE-WRITE",
+        "CLOSE-FAILURE",
+        "CLOSE-TIMER",
+        "CLOSE-OBSERVER"
+      ],
+      "obligations": [
+        {
+          "id": "CLOSE-004-TEST",
+          "kind": "test",
+          "delivery": "existing",
+          "description": "Existing loopback coverage observes a Close frame before disposal returns; does not pause an in-flight write.",
+          "references": [
+            {
+              "file": "src/main/WebsocketClientLiteTest/TeardownTests.cs",
+              "symbol": "WebsocketClientLiteTest.TeardownTests.DisposeAsync_AwaitsCloseHandshake_AndCompletesSubscriber"
+            }
+          ]
+        },
+        {
+          "id": "CLOSE-004-CONTROLLED",
+          "kind": "test",
+          "delivery": "existing",
+          "description": "Pause Close write and prove graceful disposal waits; detect an isolated ordering defect. G adds parser lifecycle, observer routing, active periodic-ping cleanup and custom-context schedules with independently gated isolated defects; no exhaustive scheduling claim.",
+          "references": [
+            {
+              "file": "src/main/WebsocketClientLiteTest/ControlledCloseTests.cs",
+              "symbol": "WebsocketClientLiteTest.ControlledCloseTests.PausedCloseWriteBlocksDisposalAndPeerRaceSendsOnce"
+            },
+            {
+              "file": "src/main/WebsocketClientLiteTest/ControlledCloseTests.cs",
+              "symbol": "WebsocketClientLiteTest.ControlledCloseTests.FailedCloseWriteDisposesWithoutRetryOrPeerWait"
+            },
+            {
+              "file": "src/main/WebsocketClientLiteTest/ControlledCloseTests.cs",
+              "symbol": "WebsocketClientLiteTest.ControlledCloseTests.QueuedPongIsSuppressedAfterPeerClose"
+            },
+            {
+              "file": "src/main/WebsocketClientLiteTest/CloseBoundaryTests.cs",
+              "symbol": "WebsocketClientLiteTest.CloseBoundaryTests.ReadFailureReleasesReadinessBeforeObserverError"
+            },
+            {
+              "file": "src/main/WebsocketClientLiteTest/CloseBoundaryTests.cs",
+              "symbol": "WebsocketClientLiteTest.CloseBoundaryTests.ParserCompletionAwaitsFallbackCloseBeforeObserverCompletion"
+            },
+            {
+              "file": "src/main/WebsocketClientLiteTest/CloseBoundaryTests.cs",
+              "symbol": "WebsocketClientLiteTest.CloseBoundaryTests.CancelledParserLeavesCloseToDisposalAndDoesNotCompleteObserver"
+            },
+            {
+              "file": "src/main/WebsocketClientLiteTest/CloseBoundaryTests.cs",
+              "symbol": "WebsocketClientLiteTest.CloseBoundaryTests.ObserverErrorPrecedesCloseAndNeverBecomesCompletion"
+            },
+            {
+              "file": "src/main/WebsocketClientLiteTest/CloseBoundaryTests.cs",
+              "symbol": "WebsocketClientLiteTest.CloseBoundaryTests.ParserCompletionRoutesOneObserverCompletionAfterClose"
+            },
+            {
+              "file": "src/main/WebsocketClientLiteTest/CloseBoundaryTests.cs",
+              "symbol": "WebsocketClientLiteTest.CloseBoundaryTests.DisposalStopsActivePeriodicPingsBeforeClose"
+            },
+            {
+              "file": "src/main/WebsocketClientLiteTest/CloseBoundaryTests.cs",
+              "symbol": "WebsocketClientLiteTest.CloseBoundaryTests.AsyncDisposalDoesNotRequireCallingSynchronizationContext"
+            },
+            {
+              "file": "src/main/WebsocketClientLiteTest/CloseBoundaryTests.cs",
+              "symbol": "WebsocketClientLiteTest.CloseBoundaryTests.DisposalCancelsPausedPeriodicPingAndReleasesTransport"
+            }
+          ]
+        },
+        {
+          "id": "CLOSE-004-REVIEW",
+          "kind": "review",
+          "delivery": "existing",
+          "description": "Review intent decision CLOSE-004 and its boundary assumptions in verification/close-intent-review.md; acceptance is recorded in PR review, not this manifest.",
+          "references": []
+        }
+      ],
+      "exclusions": [
+        "Send timeout/failure, partial writes and synchronous Dispose are abort exceptions.",
+        "Concurrent unsubscribe or external disposal may interrupt a pending write."
+      ]
+    },
+    {
+      "id": "CLOSE-005",
+      "intent": "After a successful Close send, peer Close or expiry of the peer-wait timeout permits asynchronous disposal to finish, provided scheduling, callbacks and resource disposal progress; send failure or send timeout takes the best-effort terminal path.",
+      "origin": [
+        "Library policy: bounded best-effort asynchronous teardown",
+        "https://www.rfc-editor.org/rfc/rfc6455.html#section-7.1.2"
+      ],
+      "contracts": [],
+      "production_paths": [
+        {
+          "reference": {
+            "file": "src/main/WebsocketClientLite/Service/WebsocketConnectionHandler.cs",
+            "symbol": "WebsocketClientLite.Service.WebsocketConnectionHandler.DisconnectWebsocket"
+          },
+          "responsibility": "Use separate five-second send and peer-response waits; publish Disconnected afterward."
+        },
+        {
+          "reference": {
+            "file": "src/main/WebsocketClientLite/Service/WebsocketConnectionHandler.cs",
+            "symbol": "WebsocketClientLite.Service.WebsocketConnectionHandler.DisposeAsync"
+          },
+          "responsibility": "Await shared close task and release resources."
+        },
+        {
+          "reference": {
+            "file": "src/main/WebsocketClientLite/Service/WebsocketSenderHandler.cs",
+            "symbol": "WebsocketClientLite.Service.WebsocketSenderHandler.WaitForPeerCloseAsync"
+          },
+          "responsibility": "Allow readiness or timer expiry to finish peer waiting."
+        }
+      ],
+      "assumptions": [
+        "CLOSE-WRITE",
+        "CLOSE-FAILURE",
+        "CLOSE-TIMER",
+        "CLOSE-OBSERVER"
+      ],
+      "obligations": [
+        {
+          "id": "CLOSE-005-TEST",
+          "kind": "test",
+          "delivery": "existing",
+          "description": "Existing tests cover delayed peer reply and sender-level timeout separately.",
+          "references": [
+            {
+              "file": "src/main/WebsocketClientLiteTest/TeardownTests.cs",
+              "symbol": "WebsocketClientLiteTest.TeardownTests.DisposeAsyncKeepsTransportOpenUntilDelayedPeerClose"
+            },
+            {
+              "file": "src/main/WebsocketClientLiteTest/ProtocolStateTests.cs",
+              "symbol": "WebsocketClientLiteTest.ProtocolStateTests.CloseResponseTimeoutMakesTheTransportTerminal"
+            }
+          ]
+        },
+        {
+          "id": "CLOSE-005-CONTROLLED",
+          "kind": "test",
+          "delivery": "existing",
+          "description": "Control peer wait timeout and transport failure through disposal, with diagnostic bounded waits. G adds parser lifecycle, observer routing, active periodic-ping cleanup and custom-context schedules with independently gated isolated defects; no exhaustive scheduling claim.",
+          "references": [
+            {
+              "file": "src/main/WebsocketClientLiteTest/ControlledCloseTests.cs",
+              "symbol": "WebsocketClientLiteTest.ControlledCloseTests.PeerWaitEndsByControlledTimeoutOrReadFailure"
+            },
+            {
+              "file": "src/main/WebsocketClientLiteTest/ControlledCloseTests.cs",
+              "symbol": "WebsocketClientLiteTest.ControlledCloseTests.CancellationBetweenFragmentsAllowsOnlyClose"
+            },
+            {
+              "file": "src/main/WebsocketClientLiteTest/ControlledCloseTests.cs",
+              "symbol": "WebsocketClientLiteTest.ControlledCloseTests.PostWriteFailureRejectsQueuedAndLaterDataAndSuppressesClose"
+            },
+            {
+              "file": "src/main/WebsocketClientLiteTest/ControlledCloseTests.cs",
+              "symbol": "WebsocketClientLiteTest.ControlledCloseTests.ParserSignalsPeerCloseOrReadFailureBeforeTimerExpiry"
+            },
+            {
+              "file": "src/main/WebsocketClientLiteTest/CloseBoundaryTests.cs",
+              "symbol": "WebsocketClientLiteTest.CloseBoundaryTests.ReadFailureReleasesReadinessBeforeObserverError"
+            },
+            {
+              "file": "src/main/WebsocketClientLiteTest/CloseBoundaryTests.cs",
+              "symbol": "WebsocketClientLiteTest.CloseBoundaryTests.ParserCompletionAwaitsFallbackCloseBeforeObserverCompletion"
+            },
+            {
+              "file": "src/main/WebsocketClientLiteTest/CloseBoundaryTests.cs",
+              "symbol": "WebsocketClientLiteTest.CloseBoundaryTests.CancelledParserLeavesCloseToDisposalAndDoesNotCompleteObserver"
+            },
+            {
+              "file": "src/main/WebsocketClientLiteTest/CloseBoundaryTests.cs",
+              "symbol": "WebsocketClientLiteTest.CloseBoundaryTests.ObserverErrorPrecedesCloseAndNeverBecomesCompletion"
+            },
+            {
+              "file": "src/main/WebsocketClientLiteTest/CloseBoundaryTests.cs",
+              "symbol": "WebsocketClientLiteTest.CloseBoundaryTests.ParserCompletionRoutesOneObserverCompletionAfterClose"
+            },
+            {
+              "file": "src/main/WebsocketClientLiteTest/CloseBoundaryTests.cs",
+              "symbol": "WebsocketClientLiteTest.CloseBoundaryTests.DisposalStopsActivePeriodicPingsBeforeClose"
+            },
+            {
+              "file": "src/main/WebsocketClientLiteTest/CloseBoundaryTests.cs",
+              "symbol": "WebsocketClientLiteTest.CloseBoundaryTests.AsyncDisposalDoesNotRequireCallingSynchronizationContext"
+            },
+            {
+              "file": "src/main/WebsocketClientLiteTest/CloseBoundaryTests.cs",
+              "symbol": "WebsocketClientLiteTest.CloseBoundaryTests.DisposalCancelsPausedPeriodicPingAndReleasesTransport"
+            }
+          ]
+        },
+        {
+          "id": "CLOSE-005-REVIEW",
+          "kind": "review",
+          "delivery": "existing",
+          "description": "Review intent decision CLOSE-005 and its boundary assumptions in verification/close-intent-review.md; acceptance is recorded in PR review, not this manifest.",
+          "references": []
+        }
+      ],
+      "exclusions": [
+        "No unconditional liveness, exact total disposal deadline, or exhaustive concurrency guarantee.",
+        "No promise that a timeout completes or cancels an outstanding stream write."
+      ]
+    },
+    {
+      "id": "REASSEMBLY-001",
+      "intent": "Given stable retained segments and their exact valid total, production Merge returns a fresh exact-sized concatenation in segment order, assuming the native-copy contract.",
+      "origin": [
+        "Library policy: verified payload algorithms with explicit C# adapter assumptions",
+        "https://www.rfc-editor.org/rfc/rfc6455.html#section-5.4"
+      ],
+      "contracts": [
+        {
+          "file": "verification/Protocol.dfy",
+          "symbol": "ProtocolCore.Protocol.Merge",
+          "clauses": [
+            "requires parts.Length <= 0x7fffffff",
+            "requires |Parts(parts, parts.Length)| == total as int",
+            "ensures fresh(result) && result[..] == Parts(parts, parts.Length)"
+          ]
+        }
+      ],
+      "production_paths": [
+        {
+          "reference": {
+            "file": "src/main/WebsocketClientLite/Service/WebsocketParserHandler.cs",
+            "symbol": "WebsocketClientLite.Service.WebsocketParserHandler.DataframeObservable"
+          },
+          "responsibility": "Retain owned payloads, maintain the validated total, and invoke production Merge only for multiple retained segments."
+        },
+        {
+          "reference": {
+            "file": "src/main/WebsocketClientLite/Helper/VerifiedNativeCopy.cs",
+            "symbol": "WebsocketClientLite.VerifiedProtocol.NativeCopy.CopySlice"
+          },
+          "responsibility": "Implement the explicitly trusted copy primitive; this C# code is not proved by Dafny."
+        }
+      ],
+      "assumptions": [
+        "PAYLOAD-OWNERSHIP",
+        "REASSEMBLY-TOTALS",
+        "NATIVE-COPY"
+      ],
+      "obligations": [
+        {
+          "id": "REASSEMBLY-001-PROOF",
+          "kind": "proof",
+          "delivery": "existing",
+          "description": "Verify the mapped contracts using the pinned toolchain and generated-code check. Frame conditions and preconditions remain unchanged.",
+          "references": [
+            {
+              "file": "verification/Protocol.dfy",
+              "symbol": "ProtocolCore.Protocol.Merge"
+            }
+          ]
+        },
+        {
+          "id": "REASSEMBLY-001-TEST",
+          "kind": "test",
+          "delivery": "existing",
+          "description": "Require these independent byte, adapter or loopback tests on every supported library target; tests do not prove all inputs. P3-C also requires tested-only parser retention/scratch adapters and two isolated C# defects; this does not expand the Merge proof.",
+          "references": [
+            {
+              "file": "src/main/WebsocketClientLiteTest/ProtocolStateTests.cs",
+              "symbol": "WebsocketClientLiteTest.ProtocolStateTests.MergePreservesEmptyAndNonemptySegmentsInOrder"
+            },
+            {
+              "file": "src/main/WebsocketClientLiteTest/ProtocolStateTests.cs",
+              "symbol": "WebsocketClientLiteTest.ProtocolStateTests.BulkMergeMatchesScalarProofAndIndependentConcatenation"
+            },
+            {
+              "file": "src/main/WebsocketClientLiteTest/PayloadBoundaryTests.cs",
+              "symbol": "WebsocketClientLiteTest.PayloadBoundaryTests.MergeVariantsPreserveAliasedSegmentsAndReturnFreshStorage"
+            },
+            {
+              "file": "src/main/WebsocketClientLiteTest/IntegrationTests.cs",
+              "symbol": "WebsocketClientLiteTest.IntegrationTests.Reassembles_ServerFragmentedMessage_EndToEnd"
+            },
+            {
+              "file": "src/main/WebsocketClientLiteTest/ParserRetentionTests.cs",
+              "symbol": "WebsocketClientLiteTest.ParserRetentionTests.SmallSequencesPreserveBytesMetadataAndReset"
+            },
+            {
+              "file": "src/main/WebsocketClientLiteTest/ParserRetentionTests.cs",
+              "symbol": "WebsocketClientLiteTest.ParserRetentionTests.AccumulatedLimitRejectsBeforePayloadRead"
+            },
+            {
+              "file": "src/main/WebsocketClientLiteTest/ParserRetentionTests.cs",
+              "symbol": "WebsocketClientLiteTest.ParserRetentionTests.ControlPayloadDoesNotChangeRetainedTotal"
+            },
+            {
+              "file": "src/main/WebsocketClientLiteTest/ParserRetentionTests.cs",
+              "symbol": "WebsocketClientLiteTest.ParserRetentionTests.ExtendedHeaderCapturesScratchBeforeReuse"
+            },
+            {
+              "file": "src/main/WebsocketClientLiteTest/ParserRetentionTests.cs",
+              "symbol": "WebsocketClientLiteTest.ParserRetentionTests.HugeLengthsRejectOnHeaderOnly"
+            },
+            {
+              "file": "src/main/WebsocketClientLiteTest/ParserRetentionTests.cs",
+              "symbol": "WebsocketClientLiteTest.ParserRetentionTests.IncompleteMessageTerminatesWithoutEmission"
+            },
+            {
+              "file": "src/main/WebsocketClientLiteTest/ParserRetentionTests.cs",
+              "symbol": "WebsocketClientLiteTest.ParserRetentionTests.CloseAndInvalidContinuationDoNotLeakRetainedData"
+            },
+            {
+              "file": "src/main/WebsocketClientLiteTest/ParserRetentionTests.cs",
+              "symbol": "WebsocketClientLiteTest.ParserRetentionTests.SplitUtf8IsValidatedOnlyWhenComplete"
+            },
+            {
+              "file": "src/main/WebsocketClientLiteTest/ParserRetentionTests.cs",
+              "symbol": "WebsocketClientLiteTest.ParserRetentionTests.HandshakeConsumesScratchImmediatelyAndStopsBeforeFrame"
+            }
+          ]
+        },
+        {
+          "id": "REASSEMBLY-001-MUTATION",
+          "kind": "mutation",
+          "delivery": "existing",
+          "description": "Run the exact payload mutations with scripts/pdd.sh mutations. Only the catalogued semantic failure counts; unrelated assertions, syntax errors, survival and timeout fail the experiment.",
+          "references": []
+        },
+        {
+          "id": "REASSEMBLY-001-REVIEW",
+          "kind": "review",
+          "delivery": "existing",
+          "description": "Review the corresponding decision and boundaries in verification/close-intent-review.md against the PR revision. A machine result does not record acceptance.",
+          "references": []
+        }
+      ],
+      "exclusions": [
+        "The production proof assumes NativeCopy.CopySlice; it is not the fully scalar proof.",
+        "C# retained-total bookkeeping and the entire asynchronous parser are not proved by this requirement.",
+        "No proof of generated C#, compiler/runtime correctness, successful allocation, concurrent buffer access or complete RFC conformance."
+      ]
+    },
+    {
+      "id": "REASSEMBLY-002",
+      "intent": "Under the same stable-segment and exact-total preconditions, MergeScalar returns a fresh exact concatenation using verified element copies, without the native-copy assumption.",
+      "origin": [
+        "Library policy: verified payload algorithms with explicit C# adapter assumptions",
+        "https://www.rfc-editor.org/rfc/rfc6455.html#section-5.4"
+      ],
+      "contracts": [
+        {
+          "file": "verification/Protocol.dfy",
+          "symbol": "ProtocolCore.Protocol.MergeScalar",
+          "clauses": [
+            "requires parts.Length <= 0x7fffffff",
+            "requires |Parts(parts, parts.Length)| == total as int",
+            "ensures fresh(result) && result[..] == Parts(parts, parts.Length)"
+          ]
+        }
+      ],
+      "production_paths": [
+        {
+          "reference": {
+            "file": "src/main/WebsocketClientLiteTest/PayloadBoundaryTests.cs",
+            "symbol": "WebsocketClientLiteTest.PayloadBoundaryTests.MergeVariantsPreserveAliasedSegmentsAndReturnFreshStorage"
+          },
+          "responsibility": "Test-only reference path: exercise MergeScalar independently. Production receive code uses Merge, not this scalar oracle."
+        }
+      ],
+      "assumptions": [
+        "PAYLOAD-OWNERSHIP",
+        "REASSEMBLY-TOTALS"
+      ],
+      "obligations": [
+        {
+          "id": "REASSEMBLY-002-PROOF",
+          "kind": "proof",
+          "delivery": "existing",
+          "description": "Verify the mapped contracts using the pinned toolchain and generated-code check. Frame conditions and preconditions remain unchanged.",
+          "references": [
+            {
+              "file": "verification/Protocol.dfy",
+              "symbol": "ProtocolCore.Protocol.MergeScalar"
+            }
+          ]
+        },
+        {
+          "id": "REASSEMBLY-002-TEST",
+          "kind": "test",
+          "delivery": "existing",
+          "description": "Require these independent byte, adapter or loopback tests on every supported library target; tests do not prove all inputs.",
+          "references": [
+            {
+              "file": "src/main/WebsocketClientLiteTest/ProtocolStateTests.cs",
+              "symbol": "WebsocketClientLiteTest.ProtocolStateTests.BulkMergeMatchesScalarProofAndIndependentConcatenation"
+            },
+            {
+              "file": "src/main/WebsocketClientLiteTest/PayloadBoundaryTests.cs",
+              "symbol": "WebsocketClientLiteTest.PayloadBoundaryTests.MergeVariantsPreserveAliasedSegmentsAndReturnFreshStorage"
+            }
+          ]
+        },
+        {
+          "id": "REASSEMBLY-002-MUTATION",
+          "kind": "mutation",
+          "delivery": "existing",
+          "description": "Run the exact payload mutations with scripts/pdd.sh mutations. Only the catalogued semantic failure counts; unrelated assertions, syntax errors, survival and timeout fail the experiment.",
+          "references": []
+        },
+        {
+          "id": "REASSEMBLY-002-REVIEW",
+          "kind": "review",
+          "delivery": "existing",
+          "description": "Review the corresponding decision and boundaries in verification/close-intent-review.md against the PR revision. A machine result does not record acceptance.",
+          "references": []
+        }
+      ],
+      "exclusions": [
+        "Comparing production and scalar outputs on selected cases is not a proof of their compiled C# equivalence.",
+        "No proof of generated C#, compiler/runtime correctness, successful allocation, concurrent buffer access or complete RFC conformance."
+      ]
+    },
+    {
+      "id": "REASSEMBLY-003",
+      "intent": "For distinct source/destination arrays and an in-bounds offset, the native copy adapter copies exactly the source bytes while preserving the source and destination outside that slice.",
+      "origin": [
+        "Library policy: verified payload algorithms with explicit C# adapter assumptions",
+        "https://www.rfc-editor.org/rfc/rfc6455.html#section-5.4"
+      ],
+      "contracts": [],
+      "production_paths": [
+        {
+          "reference": {
+            "file": "src/main/WebsocketClientLite/Helper/VerifiedNativeCopy.cs",
+            "symbol": "WebsocketClientLite.VerifiedProtocol.NativeCopy.CopySlice"
+          },
+          "responsibility": "Delegate to Buffer.BlockCopy with a checked offset conversion; the runtime primitive remains trusted."
+        }
+      ],
+      "assumptions": [
+        "PAYLOAD-OWNERSHIP",
+        "NATIVE-COPY"
+      ],
+      "obligations": [
+        {
+          "id": "REASSEMBLY-003-TEST",
+          "kind": "test",
+          "delivery": "existing",
+          "description": "Require these independent byte, adapter or loopback tests on every supported library target; tests do not prove all inputs.",
+          "references": [
+            {
+              "file": "src/main/WebsocketClientLiteTest/ProtocolStateTests.cs",
+              "symbol": "WebsocketClientLiteTest.ProtocolStateTests.BulkCopyContractPreservesSourceAndDestinationOutsideSlice"
+            }
+          ]
+        },
+        {
+          "id": "REASSEMBLY-003-REVIEW",
+          "kind": "review",
+          "delivery": "existing",
+          "description": "Review the corresponding decision and boundaries in verification/close-intent-review.md against the PR revision. A machine result does not record acceptance.",
+          "references": []
+        }
+      ],
+      "exclusions": [
+        "This is a tested assumption, not a proved algorithm; the external Dafny declaration is not proof evidence.",
+        "No Dafny mutation obligation: mutating the extern contract would change an assumption rather than test its implementation. Independent native-copy tests remain mandatory.",
+        "No proof of generated C#, compiler/runtime correctness, successful allocation, concurrent buffer access or complete RFC conformance."
+      ]
+    },
+    {
+      "id": "MASK-001",
+      "intent": "For a distinct key with at least four bytes and count equal to payload length, Apply XORs each payload byte with the corresponding repeating key byte and preserves the key through its data-only frame condition.",
+      "origin": [
+        "Library policy: verified payload algorithms with explicit C# adapter assumptions",
+        "https://www.rfc-editor.org/rfc/rfc6455.html#section-5.3"
+      ],
+      "contracts": [
+        {
+          "file": "verification/Masking.dfy",
+          "symbol": "MaskingCore.Masking.Apply",
+          "clauses": [
+            "requires data != key",
+            "requires key.Length >= 4",
+            "requires count as int == data.Length",
+            "modifies data",
+            "ensures forall j :: 0 <= j < data.Length ==> data[j] == old(data[j]) ^ key[j % 4]"
+          ]
+        }
+      ],
+      "production_paths": [
+        {
+          "reference": {
+            "file": "src/main/WebsocketClientLite/Helper/WebsocketMasking.cs",
+            "symbol": "WebsocketClientLite.Helper.WebsocketMasking.Decode"
+          },
+          "responsibility": "Reject null, short-key and aliased buffers; pass the payload length to the generated in-place kernel."
+        }
+      ],
+      "assumptions": [
+        "PAYLOAD-OWNERSHIP",
+        "MASK-ADAPTER"
+      ],
+      "obligations": [
+        {
+          "id": "MASK-001-PROOF",
+          "kind": "proof",
+          "delivery": "existing",
+          "description": "Verify the mapped contracts using the pinned toolchain and generated-code check. Frame conditions and preconditions remain unchanged.",
+          "references": [
+            {
+              "file": "verification/Masking.dfy",
+              "symbol": "MaskingCore.Masking.Apply"
+            }
+          ]
+        },
+        {
+          "id": "MASK-001-TEST",
+          "kind": "test",
+          "delivery": "existing",
+          "description": "Require these independent byte, adapter or loopback tests on every supported library target; tests do not prove all inputs.",
+          "references": [
+            {
+              "file": "src/main/WebsocketClientLiteTest/MaskingTests.cs",
+              "symbol": "WebsocketClientLiteTest.MaskingTests.Decode_MatchesRfc6455HelloVector"
+            },
+            {
+              "file": "src/main/WebsocketClientLiteTest/MaskingTests.cs",
+              "symbol": "WebsocketClientLiteTest.MaskingTests.Decode_PreservesScratchKeyAndRoundTrips"
+            },
+            {
+              "file": "src/main/WebsocketClientLiteTest/MaskingTests.cs",
+              "symbol": "WebsocketClientLiteTest.MaskingTests.Decode_CoversEveryByteAndKeyValueAtEachKeyPosition"
+            },
+            {
+              "file": "src/main/WebsocketClientLiteTest/MaskingTests.cs",
+              "symbol": "WebsocketClientLiteTest.MaskingTests.Decode_RejectsInvalidAdapterInputsBeforeMutation"
+            }
+          ]
+        },
+        {
+          "id": "MASK-001-MUTATION",
+          "kind": "mutation",
+          "delivery": "existing",
+          "description": "Run the exact payload mutations with scripts/pdd.sh mutations. Only the catalogued semantic failure counts; unrelated assertions, syntax errors, survival and timeout fail the experiment.",
+          "references": []
+        },
+        {
+          "id": "MASK-001-REVIEW",
+          "kind": "review",
+          "delivery": "existing",
+          "description": "Review the corresponding decision and boundaries in verification/close-intent-review.md against the PR revision. A machine result does not record acceptance.",
+          "references": []
+        }
+      ],
+      "exclusions": [
+        "The cryptographic randomness of mask-key generation is outside this XOR/preservation requirement.",
+        "No proof of generated C#, compiler/runtime correctness, successful allocation, concurrent buffer access or complete RFC conformance."
+      ]
+    },
+    {
+      "id": "MASK-002",
+      "intent": "CopyMasked writes XOR-masked bytes from exactly the requested source prefix into the destination slice, preserving the source and every destination byte outside that slice.",
+      "origin": [
+        "Library policy: verified payload algorithms with explicit C# adapter assumptions",
+        "https://www.rfc-editor.org/rfc/rfc6455.html#section-5.3"
+      ],
+      "contracts": [
+        {
+          "file": "verification/Protocol.dfy",
+          "symbol": "ProtocolCore.Protocol.CopyMasked",
+          "clauses": [
+            "requires source != dest",
+            "requires count as int <= source.Length",
+            "requires offset as int + count as int <= dest.Length",
+            "requires offset as int + count as int <= 0x7fffffff",
+            "modifies dest",
+            "ensures forall j :: 0 <= j < count as int ==> dest[offset as int + j] == source[j] ^ (if j % 4 == 0 then k0 else if j % 4 == 1 then k1 else if j % 4 == 2 then k2 else k3)",
+            "ensures forall j :: 0 <= j < dest.Length && !(offset as int <= j < offset as int + count as int) ==> dest[j] == old(dest[j])"
+          ]
+        }
+      ],
+      "production_paths": [
+        {
+          "reference": {
+            "file": "src/main/WebsocketClientLite/Service/WebsocketSenderHandler.cs",
+            "symbol": "WebsocketClientLite.Service.WebsocketSenderHandler.ComposeFrameAndSendCoreAsync"
+          },
+          "responsibility": "Establish non-aliasing, source count and destination bounds for the pooled output buffer; supply the four header key bytes."
+        }
+      ],
+      "assumptions": [
+        "PAYLOAD-OWNERSHIP",
+        "MASK-ADAPTER"
+      ],
+      "obligations": [
+        {
+          "id": "MASK-002-PROOF",
+          "kind": "proof",
+          "delivery": "existing",
+          "description": "Verify the mapped contracts using the pinned toolchain and generated-code check. Frame conditions and preconditions remain unchanged.",
+          "references": [
+            {
+              "file": "verification/Protocol.dfy",
+              "symbol": "ProtocolCore.Protocol.CopyMasked"
+            }
+          ]
+        },
+        {
+          "id": "MASK-002-TEST",
+          "kind": "test",
+          "delivery": "existing",
+          "description": "Require these independent byte, adapter or loopback tests on every supported library target; tests do not prove all inputs.",
+          "references": [
+            {
+              "file": "src/main/WebsocketClientLiteTest/ProtocolCoreTests.cs",
+              "symbol": "WebsocketClientLiteTest.ProtocolCoreTests.SliceMaskingPreservesPrefixSuffixAndSource"
+            },
+            {
+              "file": "src/main/WebsocketClientLiteTest/PayloadBoundaryTests.cs",
+              "symbol": "WebsocketClientLiteTest.PayloadBoundaryTests.CopyMaskedUsesOnlyRequestedPrefixAndPreservesOtherBytes"
+            }
+          ]
+        },
+        {
+          "id": "MASK-002-MUTATION",
+          "kind": "mutation",
+          "delivery": "existing",
+          "description": "Run the exact payload mutations with scripts/pdd.sh mutations. Only the catalogued semantic failure counts; unrelated assertions, syntax errors, survival and timeout fail the experiment.",
+          "references": []
+        },
+        {
+          "id": "MASK-002-REVIEW",
+          "kind": "review",
+          "delivery": "existing",
+          "description": "Review the corresponding decision and boundaries in verification/close-intent-review.md against the PR revision. A machine result does not record acceptance.",
+          "references": []
+        }
+      ],
+      "exclusions": [
+        "No proof of array-pool ownership, UTF-8 encoding or completed wire writes.",
+        "No proof of generated C#, compiler/runtime correctness, successful allocation, concurrent buffer access or complete RFC conformance."
+      ]
+    },
+    {
+      "id": "MASK-003",
+      "intent": "MaskSlice XORs exactly the requested in-place payload slice using the four earlier key bytes and preserves every byte outside the slice, including the key and guards.",
+      "origin": [
+        "Library policy: verified payload algorithms with explicit C# adapter assumptions",
+        "https://www.rfc-editor.org/rfc/rfc6455.html#section-5.3"
+      ],
+      "contracts": [
+        {
+          "file": "verification/Protocol.dfy",
+          "symbol": "ProtocolCore.Protocol.MaskSlice",
+          "clauses": [
+            "requires keyOffset as int + 4 <= offset as int",
+            "requires offset as int + count as int <= dest.Length",
+            "requires offset as int + count as int <= 0x7fffffff",
+            "modifies dest",
+            "ensures forall j :: 0 <= j < count as int ==> dest[offset as int + j] == old(dest[offset as int + j]) ^ old(dest[keyOffset as int + j % 4])",
+            "ensures forall j :: 0 <= j < dest.Length && !(offset as int <= j < offset as int + count as int) ==> dest[j] == old(dest[j])"
+          ]
+        }
+      ],
+      "production_paths": [
+        {
+          "reference": {
+            "file": "src/main/WebsocketClientLite/Service/WebsocketSenderHandler.cs",
+            "symbol": "WebsocketClientLite.Service.WebsocketSenderHandler.ComposeFrameAndSendCoreAsync"
+          },
+          "responsibility": "Encode text inside the allocated payload slice and establish that the key precedes the payload before masking."
+        }
+      ],
+      "assumptions": [
+        "PAYLOAD-OWNERSHIP",
+        "MASK-ADAPTER"
+      ],
+      "obligations": [
+        {
+          "id": "MASK-003-PROOF",
+          "kind": "proof",
+          "delivery": "existing",
+          "description": "Verify the mapped contracts using the pinned toolchain and generated-code check. Frame conditions and preconditions remain unchanged.",
+          "references": [
+            {
+              "file": "verification/Protocol.dfy",
+              "symbol": "ProtocolCore.Protocol.MaskSlice"
+            }
+          ]
+        },
+        {
+          "id": "MASK-003-TEST",
+          "kind": "test",
+          "delivery": "existing",
+          "description": "Require these independent byte, adapter or loopback tests on every supported library target; tests do not prove all inputs.",
+          "references": [
+            {
+              "file": "src/main/WebsocketClientLiteTest/ProtocolCoreTests.cs",
+              "symbol": "WebsocketClientLiteTest.ProtocolCoreTests.SliceMaskingPreservesPrefixSuffixAndSource"
+            },
+            {
+              "file": "src/main/WebsocketClientLiteTest/PayloadBoundaryTests.cs",
+              "symbol": "WebsocketClientLiteTest.PayloadBoundaryTests.MaskSliceMatchesKnownBytesAndPreservesEntireOutsideSlice"
+            }
+          ]
+        },
+        {
+          "id": "MASK-003-MUTATION",
+          "kind": "mutation",
+          "delivery": "existing",
+          "description": "Run the exact payload mutations with scripts/pdd.sh mutations. Only the catalogued semantic failure counts; unrelated assertions, syntax errors, survival and timeout fail the experiment.",
+          "references": []
+        },
+        {
+          "id": "MASK-003-REVIEW",
+          "kind": "review",
+          "delivery": "existing",
+          "description": "Review the corresponding decision and boundaries in verification/close-intent-review.md against the PR revision. A machine result does not record acceptance.",
+          "references": []
+        }
+      ],
+      "exclusions": [
+        "No proof of encoding, header construction, array-pool ownership or completed wire writes.",
+        "No proof of generated C#, compiler/runtime correctness, successful allocation, concurrent buffer access or complete RFC conformance."
+      ]
+    },
+    {
+      "id": "WRITE-001",
+      "intent": "Selected single-connection schedules serialize frame delegates, reject queued data after terminal notification and settle queued cancellation/abort after controlled owners settle. This is tested C# ownership, not a Dafny proof.",
+      "origin": [
+        "Library policy: P3-A queued admission, cancellation and abort"
+      ],
+      "contracts": [],
+      "production_paths": [
+        {
+          "reference": {
+            "file": "src/main/WebsocketClientLite/Service/TcpConnectionService.cs",
+            "symbol": "WebsocketClientLite.Service.TcpConnectionService.WriteSerializedAsync"
+          },
+          "responsibility": "Retain frame ownership until the delegate settles; release to queued waiters and reject admission after abort."
+        },
+        {
+          "reference": {
+            "file": "src/main/WebsocketClientLite/Service/WebsocketSenderHandler.cs",
+            "symbol": "WebsocketClientLite.Service.WebsocketSenderHandler.WriteFrameSerializedAsync"
+          },
+          "responsibility": "Check terminal sender state under the state lock after frame admission."
+        }
+      ],
+      "assumptions": [
+        "WRITE-PROGRESS"
+      ],
+      "obligations": [
+        {
+          "id": "WRITE-001-TEST",
+          "kind": "test",
+          "delivery": "existing",
+          "description": "Require all named schedules and theory rows on five library targets plus the isolated frame-overlap assertion experiment. Reuse the existing between-fragments detector.",
+          "references": [
+            {
+              "file": "src/main/WebsocketClientLiteTest/QueuedWriteTests.cs",
+              "symbol": "WebsocketClientLiteTest.QueuedWriteTests.AbortDrainsNonCancelableFrameWaiterAfterOwnerSettles"
+            },
+            {
+              "file": "src/main/WebsocketClientLiteTest/QueuedWriteTests.cs",
+              "symbol": "WebsocketClientLiteTest.QueuedWriteTests.CancellationBeforeOrWhileQueuedPreservesAdmission"
+            },
+            {
+              "file": "src/main/WebsocketClientLiteTest/QueuedWriteTests.cs",
+              "symbol": "WebsocketClientLiteTest.QueuedWriteTests.PreCancelledControlNeverAcquiresFrameOwnership"
+            },
+            {
+              "file": "src/main/WebsocketClientLiteTest/QueuedWriteTests.cs",
+              "symbol": "WebsocketClientLiteTest.QueuedWriteTests.FrameSerializationAdmitsTwoDataSendsAndOneControlWithoutOverlap"
+            },
+            {
+              "file": "src/main/WebsocketClientLiteTest/QueuedWriteTests.cs",
+              "symbol": "WebsocketClientLiteTest.QueuedWriteTests.TerminalNotificationRejectsDataWaitingAtEitherGate"
+            },
+            {
+              "file": "src/main/WebsocketClientLiteTest/QueuedWriteTests.cs",
+              "symbol": "WebsocketClientLiteTest.QueuedWriteTests.AbortAllowsQueuedCancellationWhileOwnerRemainsInFlight"
+            },
+            {
+              "file": "src/main/WebsocketClientLiteTest/ControlledCloseTests.cs",
+              "symbol": "WebsocketClientLiteTest.ControlledCloseTests.CancellationBetweenFragmentsAllowsOnlyClose"
+            }
+          ]
+        },
+        {
+          "id": "WRITE-001-REVIEW",
+          "kind": "review",
+          "delivery": "existing",
+          "description": "Review phase ownership, conditional progress and scoped abort correction against the PR source revision; machine success is not semantic approval.",
+          "references": []
+        }
+      ],
+      "exclusions": [
+        "No FIFO, starvation-freedom, arbitrary interleaving, network delivery or wall-clock completion guarantee.",
+        "In-flight delegates and callbacks must settle; synchronous abort can interrupt a write already admitted. Buffer lease instrumentation belongs to P3-B."
+      ]
+    },
+    {
+      "id": "LEASE-001",
+      "intent": "Selected sender paths retain each rented frame until its write Task settles and return it exactly once with clearing requested; only initialized bytes reach the delegate. Tested C# ownership, not a Dafny proof.",
+      "origin": [
+        "Library policy: P3-B sender buffer lifetime"
+      ],
+      "contracts": [],
+      "production_paths": [
+        {
+          "reference": {
+            "file": "src/main/WebsocketClientLite/Service/WebsocketSenderHandler.cs",
+            "symbol": "WebsocketClientLite.Service.WebsocketSenderHandler.ComposeFrameAndSendCoreAsync"
+          },
+          "responsibility": "Own rented frame through queued or in-flight send and return in finally."
+        }
+      ],
+      "assumptions": [
+        "PAYLOAD-OWNERSHIP",
+        "MASK-ADAPTER",
+        "WRITE-PROGRESS"
+      ],
+      "obligations": [
+        {
+          "id": "LEASE-001-TEST",
+          "kind": "test",
+          "delivery": "existing",
+          "description": "Require named schedules on five targets and three isolated assertion detections; pool identity/count/clearing and independent wire bytes are tested.",
+          "references": [
+            {
+              "file": "src/main/WebsocketClientLiteTest/PayloadLeaseTests.cs",
+              "symbol": "WebsocketClientLiteTest.PayloadLeaseTests.PausedWriteRetainsLeaseUntilCompletion"
+            },
+            {
+              "file": "src/main/WebsocketClientLiteTest/PayloadLeaseTests.cs",
+              "symbol": "WebsocketClientLiteTest.PayloadLeaseTests.InitializedCountMatchesIndependentWireBytes"
+            },
+            {
+              "file": "src/main/WebsocketClientLiteTest/PayloadLeaseTests.cs",
+              "symbol": "WebsocketClientLiteTest.PayloadLeaseTests.StableAliasedListInputsRemainUnchanged"
+            },
+            {
+              "file": "src/main/WebsocketClientLiteTest/PayloadLeaseTests.cs",
+              "symbol": "WebsocketClientLiteTest.PayloadLeaseTests.GateCancellationReturnsOnlyAcquiredLeases"
+            },
+            {
+              "file": "src/main/WebsocketClientLiteTest/PayloadLeaseTests.cs",
+              "symbol": "WebsocketClientLiteTest.PayloadLeaseTests.FailedOrPartialWriteReturnsAfterSettlement"
+            },
+            {
+              "file": "src/main/WebsocketClientLiteTest/PayloadLeaseTests.cs",
+              "symbol": "WebsocketClientLiteTest.PayloadLeaseTests.InvalidTextIsRejectedBeforeRent"
+            },
+            {
+              "file": "src/main/WebsocketClientLiteTest/PayloadLeaseTests.cs",
+              "symbol": "WebsocketClientLiteTest.PayloadLeaseTests.SuppressedQueuedPongReturnsWithoutDelegateUse"
+            },
+            {
+              "file": "src/main/WebsocketClientLiteTest/PayloadLeaseTests.cs",
+              "symbol": "WebsocketClientLiteTest.PayloadLeaseTests.SendObservationTimeoutRetainsPendingLease"
+            }
+          ]
+        },
+        {
+          "id": "LEASE-001-REVIEW",
+          "kind": "review",
+          "delivery": "existing",
+          "description": "Review ownership, default-preserving pool seam, caller borrowing and trusted delegate completion against the PR revision. Machine evidence is not acceptance.",
+          "references": []
+        }
+      ],
+      "exclusions": [
+        "No concurrent caller mutation safety, universal zeroization, delivery or arbitrary schedule claim.",
+        "Pool and stream contracts, scheduling progress and finite callbacks remain trusted; delegates must not use buffers after Task completion."
+      ]
+    },
+    {
+      "id": "EPOCH-001",
+      "intent": "Sequential reconnect uses distinct owned services and sockets; old cleanup cannot reset successor connectivity or dispose its transport. Permanent disposal rejects new admission. Selected C# schedules, tested-only.",
+      "origin": [
+        "Library policy: P3-D reconnect intent"
+      ],
+      "contracts": [],
+      "production_paths": [
+        {
+          "reference": {
+            "file": "src/main/WebsocketClientLite/ClientWebSocketRx.cs",
+            "symbol": "WebsocketClientLite.ClientWebSocketRx.DisposeAsync"
+          },
+          "responsibility": "Permanently close admission before draining registered services; the connection observable registers and owns setup/cleanup by service identity."
+        }
+      ],
+      "assumptions": [
+        "EPOCH-PROGRESS"
+      ],
+      "obligations": [
+        {
+          "id": "EPOCH-001-TEST",
+          "kind": "test",
+          "delivery": "existing",
+          "description": "Five-target reconnect, setup disposal/cancellation and failure cases plus reachable missing-removal experiment.",
+          "references": [
+            {
+              "file": "src/main/WebsocketClientLiteTest/ReconnectTests.cs",
+              "symbol": "WebsocketClientLiteTest.ReconnectTests.DisposedClientRejectsAdmission"
+            },
+            {
+              "file": "src/main/WebsocketClientLiteTest/ReconnectTests.cs",
+              "symbol": "WebsocketClientLiteTest.ReconnectTests.TerminalCallbackSuccessorSurvivesOldCleanup"
+            },
+            {
+              "file": "src/main/WebsocketClientLiteTest/ReconnectTests.cs",
+              "symbol": "WebsocketClientLiteTest.ReconnectTests.SetupAdmissionIsOwnedUntilTeardown"
+            },
+            {
+              "file": "src/main/WebsocketClientLiteTest/ReconnectTests.cs",
+              "symbol": "WebsocketClientLiteTest.ReconnectTests.SequentialRepeatOrRetryUsesFreshServices"
+            },
+            {
+              "file": "src/main/WebsocketClientLiteTest/ReconnectTests.cs",
+              "symbol": "WebsocketClientLiteTest.ReconnectTests.FailedConnectTerminatesAndRemovesRegistration"
+            }
+          ]
+        },
+        {
+          "id": "EPOCH-001-REVIEW",
+          "kind": "review",
+          "delivery": "existing",
+          "description": "Review reduced admission/status counterexamples, scoped resource ownership and generation guards against the PR revision; concurrent active subscription policy is deferred.",
+          "references": []
+        }
+      ],
+      "exclusions": [
+        "No aggregate policy for simultaneous active subscriptions, arbitrary interleaving proof or unconditional connection progress.",
+        "Caller-supplied sockets cannot reconnect. External connection work and finite callbacks remain trusted."
+      ]
+    },
+    {
+      "id": "HEADER-001",
+      "intent": "A server frame header is accepted only with the minimal length encoding: marker 0-125 is the length, marker 126 carries a 16-bit length of 126-65535 and marker 127 a 64-bit length of at least 65536 with the most significant bit 0. The extended length is read in network byte order, the header is 2, 4 or 10 bytes, and the accepted length is at most the configured limit and 0x7fffffff.",
+      "origin": [
+        "https://www.rfc-editor.org/rfc/rfc6455.html#section-5.2",
+        "Library policy: the configured frame size limit and the 0x7fffffff array bound (section 10.4 asks for a limit and sets no value)"
+      ],
+      "contracts": [
+        {
+          "file": "verification/Protocol.dfy",
+          "symbol": "ProtocolCore.Protocol.DecodeHeader",
+          "clauses": [
+            "requires available as int <= extended.Length",
+            "ensures status <= 2",
+            "ensures headerSize == (if (second & 127) <= 125 then 2 else if (second & 127) == 126 then 4 else 10)",
+            "ensures status == 0 <==> PrefixValid(first, second) && available < headerSize - 2",
+            "ensures status == 2 ==> HeaderValid(first, second, length, limit) && available >= headerSize - 2",
+            "ensures PrefixValid(first, second) && available >= headerSize - 2 ==> length == (if (second & 127) <= 125 then (second & 127) as bv64 else Word(extended[..headerSize as int - 2])) && (status == 2 <==> HeaderValid(first, second, length, limit))"
+          ]
+        },
+        {
+          "file": "verification/Protocol.dfy",
+          "symbol": "ProtocolCore.Protocol.ReadLength",
+          "clauses": [
+            "requires count <= 8 && count as int <= bytes.Length",
+            "ensures value == Word(bytes[..count as int])"
+          ]
+        }
+      ],
+      "production_paths": [
+        {
+          "reference": {
+            "file": "src/main/WebsocketClientLite/Helper/DataframeParsing.cs",
+            "symbol": "WebsocketClientLite.Helper.DataframeParsing.ReadDataframeAsync"
+          },
+          "responsibility": "Pass the two prefix bytes, exactly the extended-length bytes read after them with their count, and the configured limit to Admit, which calls DecodeHeader; throw unless the status is 2."
+        }
+      ],
+      "assumptions": [
+        "HEADER-ADAPTER"
+      ],
+      "obligations": [
+        {
+          "id": "HEADER-001-PROOF",
+          "kind": "proof",
+          "delivery": "existing",
+          "description": "Verify the mapped contracts using the pinned toolchain and generated-code check. Frame conditions and preconditions remain unchanged. DecodeHeader sets its status by calling HeaderValid, the specification, so its status clause is close to true by construction; the proof's own content is the length decoding (ReadLength, Word), the header size and the need-more status.",
+          "references": [
+            {
+              "file": "verification/Protocol.dfy",
+              "symbol": "ProtocolCore.Protocol.DecodeHeader"
+            },
+            {
+              "file": "verification/Protocol.dfy",
+              "symbol": "ProtocolCore.Protocol.ReadLength"
+            }
+          ]
+        },
+        {
+          "id": "HEADER-001-TEST",
+          "kind": "test",
+          "delivery": "existing",
+          "description": "Require these independent byte, adapter or loopback tests on every supported library target; tests do not prove all inputs. The non-minimal length rows of RejectsMalformedFrames were replayed on 2026-11-11, failing on a779602 and passing on the current source (docs/header-length-validation.md). The limit boundary and the 16-bit and 64-bit header truncations were shown failing first on 2026-11-11 (docs/header-test-parity-validation.md).",
+          "references": [
+            {
+              "file": "src/main/WebsocketClientLiteTest/PayloadParsingTests.cs",
+              "symbol": "WebsocketClientLiteTest.PayloadParsingTests.RejectsMalformedFrames"
+            },
+            {
+              "file": "src/main/WebsocketClientLiteTest/PayloadParsingTests.cs",
+              "symbol": "WebsocketClientLiteTest.PayloadParsingTests.ParsesCanonicalServerLengths"
+            },
+            {
+              "file": "src/main/WebsocketClientLiteTest/PayloadParsingTests.cs",
+              "symbol": "WebsocketClientLiteTest.PayloadParsingTests.TruncatedHeadersNeverProduceFrames"
+            },
+            {
+              "file": "src/main/WebsocketClientLiteTest/ParserRetentionTests.cs",
+              "symbol": "WebsocketClientLiteTest.ParserRetentionTests.ConfiguredLimitAcceptsLimitAndRejectsSuccessorFromHeader"
+            },
+            {
+              "file": "src/main/WebsocketClientLiteTest/ParserRetentionTests.cs",
+              "symbol": "WebsocketClientLiteTest.ParserRetentionTests.HugeLengthsRejectOnHeaderOnly"
+            },
+            {
+              "file": "src/main/WebsocketClientLiteTest/ProtocolCoreTests.cs",
+              "symbol": "WebsocketClientLiteTest.ProtocolCoreTests.PartialHeadersReturnNeedMoreWithoutReadingUnavailableBytes"
+            }
+          ]
+        },
+        {
+          "id": "HEADER-001-MUTATION",
+          "kind": "mutation",
+          "delivery": "existing",
+          "description": "Run the exact payload mutations with scripts/pdd.sh mutations. Only the catalogued semantic failure counts; unrelated assertions, syntax errors, survival and timeout fail the experiment.",
+          "references": []
+        },
+        {
+          "id": "HEADER-001-REVIEW",
+          "kind": "review",
+          "delivery": "existing",
+          "description": "Review the corresponding decision and boundaries in verification/close-intent-review.md against the PR revision. A machine result does not record acceptance.",
+          "references": []
+        }
+      ],
+      "exclusions": [
+        "HeaderValid is the specification and is not a mutation target; each mutant keeps DecodeHeader's call to it and adds one disjunct that accepts a single non-minimal length.",
+        "The RSV, opcode, MASK and control-frame rules of PrefixValid and HeaderValid are proved by the same contract but are not the subject of this requirement.",
+        "No proof of the stream reader, end-of-stream or cancellation handling, or the conversion of MaxFrameSize to the limit.",
+        "No proof of generated C#, compiler/runtime correctness, successful allocation, concurrent buffer access or complete RFC conformance."
+      ]
+    },
+    {
+      "id": "HEADER-002",
+      "intent": "A server frame is admitted or rejected from its header and the parser's message state alone, before any payload byte is read or allocated. An admitted frame has a valid header and a message size within the configured limit, and a rejected frame leaves the message state and total unchanged.",
+      "origin": [
+        "Library policy: admission from the header before any payload read or allocation (section 10.4 asks an implementation to protect itself against exceeding its limits)",
+        "https://www.rfc-editor.org/rfc/rfc6455.html#section-5.2",
+        "https://www.rfc-editor.org/rfc/rfc6455.html#section-5.4",
+        "https://www.rfc-editor.org/rfc/rfc6455.html#section-5.5"
+      ],
+      "contracts": [
+        {
+          "file": "verification/Protocol.dfy",
+          "symbol": "ProtocolCore.Protocol.Admit",
+          "clauses": [
+            "requires available as int <= extended.Length",
+            "requires state == 0 || state == 1 || state == 2 || state == 8",
+            "requires total <= limit",
+            "ensures status <= 2",
+            "ensures status != 2 ==> next == state && size == total && !emit",
+            "ensures status == 2 ==> HeaderValid(first, second, length, limit as bv64) && size <= limit"
+          ]
+        }
+      ],
+      "production_paths": [
+        {
+          "reference": {
+            "file": "src/main/WebsocketClientLite/Helper/DataframeParsing.cs",
+            "symbol": "WebsocketClientLite.Helper.DataframeParsing.ReadDataframeAsync"
+          },
+          "responsibility": "Call Admit after the prefix and again after the extended length, read more header bytes only on status 0, and read or allocate the payload only on status 2."
+        },
+        {
+          "reference": {
+            "file": "src/main/WebsocketClientLite/Service/WebsocketParserHandler.cs",
+            "symbol": "WebsocketClientLite.Service.WebsocketParserHandler.DataframeObservable"
+          },
+          "responsibility": "Supply the message state and retained total from the previous Step result."
+        }
+      ],
+      "assumptions": [
+        "HEADER-ADAPTER"
+      ],
+      "obligations": [
+        {
+          "id": "HEADER-002-PROOF",
+          "kind": "proof",
+          "delivery": "existing",
+          "description": "Verify the mapped contracts using the pinned toolchain and generated-code check. Frame conditions and preconditions remain unchanged.",
+          "references": [
+            {
+              "file": "verification/Protocol.dfy",
+              "symbol": "ProtocolCore.Protocol.Admit"
+            }
+          ]
+        },
+        {
+          "id": "HEADER-002-TEST",
+          "kind": "test",
+          "delivery": "existing",
+          "description": "Require these independent byte, adapter or loopback tests on every supported library target; tests do not prove all inputs. The header-only read order of every invalid header row and of the limit successor was shown failing first on 2026-11-11 (docs/header-test-parity-validation.md).",
+          "references": [
+            {
+              "file": "src/main/WebsocketClientLiteTest/ParserRetentionTests.cs",
+              "symbol": "WebsocketClientLiteTest.ParserRetentionTests.HugeLengthsRejectOnHeaderOnly"
+            },
+            {
+              "file": "src/main/WebsocketClientLiteTest/PayloadParsingTests.cs",
+              "symbol": "WebsocketClientLiteTest.PayloadParsingTests.RejectsSequenceBeforeAttemptingPayloadRead"
+            },
+            {
+              "file": "src/main/WebsocketClientLiteTest/ParserRetentionTests.cs",
+              "symbol": "WebsocketClientLiteTest.ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead"
+            },
+            {
+              "file": "src/main/WebsocketClientLiteTest/ParserRetentionTests.cs",
+              "symbol": "WebsocketClientLiteTest.ParserRetentionTests.ConfiguredLimitAcceptsLimitAndRejectsSuccessorFromHeader"
+            }
+          ]
+        },
+        {
+          "id": "HEADER-002-REVIEW",
+          "kind": "review",
+          "delivery": "existing",
+          "description": "Review the corresponding decision and boundaries in verification/close-intent-review.md against the PR revision. A machine result does not record acceptance.",
+          "references": []
+        }
+      ],
+      "exclusions": [
+        "No Dafny mutation obligation: Admit is not in the mutation scopes, and its header part is HEADER-001's DecodeHeader.",
+        "The proof covers the decision, not the order of reads in C#; that order is tested only for the selected rows.",
+        "No proof of generated C#, compiler/runtime correctness, successful allocation, concurrent buffer access or complete RFC conformance."
+      ]
+    }
+  ],
+  "boundaries_file": "verification/boundaries.json"
+}

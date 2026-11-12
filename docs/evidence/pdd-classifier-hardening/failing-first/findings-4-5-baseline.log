@@ -1,0 +1,121 @@
+source: git archive 29697a494053f8376ad30fae3895055901c97fd6
+copy: /tmp/s10-experiment.y62p0xam
+added from the working tree: tools/Pdd.Tests/ClassifierHardeningTests.cs
+command: dotnet test tools/Pdd.Tests/Pdd.Tests.csproj -c Release --filter FullyQualifiedName~ClassifierHardeningTests
+  Determining projects to restore...
+  Restored /tmp/s10-experiment.y62p0xam/tools/Pdd/Pdd.csproj (in 41 ms).
+  Restored /tmp/s10-experiment.y62p0xam/tools/Pdd.Tests/Pdd.Tests.csproj (in 117 ms).
+  Pdd -> /tmp/s10-experiment.y62p0xam/tools/Pdd/bin/Release/net10.0/Pdd.dll
+  Pdd.Tests -> /tmp/s10-experiment.y62p0xam/tools/Pdd.Tests/bin/Release/net10.0/Pdd.Tests.dll
+Test run for /tmp/s10-experiment.y62p0xam/tools/Pdd.Tests/bin/Release/net10.0/Pdd.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.25]     Pdd.Tests.ClassifierHardeningTests.UnreadableNamedPredicateIsInconclusive(mode: "duplicate") [FAIL]
+[xUnit.net 00:00:00.34]     Pdd.Tests.ClassifierHardeningTests.UnreadableNamedPredicateIsInconclusive(mode: "unbalanced") [FAIL]
+[xUnit.net 00:00:00.42]     Pdd.Tests.ClassifierHardeningTests.AttributedNamedPredicateIsFound(attributes: "{:opaque} ") [FAIL]
+[xUnit.net 00:00:00.51]     Pdd.Tests.ClassifierHardeningTests.AttributedNamedPredicateIsFound(attributes: "{:opaque} {:fuel 2} ") [FAIL]
+[xUnit.net 00:00:00.60]     Pdd.Tests.ClassifierHardeningTests.SetDisplayInAContractIsNotTheBody(contract: "      ensures HeaderValid(first, second, length, l"···) [FAIL]
+[xUnit.net 00:00:00.69]     Pdd.Tests.ClassifierHardeningTests.SetDisplayInAContractIsNotTheBody(contract: "      requires limit in {0, limit}") [FAIL]
+[xUnit.net 00:00:00.78]     Pdd.Tests.ClassifierHardeningTests.SameNameElsewhereDoesNotCount(scope: "class") [FAIL]
+[xUnit.net 00:00:00.89]     Pdd.Tests.ClassifierHardeningTests.SameNameElsewhereDoesNotCount(scope: "module") [FAIL]
+[xUnit.net 00:00:01.01]     Pdd.Tests.ClassifierHardeningTests.BodylessNamedFunctionDoesNotTakeTheNextBody [FAIL]
+  Failed Pdd.Tests.ClassifierHardeningTests.UnreadableNamedPredicateIsInconclusive(mode: "duplicate") [119 ms]
+  Error Message:
+   Assert.Equal() Failure: Strings differ
+           ↓ (pos 0)
+Expected: "inconclusive"
+Actual:   "detected"
+           ↑ (pos 0)
+  Stack Trace:
+     at Pdd.Tests.ClassifierHardeningTests.UnreadableNamedPredicateIsInconclusive(String mode) in /tmp/s10-experiment.y62p0xam/tools/Pdd.Tests/ClassifierHardeningTests.cs:line 90
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)
+  Failed Pdd.Tests.ClassifierHardeningTests.UnreadableNamedPredicateIsInconclusive(mode: "unbalanced") [90 ms]
+  Error Message:
+   System.IO.InvalidDataException : unbalanced declaration body
+  Stack Trace:
+     at Pdd.Requirements.Body(String text, Int32 opening) in /tmp/s10-experiment.y62p0xam/tools/Pdd/Requirements.cs:line 84
+   at Pdd.Mutations.NamedPredicateLines(String source, String clause) in /tmp/s10-experiment.y62p0xam/tools/Pdd/Mutations.cs:line 172
+   at Pdd.Mutations.Classify(ExecutionResult record, String source, Mutant mutant) in /tmp/s10-experiment.y62p0xam/tools/Pdd/Mutations.cs:line 146
+   at Pdd.Tests.ClassifierHardeningTests.UnreadableNamedPredicateIsInconclusive(String mode) in /tmp/s10-experiment.y62p0xam/tools/Pdd.Tests/ClassifierHardeningTests.cs:line 90
+   at InvokeStub_ClassifierHardeningTests.UnreadableNamedPredicateIsInconclusive(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed Pdd.Tests.ClassifierHardeningTests.AttributedNamedPredicateIsFound(attributes: "{:opaque} ") [88 ms]
+  Error Message:
+   Assert.Equal() Failure: Strings differ
+           ↓ (pos 0)
+Expected: "detected"
+Actual:   "inconclusive"
+           ↑ (pos 0)
+  Stack Trace:
+     at Pdd.Tests.ClassifierHardeningTests.AttributedNamedPredicateIsFound(String attributes) in /tmp/s10-experiment.y62p0xam/tools/Pdd.Tests/ClassifierHardeningTests.cs:line 101
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)
+  Failed Pdd.Tests.ClassifierHardeningTests.AttributedNamedPredicateIsFound(attributes: "{:opaque} {:fuel 2} ") [89 ms]
+  Error Message:
+   Assert.Equal() Failure: Strings differ
+           ↓ (pos 0)
+Expected: "detected"
+Actual:   "inconclusive"
+           ↑ (pos 0)
+  Stack Trace:
+     at Pdd.Tests.ClassifierHardeningTests.AttributedNamedPredicateIsFound(String attributes) in /tmp/s10-experiment.y62p0xam/tools/Pdd.Tests/ClassifierHardeningTests.cs:line 101
+   at InvokeStub_ClassifierHardeningTests.AttributedNamedPredicateIsFound(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed Pdd.Tests.ClassifierHardeningTests.SetDisplayInAContractIsNotTheBody(contract: "      ensures HeaderValid(first, second, length, l"···) [88 ms]
+  Error Message:
+   Assert.Equal() Failure: Strings differ
+           ↓ (pos 0)
+Expected: "detected"
+Actual:   "inconclusive"
+           ↑ (pos 0)
+  Stack Trace:
+     at Pdd.Tests.ClassifierHardeningTests.SetDisplayInAContractIsNotTheBody(String contract) in /tmp/s10-experiment.y62p0xam/tools/Pdd.Tests/ClassifierHardeningTests.cs:line 75
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)
+  Failed Pdd.Tests.ClassifierHardeningTests.SetDisplayInAContractIsNotTheBody(contract: "      requires limit in {0, limit}") [90 ms]
+  Error Message:
+   Assert.Equal() Failure: Strings differ
+           ↓ (pos 0)
+Expected: "detected"
+Actual:   "inconclusive"
+           ↑ (pos 0)
+  Stack Trace:
+     at Pdd.Tests.ClassifierHardeningTests.SetDisplayInAContractIsNotTheBody(String contract) in /tmp/s10-experiment.y62p0xam/tools/Pdd.Tests/ClassifierHardeningTests.cs:line 75
+   at InvokeStub_ClassifierHardeningTests.SetDisplayInAContractIsNotTheBody(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed Pdd.Tests.ClassifierHardeningTests.SameNameElsewhereDoesNotCount(scope: "class") [89 ms]
+  Error Message:
+   Assert.Equal() Failure: Strings differ
+           ↓ (pos 0)
+Expected: "inconclusive"
+Actual:   "detected"
+           ↑ (pos 0)
+  Stack Trace:
+     at Pdd.Tests.ClassifierHardeningTests.SameNameElsewhereDoesNotCount(String scope) in /tmp/s10-experiment.y62p0xam/tools/Pdd.Tests/ClassifierHardeningTests.cs:line 116
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)
+  Failed Pdd.Tests.ClassifierHardeningTests.SameNameElsewhereDoesNotCount(scope: "module") [109 ms]
+  Error Message:
+   Assert.Equal() Failure: Strings differ
+           ↓ (pos 0)
+Expected: "inconclusive"
+Actual:   "detected"
+           ↑ (pos 0)
+  Stack Trace:
+     at Pdd.Tests.ClassifierHardeningTests.SameNameElsewhereDoesNotCount(String scope) in /tmp/s10-experiment.y62p0xam/tools/Pdd.Tests/ClassifierHardeningTests.cs:line 116
+   at InvokeStub_ClassifierHardeningTests.SameNameElsewhereDoesNotCount(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed Pdd.Tests.ClassifierHardeningTests.BodylessNamedFunctionDoesNotTakeTheNextBody [118 ms]
+  Error Message:
+   Assert.Equal() Failure: Strings differ
+           ↓ (pos 0)
+Expected: "inconclusive"
+Actual:   "detected"
+           ↑ (pos 0)
+  Stack Trace:
+     at Pdd.Tests.ClassifierHardeningTests.BodylessNamedFunctionDoesNotTakeTheNextBody() in /tmp/s10-experiment.y62p0xam/tools/Pdd.Tests/ClassifierHardeningTests.cs:line 64
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+
+Failed!  - Failed:     9, Passed:     1, Skipped:     0, Total:    10, Duration: 1 s - Pdd.Tests.dll (net10.0)
+exit=1 elapsed=3488ms
