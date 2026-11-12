@@ -8,7 +8,8 @@ REPO=$(git -C "$(dirname "$0")" rev-parse --show-toplevel)
 TOOLS=$REPO/docs/evidence/handshake-rejection/tools
 S=${SCRATCH:-/tmp/s11-handshake-scratch}
 name=$1; commit=$2; change=$3
-ev=$REPO/docs/evidence/handshake-rejection/copies; mkdir -p "$ev"
+# EVIDENCE: the evidence folder (default docs/evidence/handshake-rejection, S11's copies).
+ev=${EVIDENCE:-$REPO/docs/evidence/handshake-rejection}/copies; mkdir -p "$ev"
 copy=$S/copies/$name; rm -rf "$copy"; mkdir -p "$copy"
 git -C "$REPO" archive "$commit" | tar -x -C "$copy"
 pristine=$S/pristine/$name; rm -rf "$pristine"; mkdir -p "$pristine"

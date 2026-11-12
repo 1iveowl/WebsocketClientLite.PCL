@@ -11,7 +11,8 @@ REPO=$(git -C "$(dirname "$0")" rev-parse --show-toplevel)
 S=${SCRATCH:-/tmp/s11-handshake-scratch}
 batch=$1; name=$2; runs=$3; mode=$4; tests=$5
 copy=$S/copies/$name
-ev=$REPO/docs/evidence/handshake-rejection/runs/$batch; mkdir -p "$ev"
+# EVIDENCE: the evidence folder (default docs/evidence/handshake-rejection, S11's runs).
+ev=${EVIDENCE:-$REPO/docs/evidence/handshake-rejection}/runs/$batch; mkdir -p "$ev"
 covering="FullyQualifiedName~WebsocketClientLiteTest.ReconnectTests.FailedConnectTerminatesAndRemovesRegistration|FullyQualifiedName~WebsocketClientLiteTest.IntegrationTests.InvalidAcceptNeverConnectsEvenWhenServerStaysOpen|FullyQualifiedName~WebsocketClientLiteTest.IntegrationTests.Non101HandshakeResponse_FailsFast_WithStatusCode"
 case "$tests" in
   covering) filter=$covering ;;
