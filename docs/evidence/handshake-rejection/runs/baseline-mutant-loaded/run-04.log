@@ -1,0 +1,32 @@
+Test run for /tmp/s11-handshake-scratch/copies/base-mutant/src/main/WebsocketClientLiteTest/bin/Release/net10.0/WebsocketClientLiteTest.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v4.0.1+0f7d528729 (64-bit .NET 10.0.14)
+[xUnit.net 00:00:00.15]   Discovering: WebsocketClientLiteTest
+[xUnit.net 00:00:00.30]   Discovered:  WebsocketClientLiteTest
+[xUnit.net 00:00:00.34]   Starting:    WebsocketClientLiteTest
+  Passed WebsocketClientLiteTest.IntegrationTests.InvalidAcceptNeverConnectsEvenWhenServerStaysOpen(connection: "Upgrade") [3 s]
+[xUnit.net 00:00:03.52]     WebsocketClientLiteTest.ReconnectTests.FailedConnectTerminatesAndRemovesRegistration [FAIL]
+[xUnit.net 00:00:03.52]       Assert.Null() Failure: Value is not null
+[xUnit.net 00:00:03.52]       Expected: null
+[xUnit.net 00:00:03.52]       Actual:   WebsocketSenderHandler { }
+[xUnit.net 00:00:03.52]       Stack Trace:
+[xUnit.net 00:00:03.52]         /tmp/s11-handshake-scratch/copies/base-mutant/src/main/WebsocketClientLiteTest/ReconnectTests.cs(189,0): at WebsocketClientLiteTest.ReconnectTests.FailedConnectTerminatesAndRemovesRegistration()
+[xUnit.net 00:00:03.52]         --- End of stack trace from previous location ---
+[xUnit.net 00:00:03.55]   Finished:    WebsocketClientLiteTest
+  Failed WebsocketClientLiteTest.ReconnectTests.FailedConnectTerminatesAndRemovesRegistration [3 s]
+  Error Message:
+   Assert.Null() Failure: Value is not null
+Expected: null
+Actual:   WebsocketSenderHandler { }
+  Stack Trace:
+     at WebsocketClientLiteTest.ReconnectTests.FailedConnectTerminatesAndRemovesRegistration() in /tmp/s11-handshake-scratch/copies/base-mutant/src/main/WebsocketClientLiteTest/ReconnectTests.cs:line 189
+--- End of stack trace from previous location ---
+  Passed WebsocketClientLiteTest.IntegrationTests.InvalidAcceptNeverConnectsEvenWhenServerStaysOpen(connection: "close") [29 ms]
+  Passed WebsocketClientLiteTest.IntegrationTests.Non101HandshakeResponse_FailsFast_WithStatusCode [25 ms]
+Results File: /home/vscode/worktrees/s11/docs/evidence/handshake-rejection/runs/baseline-mutant-loaded/run-04.trx
+
+Test Run Failed.
+Total tests: 4
+     Passed: 3
+     Failed: 1
+ Total time: 4.1869 Seconds

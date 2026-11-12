@@ -1,0 +1,5 @@
+batch=baseline-unchanged-loaded copy=base-unchanged runs=1 mode=loaded tests=covering nproc=32 date=2026-11-11T23:01:04Z
+timing lock: held by the caller (flock ~/worktrees/.timing.lock) for the whole batch
+filter=FullyQualifiedName~WebsocketClientLiteTest.ReconnectTests.FailedConnectTerminatesAndRemovesRegistration|FullyQualifiedName~WebsocketClientLiteTest.IntegrationTests.InvalidAcceptNeverConnectsEvenWhenServerStaysOpen|FullyQualifiedName~WebsocketClientLiteTest.IntegrationTests.Non101HandshakeResponse_FailsFast_WithStatusCode
+load: 32 busy loops (yes > /dev/null) started 2026-11-11T23:01:04Z
+load: stopped 2026-11-11T23:01:09Z

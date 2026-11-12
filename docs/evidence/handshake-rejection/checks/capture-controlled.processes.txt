@@ -1,0 +1,31 @@
+# start 2026-11-11T23:30:03Z lock=yes, waited 182s
+ 23:30:03 up 13 days, 15:14,  0 user,  load average: 3.21, 4.77, 7.77
+ 365490    10:25:39 claude
+ 377586    09:45:53 claude
+ 577568    01:26:36 dotnet
+ 577569    01:26:36 dotnet
+ 577570    01:26:36 dotnet
+ 577648    01:26:35 dotnet
+ 577649    01:26:35 dotnet
+ 577650    01:26:35 dotnet
+ 577683    01:26:35 dotnet
+ 696266       37:12 claude
+ 697348       35:44 claude
+ 697436       35:44 claude
+ 706130       29:55 claude
+# end 2026-11-11T23:31:10Z
+ 23:31:10 up 13 days, 15:15,  0 user,  load average: 4.88, 4.90, 7.59
+ 365490    10:26:46 claude
+ 377586    09:47:00 claude
+ 577568    01:27:43 dotnet
+ 577569    01:27:43 dotnet
+ 577570    01:27:43 dotnet
+ 577648    01:27:43 dotnet
+ 577649    01:27:43 dotnet
+ 577650    01:27:43 dotnet
+ 577683    01:27:42 dotnet
+ 696266       38:19 claude
+ 697348       36:52 claude
+ 697436       36:51 claude
+ 706130       31:02 claude
+ 754701       01:02 claude.exe

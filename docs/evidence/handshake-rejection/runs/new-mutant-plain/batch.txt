@@ -1,0 +1,3 @@
+batch=new-mutant-plain copy=new-mutant runs=15 mode=plain tests=covering+new nproc=32 date=2026-11-11T23:01:52Z
+timing lock: held by the caller (flock ~/worktrees/.timing.lock) for the whole batch
+filter=FullyQualifiedName~WebsocketClientLiteTest.ReconnectTests.FailedConnectTerminatesAndRemovesRegistration|FullyQualifiedName~WebsocketClientLiteTest.IntegrationTests.InvalidAcceptNeverConnectsEvenWhenServerStaysOpen|FullyQualifiedName~WebsocketClientLiteTest.IntegrationTests.Non101HandshakeResponse_FailsFast_WithStatusCode|FullyQualifiedName~WebsocketClientLiteTest.HandshakeRejectionTests

@@ -1,0 +1,76 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="6055af9f-a881-4273-bf0c-2650cb5cbf62" name="@a920b7ae3df2 2026-11-11 23:11:03" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-11-11T23:11:03.4680908+00:00" queuing="2026-11-11T23:11:03.4680909+00:00" start="2026-11-11T23:11:01.9216042+00:00" finish="2026-11-11T23:11:03.4756188+00:00" />
+  <TestSettings name="default" id="557e25d6-d4db-4efb-bcd5-040bbb06c6c7">
+    <Deployment runDeploymentRoot="_a920b7ae3df2_2026-11-11_23_11_03" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="eb7b15c1-b0d3-4873-95c6-1518b307c31d" testId="a6cf8ad2-1826-d0cf-2f55-8c8caeb57dd0" testName="WebsocketClientLiteTest.HandshakeRejectionTests.RejectedHandshakeThrowsAndNeverInstallsSender(rejection: InvalidAccept)" computerName="a920b7ae3df2" duration="00:00:00.0158398" startTime="2026-11-11T23:11:03.2810713+00:00" endTime="2026-11-11T23:11:03.2985953+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="eb7b15c1-b0d3-4873-95c6-1518b307c31d" />
+    <UnitTestResult executionId="0504e728-2a19-4ff7-8415-3c52d355124a" testId="847a11f5-03a4-3dfb-415a-63a243edbbd6" testName="WebsocketClientLiteTest.IntegrationTests.InvalidAcceptNeverConnectsEvenWhenServerStaysOpen(connection: &quot;close&quot;)" computerName="a920b7ae3df2" duration="00:00:00.0302509" startTime="2026-11-11T23:11:02.7318832+00:00" endTime="2026-11-11T23:11:02.7493565+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="0504e728-2a19-4ff7-8415-3c52d355124a" />
+    <UnitTestResult executionId="02d188ad-18b0-493e-be33-b451e095daf5" testId="a372d844-784c-bd8f-28d3-a270d2f4b09d" testName="WebsocketClientLiteTest.ReconnectTests.FailedConnectTerminatesAndRemovesRegistration" computerName="a920b7ae3df2" duration="00:00:00.0923433" startTime="2026-11-11T23:11:02.6060541+00:00" endTime="2026-11-11T23:11:02.7128492+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="02d188ad-18b0-493e-be33-b451e095daf5" />
+    <UnitTestResult executionId="3e0575d2-bc23-4382-bfa3-164b3462f154" testId="e05a2135-9011-c14a-c2ba-68efdb3c7b2d" testName="WebsocketClientLiteTest.HandshakeRejectionTests.RejectedHandshakeThrowsAndNeverInstallsSender(rejection: Timeout)" computerName="a920b7ae3df2" duration="00:00:00.5279184" startTime="2026-11-11T23:11:02.7466883+00:00" endTime="2026-11-11T23:11:03.2806351+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="3e0575d2-bc23-4382-bfa3-164b3462f154" />
+    <UnitTestResult executionId="9cae6563-a610-4078-9ad9-aa0b2650b12f" testId="85aeec09-2dbe-5c3d-f451-f9709fae6cab" testName="WebsocketClientLiteTest.HandshakeRejectionTests.RejectedHandshakeThrowsAndNeverInstallsSender(rejection: SendFailed)" computerName="a920b7ae3df2" duration="00:00:00.1024917" startTime="2026-11-11T23:11:02.6158534+00:00" endTime="2026-11-11T23:11:02.7326868+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="9cae6563-a610-4078-9ad9-aa0b2650b12f" />
+    <UnitTestResult executionId="6025e286-8955-4aee-b308-f1ea1582f65c" testId="53661987-b6c8-bbfa-6bb6-feefde9fb5b7" testName="WebsocketClientLiteTest.IntegrationTests.Non101HandshakeResponse_FailsFast_WithStatusCode" computerName="a920b7ae3df2" duration="00:00:00.0170944" startTime="2026-11-11T23:11:02.7494832+00:00" endTime="2026-11-11T23:11:02.7705698+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="6025e286-8955-4aee-b308-f1ea1582f65c" />
+    <UnitTestResult executionId="f751a161-3d30-40d0-8254-ecb933f42a84" testId="fb8c1a21-02b6-0c54-492f-e4b11a0f55ab" testName="WebsocketClientLiteTest.HandshakeRejectionTests.RejectedHandshakeThrowsAndNeverInstallsSender(rejection: NotFound)" computerName="a920b7ae3df2" duration="00:00:00.0251076" startTime="2026-11-11T23:11:02.7327881+00:00" endTime="2026-11-11T23:11:02.7465820+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f751a161-3d30-40d0-8254-ecb933f42a84" />
+    <UnitTestResult executionId="ba08b695-703c-4358-b81b-ea37e44c14ad" testId="1daef270-3dde-6932-80a4-21f2b1a64654" testName="WebsocketClientLiteTest.IntegrationTests.InvalidAcceptNeverConnectsEvenWhenServerStaysOpen(connection: &quot;Upgrade&quot;)" computerName="a920b7ae3df2" duration="00:00:00.0903093" startTime="2026-11-11T23:11:02.6072543+00:00" endTime="2026-11-11T23:11:02.7313959+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="ba08b695-703c-4358-b81b-ea37e44c14ad" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="WebsocketClientLiteTest.HandshakeRejectionTests.RejectedHandshakeThrowsAndNeverInstallsSender(rejection: Timeout)" storage="/tmp/s11-handshake-scratch/copies/new-unchanged/src/main/websocketclientlitetest/bin/release/net10.0/websocketclientlitetest.dll" id="e05a2135-9011-c14a-c2ba-68efdb3c7b2d">
+      <Execution id="3e0575d2-bc23-4382-bfa3-164b3462f154" />
+      <TestMethod codeBase="/tmp/s11-handshake-scratch/copies/new-unchanged/src/main/WebsocketClientLiteTest/bin/Release/net10.0/WebsocketClientLiteTest.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="WebsocketClientLiteTest.HandshakeRejectionTests" name="RejectedHandshakeThrowsAndNeverInstallsSender" />
+    </UnitTest>
+    <UnitTest name="WebsocketClientLiteTest.HandshakeRejectionTests.RejectedHandshakeThrowsAndNeverInstallsSender(rejection: NotFound)" storage="/tmp/s11-handshake-scratch/copies/new-unchanged/src/main/websocketclientlitetest/bin/release/net10.0/websocketclientlitetest.dll" id="fb8c1a21-02b6-0c54-492f-e4b11a0f55ab">
+      <Execution id="f751a161-3d30-40d0-8254-ecb933f42a84" />
+      <TestMethod codeBase="/tmp/s11-handshake-scratch/copies/new-unchanged/src/main/WebsocketClientLiteTest/bin/Release/net10.0/WebsocketClientLiteTest.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="WebsocketClientLiteTest.HandshakeRejectionTests" name="RejectedHandshakeThrowsAndNeverInstallsSender" />
+    </UnitTest>
+    <UnitTest name="WebsocketClientLiteTest.ReconnectTests.FailedConnectTerminatesAndRemovesRegistration" storage="/tmp/s11-handshake-scratch/copies/new-unchanged/src/main/websocketclientlitetest/bin/release/net10.0/websocketclientlitetest.dll" id="a372d844-784c-bd8f-28d3-a270d2f4b09d">
+      <Execution id="02d188ad-18b0-493e-be33-b451e095daf5" />
+      <TestMethod codeBase="/tmp/s11-handshake-scratch/copies/new-unchanged/src/main/WebsocketClientLiteTest/bin/Release/net10.0/WebsocketClientLiteTest.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="WebsocketClientLiteTest.ReconnectTests" name="FailedConnectTerminatesAndRemovesRegistration" />
+    </UnitTest>
+    <UnitTest name="WebsocketClientLiteTest.IntegrationTests.InvalidAcceptNeverConnectsEvenWhenServerStaysOpen(connection: &quot;Upgrade&quot;)" storage="/tmp/s11-handshake-scratch/copies/new-unchanged/src/main/websocketclientlitetest/bin/release/net10.0/websocketclientlitetest.dll" id="1daef270-3dde-6932-80a4-21f2b1a64654">
+      <Execution id="ba08b695-703c-4358-b81b-ea37e44c14ad" />
+      <TestMethod codeBase="/tmp/s11-handshake-scratch/copies/new-unchanged/src/main/WebsocketClientLiteTest/bin/Release/net10.0/WebsocketClientLiteTest.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="WebsocketClientLiteTest.IntegrationTests" name="InvalidAcceptNeverConnectsEvenWhenServerStaysOpen" />
+    </UnitTest>
+    <UnitTest name="WebsocketClientLiteTest.IntegrationTests.Non101HandshakeResponse_FailsFast_WithStatusCode" storage="/tmp/s11-handshake-scratch/copies/new-unchanged/src/main/websocketclientlitetest/bin/release/net10.0/websocketclientlitetest.dll" id="53661987-b6c8-bbfa-6bb6-feefde9fb5b7">
+      <Execution id="6025e286-8955-4aee-b308-f1ea1582f65c" />
+      <TestMethod codeBase="/tmp/s11-handshake-scratch/copies/new-unchanged/src/main/WebsocketClientLiteTest/bin/Release/net10.0/WebsocketClientLiteTest.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="WebsocketClientLiteTest.IntegrationTests" name="Non101HandshakeResponse_FailsFast_WithStatusCode" />
+    </UnitTest>
+    <UnitTest name="WebsocketClientLiteTest.HandshakeRejectionTests.RejectedHandshakeThrowsAndNeverInstallsSender(rejection: InvalidAccept)" storage="/tmp/s11-handshake-scratch/copies/new-unchanged/src/main/websocketclientlitetest/bin/release/net10.0/websocketclientlitetest.dll" id="a6cf8ad2-1826-d0cf-2f55-8c8caeb57dd0">
+      <Execution id="eb7b15c1-b0d3-4873-95c6-1518b307c31d" />
+      <TestMethod codeBase="/tmp/s11-handshake-scratch/copies/new-unchanged/src/main/WebsocketClientLiteTest/bin/Release/net10.0/WebsocketClientLiteTest.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="WebsocketClientLiteTest.HandshakeRejectionTests" name="RejectedHandshakeThrowsAndNeverInstallsSender" />
+    </UnitTest>
+    <UnitTest name="WebsocketClientLiteTest.IntegrationTests.InvalidAcceptNeverConnectsEvenWhenServerStaysOpen(connection: &quot;close&quot;)" storage="/tmp/s11-handshake-scratch/copies/new-unchanged/src/main/websocketclientlitetest/bin/release/net10.0/websocketclientlitetest.dll" id="847a11f5-03a4-3dfb-415a-63a243edbbd6">
+      <Execution id="0504e728-2a19-4ff7-8415-3c52d355124a" />
+      <TestMethod codeBase="/tmp/s11-handshake-scratch/copies/new-unchanged/src/main/WebsocketClientLiteTest/bin/Release/net10.0/WebsocketClientLiteTest.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="WebsocketClientLiteTest.IntegrationTests" name="InvalidAcceptNeverConnectsEvenWhenServerStaysOpen" />
+    </UnitTest>
+    <UnitTest name="WebsocketClientLiteTest.HandshakeRejectionTests.RejectedHandshakeThrowsAndNeverInstallsSender(rejection: SendFailed)" storage="/tmp/s11-handshake-scratch/copies/new-unchanged/src/main/websocketclientlitetest/bin/release/net10.0/websocketclientlitetest.dll" id="85aeec09-2dbe-5c3d-f451-f9709fae6cab">
+      <Execution id="9cae6563-a610-4078-9ad9-aa0b2650b12f" />
+      <TestMethod codeBase="/tmp/s11-handshake-scratch/copies/new-unchanged/src/main/WebsocketClientLiteTest/bin/Release/net10.0/WebsocketClientLiteTest.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="WebsocketClientLiteTest.HandshakeRejectionTests" name="RejectedHandshakeThrowsAndNeverInstallsSender" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="a6cf8ad2-1826-d0cf-2f55-8c8caeb57dd0" executionId="eb7b15c1-b0d3-4873-95c6-1518b307c31d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="847a11f5-03a4-3dfb-415a-63a243edbbd6" executionId="0504e728-2a19-4ff7-8415-3c52d355124a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="a372d844-784c-bd8f-28d3-a270d2f4b09d" executionId="02d188ad-18b0-493e-be33-b451e095daf5" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="e05a2135-9011-c14a-c2ba-68efdb3c7b2d" executionId="3e0575d2-bc23-4382-bfa3-164b3462f154" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="85aeec09-2dbe-5c3d-f451-f9709fae6cab" executionId="9cae6563-a610-4078-9ad9-aa0b2650b12f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="53661987-b6c8-bbfa-6bb6-feefde9fb5b7" executionId="6025e286-8955-4aee-b308-f1ea1582f65c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="fb8c1a21-02b6-0c54-492f-e4b11a0f55ab" executionId="f751a161-3d30-40d0-8254-ecb933f42a84" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="1daef270-3dde-6932-80a4-21f2b1a64654" executionId="ba08b695-703c-4358-b81b-ea37e44c14ad" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Completed">
+    <Counters total="8" executed="8" passed="8" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v4.0.1+0f7d528729 (64-bit .NET 10.0.14)
+[xUnit.net 00:00:00.08]   Discovering: WebsocketClientLiteTest
+[xUnit.net 00:00:00.18]   Discovered:  WebsocketClientLiteTest
+[xUnit.net 00:00:00.21]   Starting:    WebsocketClientLiteTest
+[xUnit.net 00:00:00.94]   Finished:    WebsocketClientLiteTest
+</StdOut>
+    </Output>
+  </ResultSummary>
+</TestRun>

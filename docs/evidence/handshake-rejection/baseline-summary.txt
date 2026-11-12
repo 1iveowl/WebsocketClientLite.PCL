@@ -1,0 +1,49 @@
+## baseline-mutant-plain: 15 runs, 7 with a non-zero exit
+  run-01 exit=0 ms=740 tests=4 not-passed=0
+  run-02 exit=0 ms=734 tests=4 not-passed=0
+  run-03 exit=0 ms=746 tests=4 not-passed=0
+  run-04 exit=1 ms=3751 tests=4 not-passed=1: WebsocketClientLiteTest.ReconnectTests.FailedConnectTerminatesAndRemovesRegistration
+  run-05 exit=1 ms=3784 tests=4 not-passed=1: WebsocketClientLiteTest.ReconnectTests.FailedConnectTerminatesAndRemovesRegistration
+  run-06 exit=0 ms=780 tests=4 not-passed=0
+  run-07 exit=1 ms=3753 tests=4 not-passed=1: WebsocketClientLiteTest.ReconnectTests.FailedConnectTerminatesAndRemovesRegistration
+  run-08 exit=1 ms=3791 tests=4 not-passed=1: WebsocketClientLiteTest.ReconnectTests.FailedConnectTerminatesAndRemovesRegistration
+  run-09 exit=1 ms=3743 tests=4 not-passed=1: WebsocketClientLiteTest.ReconnectTests.FailedConnectTerminatesAndRemovesRegistration
+  run-10 exit=0 ms=795 tests=4 not-passed=0
+  run-11 exit=0 ms=740 tests=4 not-passed=0
+  run-12 exit=1 ms=3781 tests=4 not-passed=1: WebsocketClientLiteTest.ReconnectTests.FailedConnectTerminatesAndRemovesRegistration
+  run-13 exit=1 ms=3781 tests=4 not-passed=1: WebsocketClientLiteTest.ReconnectTests.FailedConnectTerminatesAndRemovesRegistration
+  run-14 exit=0 ms=765 tests=4 not-passed=0
+  run-15 exit=0 ms=761 tests=4 not-passed=0
+  passed 15 of 15  WebsocketClientLiteTest.IntegrationTests.InvalidAcceptNeverConnectsEvenWhenServerStaysOpen(connection: "Upgrade")
+  passed 15 of 15  WebsocketClientLiteTest.IntegrationTests.InvalidAcceptNeverConnectsEvenWhenServerStaysOpen(connection: "close")
+  passed 15 of 15  WebsocketClientLiteTest.IntegrationTests.Non101HandshakeResponse_FailsFast_WithStatusCode
+  passed  8 of 15  WebsocketClientLiteTest.ReconnectTests.FailedConnectTerminatesAndRemovesRegistration
+
+## baseline-mutant-loaded: 15 runs, 6 with a non-zero exit
+  run-01 exit=0 ms=2053 tests=4 not-passed=0
+  run-02 exit=0 ms=2347 tests=4 not-passed=0
+  run-03 exit=0 ms=2263 tests=4 not-passed=0
+  run-04 exit=1 ms=5321 tests=4 not-passed=1: WebsocketClientLiteTest.ReconnectTests.FailedConnectTerminatesAndRemovesRegistration
+  run-05 exit=1 ms=5140 tests=4 not-passed=1: WebsocketClientLiteTest.ReconnectTests.FailedConnectTerminatesAndRemovesRegistration
+  run-06 exit=0 ms=5296 tests=4 not-passed=0
+  run-07 exit=1 ms=5268 tests=4 not-passed=1: WebsocketClientLiteTest.ReconnectTests.FailedConnectTerminatesAndRemovesRegistration
+  run-08 exit=1 ms=5200 tests=4 not-passed=1: WebsocketClientLiteTest.ReconnectTests.FailedConnectTerminatesAndRemovesRegistration
+  run-09 exit=1 ms=8380 tests=4 not-passed=1: WebsocketClientLiteTest.ReconnectTests.FailedConnectTerminatesAndRemovesRegistration
+  run-10 exit=0 ms=2500 tests=4 not-passed=0
+  run-11 exit=0 ms=2313 tests=4 not-passed=0
+  run-12 exit=0 ms=5209 tests=4 not-passed=0
+  run-13 exit=0 ms=2282 tests=4 not-passed=0
+  run-14 exit=0 ms=2253 tests=4 not-passed=0
+  run-15 exit=1 ms=2441 tests=4 not-passed=1: WebsocketClientLiteTest.ReconnectTests.FailedConnectTerminatesAndRemovesRegistration
+  passed 15 of 15  WebsocketClientLiteTest.IntegrationTests.InvalidAcceptNeverConnectsEvenWhenServerStaysOpen(connection: "Upgrade")
+  passed 15 of 15  WebsocketClientLiteTest.IntegrationTests.InvalidAcceptNeverConnectsEvenWhenServerStaysOpen(connection: "close")
+  passed 15 of 15  WebsocketClientLiteTest.IntegrationTests.Non101HandshakeResponse_FailsFast_WithStatusCode
+  passed  9 of 15  WebsocketClientLiteTest.ReconnectTests.FailedConnectTerminatesAndRemovesRegistration
+
+## baseline-unchanged-loaded: 1 runs, 0 with a non-zero exit
+  run-1 exit=0 ms=2462 tests=4 not-passed=0
+  passed  1 of  1  WebsocketClientLiteTest.IntegrationTests.InvalidAcceptNeverConnectsEvenWhenServerStaysOpen(connection: "Upgrade")
+  passed  1 of  1  WebsocketClientLiteTest.IntegrationTests.InvalidAcceptNeverConnectsEvenWhenServerStaysOpen(connection: "close")
+  passed  1 of  1  WebsocketClientLiteTest.IntegrationTests.Non101HandshakeResponse_FailsFast_WithStatusCode
+  passed  1 of  1  WebsocketClientLiteTest.ReconnectTests.FailedConnectTerminatesAndRemovesRegistration
+

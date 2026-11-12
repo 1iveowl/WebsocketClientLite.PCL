@@ -1,0 +1,162 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="143dbc28-e0a8-4e12-a265-283d21d66cf9" name="@a920b7ae3df2 2026-11-11 23:03:48" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-11-11T23:03:48.6174982+00:00" queuing="2026-11-11T23:03:48.6174983+00:00" start="2026-11-11T23:03:46.9375890+00:00" finish="2026-11-11T23:04:02.8363732+00:00" />
+  <TestSettings name="default" id="8b338e91-e7ee-4c06-8c64-76f726fd8bf6">
+    <Deployment runDeploymentRoot="_a920b7ae3df2_2026-11-11_23_03_48" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="b2aba5b0-682c-45c1-993a-023fb47e9c91" testId="847a11f5-03a4-3dfb-415a-63a243edbbd6" testName="WebsocketClientLiteTest.IntegrationTests.InvalidAcceptNeverConnectsEvenWhenServerStaysOpen(connection: &quot;close&quot;)" computerName="a920b7ae3df2" duration="00:00:00.0028658" startTime="2026-11-11T23:03:47.2833576+00:00" endTime="2026-11-11T23:03:47.2846266+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="b2aba5b0-682c-45c1-993a-023fb47e9c91" />
+    <UnitTestResult executionId="96be8581-2838-4929-a737-55a6745a3709" testId="e05a2135-9011-c14a-c2ba-68efdb3c7b2d" testName="WebsocketClientLiteTest.HandshakeRejectionTests.RejectedHandshakeThrowsAndNeverInstallsSender(rejection: Timeout)" computerName="a920b7ae3df2" duration="00:00:05.5066415" startTime="2026-11-11T23:03:52.2890229+00:00" endTime="2026-11-11T23:03:57.7955275+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="96be8581-2838-4929-a737-55a6745a3709">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Values differ
+Expected: 0
+Actual:   1</Message>
+          <StackTrace>   at WebsocketClientLiteTest.HandshakeRejectionTests.RejectedHandshakeThrowsAndNeverInstallsSender(Rejection rejection) in /tmp/s11-handshake-scratch/copies/new-mutant/src/main/WebsocketClientLiteTest/HandshakeRejectionTests.cs:line 84
+   at WebsocketClientLiteTest.HandshakeRejectionTests.RejectedHandshakeThrowsAndNeverInstallsSender(Rejection rejection) in /tmp/s11-handshake-scratch/copies/new-mutant/src/main/WebsocketClientLiteTest/HandshakeRejectionTests.cs:line 106
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="f5b3c92c-5122-42e6-9ec5-64b3419ec063" testId="53661987-b6c8-bbfa-6bb6-feefde9fb5b7" testName="WebsocketClientLiteTest.IntegrationTests.Non101HandshakeResponse_FailsFast_WithStatusCode" computerName="a920b7ae3df2" duration="00:00:00.0016582" startTime="2026-11-11T23:03:47.2847137+00:00" endTime="2026-11-11T23:03:47.2875868+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f5b3c92c-5122-42e6-9ec5-64b3419ec063" />
+    <UnitTestResult executionId="458f3f43-d70c-4a55-916d-7ddb76f3d863" testId="85aeec09-2dbe-5c3d-f451-f9709fae6cab" testName="WebsocketClientLiteTest.HandshakeRejectionTests.RejectedHandshakeThrowsAndNeverInstallsSender(rejection: SendFailed)" computerName="a920b7ae3df2" duration="00:00:00.0264568" startTime="2026-11-11T23:03:47.2467186+00:00" endTime="2026-11-11T23:03:47.2849359+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="458f3f43-d70c-4a55-916d-7ddb76f3d863">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Values differ
+Expected: 0
+Actual:   1</Message>
+          <StackTrace>   at WebsocketClientLiteTest.HandshakeRejectionTests.RejectedHandshakeThrowsAndNeverInstallsSender(Rejection rejection) in /tmp/s11-handshake-scratch/copies/new-mutant/src/main/WebsocketClientLiteTest/HandshakeRejectionTests.cs:line 84
+   at WebsocketClientLiteTest.HandshakeRejectionTests.RejectedHandshakeThrowsAndNeverInstallsSender(Rejection rejection) in /tmp/s11-handshake-scratch/copies/new-mutant/src/main/WebsocketClientLiteTest/HandshakeRejectionTests.cs:line 106
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="e5002c8a-1a90-4f33-8be6-879d450a7c8a" testId="a372d844-784c-bd8f-28d3-a270d2f4b09d" testName="WebsocketClientLiteTest.ReconnectTests.FailedConnectTerminatesAndRemovesRegistration" computerName="a920b7ae3df2" duration="00:00:00.0258802" startTime="2026-11-11T23:03:47.2466847+00:00" endTime="2026-11-11T23:03:47.2770182+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e5002c8a-1a90-4f33-8be6-879d450a7c8a" />
+    <UnitTestResult executionId="4ecec7c6-6eac-4809-a6f0-693c99c207d8" testId="fb8c1a21-02b6-0c54-492f-e4b11a0f55ab" testName="WebsocketClientLiteTest.HandshakeRejectionTests.RejectedHandshakeThrowsAndNeverInstallsSender(rejection: NotFound)" computerName="a920b7ae3df2" duration="00:00:05.0043970" startTime="2026-11-11T23:03:47.2875609+00:00" endTime="2026-11-11T23:03:52.2875417+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="4ecec7c6-6eac-4809-a6f0-693c99c207d8">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Values differ
+Expected: 0
+Actual:   1</Message>
+          <StackTrace>   at WebsocketClientLiteTest.HandshakeRejectionTests.RejectedHandshakeThrowsAndNeverInstallsSender(Rejection rejection) in /tmp/s11-handshake-scratch/copies/new-mutant/src/main/WebsocketClientLiteTest/HandshakeRejectionTests.cs:line 84
+   at WebsocketClientLiteTest.HandshakeRejectionTests.RejectedHandshakeThrowsAndNeverInstallsSender(Rejection rejection) in /tmp/s11-handshake-scratch/copies/new-mutant/src/main/WebsocketClientLiteTest/HandshakeRejectionTests.cs:line 106
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="604732a1-eaa7-4fda-82e3-7deda935019f" testId="a6cf8ad2-1826-d0cf-2f55-8c8caeb57dd0" testName="WebsocketClientLiteTest.HandshakeRejectionTests.RejectedHandshakeThrowsAndNeverInstallsSender(rejection: InvalidAccept)" computerName="a920b7ae3df2" duration="00:00:05.0015465" startTime="2026-11-11T23:03:57.7961909+00:00" endTime="2026-11-11T23:04:02.7980671+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="604732a1-eaa7-4fda-82e3-7deda935019f">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Values differ
+Expected: 0
+Actual:   1</Message>
+          <StackTrace>   at WebsocketClientLiteTest.HandshakeRejectionTests.RejectedHandshakeThrowsAndNeverInstallsSender(Rejection rejection) in /tmp/s11-handshake-scratch/copies/new-mutant/src/main/WebsocketClientLiteTest/HandshakeRejectionTests.cs:line 84
+   at WebsocketClientLiteTest.HandshakeRejectionTests.RejectedHandshakeThrowsAndNeverInstallsSender(Rejection rejection) in /tmp/s11-handshake-scratch/copies/new-mutant/src/main/WebsocketClientLiteTest/HandshakeRejectionTests.cs:line 106
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="bb027e89-2984-40ce-880e-3cc57fe346e0" testId="1daef270-3dde-6932-80a4-21f2b1a64654" testName="WebsocketClientLiteTest.IntegrationTests.InvalidAcceptNeverConnectsEvenWhenServerStaysOpen(connection: &quot;Upgrade&quot;)" computerName="a920b7ae3df2" duration="00:00:00.0258865" startTime="2026-11-11T23:03:47.2459637+00:00" endTime="2026-11-11T23:03:47.2793990+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="bb027e89-2984-40ce-880e-3cc57fe346e0" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="WebsocketClientLiteTest.HandshakeRejectionTests.RejectedHandshakeThrowsAndNeverInstallsSender(rejection: Timeout)" storage="/tmp/s11-handshake-scratch/copies/new-mutant/src/main/websocketclientlitetest/bin/release/net10.0/websocketclientlitetest.dll" id="e05a2135-9011-c14a-c2ba-68efdb3c7b2d">
+      <Execution id="96be8581-2838-4929-a737-55a6745a3709" />
+      <TestMethod codeBase="/tmp/s11-handshake-scratch/copies/new-mutant/src/main/WebsocketClientLiteTest/bin/Release/net10.0/WebsocketClientLiteTest.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="WebsocketClientLiteTest.HandshakeRejectionTests" name="RejectedHandshakeThrowsAndNeverInstallsSender" />
+    </UnitTest>
+    <UnitTest name="WebsocketClientLiteTest.HandshakeRejectionTests.RejectedHandshakeThrowsAndNeverInstallsSender(rejection: NotFound)" storage="/tmp/s11-handshake-scratch/copies/new-mutant/src/main/websocketclientlitetest/bin/release/net10.0/websocketclientlitetest.dll" id="fb8c1a21-02b6-0c54-492f-e4b11a0f55ab">
+      <Execution id="4ecec7c6-6eac-4809-a6f0-693c99c207d8" />
+      <TestMethod codeBase="/tmp/s11-handshake-scratch/copies/new-mutant/src/main/WebsocketClientLiteTest/bin/Release/net10.0/WebsocketClientLiteTest.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="WebsocketClientLiteTest.HandshakeRejectionTests" name="RejectedHandshakeThrowsAndNeverInstallsSender" />
+    </UnitTest>
+    <UnitTest name="WebsocketClientLiteTest.ReconnectTests.FailedConnectTerminatesAndRemovesRegistration" storage="/tmp/s11-handshake-scratch/copies/new-mutant/src/main/websocketclientlitetest/bin/release/net10.0/websocketclientlitetest.dll" id="a372d844-784c-bd8f-28d3-a270d2f4b09d">
+      <Execution id="e5002c8a-1a90-4f33-8be6-879d450a7c8a" />
+      <TestMethod codeBase="/tmp/s11-handshake-scratch/copies/new-mutant/src/main/WebsocketClientLiteTest/bin/Release/net10.0/WebsocketClientLiteTest.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="WebsocketClientLiteTest.ReconnectTests" name="FailedConnectTerminatesAndRemovesRegistration" />
+    </UnitTest>
+    <UnitTest name="WebsocketClientLiteTest.IntegrationTests.InvalidAcceptNeverConnectsEvenWhenServerStaysOpen(connection: &quot;Upgrade&quot;)" storage="/tmp/s11-handshake-scratch/copies/new-mutant/src/main/websocketclientlitetest/bin/release/net10.0/websocketclientlitetest.dll" id="1daef270-3dde-6932-80a4-21f2b1a64654">
+      <Execution id="bb027e89-2984-40ce-880e-3cc57fe346e0" />
+      <TestMethod codeBase="/tmp/s11-handshake-scratch/copies/new-mutant/src/main/WebsocketClientLiteTest/bin/Release/net10.0/WebsocketClientLiteTest.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="WebsocketClientLiteTest.IntegrationTests" name="InvalidAcceptNeverConnectsEvenWhenServerStaysOpen" />
+    </UnitTest>
+    <UnitTest name="WebsocketClientLiteTest.IntegrationTests.Non101HandshakeResponse_FailsFast_WithStatusCode" storage="/tmp/s11-handshake-scratch/copies/new-mutant/src/main/websocketclientlitetest/bin/release/net10.0/websocketclientlitetest.dll" id="53661987-b6c8-bbfa-6bb6-feefde9fb5b7">
+      <Execution id="f5b3c92c-5122-42e6-9ec5-64b3419ec063" />
+      <TestMethod codeBase="/tmp/s11-handshake-scratch/copies/new-mutant/src/main/WebsocketClientLiteTest/bin/Release/net10.0/WebsocketClientLiteTest.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="WebsocketClientLiteTest.IntegrationTests" name="Non101HandshakeResponse_FailsFast_WithStatusCode" />
+    </UnitTest>
+    <UnitTest name="WebsocketClientLiteTest.HandshakeRejectionTests.RejectedHandshakeThrowsAndNeverInstallsSender(rejection: InvalidAccept)" storage="/tmp/s11-handshake-scratch/copies/new-mutant/src/main/websocketclientlitetest/bin/release/net10.0/websocketclientlitetest.dll" id="a6cf8ad2-1826-d0cf-2f55-8c8caeb57dd0">
+      <Execution id="604732a1-eaa7-4fda-82e3-7deda935019f" />
+      <TestMethod codeBase="/tmp/s11-handshake-scratch/copies/new-mutant/src/main/WebsocketClientLiteTest/bin/Release/net10.0/WebsocketClientLiteTest.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="WebsocketClientLiteTest.HandshakeRejectionTests" name="RejectedHandshakeThrowsAndNeverInstallsSender" />
+    </UnitTest>
+    <UnitTest name="WebsocketClientLiteTest.HandshakeRejectionTests.RejectedHandshakeThrowsAndNeverInstallsSender(rejection: SendFailed)" storage="/tmp/s11-handshake-scratch/copies/new-mutant/src/main/websocketclientlitetest/bin/release/net10.0/websocketclientlitetest.dll" id="85aeec09-2dbe-5c3d-f451-f9709fae6cab">
+      <Execution id="458f3f43-d70c-4a55-916d-7ddb76f3d863" />
+      <TestMethod codeBase="/tmp/s11-handshake-scratch/copies/new-mutant/src/main/WebsocketClientLiteTest/bin/Release/net10.0/WebsocketClientLiteTest.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="WebsocketClientLiteTest.HandshakeRejectionTests" name="RejectedHandshakeThrowsAndNeverInstallsSender" />
+    </UnitTest>
+    <UnitTest name="WebsocketClientLiteTest.IntegrationTests.InvalidAcceptNeverConnectsEvenWhenServerStaysOpen(connection: &quot;close&quot;)" storage="/tmp/s11-handshake-scratch/copies/new-mutant/src/main/websocketclientlitetest/bin/release/net10.0/websocketclientlitetest.dll" id="847a11f5-03a4-3dfb-415a-63a243edbbd6">
+      <Execution id="b2aba5b0-682c-45c1-993a-023fb47e9c91" />
+      <TestMethod codeBase="/tmp/s11-handshake-scratch/copies/new-mutant/src/main/WebsocketClientLiteTest/bin/Release/net10.0/WebsocketClientLiteTest.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="WebsocketClientLiteTest.IntegrationTests" name="InvalidAcceptNeverConnectsEvenWhenServerStaysOpen" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="847a11f5-03a4-3dfb-415a-63a243edbbd6" executionId="b2aba5b0-682c-45c1-993a-023fb47e9c91" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="e05a2135-9011-c14a-c2ba-68efdb3c7b2d" executionId="96be8581-2838-4929-a737-55a6745a3709" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="53661987-b6c8-bbfa-6bb6-feefde9fb5b7" executionId="f5b3c92c-5122-42e6-9ec5-64b3419ec063" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="85aeec09-2dbe-5c3d-f451-f9709fae6cab" executionId="458f3f43-d70c-4a55-916d-7ddb76f3d863" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="a372d844-784c-bd8f-28d3-a270d2f4b09d" executionId="e5002c8a-1a90-4f33-8be6-879d450a7c8a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="fb8c1a21-02b6-0c54-492f-e4b11a0f55ab" executionId="4ecec7c6-6eac-4809-a6f0-693c99c207d8" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="a6cf8ad2-1826-d0cf-2f55-8c8caeb57dd0" executionId="604732a1-eaa7-4fda-82e3-7deda935019f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="1daef270-3dde-6932-80a4-21f2b1a64654" executionId="bb027e89-2984-40ce-880e-3cc57fe346e0" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="8" executed="8" passed="4" failed="4" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v4.0.1+0f7d528729 (64-bit .NET 10.0.14)
+[xUnit.net 00:00:00.04]   Discovering: WebsocketClientLiteTest
+[xUnit.net 00:00:00.10]   Discovered:  WebsocketClientLiteTest
+[xUnit.net 00:00:00.11]   Starting:    WebsocketClientLiteTest
+[xUnit.net 00:00:00.17]       Assert.Equal() Failure: Values differ
+[xUnit.net 00:00:00.17]       Expected: 0
+[xUnit.net 00:00:00.17]       Actual:   1
+[xUnit.net 00:00:00.17]       Stack Trace:
+[xUnit.net 00:00:00.17]         /tmp/s11-handshake-scratch/copies/new-mutant/src/main/WebsocketClientLiteTest/HandshakeRejectionTests.cs(84,0): at WebsocketClientLiteTest.HandshakeRejectionTests.RejectedHandshakeThrowsAndNeverInstallsSender(Rejection rejection)
+[xUnit.net 00:00:00.17]         /tmp/s11-handshake-scratch/copies/new-mutant/src/main/WebsocketClientLiteTest/HandshakeRejectionTests.cs(106,0): at WebsocketClientLiteTest.HandshakeRejectionTests.RejectedHandshakeThrowsAndNeverInstallsSender(Rejection rejection)
+[xUnit.net 00:00:00.17]         --- End of stack trace from previous location ---
+[xUnit.net 00:00:05.17]       Assert.Equal() Failure: Values differ
+[xUnit.net 00:00:05.17]       Expected: 0
+[xUnit.net 00:00:05.17]       Actual:   1
+[xUnit.net 00:00:05.17]       Stack Trace:
+[xUnit.net 00:00:05.17]         /tmp/s11-handshake-scratch/copies/new-mutant/src/main/WebsocketClientLiteTest/HandshakeRejectionTests.cs(84,0): at WebsocketClientLiteTest.HandshakeRejectionTests.RejectedHandshakeThrowsAndNeverInstallsSender(Rejection rejection)
+[xUnit.net 00:00:05.17]         /tmp/s11-handshake-scratch/copies/new-mutant/src/main/WebsocketClientLiteTest/HandshakeRejectionTests.cs(106,0): at WebsocketClientLiteTest.HandshakeRejectionTests.RejectedHandshakeThrowsAndNeverInstallsSender(Rejection rejection)
+[xUnit.net 00:00:05.17]         --- End of stack trace from previous location ---
+[xUnit.net 00:00:10.67]       Assert.Equal() Failure: Values differ
+[xUnit.net 00:00:10.67]       Expected: 0
+[xUnit.net 00:00:10.67]       Actual:   1
+[xUnit.net 00:00:10.67]       Stack Trace:
+[xUnit.net 00:00:10.67]         /tmp/s11-handshake-scratch/copies/new-mutant/src/main/WebsocketClientLiteTest/HandshakeRejectionTests.cs(84,0): at WebsocketClientLiteTest.HandshakeRejectionTests.RejectedHandshakeThrowsAndNeverInstallsSender(Rejection rejection)
+[xUnit.net 00:00:10.67]         /tmp/s11-handshake-scratch/copies/new-mutant/src/main/WebsocketClientLiteTest/HandshakeRejectionTests.cs(106,0): at WebsocketClientLiteTest.HandshakeRejectionTests.RejectedHandshakeThrowsAndNeverInstallsSender(Rejection rejection)
+[xUnit.net 00:00:10.67]         --- End of stack trace from previous location ---
+[xUnit.net 00:00:15.68]       Assert.Equal() Failure: Values differ
+[xUnit.net 00:00:15.68]       Expected: 0
+[xUnit.net 00:00:15.68]       Actual:   1
+[xUnit.net 00:00:15.68]       Stack Trace:
+[xUnit.net 00:00:15.68]         /tmp/s11-handshake-scratch/copies/new-mutant/src/main/WebsocketClientLiteTest/HandshakeRejectionTests.cs(84,0): at WebsocketClientLiteTest.HandshakeRejectionTests.RejectedHandshakeThrowsAndNeverInstallsSender(Rejection rejection)
+[xUnit.net 00:00:15.68]         /tmp/s11-handshake-scratch/copies/new-mutant/src/main/WebsocketClientLiteTest/HandshakeRejectionTests.cs(106,0): at WebsocketClientLiteTest.HandshakeRejectionTests.RejectedHandshakeThrowsAndNeverInstallsSender(Rejection rejection)
+[xUnit.net 00:00:15.68]         --- End of stack trace from previous location ---
+[xUnit.net 00:00:15.68]   Finished:    WebsocketClientLiteTest
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="a920b7ae3df2" outcome="Error" timestamp="2026-11-11T23:03:47.2866396+00:00">
+        <Text>[xUnit.net 00:00:00.17]     WebsocketClientLiteTest.HandshakeRejectionTests.RejectedHandshakeThrowsAndNeverInstallsSender(rejection: SendFailed) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="a920b7ae3df2" outcome="Error" timestamp="2026-11-11T23:03:52.2888432+00:00">
+        <Text>[xUnit.net 00:00:05.17]     WebsocketClientLiteTest.HandshakeRejectionTests.RejectedHandshakeThrowsAndNeverInstallsSender(rejection: NotFound) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="a920b7ae3df2" outcome="Error" timestamp="2026-11-11T23:03:57.7963071+00:00">
+        <Text>[xUnit.net 00:00:10.67]     WebsocketClientLiteTest.HandshakeRejectionTests.RejectedHandshakeThrowsAndNeverInstallsSender(rejection: Timeout) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="a920b7ae3df2" outcome="Error" timestamp="2026-11-11T23:04:02.7986225+00:00">
+        <Text>[xUnit.net 00:00:15.68]     WebsocketClientLiteTest.HandshakeRejectionTests.RejectedHandshakeThrowsAndNeverInstallsSender(rejection: InvalidAccept) [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>
