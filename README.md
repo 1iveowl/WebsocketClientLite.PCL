@@ -245,7 +245,7 @@ await using var client = new ClientWebSocketRx {
 
 ```
 
-`await using` (i.e. `DisposeAsync`) is the preferred lifecycle: when the client goes out of scope, the RFC 6455 close handshake of any still-active connection is awaited before the socket is released. A plain `using`/`Dispose()` also works but is the abrupt variant — the close is attempted best-effort within a bounded time (3 seconds) so synchronous disposal can never hang. Unsubscribing from the connection observable remains the usual way to end a single connection; disposal is for the client object's end of life.
+`await using` (i.e. `DisposeAsync`) is the preferred lifecycle: when the client goes out of scope, the RFC 6455 close handshake of any still-active connection is awaited before the socket is released. It has two separate waits, not one deadline: up to five seconds for the Close frame to be sent, then up to five more for the server's Close. If the send times out, the connection is disposed right away without waiting for the server. Disposal also waits for your callbacks and for the stream to return, so it is not guaranteed to finish within ten seconds. A plain `using`/`Dispose()` also works but is the abrupt variant — the close is attempted best-effort within a bounded time (3 seconds) so synchronous disposal can never hang. Unsubscribing from the connection observable remains the usual way to end a single connection; disposal is for the client object's end of life.
 You can also provide your own `TcpClient` for greater control:
 
 ```csharp
@@ -267,8 +267,10 @@ does not reset the successor's connected status or dispose its transport.
 Disposing the client permanently ends admission: later subscriptions fail with
 `ObjectDisposedException`. Unsubscribe to end one attempt while keeping the client
 available. Use a finite retry policy that stops when you dispose the client.
-The shared Sender/status policy for simultaneous active subscriptions on one
-client is unspecified; use separate clients for independent connections.
+One active subscription per client at a time is the supported use: subscribe
+again only after the previous attempt has ended, as `Retry`/`Repeat` do. With two
+active subscriptions on one client, `IsConnected` and `Sender` are not specified;
+use separate clients for independent connections.
 
 ### Connecting to a WebSocket Server
 
