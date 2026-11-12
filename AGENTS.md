@@ -73,5 +73,5 @@ The full process is in [CONTRIBUTING.md](CONTRIBUTING.md). What an agent must fo
 - Test: `./test-all-tfms.sh` runs the unit tests against each library build; CI runs it in
   Release and requires at least 70 % line coverage (`scripts/check-coverage.sh`).
 - Keep changes compatible with every target framework; conditional code uses `#if`.
-- The README documents the public API and a "New in Version" section per release.
+- The README documents the public API and has one row per release in its "Release history" table. The release notes are in `CHANGELOG.md`, one `## New in Version <x.y.z>` section per release.
 - Layout, the dev container, remote hosts and Herdr: [docs/development.md](docs/development.md).
