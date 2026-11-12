@@ -1,0 +1,13 @@
+ 22:21:10 up 13 days, 14:05,  0 user,  load average: 1.66, 1.81, 1.45
+ 568353       38:10 /usr/share/dotnet/sdk/10.0.403/Roslyn/bincore/VBCSCompiler -pipename:afbl1n9yN_RPIGY3Zht7xFLgW0q6Vl3WupFdpM2aC3E
+ 577568       17:43 /usr/share/dotnet/dotnet /usr/share/dotnet/sdk/10.0.403/MSBuild.dll /noautoresponse /nologo /nodemode:1 /nodeReuse:true /low:false
+ 577569       17:43 /usr/share/dotnet/dotnet /usr/share/dotnet/sdk/10.0.403/MSBuild.dll /noautoresponse /nologo /nodemode:1 /nodeReuse:true /low:false
+ 577570       17:43 /usr/share/dotnet/dotnet /usr/share/dotnet/sdk/10.0.403/MSBuild.dll /noautoresponse /nologo /nodemode:1 /nodeReuse:true /low:false
+ 577648       17:42 /usr/share/dotnet/dotnet /usr/share/dotnet/sdk/10.0.403/MSBuild.dll /noautoresponse /nologo /nodemode:1 /nodeReuse:true /low:false
+ 577649       17:42 /usr/share/dotnet/dotnet /usr/share/dotnet/sdk/10.0.403/MSBuild.dll /noautoresponse /nologo /nodemode:1 /nodeReuse:true /low:false
+ 577650       17:42 /usr/share/dotnet/dotnet /usr/share/dotnet/sdk/10.0.403/MSBuild.dll /noautoresponse /nologo /nodemode:1 /nodeReuse:true /low:false
+ 577683       17:42 /usr/share/dotnet/dotnet /usr/share/dotnet/sdk/10.0.403/MSBuild.dll /noautoresponse /nologo /nodemode:1 /nodeReuse:true /low:false
+ 604123       03:38 /bin/bash -c source /home/vscode/.claude/shell-snapshots/snapshot-bash-1794434888187-zq950j.sh 2>/dev/null || true && shopt -u extglob 2>/de
+ 613628       00:02 dotnet test src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj -c Release -p:LibTfm=net10.0 --no-build --nologo --filter FullyQ
+ 613657       00:02 /usr/share/dotnet/dotnet exec /usr/share/dotnet/sdk/10.0.403/vstest.console.dll --testAdapterPath:/home/vscode/.nuget/packages/coverlet.coll
+ 613670       00:02 /usr/share/dotnet/dotnet exec --runtimeconfig /tmp/s6-scratch/defects-after-copy/src/main/WebsocketClientLiteTest/bin/Release/net10.0/Websoc

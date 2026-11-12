@@ -1,0 +1,20 @@
+  Determining projects to restore...
+  Restored /tmp/m4-seed-default-event-is-send-bnV9Po/src/main/WebsocketClientLite/WebsocketClientLite.csproj (in 119 ms).
+  Restored /tmp/m4-seed-default-event-is-send-bnV9Po/src/interface/IWebsocketClientLite/IWebsocketClientLite.csproj (in 118 ms).
+  Restored /tmp/m4-seed-default-event-is-send-bnV9Po/src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj (in 118 ms).
+  IWebsocketClientLite -> /tmp/m4-seed-default-event-is-send-bnV9Po/src/interface/IWebsocketClientLite/bin/Release/netstandard2.0/IWebsocketClientLite.dll
+  WebsocketClientLite -> /tmp/m4-seed-default-event-is-send-bnV9Po/src/main/WebsocketClientLite/bin/Release/net10.0/WebsocketClientLite.dll
+  WebsocketClientLiteTest -> /tmp/m4-seed-default-event-is-send-bnV9Po/src/main/WebsocketClientLiteTest/bin/Release/net10.0/WebsocketClientLiteTest.dll
+Test run for /tmp/m4-seed-default-event-is-send-bnV9Po/src/main/WebsocketClientLiteTest/bin/Release/net10.0/WebsocketClientLiteTest.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.16]     WebsocketClientLiteTest.CoreBoundaryTypesTests.DefaultCloseEventIsNoEvent [FAIL]
+  Failed WebsocketClientLiteTest.CoreBoundaryTypesTests.DefaultCloseEventIsNoEvent [< 1 ms]
+  Error Message:
+   Assert.Throws() Failure: No exception was thrown
+Expected: typeof(System.InvalidOperationException)
+  Stack Trace:
+     at WebsocketClientLiteTest.CoreBoundaryTypesTests.DefaultCloseEventIsNoEvent() in /tmp/m4-seed-default-event-is-send-bnV9Po/src/main/WebsocketClientLiteTest/CoreBoundaryTypesTests.cs:line 113
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+
+Failed!  - Failed:     1, Passed:    16, Skipped:     0, Total:    17, Duration: 38 ms - WebsocketClientLiteTest.dll (net10.0)

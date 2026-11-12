@@ -1,0 +1,24 @@
+source: git archive cad232592f23da30ca559d05f87401a5f9a733b0
+copy: /tmp/s10-shift.IKZXcy
+copy is a git repository with one commit
+inserted one comment line at line 190 (CloseStep declaration moves from 197 to 198)
+--- /dev/fd/63	2026-11-11 23:32:21.872341477 +0000
++++ /tmp/s10-shift.IKZXcy/verification/Protocol.dfy	2026-11-11 23:32:21.872341477 +0000
+@@ -187,6 +187,7 @@
+     // Failure is irreversible for application data, including a partially written frame.
+     static function SendFailed(state: bv8): bv8 { if state == 8 then 8 else 15 }
+ 
++    // Added by the S10 line-shift experiment: one comment line above CloseStep.
+     // RFC 6455 sections 5.5.1 and 7.1.2, mixed with library policy. Sections 5.5.1 and
+     // 7.1.2: once Close has been both sent and received, the TCP connection is to be closed,
+     // which is the release decision. Library policy: the sequential Close state model, with
+  Determining projects to restore...
+  Restored /tmp/s10-shift.IKZXcy/tools/Pdd/Pdd.csproj (in 41 ms).
+  Restored /tmp/s10-shift.IKZXcy/tools/Pdd.Tests/Pdd.Tests.csproj (in 118 ms).
+  Pdd -> /tmp/s10-shift.IKZXcy/tools/Pdd/bin/Release/net10.0/Pdd.dll
+  Pdd.Tests -> /tmp/s10-shift.IKZXcy/tools/Pdd.Tests/bin/Release/net10.0/Pdd.Tests.dll
+Test run for /tmp/s10-shift.IKZXcy/tools/Pdd.Tests/bin/Release/net10.0/Pdd.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+
+Passed!  - Failed:     0, Passed:   275, Skipped:     0, Total:   275, Duration: 13 s - Pdd.Tests.dll (net10.0)
+exit=0 elapsed=15746ms

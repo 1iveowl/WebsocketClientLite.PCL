@@ -37,7 +37,7 @@ public class PayloadParsingTests
 
     private async Task<Dataframe?> Parse(byte[] frame, int maxFrameSize = 0)
     {
-        var fake = new FakeTcpConnectionService(frame, maxFrameSize);
+        using var fake = new FakeTcpConnectionService(frame, maxFrameSize);
         return await fake.ReadDataframeAsync(CancellationToken.None);
     }
 
@@ -166,8 +166,10 @@ public class PayloadParsingTests
     [Fact]
     public async Task Parse_FrameExceedingMaxFrameSize_Throws()
     {
-        // Binary frame, masked, 16-bit length declaring 200 bytes.
-        var frame = new byte[] { 0x82, 0x7E, 0x00, 0xC8 };
+        // Binary frame, unmasked, 16-bit length declaring 200 bytes, against a limit of 100.
+        // The 200 payload bytes are sent, so a parser without the size check would return
+        // the frame instead of failing on EOF with the same exception type.
+        var frame = new byte[] { 0x82, 0x7E, 0x00, 0xC8 }.Concat(new byte[200]).ToArray();
 
         await Assert.ThrowsAsync<WebsocketClientLiteException>(
             () => Parse(frame, maxFrameSize: 100));
@@ -176,8 +178,10 @@ public class PayloadParsingTests
     [Fact]
     public async Task Parse_OversizedControlFrame_Throws()
     {
-        // Ping (control) frame declaring a 200-byte payload (> 125 is illegal).
-        var frame = new byte[] { 0x89, 0x7E, 0x00, 0xC8 };
+        // Ping (control) frame declaring a 200-byte payload (> 125 is illegal). The 200
+        // payload bytes are sent, so a parser without the control length check would return
+        // the frame instead of failing on EOF with the same exception type.
+        var frame = new byte[] { 0x89, 0x7E, 0x00, 0xC8 }.Concat(new byte[200]).ToArray();
 
         await Assert.ThrowsAsync<WebsocketClientLiteException>(() => Parse(frame));
     }
@@ -212,17 +216,70 @@ public class PayloadParsingTests
         Assert.Equal(new string('a', length), parsed.Message);
     }
 
+    // Headers that are refused from the header alone, each with the header bytes the
+    // decision needs: 2 when the first two bytes decide, otherwise the full 4- or 10-byte
+    // header. RejectsMalformedFrames and ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead
+    // both read this list, so a row added here is tried by both.
+    internal static readonly (byte[] Header, int Decides)[] InvalidHeaders =
+    {
+        (new byte[] { 0xC1, 0 }, 2), // RSV1
+        (new byte[] { 0xA1, 0 }, 2), // RSV2
+        (new byte[] { 0x91, 0 }, 2), // RSV3
+        // Reserved data opcodes 3 to 7. Combined coverage: they are in the data range, so
+        // Step's sequence rule, which admits only text or binary at idle, also refuses them
+        // without the Known check. No row shows the Known check alone for opcodes 3 to 7.
+        (new byte[] { 0x83, 0 }, 2),
+        (new byte[] { 0x84, 0 }, 2),
+        (new byte[] { 0x85, 0 }, 2),
+        (new byte[] { 0x86, 0 }, 2),
+        (new byte[] { 0x87, 0 }, 2),
+        (new byte[] { 0x8B, 0 }, 2), // reserved control opcodes 11 to 15
+        (new byte[] { 0x8C, 0 }, 2),
+        (new byte[] { 0x8D, 0 }, 2),
+        (new byte[] { 0x8E, 0 }, 2),
+        (new byte[] { 0x8F, 0 }, 2),
+        (new byte[] { 0x81, 126, 0, 125 }, 4), // non-minimal 16-bit length
+        (new byte[] { 0x81, 127, 0, 0, 0, 0, 0, 0, 255, 255 }, 10), // non-minimal 64-bit length
+        // Combined coverage: bit 63 set, and so also above int.MaxValue and the default limit.
+        // Removing either the bit-63 rule or the size limit leaves this row rejected by the
+        // other, so it cannot show that the bit-63 rule alone is enforced.
+        (new byte[] { 0x81, 127, 128, 0, 0, 0, 0, 0, 0, 0 }, 10),
+    };
+
+    public static TheoryData<byte[]> InvalidHeaderRows()
+    {
+        var rows = new TheoryData<byte[]>();
+        foreach (var (header, _) in InvalidHeaders) rows.Add(header);
+        return rows;
+    }
+
     [Theory]
-    [InlineData(new byte[] { 0xC1, 0 })]
-    [InlineData(new byte[] { 0x83, 0 })]
-    [InlineData(new byte[] { 0x81, 126, 0, 125 })]
-    [InlineData(new byte[] { 0x81, 127, 0, 0, 0, 0, 0, 0, 255, 255 })]
-    [InlineData(new byte[] { 0x81, 127, 128, 0, 0, 0, 0, 0, 0, 0 })]
+    [MemberData(nameof(InvalidHeaderRows))]
     [InlineData(new byte[] { 0x88, 1, 0 })]
     [InlineData(new byte[] { 0x88, 2, 3, 237 })] // forbidden 1005
     [InlineData(new byte[] { 0x88, 3, 3, 232, 255 })] // invalid reason UTF-8
-    public async Task RejectsMalformedFrames(byte[] bytes) =>
-        await Assert.ThrowsAsync<WebsocketClientLiteException>(() => Parse(bytes));
+    public async Task RejectsMalformedFrames(byte[] bytes)
+    {
+        // Each row is sent with the payload its header announces, so a parser that
+        // accepted the header would return a frame instead of failing on EOF with the
+        // same exception type. The header itself has to be refused.
+        var frame = bytes.Concat(new byte[MissingPayload(bytes)]).ToArray();
+        var error = await Assert.ThrowsAsync<WebsocketClientLiteException>(() => Parse(frame));
+        Assert.DoesNotContain(TcpConnectionService.AbortedUnexpectedlyMessage, error.Message, StringComparison.Ordinal);
+    }
+
+    // Payload bytes the header announces but the row does not carry. A length above 64 KiB
+    // (the row with bit 63 set) is not padded: the header is refused from its length alone.
+    internal static int MissingPayload(byte[] bytes)
+    {
+        int marker = bytes[1] & 127;
+        int headerSize = marker <= 125 ? 2 : marker == 126 ? 4 : 10;
+        if (bytes.Length < headerSize) return 0;
+        ulong announced = marker <= 125 ? (ulong)marker : 0;
+        for (int i = 2; i < headerSize; i++) announced = announced << 8 | bytes[i];
+        if (announced > 65536) return 0;
+        return Math.Max(0, (int)announced - (bytes.Length - headerSize));
+    }
 
     [Theory]
     [InlineData(new byte[] { 0x80, 0 })] // orphan continuation
@@ -269,14 +326,37 @@ public class PayloadParsingTests
         // EOF would prove the parser tried to read the absent payload. Admission
         // must fail from the header and previous state instead.
         Assert.Contains("fragmentation sequence", error.Message, StringComparison.Ordinal);
-        Assert.DoesNotContain("aborted unexpectedly", error.Message, StringComparison.Ordinal);
+        Assert.DoesNotContain(TcpConnectionService.AbortedUnexpectedlyMessage, error.Message, StringComparison.Ordinal);
     }
 
-    [Fact]
-    public async Task TruncatedHeadersNeverProduceFrames()
+    // Every proper prefix of a 4-byte (16-bit length) and a 10-byte (64-bit length) header
+    // ends in the end-of-stream error: no frame, and no decision on bytes that never
+    // arrived. Every prefix is tried and each one that ends otherwise is listed.
+    [Theory]
+    [InlineData(new byte[] { 0x82, 126, 1, 0 })]
+    [InlineData(new byte[] { 0x82, 127, 0, 0, 0, 0, 0, 1, 0, 0 })]
+    public async Task TruncatedHeadersNeverProduceFrames(byte[] header)
     {
-        byte[] header = { 0x82, 127, 0, 0, 0, 0, 0, 1, 0, 0 };
+        var wrong = new List<string>();
         for (int length = 0; length < header.Length; length++)
-            await Assert.ThrowsAsync<WebsocketClientLiteException>(() => Parse(header.Take(length).ToArray()));
+        {
+            try
+            {
+                var frame = await Parse(header.Take(length).ToArray());
+                wrong.Add($"{length}: {(frame is null ? "null" : "frame")}");
+            }
+            catch (WebsocketClientLiteException error) when (error.Message != TcpConnectionService.AbortedUnexpectedlyMessage)
+            {
+                wrong.Add($"{length}: {error.Message}");
+            }
+            catch (WebsocketClientLiteException)
+            {
+            }
+            catch (Exception other)
+            {
+                wrong.Add($"{length}: {other.GetType().Name}: {other.Message}");
+            }
+        }
+        Assert.True(wrong.Count == 0, "Truncated header did not end in end of stream at " + string.Join("; ", wrong));
     }
 }

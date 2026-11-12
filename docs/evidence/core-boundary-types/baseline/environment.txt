@@ -1,0 +1,12 @@
+recorded: 2026-11-11T22:01:45Z (2026-11-11)
+git HEAD: fa96d59af838e7aa57071de1712a02c7065a6aab
+git status --porcelain (excluding this evidence dir):
+uname: Linux 7.2.11+deb13-amd64 x86_64
+nproc: 32
+model name	: AMD Ryzen 9 9955HX 16-Core Processor
+               total        used        free      shared  buff/cache   available
+Mem:           61961       18916        6317        6465       43888       43045
+
+10.0.403
+Microsoft.AspNetCore.App 10.0.14 [/usr/share/dotnet/shared/Microsoft.AspNetCore.App]
+Microsoft.NETCore.App 10.0.14 [/usr/share/dotnet/shared/Microsoft.NETCore.App]

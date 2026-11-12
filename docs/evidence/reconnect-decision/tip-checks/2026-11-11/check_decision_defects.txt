@@ -1,0 +1,4 @@
+1. run: {'exit': None, 'timed_out': True} child alive after timeout: False
+2. trx: {'total': 2, 'passed': 1, 'skipped': ['b'], 'not_passed': []}
+result: passed
+exit=0

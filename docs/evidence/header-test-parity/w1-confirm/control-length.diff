@@ -1,0 +1,28 @@
+diff -ruN w1-confirm-control-length/verification/generated/Masking.g.cs copy/verification/generated/Masking.g.cs
+--- w1-confirm-control-length/verification/generated/Masking.g.cs	2026-11-11 16:10:21.000000000 +0000
++++ copy/verification/generated/Masking.g.cs	2026-11-11 16:17:25.332045801 +0000
+@@ -696,13 +696,13 @@
+     public static bool PrefixValid(byte first, byte second)
+     {
+       byte _0_op = (byte)((first) & ((byte)(15)));
+-      return (((((byte)((first) & ((byte)(112)))) == ((byte)(0))) && (((byte)((second) & ((byte)(128)))) == ((byte)(0)))) && (WebsocketClientLite.VerifiedProtocol.Protocol.Known(_0_op))) && (((_0_op) < ((byte)(8))) || ((((byte)((first) & ((byte)(128)))) != ((byte)(0))) && (((byte)((second) & ((byte)(127)))) <= ((byte)(125)))));
++      return (((((byte)((first) & ((byte)(112)))) == ((byte)(0))) && (((byte)((second) & ((byte)(128)))) == ((byte)(0)))) && (WebsocketClientLite.VerifiedProtocol.Protocol.Known(_0_op))) && (((_0_op) < ((byte)(8))) || ((((byte)((first) & ((byte)(128)))) != ((byte)(0))) && (true)));
+     }
+     public static bool HeaderValid(byte first, byte second, ulong length, ulong limit)
+     {
+       byte _0_op = (byte)((first) & ((byte)(15)));
+       byte _1_marker = (byte)((second) & ((byte)(127)));
+-      return (((((WebsocketClientLite.VerifiedProtocol.Protocol.PrefixValid(first, second)) && ((length) <= (limit))) && ((length) <= (2147483647UL))) && (((length) & (9223372036854775808UL)) == (0UL))) && ((((_1_marker) < ((byte)(126))) ? ((length) == ((ulong)(_1_marker))) : ((((_1_marker) == ((byte)(126))) ? (((126UL) <= (length)) && ((length) <= (65535UL))) : ((length) >= (65536UL))))))) && (((_0_op) < ((byte)(8))) || ((((byte)((first) & ((byte)(128)))) != ((byte)(0))) && ((length) <= (125UL))));
++      return (((((WebsocketClientLite.VerifiedProtocol.Protocol.PrefixValid(first, second)) && ((length) <= (limit))) && ((length) <= (2147483647UL))) && (((length) & (9223372036854775808UL)) == (0UL))) && ((((_1_marker) < ((byte)(126))) ? ((length) == ((ulong)(_1_marker))) : ((((_1_marker) == ((byte)(126))) ? (((126UL) <= (length)) && ((length) <= (65535UL))) : ((length) >= (65536UL))))))) && (((_0_op) < ((byte)(8))) || ((((byte)((first) & ((byte)(128)))) != ((byte)(0))) && (true)));
+     }
+     public static void DecodeHeader(byte first, byte second, byte[] extended, uint available, ulong limit, out byte status, out ulong length, out uint headerSize)
+     {
+@@ -760,7 +760,7 @@
+         return ;
+       }
+       if ((op) >= ((byte)(8))) {
+-        if ((!(fin)) || ((length) > (125U))) {
++        if ((!(fin)) || (false)) {
+           return ;
+         }
+         ok = true;

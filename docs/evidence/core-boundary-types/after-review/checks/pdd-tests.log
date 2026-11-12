@@ -1,0 +1,9 @@
+  Determining projects to restore...
+  Restored /home/vscode/worktrees/fix-143/tools/Pdd.Tests/Pdd.Tests.csproj (in 129 ms).
+  1 of 2 projects are up-to-date for restore.
+  Pdd -> /home/vscode/worktrees/fix-143/tools/Pdd/bin/Release/net10.0/Pdd.dll
+  Pdd.Tests -> /home/vscode/worktrees/fix-143/tools/Pdd.Tests/bin/Release/net10.0/Pdd.Tests.dll
+Test run for /home/vscode/worktrees/fix-143/tools/Pdd.Tests/bin/Release/net10.0/Pdd.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+
+Passed!  - Failed:     0, Passed:   262, Skipped:     0, Total:   262, Duration: 13 s - Pdd.Tests.dll (net10.0)

@@ -1,4 +1,5 @@
 using System.Text.Json.Nodes;
+using System.Text.RegularExpressions;
 using Pdd;
 using Xunit;
 
@@ -8,7 +9,19 @@ public class PayloadEvidenceTests
 {
     static string Root => RequirementsTests.Root;
     static MutationCatalog Payload => new Mutations(Root).LoadCatalog(scope: "payload");
-    static JsonArray Diagnostics => Data.Read(Path.Combine(Root, "verification/tests/fixtures/payload-diagnostics.json")).AsArray();
+    // The observed records, each rendered once against the mutated source it is classified
+    // against (#145 review, findings 4 and 6, 2026-11-12).
+    static readonly Lazy<JsonArray> RenderedDiagnostics = new(() =>
+    {
+        var catalog = Payload;
+        return new JsonArray(Data.Read(Path.Combine(Root, "verification/tests/fixtures/payload-diagnostics.json")).AsArray().Select(record =>
+        {
+            var mutant = catalog.Mutants.Single(m => m.Id == record!["id"]!.ToString());
+            var sources = Fixtures.Sources.ToDictionary(p => p.Key, p => p.Key == mutant.File ? Mutations.Apply(p.Value, mutant) : p.Value);
+            return (JsonNode?)Fixtures.Rendered(record!, sources);
+        }).ToArray());
+    });
+    static JsonArray Diagnostics => RenderedDiagnostics.Value;
     public static IEnumerable<object[]> Cases() => Diagnostics.Select(c => new object[] { c!.ToJsonString() });
     [Theory, MemberData(nameof(Cases))]
     public void ObservedDiagnosticsRequireTheExactSemanticFailure(string json)
@@ -36,6 +49,43 @@ public class PayloadEvidenceTests
             Assert.Equal("inconclusive", Mutations.Classify(invalid, source, target).Status);
         }
     }
+    [Theory]
+    [InlineData("signature")]
+    [InlineData("Known")]
+    [InlineData("PrefixValid")]
+    [InlineData("without-postcondition")]
+    public void PropositionLocationMustLieInAPredicateTheTargetNames(string mode)
+    {
+        var fixture = Diagnostics.Single(d => d!["id"]!.ToString() == "HEADER-001-short-sixteen-bit")!;
+        var mutant = Payload.Mutants.Single(m => m.Id == "HEADER-001-short-sixteen-bit");
+        var source = Mutations.Apply(Data.Text(Path.Combine(Root, mutant.File)), mutant);
+        Assert.Equal("detected", Mutations.Classify(Data.Model<ExecutionResult>(fixture), source, mutant).Status);
+        var inside = Regex.Match(fixture["stdout"]!.ToString(), @"Protocol\.dfy\((\d+),\d+\): Related location: this proposition").Groups[1].Value;
+        Assert.Equal(Fixtures.LineOf(source, "else if marker == 126 then 126 <= length <= 65535 else length >= 65536) &&"), int.Parse(inside));
+        var moved = Data.Model<ExecutionResult>(fixture);
+        // Outside every function, and inside the bodies of two predicates the target clause
+        // does not name: Known's body is on its declaration line, PrefixValid's body follows it.
+        int? line = mode switch
+        {
+            "signature" => Fixtures.LineOf(source, "static method DecodeHeader("),
+            "Known" => Fixtures.LineOf(source, "static function Known(op: bv8): bool { op == 0 ||"),
+            "PrefixValid" => Fixtures.LineOf(source, "static function PrefixValid(first: bv8, second: bv8): bool {") + 2,
+            _ => null
+        };
+        if (line is { } target)
+        {
+            Assert.DoesNotContain("PrefixValid(", mutant.TargetClause);
+            Assert.DoesNotContain("Known(", mutant.TargetClause);
+            if (mode == "PrefixValid")
+                Assert.Contains("Known(op)", source.Split('\n')[target - 1]);
+            moved.Stdout = moved.Stdout.Replace($"Protocol.dfy({inside},", $"Protocol.dfy({target},", StringComparison.Ordinal);
+            Assert.Contains($"Protocol.dfy({target},", moved.Stdout);
+        }
+        else
+            moved.Stdout = Regex.Replace(moved.Stdout, @"^.*Related location: this is the postcondition that could not be proved\r?\n", "", RegexOptions.Multiline);
+        Assert.NotEqual(fixture["stdout"]!.ToString(), moved.Stdout);
+        Assert.Equal("inconclusive", Mutations.Classify(moved, source, mutant).Status);
+    }
     [Fact]
     public void ScopedOffsetEditDoesNotMutateProductionAndScalarTogether()
     {
@@ -52,7 +102,7 @@ public class PayloadEvidenceTests
     public void CatalogRequiresCompletePayloadMappingAndKnownScope()
     {
         var catalog = new Mutations(Root).LoadCatalog();
-        Assert.Equal(15, catalog.Mutants.Length);
+        Assert.Equal(17, catalog.Mutants.Length);
         var data = Data.Read(Path.Combine(Root, "verification/mutations/payload.json"));
         data["mutants"]![0]!["contract_clause"] = "ensures true";
         Assert.Throws<InvalidDataException>(() => new Mutations(Root).LoadCatalog(data, "payload"));
@@ -116,7 +166,7 @@ public class PayloadEvidenceTests
         }
         var result = await Mutations.Suite(catalog, sources, output.Path, ["fixture"], 1, 1, executor: Execute);
         Assert.Equal("passed", result["status"]!.ToString());
-        Assert.Equal(11, trees.Count);
+        Assert.Equal(13, trees.Count);
         Assert.All(trees, tree => Assert.False(Directory.Exists(tree)));
         Assert.All(sources, s => Assert.Equal(s.Value, Data.Text(Path.Combine(Root, s.Key))));
     }

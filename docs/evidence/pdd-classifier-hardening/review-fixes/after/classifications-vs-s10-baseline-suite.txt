@@ -1,0 +1,20 @@
+same  baseline: passed -> passed, matched 0 -> 0
+same  CLOSE-001-duplicate-send: detected -> detected, matched 1 -> 1
+same  CLOSE-001-suppressed-send: detected -> detected, matched 1 -> 1
+same  CLOSE-002-state-bit-loss: detected -> detected, matched 1 -> 1
+same  CLOSE-003-premature-release: detected -> detected, matched 1 -> 1
+same  CLOSE-003-suppressed-release: detected -> detected, matched 1 -> 1
+same  REASSEMBLY-001-offset-stall: detected -> detected, matched 1 -> 1
+same  REASSEMBLY-002-offset-stall: detected -> detected, matched 1 -> 1
+same  REASSEMBLY-001-oversized-result: detected -> detected, matched 1 -> 1
+same  MASK-001-xor-to-or: detected -> detected, matched 1 -> 1
+same  MASK-001-key-write: detected -> detected, matched 1 -> 1
+same  MASK-002-tail-xor-to-or: detected -> detected, matched 1 -> 1
+same  MASK-002-corrupt-bulk-byte: detected -> detected, matched 1 -> 1
+same  MASK-002-preserve-prefix: detected -> detected, matched 2 -> 2
+same  MASK-003-xor-to-or: detected -> detected, matched 1 -> 1
+same  MASK-003-preserve-prefix: detected -> detected, matched 1 -> 1
+same  HEADER-001-short-sixteen-bit: detected -> detected, matched 1 -> 1
+same  HEADER-001-short-sixty-four-bit: detected -> detected, matched 1 -> 1
+ids only in after: []
+ALL SAME

@@ -1,0 +1,171 @@
+== before build at 2026-11-11T22:31:57Z, load 3.61 2.17 1.77
+ 568353       48:57 VBCSCompiler
+ 577568       28:30 dotnet MSBuild.dll
+ 577569       28:30 dotnet MSBuild.dll
+ 577570       28:30 dotnet MSBuild.dll
+ 577648       28:29 dotnet MSBuild.dll
+ 577649       28:29 dotnet MSBuild.dll
+ 577650       28:29 dotnet MSBuild.dll
+ 577683       28:29 dotnet MSBuild.dll
+ 577982       28:10 claude
+ 643498       00:04 dotnet test
+ 643545       00:03 dotnet vstest.console.dll
+ 643558       00:03 dotnet testhost.dll
+== before suite-netstandard2.0 at 2026-11-11T22:31:58Z, load 3.61 2.17 1.77
+ 568353       48:59 VBCSCompiler
+ 577568       28:31 dotnet MSBuild.dll
+ 577569       28:31 dotnet MSBuild.dll
+ 577570       28:31 dotnet MSBuild.dll
+ 577648       28:30 dotnet MSBuild.dll
+ 577649       28:30 dotnet MSBuild.dll
+ 577650       28:30 dotnet MSBuild.dll
+ 577683       28:30 dotnet MSBuild.dll
+ 577982       28:11 claude
+ 643498       00:06 dotnet test
+ 643545       00:05 dotnet vstest.console.dll
+ 643558       00:05 dotnet testhost.dll
+== before suite-netstandard2.1 at 2026-11-11T22:32:09Z, load 3.28 2.15 1.77
+ 568353       49:09 VBCSCompiler
+ 577568       28:42 dotnet MSBuild.dll
+ 577569       28:42 dotnet MSBuild.dll
+ 577570       28:42 dotnet MSBuild.dll
+ 577648       28:41 dotnet MSBuild.dll
+ 577649       28:41 dotnet MSBuild.dll
+ 577650       28:41 dotnet MSBuild.dll
+ 577683       28:41 dotnet MSBuild.dll
+ 577982       28:22 claude
+ 644455       00:01 dotnet Pdd.dll
+ 644582       00:00 dotnet test
+== before suite-net8.0 at 2026-11-11T22:32:19Z, load 3.45 2.23 1.80
+ 568353       49:20 VBCSCompiler
+ 577568       28:52 dotnet MSBuild.dll
+ 577569       28:52 dotnet MSBuild.dll
+ 577570       28:52 dotnet MSBuild.dll
+ 577648       28:52 dotnet MSBuild.dll
+ 577649       28:52 dotnet MSBuild.dll
+ 577650       28:52 dotnet MSBuild.dll
+ 577683       28:52 dotnet MSBuild.dll
+ 577982       28:33 claude
+ 644455       00:12 dotnet Pdd.dll
+ 644582       00:10 dotnet test
+ 644675       00:10 dotnet vstest.console.dll
+ 644688       00:10 dotnet testhost.dll
+== before suite-net9.0 at 2026-11-11T22:32:30Z, load 3.46 2.27 1.82
+ 568353       49:31 VBCSCompiler
+ 577568       29:03 dotnet MSBuild.dll
+ 577569       29:03 dotnet MSBuild.dll
+ 577570       29:03 dotnet MSBuild.dll
+ 577648       29:02 dotnet MSBuild.dll
+ 577649       29:02 dotnet MSBuild.dll
+ 577650       29:02 dotnet MSBuild.dll
+ 577683       29:02 dotnet MSBuild.dll
+ 577982       28:43 claude
+ 644455       00:23 dotnet Pdd.dll
+== before suite-net10.0 at 2026-11-11T22:32:41Z, load 2.98 2.22 1.81
+ 568353       49:41 VBCSCompiler
+ 577568       29:14 dotnet MSBuild.dll
+ 577569       29:14 dotnet MSBuild.dll
+ 577570       29:14 dotnet MSBuild.dll
+ 577648       29:13 dotnet MSBuild.dll
+ 577649       29:13 dotnet MSBuild.dll
+ 577650       29:13 dotnet MSBuild.dll
+ 577683       29:13 dotnet MSBuild.dll
+ 577982       28:54 claude
+ 644455       00:33 dotnet Pdd.dll
+ 645884       00:07 dotnet Pdd.dll
+== before suite-net10.0-repeat-1 at 2026-11-11T22:32:51Z, load 2.83 2.22 1.81
+ 568353       49:52 VBCSCompiler
+ 577568       29:24 dotnet MSBuild.dll
+ 577569       29:24 dotnet MSBuild.dll
+ 577570       29:24 dotnet MSBuild.dll
+ 577648       29:24 dotnet MSBuild.dll
+ 577649       29:24 dotnet MSBuild.dll
+ 577650       29:24 dotnet MSBuild.dll
+ 577683       29:24 dotnet MSBuild.dll
+ 577982       29:04 claude
+ 644455       00:44 dotnet Pdd.dll
+ 645884       00:18 dotnet Pdd.dll
+== before suite-net10.0-repeat-2 at 2026-11-11T22:33:01Z, load 5.41 2.77 2.00
+ 568353       50:02 VBCSCompiler
+ 577568       29:34 dotnet MSBuild.dll
+ 577569       29:34 dotnet MSBuild.dll
+ 577570       29:34 dotnet MSBuild.dll
+ 577648       29:33 dotnet MSBuild.dll
+ 577649       29:33 dotnet MSBuild.dll
+ 577650       29:33 dotnet MSBuild.dll
+ 577683       29:33 dotnet MSBuild.dll
+ 577982       29:14 claude
+ 644455       00:54 dotnet Pdd.dll
+ 645884       00:28 dotnet Pdd.dll
+== before suite-net10.0-repeat-3 at 2026-11-11T22:33:11Z, load 5.24 2.83 2.02
+ 568353       50:12 VBCSCompiler
+ 577568       29:44 dotnet MSBuild.dll
+ 577569       29:44 dotnet MSBuild.dll
+ 577570       29:44 dotnet MSBuild.dll
+ 577648       29:43 dotnet MSBuild.dll
+ 577649       29:43 dotnet MSBuild.dll
+ 577650       29:43 dotnet MSBuild.dll
+ 577683       29:43 dotnet MSBuild.dll
+ 577982       29:24 claude
+ 644455       01:04 dotnet Pdd.dll
+ 645884       00:38 dotnet Pdd.dll
+== before reconnect-defect at 2026-11-11T22:33:21Z, load 5.03 2.87 2.04
+ 568353       50:22 VBCSCompiler
+ 577568       29:54 dotnet MSBuild.dll
+ 577569       29:54 dotnet MSBuild.dll
+ 577570       29:54 dotnet MSBuild.dll
+ 577648       29:53 dotnet MSBuild.dll
+ 577649       29:53 dotnet MSBuild.dll
+ 577650       29:53 dotnet MSBuild.dll
+ 577683       29:53 dotnet MSBuild.dll
+ 577982       29:34 claude
+ 644455       01:14 dotnet Pdd.dll
+ 645884       00:48 dotnet Pdd.dll
+== before plain-build at 2026-11-11T22:33:38Z, load 4.86 2.94 2.08
+ 568353       50:39 VBCSCompiler
+ 577568       30:11 dotnet MSBuild.dll
+ 577569       30:11 dotnet MSBuild.dll
+ 577570       30:11 dotnet MSBuild.dll
+ 577648       30:10 dotnet MSBuild.dll
+ 577649       30:10 dotnet MSBuild.dll
+ 577650       30:10 dotnet MSBuild.dll
+ 577683       30:10 dotnet MSBuild.dll
+ 577982       29:51 claude
+ 644455       01:31 dotnet Pdd.dll
+ 645884       01:05 dotnet Pdd.dll
+== before plain-net10.0-repeat-1 at 2026-11-11T22:33:39Z, load 4.86 2.94 2.08
+ 568353       50:40 VBCSCompiler
+ 577568       30:12 dotnet MSBuild.dll
+ 577569       30:12 dotnet MSBuild.dll
+ 577570       30:12 dotnet MSBuild.dll
+ 577648       30:11 dotnet MSBuild.dll
+ 577649       30:11 dotnet MSBuild.dll
+ 577650       30:11 dotnet MSBuild.dll
+ 577683       30:11 dotnet MSBuild.dll
+ 577982       29:52 claude
+ 644455       01:32 dotnet Pdd.dll
+ 645884       01:06 dotnet Pdd.dll
+== before plain-net10.0-repeat-2 at 2026-11-11T22:33:40Z, load 4.86 2.94 2.08
+ 568353       50:40 VBCSCompiler
+ 577568       30:13 dotnet MSBuild.dll
+ 577569       30:13 dotnet MSBuild.dll
+ 577570       30:13 dotnet MSBuild.dll
+ 577648       30:12 dotnet MSBuild.dll
+ 577649       30:12 dotnet MSBuild.dll
+ 577650       30:12 dotnet MSBuild.dll
+ 577683       30:12 dotnet MSBuild.dll
+ 577982       29:53 claude
+ 644455       01:32 dotnet Pdd.dll
+ 645884       01:06 dotnet Pdd.dll
+== before plain-net10.0-repeat-3 at 2026-11-11T22:33:41Z, load 4.79 2.96 2.09
+ 568353       50:41 VBCSCompiler
+ 577568       30:13 dotnet MSBuild.dll
+ 577569       30:13 dotnet MSBuild.dll
+ 577570       30:13 dotnet MSBuild.dll
+ 577648       30:13 dotnet MSBuild.dll
+ 577649       30:13 dotnet MSBuild.dll
+ 577650       30:13 dotnet MSBuild.dll
+ 577683       30:13 dotnet MSBuild.dll
+ 577982       29:54 claude
+ 644455       01:33 dotnet Pdd.dll
+ 645884       01:07 dotnet Pdd.dll

@@ -17,7 +17,7 @@ internal class WebsocketParserHandler(TcpConnectionService tcpConnectionService)
     internal IObservable<Dataframe?> DataframeObservable() =>
         Observable.Create<Dataframe?>(async (obs, token) =>
         {
-            byte state = 0;
+            var state = ReceiveState.Idle;
             uint total = 0;
             Dataframe? first = null;
             var segments = new List<byte[]>();
@@ -25,11 +25,11 @@ internal class WebsocketParserHandler(TcpConnectionService tcpConnectionService)
             {
                 while (!token.IsCancellationRequested)
                 {
-                    var frame = await tcpConnectionService.ReadDataframeAsync(token, state, total).ConfigureAwait(false);
+                    var frame = await tcpConnectionService.ReadDataframeAsync(state, total, token).ConfigureAwait(false);
                     if (frame is null) break;
                     var payload = frame.Payload ?? Array.Empty<byte>();
-                    Protocol.Step(state, (byte)frame.Opcode, frame.FIN, total, (uint)payload.Length,
-                        (uint)tcpConnectionService.MaxFrameSize, out bool ok, out byte next,
+                    ReceiveState.Step(state, (byte)frame.Opcode, frame.FIN, total, (uint)payload.Length,
+                        (uint)tcpConnectionService.MaxFrameSize, out bool ok, out ReceiveState next,
                         out uint size, out bool emit);
                     if (!ok) throw new WebsocketClientLiteException("Protocol error: invalid fragmentation sequence or message exceeds the configured maximum.");
 
@@ -38,11 +38,11 @@ internal class WebsocketParserHandler(TcpConnectionService tcpConnectionService)
                         state = next;
                         total = size;
                         obs.OnNext(frame);
-                        if (state == 8) break;
+                        if (state.IsClosed) break;
                         continue;
                     }
 
-                    if (state == 0) first = frame;
+                    if (state.IsIdle) first = frame;
                     if (payload.Length > 0) segments.Add(payload);
                     state = next;
                     total = size;

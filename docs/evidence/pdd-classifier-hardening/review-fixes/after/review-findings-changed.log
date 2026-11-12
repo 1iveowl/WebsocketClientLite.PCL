@@ -1,0 +1,12 @@
+source: git archive 5fd8632e2db54ed2a7d9d8442526beba77edbae9, copy: /tmp/m6-head.7R5hkG
+tools/Pdd.Tests/ClassifierHardeningTests.cs replaced with /home/vscode/worktrees/s10/tools/Pdd.Tests/ClassifierHardeningTests.cs (sha256 3cfd7cf7d0e16211)
+  Determining projects to restore...
+  Restored /tmp/m6-head.7R5hkG/tools/Pdd/Pdd.csproj (in 40 ms).
+  Restored /tmp/m6-head.7R5hkG/tools/Pdd.Tests/Pdd.Tests.csproj (in 116 ms).
+  Pdd -> /tmp/m6-head.7R5hkG/tools/Pdd/bin/Release/net10.0/Pdd.dll
+  Pdd.Tests -> /tmp/m6-head.7R5hkG/tools/Pdd.Tests/bin/Release/net10.0/Pdd.Tests.dll
+Test run for /tmp/m6-head.7R5hkG/tools/Pdd.Tests/bin/Release/net10.0/Pdd.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+
+Passed!  - Failed:     0, Passed:    24, Skipped:     0, Total:    24, Duration: 4 s - Pdd.Tests.dll (net10.0)
+exit=0 elapsed=6671ms

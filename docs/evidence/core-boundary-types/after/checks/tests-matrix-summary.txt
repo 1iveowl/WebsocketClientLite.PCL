@@ -1,0 +1,35 @@
+  Testing against library build: netstandard2.0 (config: Release)
+  IWebsocketClientLite -> /home/vscode/worktrees/s7/src/interface/IWebsocketClientLite/bin/Release/netstandard2.0/IWebsocketClientLite.dll
+  WebsocketClientLite -> /home/vscode/worktrees/s7/src/main/WebsocketClientLite/bin/Release/netstandard2.0/WebsocketClientLite.dll
+  WebsocketClientLiteTest -> /home/vscode/worktrees/s7/src/main/WebsocketClientLiteTest/bin/Release/net10.0/WebsocketClientLiteTest.dll
+Test run for /home/vscode/worktrees/s7/src/main/WebsocketClientLiteTest/bin/Release/net10.0/WebsocketClientLiteTest.dll (.NETCoreApp,Version=v10.0)
+Results File: /home/vscode/worktrees/s7/artifacts/s8/pdd/tests/tests/netstandard2.0/results.trx
+Passed!  - Failed:     0, Passed:   280, Skipped:     0, Total:   280, Duration: 24 s - WebsocketClientLiteTest.dll (net10.0)
+  Testing against library build: netstandard2.1 (config: Release)
+  IWebsocketClientLite -> /home/vscode/worktrees/s7/src/interface/IWebsocketClientLite/bin/Release/netstandard2.0/IWebsocketClientLite.dll
+  WebsocketClientLite -> /home/vscode/worktrees/s7/src/main/WebsocketClientLite/bin/Release/netstandard2.1/WebsocketClientLite.dll
+  WebsocketClientLiteTest -> /home/vscode/worktrees/s7/src/main/WebsocketClientLiteTest/bin/Release/net10.0/WebsocketClientLiteTest.dll
+Test run for /home/vscode/worktrees/s7/src/main/WebsocketClientLiteTest/bin/Release/net10.0/WebsocketClientLiteTest.dll (.NETCoreApp,Version=v10.0)
+Results File: /home/vscode/worktrees/s7/artifacts/s8/pdd/tests/tests/netstandard2.1/results.trx
+Passed!  - Failed:     0, Passed:   280, Skipped:     0, Total:   280, Duration: 24 s - WebsocketClientLiteTest.dll (net10.0)
+  Testing against library build: net8.0 (config: Release)
+  IWebsocketClientLite -> /home/vscode/worktrees/s7/src/interface/IWebsocketClientLite/bin/Release/netstandard2.0/IWebsocketClientLite.dll
+  WebsocketClientLite -> /home/vscode/worktrees/s7/src/main/WebsocketClientLite/bin/Release/net8.0/WebsocketClientLite.dll
+  WebsocketClientLiteTest -> /home/vscode/worktrees/s7/src/main/WebsocketClientLiteTest/bin/Release/net10.0/WebsocketClientLiteTest.dll
+Test run for /home/vscode/worktrees/s7/src/main/WebsocketClientLiteTest/bin/Release/net10.0/WebsocketClientLiteTest.dll (.NETCoreApp,Version=v10.0)
+Results File: /home/vscode/worktrees/s7/artifacts/s8/pdd/tests/tests/net8.0/results.trx
+Passed!  - Failed:     0, Passed:   280, Skipped:     0, Total:   280, Duration: 24 s - WebsocketClientLiteTest.dll (net10.0)
+  Testing against library build: net9.0 (config: Release)
+  IWebsocketClientLite -> /home/vscode/worktrees/s7/src/interface/IWebsocketClientLite/bin/Release/netstandard2.0/IWebsocketClientLite.dll
+  WebsocketClientLite -> /home/vscode/worktrees/s7/src/main/WebsocketClientLite/bin/Release/net9.0/WebsocketClientLite.dll
+  WebsocketClientLiteTest -> /home/vscode/worktrees/s7/src/main/WebsocketClientLiteTest/bin/Release/net10.0/WebsocketClientLiteTest.dll
+Test run for /home/vscode/worktrees/s7/src/main/WebsocketClientLiteTest/bin/Release/net10.0/WebsocketClientLiteTest.dll (.NETCoreApp,Version=v10.0)
+Results File: /home/vscode/worktrees/s7/artifacts/s8/pdd/tests/tests/net9.0/results.trx
+Passed!  - Failed:     0, Passed:   280, Skipped:     0, Total:   280, Duration: 24 s - WebsocketClientLiteTest.dll (net10.0)
+  Testing against library build: net10.0 (config: Release)
+  IWebsocketClientLite -> /home/vscode/worktrees/s7/src/interface/IWebsocketClientLite/bin/Release/netstandard2.0/IWebsocketClientLite.dll
+  WebsocketClientLite -> /home/vscode/worktrees/s7/src/main/WebsocketClientLite/bin/Release/net10.0/WebsocketClientLite.dll
+  WebsocketClientLiteTest -> /home/vscode/worktrees/s7/src/main/WebsocketClientLiteTest/bin/Release/net10.0/WebsocketClientLiteTest.dll
+Test run for /home/vscode/worktrees/s7/src/main/WebsocketClientLiteTest/bin/Release/net10.0/WebsocketClientLiteTest.dll (.NETCoreApp,Version=v10.0)
+Results File: /home/vscode/worktrees/s7/artifacts/s8/pdd/tests/tests/net10.0/results.trx
+Passed!  - Failed:     0, Passed:   280, Skipped:     0, Total:   280, Duration: 24 s - WebsocketClientLiteTest.dll (net10.0)

@@ -154,6 +154,83 @@ public class ParserRetentionTests
         Assert.True(input.BytesRead == 10 && input.Attempts == 10, "Large admission attempted payload allocation/read");
     }
 
+    // Every invalid header of PayloadParsingTests, sent with the payload it announces, is
+    // refused after exactly the header bytes the decision needs: 2 when the first two bytes
+    // already decide (RSV bits, opcode, mask, control FIN or a control length marker above
+    // 125), otherwise the full 4- or 10-byte header. Attempts equal to the bytes read means
+    // no further read was tried, so no payload byte was read and the stream did not end.
+    // The member rows are PayloadParsingTests.InvalidHeaders, which RejectsMalformedFrames
+    // also reads, so a row added there is tried here too. The inline rows are the headers
+    // of the single masked, fragmented control, oversized control and over-limit tests
+    // there. Every row announces at least one payload byte and carries it, so that a
+    // payload read would show; rows of length 0 there announce one byte here. The bit-63
+    // row is the exception: its length is refused alone, so it is not padded.
+    public static TheoryData<byte[], int, int> SharedInvalidHeaderRows()
+    {
+        var rows = new TheoryData<byte[], int, int>();
+        foreach (var (header, decides) in PayloadParsingTests.InvalidHeaders)
+            rows.Add(header.Length == 2 && header[1] == 0 ? new byte[] { header[0], 1 } : header, 0, decides);
+        return rows;
+    }
+
+    [Theory]
+    [MemberData(nameof(SharedInvalidHeaderRows))]
+    [InlineData(new byte[] { 0x81, 0x81, 1, 2, 3, 4, 0 }, 0, 2)] // masked server frame: mask key and one payload byte
+    [InlineData(new byte[] { 0x09, 1 }, 0, 2)] // fragmented control frame
+    [InlineData(new byte[] { 0x89, 126, 0, 200 }, 0, 2)] // control length above 125
+    [InlineData(new byte[] { 0x82, 126, 0, 200 }, 100, 4)] // above the configured limit
+    public async Task InvalidHeadersRejectBeforePayloadRead(byte[] header, int limit, int read)
+    {
+        using var input = new Input(header.Concat(new byte[PayloadParsingTests.MissingPayload(header)]).ToArray());
+        using var connection = Connection(input, limit);
+        await Assert.ThrowsAsync<WebsocketClientLiteException>(() => connection.ReadDataframeAsync(CancellationToken.None));
+        Assert.True(input.BytesRead == read && input.Attempts == read,
+            $"Invalid header read {input.BytesRead} bytes in {input.Attempts} attempts, expected {read}");
+    }
+
+    // The configured limit is inclusive: a frame of exactly the limit is read in full, and
+    // a frame one byte longer is refused after its header, with its payload present on the
+    // stream. The rows put the limit and its successor in each length encoding and across
+    // the 7/16-bit and 16/64-bit encoding boundaries.
+    [Theory]
+    [InlineData(1)]
+    [InlineData(100)]
+    [InlineData(125)]
+    [InlineData(200)]
+    [InlineData(65535)]
+    [InlineData(65536)]
+    public async Task ConfiguredLimitAcceptsLimitAndRejectsSuccessorFromHeader(int limit)
+    {
+        // Independent literal RFC 6455 section 5.2 encoding of an unmasked binary frame header.
+        static byte[] Header(int length) => length <= 125 ? new byte[] { 0x82, (byte)length }
+            : length <= 65535 ? new byte[] { 0x82, 126, (byte)(length >> 8), (byte)length }
+            : new byte[] { 0x82, 127, 0, 0, 0, 0, (byte)(length >> 24), (byte)(length >> 16), (byte)(length >> 8), (byte)length };
+        var payload = Enumerable.Range(0, limit + 1).Select(i => (byte)(i * 7)).ToArray();
+
+        var atLimit = Header(limit);
+        var above = Header(limit + 1);
+
+        using (var input = new Input(Join(atLimit, payload[..limit])))
+        using (var connection = Connection(input, limit))
+        {
+            Dataframe? frame = null; Exception? error = null;
+            try { frame = await connection.ReadDataframeAsync(CancellationToken.None); }
+            catch (Exception e) { error = e; }
+            Assert.True(error is null && frame is not null, $"Frame of exactly the limit {limit} was refused: {error}");
+            Message(frame!, 2, payload[..limit]);
+            int wire = atLimit.Length + limit;
+            Assert.True(input.BytesRead == wire && input.Attempts == wire, "Frame at the limit read differs from its wire size");
+        }
+
+        using (var input = new Input(Join(above, payload)))
+        using (var connection = Connection(input, limit))
+        {
+            await Assert.ThrowsAsync<WebsocketClientLiteException>(() => connection.ReadDataframeAsync(CancellationToken.None));
+            Assert.True(input.BytesRead == above.Length && input.Attempts == above.Length,
+                $"Frame one above the limit {limit} read {input.BytesRead} bytes in {input.Attempts} attempts, expected {above.Length}");
+        }
+    }
+
     [Theory]
     [InlineData(false)]
     [InlineData(true)]

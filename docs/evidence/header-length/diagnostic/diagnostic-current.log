@@ -1,0 +1,33 @@
+  Determining projects to restore...
+  Restored /tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/e85ac318-b810-4e30-affa-a35c2c77090f/scratchpad/replay/diag-current/src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj (in 110 ms).
+  Restored /tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/e85ac318-b810-4e30-affa-a35c2c77090f/scratchpad/replay/diag-current/src/interface/IWebsocketClientLite/IWebsocketClientLite.csproj (in 110 ms).
+  Restored /tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/e85ac318-b810-4e30-affa-a35c2c77090f/scratchpad/replay/diag-current/src/main/WebsocketClientLite/WebsocketClientLite.csproj (in 119 ms).
+  IWebsocketClientLite -> /tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/e85ac318-b810-4e30-affa-a35c2c77090f/scratchpad/replay/diag-current/src/interface/IWebsocketClientLite/bin/Release/netstandard2.0/IWebsocketClientLite.dll
+  WebsocketClientLite -> /tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/e85ac318-b810-4e30-affa-a35c2c77090f/scratchpad/replay/diag-current/src/main/WebsocketClientLite/bin/Release/net10.0/WebsocketClientLite.dll
+  WebsocketClientLiteTest -> /tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/e85ac318-b810-4e30-affa-a35c2c77090f/scratchpad/replay/diag-current/src/main/WebsocketClientLiteTest/bin/Release/net10.0/WebsocketClientLiteTest.dll
+Test run for /tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/e85ac318-b810-4e30-affa-a35c2c77090f/scratchpad/replay/diag-current/src/main/WebsocketClientLiteTest/bin/Release/net10.0/WebsocketClientLiteTest.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+/tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/e85ac318-b810-4e30-affa-a35c2c77090f/scratchpad/replay/diag-current/src/main/WebsocketClientLiteTest/bin/Release/net10.0/WebsocketClientLiteTest.dll
+[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v4.0.1+0f7d528729 (64-bit .NET 10.0.14)
+[xUnit.net 00:00:00.05]   Discovering: WebsocketClientLiteTest
+[xUnit.net 00:00:00.09]   Discovered:  WebsocketClientLiteTest
+[xUnit.net 00:00:00.11]   Starting:    WebsocketClientLiteTest
+[xUnit.net 00:00:00.13]   Finished:    WebsocketClientLiteTest
+  Passed WebsocketClientLiteTest.HeaderLengthDiagnostic.Record(name: "64-bit field carrying 65535", header: [129, 127, 0, 0, 0, ···], announced: 65535) [4 ms]
+  Standard Output Messages:
+ 64-bit field carrying 65535; payload appended=False; total bytes=10; threw WebsocketClientLiteException: Protocol error: invalid server frame header/fragmentation sequence or payload exceeds the configured maximum.
+ 64-bit field carrying 65535; payload appended=True; total bytes=65545; threw WebsocketClientLiteException: Protocol error: invalid server frame header/fragmentation sequence or payload exceeds the configured maximum.
+
+
+  Passed WebsocketClientLiteTest.HeaderLengthDiagnostic.Record(name: "16-bit field carrying 125", header: [129, 126, 0, 125], announced: 125) [< 1 ms]
+  Standard Output Messages:
+ 16-bit field carrying 125; payload appended=False; total bytes=4; threw WebsocketClientLiteException: Protocol error: invalid server frame header/fragmentation sequence or payload exceeds the configured maximum.
+ 16-bit field carrying 125; payload appended=True; total bytes=129; threw WebsocketClientLiteException: Protocol error: invalid server frame header/fragmentation sequence or payload exceeds the configured maximum.
+
+
+Results File: /tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/e85ac318-b810-4e30-affa-a35c2c77090f/scratchpad/replay/evidence/diagnostic-current.trx
+
+Test Run Successful.
+Total tests: 2
+     Passed: 2
+ Total time: 0.3655 Seconds

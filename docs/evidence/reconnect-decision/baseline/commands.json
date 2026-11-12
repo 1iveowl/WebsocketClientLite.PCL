@@ -1,0 +1,28 @@
+[
+  {
+    "run": "attempt 1 (failed before measuring)",
+    "command": "git worktree add --detach <scratch>/wt-base fa96d59 && which bc && chmod +x measure.sh && bash measure.sh <scratch>/wt-base <out>",
+    "outcome": "Exit 1 at `which bc`: bc is not installed, so measure.sh never ran and nothing was measured. The script's arithmetic was changed to awk and the run below was started. Kept here as a failed attempt, not retried into a pass."
+  },
+  {
+    "run": "attempt 2",
+    "command": "bash measure.sh <scratch>/wt-base <out>",
+    "script": "measure.sh",
+    "outputs": ["host.txt", "timings.txt", "build.log", "suite-*.log", "trx/*.trx", "reconnect-defect.log", "reconnect-defect/"],
+    "outcome": "exit 0. Build passed; ReconnectTests passed 9 of 9 on each of the five library targets and in three more net10.0 runs; reconnect-defect passed (baseline 10 of 10, missing-removal failed with 'Old service retained registration')."
+  },
+  {
+    "run": "case durations",
+    "command": "python3 -I trx_cases.py <out>/trx",
+    "script": "trx_cases.py",
+    "outputs": ["case-durations.txt"],
+    "outcome": "Per-case durations from every TRX file."
+  },
+  {
+    "run": "region counts",
+    "command": "python3 -I count_region.py <scratch>/wt-base/src/main/WebsocketClientLite/ClientWebSocketRx.cs",
+    "script": "count_region.py",
+    "outputs": ["region-counts.txt"],
+    "outcome": "97 physical lines, 88 code lines, 15 lifecycle-state lines, 6 lock sites. The script asserts its anchor lines, so a shifted file fails instead of being miscounted."
+  }
+]

@@ -1,0 +1,82 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="d7cc8790-c549-4587-b414-c1ffbf437a92" name="@a920b7ae3df2 2026-11-11 22:32:22" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-11-11T22:32:22.6917345+00:00" queuing="2026-11-11T22:32:22.6917345+00:00" start="2026-11-11T22:32:21.0203111+00:00" finish="2026-11-11T22:32:30.5745574+00:00" />
+  <TestSettings name="default" id="af6c606a-9c85-43e1-8fee-764b6962a4a8">
+    <Deployment runDeploymentRoot="_a920b7ae3df2_2026-11-11_22_32_22" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="fc48b1e5-c7de-4350-963a-0288d52feebc" testId="4f9f1cf2-3801-6249-b108-6808ac91439e" testName="WebsocketClientLiteTest.ReconnectTests.DisposedClientRejectsAdmission(asynchronous: True)" computerName="a920b7ae3df2" duration="00:00:00.0011501" startTime="2026-11-11T22:32:30.5329522+00:00" endTime="2026-11-11T22:32:30.5336695+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="fc48b1e5-c7de-4350-963a-0288d52feebc" />
+    <UnitTestResult executionId="f3b60f96-719d-4fcb-93f9-b189ea8fdc93" testId="5fbdc1dd-99f9-f8c3-6c21-3692aab77b24" testName="WebsocketClientLiteTest.ReconnectTests.DisposedClientRejectsAdmission(asynchronous: False)" computerName="a920b7ae3df2" duration="00:00:00.0002787" startTime="2026-11-11T22:32:30.5337896+00:00" endTime="2026-11-11T22:32:30.5340129+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f3b60f96-719d-4fcb-93f9-b189ea8fdc93" />
+    <UnitTestResult executionId="16ae147e-153c-4809-8c16-c21c76a616a6" testId="5580379f-76b9-8a6c-948e-00491f7b49a6" testName="WebsocketClientLiteTest.ReconnectTests.SetupAdmissionIsOwnedUntilTeardown(mode: &quot;unsubscribe&quot;)" computerName="a920b7ae3df2" duration="00:00:00.0019489" startTime="2026-11-11T22:32:21.3658686+00:00" endTime="2026-11-11T22:32:21.3660234+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="16ae147e-153c-4809-8c16-c21c76a616a6" />
+    <UnitTestResult executionId="b1a43cd5-2379-41e5-a937-7e89bc2e43dc" testId="655cdd3e-4c9c-6553-17dd-43fd5ec11467" testName="WebsocketClientLiteTest.ReconnectTests.TerminalCallbackSuccessorSurvivesOldCleanup" computerName="a920b7ae3df2" duration="00:00:03.0648622" startTime="2026-11-11T22:32:21.3667318+00:00" endTime="2026-11-11T22:32:24.4298367+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="b1a43cd5-2379-41e5-a937-7e89bc2e43dc" />
+    <UnitTestResult executionId="3d93710c-19e3-4e17-ace7-5fc29f78b3dd" testId="66ff8d1f-96ab-3b11-f3f9-1559ae6692d3" testName="WebsocketClientLiteTest.ReconnectTests.SequentialRepeatOrRetryUsesFreshServices(retry: False)" computerName="a920b7ae3df2" duration="00:00:03.0546407" startTime="2026-11-11T22:32:24.4304722+00:00" endTime="2026-11-11T22:32:27.4852842+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="3d93710c-19e3-4e17-ace7-5fc29f78b3dd" />
+    <UnitTestResult executionId="80295e20-e43e-4a7a-b0f3-f76ace25fe8f" testId="6a258e59-1cfa-d63a-f861-474896aa9552" testName="WebsocketClientLiteTest.ReconnectTests.SetupAdmissionIsOwnedUntilTeardown(mode: &quot;async&quot;)" computerName="a920b7ae3df2" duration="00:00:00.0352983" startTime="2026-11-11T22:32:21.3211256+00:00" endTime="2026-11-11T22:32:21.3608043+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="80295e20-e43e-4a7a-b0f3-f76ace25fe8f" />
+    <UnitTestResult executionId="350a7e4a-515e-4592-8bd8-22648a2d0563" testId="a372d844-784c-bd8f-28d3-a270d2f4b09d" testName="WebsocketClientLiteTest.ReconnectTests.FailedConnectTerminatesAndRemovesRegistration" computerName="a920b7ae3df2" duration="00:00:00.0022397" startTime="2026-11-11T22:32:30.5341216+00:00" endTime="2026-11-11T22:32:30.5364665+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="350a7e4a-515e-4592-8bd8-22648a2d0563" />
+    <UnitTestResult executionId="b6c2a2c8-88e0-4902-867d-d620aa4e8f54" testId="97a8abd2-9240-f71c-78c5-94e63f217fb4" testName="WebsocketClientLiteTest.ReconnectTests.SequentialRepeatOrRetryUsesFreshServices(retry: True)" computerName="a920b7ae3df2" duration="00:00:03.0465496" startTime="2026-11-11T22:32:27.4858591+00:00" endTime="2026-11-11T22:32:30.5324389+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="b6c2a2c8-88e0-4902-867d-d620aa4e8f54" />
+    <UnitTestResult executionId="17397a95-9139-4661-afdb-a29591532b08" testId="f377a924-9e9a-f90c-242a-1f9947ca726c" testName="WebsocketClientLiteTest.ReconnectTests.SetupAdmissionIsOwnedUntilTeardown(mode: &quot;dispose&quot;)" computerName="a920b7ae3df2" duration="00:00:00.0007812" startTime="2026-11-11T22:32:21.3663225+00:00" endTime="2026-11-11T22:32:21.3663456+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="17397a95-9139-4661-afdb-a29591532b08" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="WebsocketClientLiteTest.ReconnectTests.SetupAdmissionIsOwnedUntilTeardown(mode: &quot;async&quot;)" storage="/tmp/s6-scratch/timing-after/src/main/websocketclientlitetest/bin/release/net10.0/websocketclientlitetest.dll" id="6a258e59-1cfa-d63a-f861-474896aa9552">
+      <Execution id="80295e20-e43e-4a7a-b0f3-f76ace25fe8f" />
+      <TestMethod codeBase="/tmp/s6-scratch/timing-after/src/main/WebsocketClientLiteTest/bin/Release/net10.0/WebsocketClientLiteTest.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="WebsocketClientLiteTest.ReconnectTests" name="SetupAdmissionIsOwnedUntilTeardown" />
+    </UnitTest>
+    <UnitTest name="WebsocketClientLiteTest.ReconnectTests.DisposedClientRejectsAdmission(asynchronous: True)" storage="/tmp/s6-scratch/timing-after/src/main/websocketclientlitetest/bin/release/net10.0/websocketclientlitetest.dll" id="4f9f1cf2-3801-6249-b108-6808ac91439e">
+      <Execution id="fc48b1e5-c7de-4350-963a-0288d52feebc" />
+      <TestMethod codeBase="/tmp/s6-scratch/timing-after/src/main/WebsocketClientLiteTest/bin/Release/net10.0/WebsocketClientLiteTest.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="WebsocketClientLiteTest.ReconnectTests" name="DisposedClientRejectsAdmission" />
+    </UnitTest>
+    <UnitTest name="WebsocketClientLiteTest.ReconnectTests.SetupAdmissionIsOwnedUntilTeardown(mode: &quot;unsubscribe&quot;)" storage="/tmp/s6-scratch/timing-after/src/main/websocketclientlitetest/bin/release/net10.0/websocketclientlitetest.dll" id="5580379f-76b9-8a6c-948e-00491f7b49a6">
+      <Execution id="16ae147e-153c-4809-8c16-c21c76a616a6" />
+      <TestMethod codeBase="/tmp/s6-scratch/timing-after/src/main/WebsocketClientLiteTest/bin/Release/net10.0/WebsocketClientLiteTest.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="WebsocketClientLiteTest.ReconnectTests" name="SetupAdmissionIsOwnedUntilTeardown" />
+    </UnitTest>
+    <UnitTest name="WebsocketClientLiteTest.ReconnectTests.SequentialRepeatOrRetryUsesFreshServices(retry: False)" storage="/tmp/s6-scratch/timing-after/src/main/websocketclientlitetest/bin/release/net10.0/websocketclientlitetest.dll" id="66ff8d1f-96ab-3b11-f3f9-1559ae6692d3">
+      <Execution id="3d93710c-19e3-4e17-ace7-5fc29f78b3dd" />
+      <TestMethod codeBase="/tmp/s6-scratch/timing-after/src/main/WebsocketClientLiteTest/bin/Release/net10.0/WebsocketClientLiteTest.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="WebsocketClientLiteTest.ReconnectTests" name="SequentialRepeatOrRetryUsesFreshServices" />
+    </UnitTest>
+    <UnitTest name="WebsocketClientLiteTest.ReconnectTests.FailedConnectTerminatesAndRemovesRegistration" storage="/tmp/s6-scratch/timing-after/src/main/websocketclientlitetest/bin/release/net10.0/websocketclientlitetest.dll" id="a372d844-784c-bd8f-28d3-a270d2f4b09d">
+      <Execution id="350a7e4a-515e-4592-8bd8-22648a2d0563" />
+      <TestMethod codeBase="/tmp/s6-scratch/timing-after/src/main/WebsocketClientLiteTest/bin/Release/net10.0/WebsocketClientLiteTest.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="WebsocketClientLiteTest.ReconnectTests" name="FailedConnectTerminatesAndRemovesRegistration" />
+    </UnitTest>
+    <UnitTest name="WebsocketClientLiteTest.ReconnectTests.DisposedClientRejectsAdmission(asynchronous: False)" storage="/tmp/s6-scratch/timing-after/src/main/websocketclientlitetest/bin/release/net10.0/websocketclientlitetest.dll" id="5fbdc1dd-99f9-f8c3-6c21-3692aab77b24">
+      <Execution id="f3b60f96-719d-4fcb-93f9-b189ea8fdc93" />
+      <TestMethod codeBase="/tmp/s6-scratch/timing-after/src/main/WebsocketClientLiteTest/bin/Release/net10.0/WebsocketClientLiteTest.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="WebsocketClientLiteTest.ReconnectTests" name="DisposedClientRejectsAdmission" />
+    </UnitTest>
+    <UnitTest name="WebsocketClientLiteTest.ReconnectTests.SequentialRepeatOrRetryUsesFreshServices(retry: True)" storage="/tmp/s6-scratch/timing-after/src/main/websocketclientlitetest/bin/release/net10.0/websocketclientlitetest.dll" id="97a8abd2-9240-f71c-78c5-94e63f217fb4">
+      <Execution id="b6c2a2c8-88e0-4902-867d-d620aa4e8f54" />
+      <TestMethod codeBase="/tmp/s6-scratch/timing-after/src/main/WebsocketClientLiteTest/bin/Release/net10.0/WebsocketClientLiteTest.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="WebsocketClientLiteTest.ReconnectTests" name="SequentialRepeatOrRetryUsesFreshServices" />
+    </UnitTest>
+    <UnitTest name="WebsocketClientLiteTest.ReconnectTests.SetupAdmissionIsOwnedUntilTeardown(mode: &quot;dispose&quot;)" storage="/tmp/s6-scratch/timing-after/src/main/websocketclientlitetest/bin/release/net10.0/websocketclientlitetest.dll" id="f377a924-9e9a-f90c-242a-1f9947ca726c">
+      <Execution id="17397a95-9139-4661-afdb-a29591532b08" />
+      <TestMethod codeBase="/tmp/s6-scratch/timing-after/src/main/WebsocketClientLiteTest/bin/Release/net10.0/WebsocketClientLiteTest.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="WebsocketClientLiteTest.ReconnectTests" name="SetupAdmissionIsOwnedUntilTeardown" />
+    </UnitTest>
+    <UnitTest name="WebsocketClientLiteTest.ReconnectTests.TerminalCallbackSuccessorSurvivesOldCleanup" storage="/tmp/s6-scratch/timing-after/src/main/websocketclientlitetest/bin/release/net10.0/websocketclientlitetest.dll" id="655cdd3e-4c9c-6553-17dd-43fd5ec11467">
+      <Execution id="b1a43cd5-2379-41e5-a937-7e89bc2e43dc" />
+      <TestMethod codeBase="/tmp/s6-scratch/timing-after/src/main/WebsocketClientLiteTest/bin/Release/net10.0/WebsocketClientLiteTest.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="WebsocketClientLiteTest.ReconnectTests" name="TerminalCallbackSuccessorSurvivesOldCleanup" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="4f9f1cf2-3801-6249-b108-6808ac91439e" executionId="fc48b1e5-c7de-4350-963a-0288d52feebc" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="5fbdc1dd-99f9-f8c3-6c21-3692aab77b24" executionId="f3b60f96-719d-4fcb-93f9-b189ea8fdc93" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="5580379f-76b9-8a6c-948e-00491f7b49a6" executionId="16ae147e-153c-4809-8c16-c21c76a616a6" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="655cdd3e-4c9c-6553-17dd-43fd5ec11467" executionId="b1a43cd5-2379-41e5-a937-7e89bc2e43dc" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="66ff8d1f-96ab-3b11-f3f9-1559ae6692d3" executionId="3d93710c-19e3-4e17-ace7-5fc29f78b3dd" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="6a258e59-1cfa-d63a-f861-474896aa9552" executionId="80295e20-e43e-4a7a-b0f3-f76ace25fe8f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="a372d844-784c-bd8f-28d3-a270d2f4b09d" executionId="350a7e4a-515e-4592-8bd8-22648a2d0563" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="97a8abd2-9240-f71c-78c5-94e63f217fb4" executionId="b6c2a2c8-88e0-4902-867d-d620aa4e8f54" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="f377a924-9e9a-f90c-242a-1f9947ca726c" executionId="17397a95-9139-4661-afdb-a29591532b08" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Completed">
+    <Counters total="9" executed="9" passed="9" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v4.0.1+0f7d528729 (64-bit .NET 10.0.14)
+[xUnit.net 00:00:00.05]   Discovering: WebsocketClientLiteTest
+[xUnit.net 00:00:00.09]   Discovered:  WebsocketClientLiteTest
+[xUnit.net 00:00:00.11]   Starting:    WebsocketClientLiteTest
+[xUnit.net 00:00:09.34]   Finished:    WebsocketClientLiteTest
+</StdOut>
+    </Output>
+  </ResultSummary>
+</TestRun>

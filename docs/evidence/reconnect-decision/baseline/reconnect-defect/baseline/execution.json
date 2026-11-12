@@ -1,0 +1,26 @@
+{
+  "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net10.0",
+    "--filter",
+    "FullyQualifiedName~WebsocketClientLiteTest.ReconnectTests|FullyQualifiedName=WebsocketClientLiteTest.RuntimeEvidenceTests.RecordHostRuntime",
+    "--logger",
+    "trx;LogFileName=results.trx",
+    "--results-directory",
+    "/tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/59ab5014-b189-4286-91c4-eee051d950c7/scratchpad/baseline-out/reconnect-defect/baseline"
+  ],
+  "budget_seconds": 180,
+  "started_at": "2026-11-11T21:49:09.6748637+00:00",
+  "exit_code": 0,
+  "timed_out": false,
+  "interrupted": false,
+  "cleanup_incomplete": false,
+  "cleanup_seconds": 0,
+  "elapsed_seconds": 11.215,
+  "stdout": "  Determining projects to restore...\n  Restored /tmp/pdd-a5fcafb6b7cb4b39a7be2fbf3e8426b9/src/main/WebsocketClientLite/WebsocketClientLite.csproj (in 110 ms).\n  Restored /tmp/pdd-a5fcafb6b7cb4b39a7be2fbf3e8426b9/src/interface/IWebsocketClientLite/IWebsocketClientLite.csproj (in 108 ms).\n  Restored /tmp/pdd-a5fcafb6b7cb4b39a7be2fbf3e8426b9/src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj (in 108 ms).\n  IWebsocketClientLite -> /tmp/pdd-a5fcafb6b7cb4b39a7be2fbf3e8426b9/src/interface/IWebsocketClientLite/bin/Release/netstandard2.0/IWebsocketClientLite.dll\n  WebsocketClientLite -> /tmp/pdd-a5fcafb6b7cb4b39a7be2fbf3e8426b9/src/main/WebsocketClientLite/bin/Release/net10.0/WebsocketClientLite.dll\n  WebsocketClientLiteTest -> /tmp/pdd-a5fcafb6b7cb4b39a7be2fbf3e8426b9/src/main/WebsocketClientLiteTest/bin/Release/net10.0/WebsocketClientLiteTest.dll\nTest run for /tmp/pdd-a5fcafb6b7cb4b39a7be2fbf3e8426b9/src/main/WebsocketClientLiteTest/bin/Release/net10.0/WebsocketClientLiteTest.dll (.NETCoreApp,Version=v10.0)\nA total of 1 test files matched the specified pattern.\nResults File: /tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/59ab5014-b189-4286-91c4-eee051d950c7/scratchpad/baseline-out/reconnect-defect/baseline/results.trx\n\nPassed!  - Failed:     0, Passed:    10, Skipped:     0, Total:    10, Duration: 9 s - WebsocketClientLiteTest.dll (net10.0)\n",
+  "stderr": ""
+}

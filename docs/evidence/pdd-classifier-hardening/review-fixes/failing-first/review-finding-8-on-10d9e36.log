@@ -1,0 +1,21 @@
+source: git archive 10d9e3615e8a97ec9e207983d7ebf339a2d1430f, copy: /tmp/m6-head.BKxjP9
+tools/Pdd.Tests/ClassifierHardeningTests.cs replaced with /tmp/m6-out/failing-first/ClassifierHardeningTests.at-run-2.cs (sha256 aacbf6f93f5f846b)
+  Determining projects to restore...
+  Restored /tmp/m6-head.BKxjP9/tools/Pdd/Pdd.csproj (in 39 ms).
+  Restored /tmp/m6-head.BKxjP9/tools/Pdd.Tests/Pdd.Tests.csproj (in 112 ms).
+  Pdd -> /tmp/m6-head.BKxjP9/tools/Pdd/bin/Release/net10.0/Pdd.dll
+  Pdd.Tests -> /tmp/m6-head.BKxjP9/tools/Pdd.Tests/bin/Release/net10.0/Pdd.Tests.dll
+Test run for /tmp/m6-head.BKxjP9/tools/Pdd.Tests/bin/Release/net10.0/Pdd.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.36]     Pdd.Tests.ClassifierHardeningTests.BodyBraceOutsideTheLayoutIsReported [FAIL]
+  Failed Pdd.Tests.ClassifierHardeningTests.BodyBraceOutsideTheLayoutIsReported [119 ms]
+  Error Message:
+   Assert.Throws() Failure: No exception was thrown
+Expected: typeof(System.IO.InvalidDataException)
+  Stack Trace:
+     at Pdd.Tests.ClassifierHardeningTests.BodyBraceOutsideTheLayoutIsReported() in /tmp/m6-head.BKxjP9/tools/Pdd.Tests/ClassifierHardeningTests.cs:line 169
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+
+Failed!  - Failed:     1, Passed:     0, Skipped:     0, Total:     1, Duration: 126 ms - Pdd.Tests.dll (net10.0)
+exit=1 elapsed=2600ms

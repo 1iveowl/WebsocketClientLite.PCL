@@ -1,0 +1,25 @@
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:00.49
+baseline: passed (8.974s)
+CLOSE-001-duplicate-send: detected (8.969s)
+CLOSE-001-suppressed-send: detected (9.659s)
+CLOSE-002-state-bit-loss: detected (9.376s)
+CLOSE-003-premature-release: detected (8.964s)
+CLOSE-003-suppressed-release: detected (8.896s)
+REASSEMBLY-001-offset-stall: detected (8.822s)
+REASSEMBLY-002-offset-stall: detected (9.551s)
+REASSEMBLY-001-oversized-result: detected (8.769s)
+MASK-001-xor-to-or: detected (9.098s)
+MASK-001-key-write: detected (8.723s)
+MASK-002-tail-xor-to-or: detected (8.835s)
+MASK-002-corrupt-bulk-byte: detected (8.798s)
+MASK-002-preserve-prefix: detected (8.9s)
+MASK-003-xor-to-or: detected (9.036s)
+MASK-003-preserve-prefix: detected (9.339s)
+HEADER-001-short-sixteen-bit: detected (8.904s)
+HEADER-001-short-sixty-four-bit: detected (9.016s)
+Evidence: /home/vscode/worktrees/s7/artifacts/s8/pdd/protocol/mutations

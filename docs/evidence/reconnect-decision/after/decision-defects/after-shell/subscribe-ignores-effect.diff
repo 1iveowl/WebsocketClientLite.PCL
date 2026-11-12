@@ -1,0 +1,12 @@
+--- a/src/main/WebsocketClientLite/ClientWebSocketRx.cs
++++ b/src/main/WebsocketClientLite/ClientWebSocketRx.cs
+@@ -261,7 +261,8 @@
+             var generation = new object();
+             lock (_lifecycleGate)
+             {
+-                if (Advance(LifecycleEvent.Subscribe, generation) != LifecycleEffect.Admit)
++                _ = Advance(LifecycleEvent.Subscribe, generation);
++                if (false)
+                 {
+                     obsTuple.OnError(new ObjectDisposedException(nameof(ClientWebSocketRx)));
+                     return Disposable.Empty;

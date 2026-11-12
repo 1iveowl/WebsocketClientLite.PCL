@@ -1,0 +1,7 @@
+id=step-drops-state
+commit=6646466
+before=Protocol.Step(state._code, op, fin
+after=Protocol.Step(0, op, fin
+source_sha256=6160f2daccfd16904d545c503ac3733db9e8359d71498a199439206b5e97a1c8
+mutant_sha256=9fdb7ed17acf10f367b424b8a5c2ec80eca4aaf95290c92a19f09283bb10692a
+exit=1

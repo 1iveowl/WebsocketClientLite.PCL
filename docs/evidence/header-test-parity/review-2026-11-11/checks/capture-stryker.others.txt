@@ -1,0 +1,14 @@
+ 22:22:24 up 13 days, 14:06,  0 user,  load average: 1.91, 1.91, 1.52
+ 568353       39:25 /usr/share/dotnet/sdk/10.0.403/Roslyn/bincore/VBCSCompiler -pipename:afbl1n9yN_RPIGY3Zht7xFLgW0q6Vl3WupFdpM2aC3E
+ 577568       18:57 /usr/share/dotnet/dotnet /usr/share/dotnet/sdk/10.0.403/MSBuild.dll /noautoresponse /nologo /nodemode:1 /nodeReuse:true /low:false
+ 577569       18:57 /usr/share/dotnet/dotnet /usr/share/dotnet/sdk/10.0.403/MSBuild.dll /noautoresponse /nologo /nodemode:1 /nodeReuse:true /low:false
+ 577570       18:57 /usr/share/dotnet/dotnet /usr/share/dotnet/sdk/10.0.403/MSBuild.dll /noautoresponse /nologo /nodemode:1 /nodeReuse:true /low:false
+ 577648       18:57 /usr/share/dotnet/dotnet /usr/share/dotnet/sdk/10.0.403/MSBuild.dll /noautoresponse /nologo /nodemode:1 /nodeReuse:true /low:false
+ 577649       18:57 /usr/share/dotnet/dotnet /usr/share/dotnet/sdk/10.0.403/MSBuild.dll /noautoresponse /nologo /nodemode:1 /nodeReuse:true /low:false
+ 577650       18:57 /usr/share/dotnet/dotnet /usr/share/dotnet/sdk/10.0.403/MSBuild.dll /noautoresponse /nologo /nodemode:1 /nodeReuse:true /low:false
+ 577683       18:57 /usr/share/dotnet/dotnet /usr/share/dotnet/sdk/10.0.403/MSBuild.dll /noautoresponse /nologo /nodemode:1 /nodeReuse:true /low:false
+ 617832       00:08 flock -o /home/vscode/worktrees/.timing.lock /tmp/fix140-checks.sh run capture-stryker 1794435736 ./scripts/pdd.sh capture --job stryker --o
+ 618051       00:01 dotnet test src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj -c Release -p:LibTfm=net10.0 --no-build --nologo --filter FullyQ
+ 618080       00:01 /usr/share/dotnet/dotnet exec /usr/share/dotnet/sdk/10.0.403/vstest.console.dll --testAdapterPath:/home/vscode/.nuget/packages/coverlet.coll
+ 618093       00:01 /usr/share/dotnet/dotnet exec --runtimeconfig /tmp/s6-scratch/defects-after-copy/src/main/WebsocketClientLiteTest/bin/Release/net10.0/Websoc
+ 618148       00:00 bash /tmp/fix140-checks.sh run capture-stryker 1794435736 ./scripts/pdd.sh capture --job stryker --output artifacts/pdd-review/stryker

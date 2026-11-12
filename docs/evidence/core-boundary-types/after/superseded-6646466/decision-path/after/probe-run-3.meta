@@ -1,0 +1,18 @@
+date_utc=2026-11-11T22:28:04Z
+lock=flock ~/worktrees/.timing.lock
+loadavg=1.44 1.77 1.62 2/4699 635474
+ps:
+ 568353       45:05 VBCSCompiler
+ 577568       24:37 MSBuild.dll
+ 577569       24:37 MSBuild.dll
+ 577570       24:37 MSBuild.dll
+ 577648       24:36 MSBuild.dll
+ 577649       24:36 MSBuild.dll
+ 577650       24:36 MSBuild.dll
+ 577683       24:36 MSBuild.dll
+ 577982       24:17 claude
+ 634898       00:05 dotnet test
+ 634927       00:04 vstest.console.dll
+ 634940       00:04 testhost.dll
+wall_seconds=0.49
+exit=0

@@ -1,0 +1,165 @@
+source: git archive 29697a494053f8376ad30fae3895055901c97fd6
+copy: /tmp/s10-shift.Jtyepa
+inserted one comment line at line 190 (CloseStep declaration moves from 197 to 198)
+--- /dev/fd/63	2026-11-11 22:59:33.825839820 +0000
++++ /tmp/s10-shift.Jtyepa/verification/Protocol.dfy	2026-11-11 22:59:33.825839820 +0000
+@@ -187,6 +187,7 @@
+     // Failure is irreversible for application data, including a partially written frame.
+     static function SendFailed(state: bv8): bv8 { if state == 8 then 8 else 15 }
+ 
++    // Added by the S10 line-shift experiment: one comment line above CloseStep.
+     // RFC 6455 sections 5.5.1 and 7.1.2, mixed with library policy. Sections 5.5.1 and
+     // 7.1.2: once Close has been both sent and received, the TCP connection is to be closed,
+     // which is the release decision. Library policy: the sequential Close state model, with
+  Determining projects to restore...
+  Restored /tmp/s10-shift.Jtyepa/tools/Pdd/Pdd.csproj (in 40 ms).
+  Restored /tmp/s10-shift.Jtyepa/tools/Pdd.Tests/Pdd.Tests.csproj (in 119 ms).
+  Pdd -> /tmp/s10-shift.Jtyepa/tools/Pdd/bin/Release/net10.0/Pdd.dll
+  Pdd.Tests -> /tmp/s10-shift.Jtyepa/tools/Pdd.Tests/bin/Release/net10.0/Pdd.Tests.dll
+Test run for /tmp/s10-shift.Jtyepa/tools/Pdd.Tests/bin/Release/net10.0/Pdd.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.32]     Pdd.Tests.PayloadEvidenceTests.ObservedDiagnosticsRequireTheExactSemanticFailure(json: "{\"id\":\"MASK-002-tail-xor-to-or\",\"exit_code\":"···) [FAIL]
+  Failed Pdd.Tests.PayloadEvidenceTests.ObservedDiagnosticsRequireTheExactSemanticFailure(json: "{\"id\":\"MASK-002-tail-xor-to-or\",\"exit_code\":"···) [171 ms]
+  Error Message:
+   Assert.Equal() Failure: Strings differ
+           ↓ (pos 0)
+Expected: "detected"
+Actual:   "inconclusive"
+           ↑ (pos 0)
+  Stack Trace:
+     at Pdd.Tests.PayloadEvidenceTests.ObservedDiagnosticsRequireTheExactSemanticFailure(String json) in /tmp/s10-shift.Jtyepa/tools/Pdd.Tests/PayloadEvidenceTests.cs:line 21
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)
+[xUnit.net 00:00:00.73]     Pdd.Tests.PayloadEvidenceTests.ObservedDiagnosticsRequireTheExactSemanticFailure(json: "{\"id\":\"MASK-003-preserve-prefix\",\"exit_code\""···) [FAIL]
+[xUnit.net 00:00:00.83]     Pdd.Tests.PayloadEvidenceTests.ObservedDiagnosticsRequireTheExactSemanticFailure(json: "{\"id\":\"MASK-002-preserve-prefix\",\"exit_code\""···) [FAIL]
+  Failed Pdd.Tests.PayloadEvidenceTests.ObservedDiagnosticsRequireTheExactSemanticFailure(json: "{\"id\":\"MASK-003-preserve-prefix\",\"exit_code\""···) [95 ms]
+  Error Message:
+   Assert.Equal() Failure: Strings differ
+           ↓ (pos 0)
+Expected: "detected"
+Actual:   "inconclusive"
+           ↑ (pos 0)
+  Stack Trace:
+     at Pdd.Tests.PayloadEvidenceTests.ObservedDiagnosticsRequireTheExactSemanticFailure(String json) in /tmp/s10-shift.Jtyepa/tools/Pdd.Tests/PayloadEvidenceTests.cs:line 21
+   at InvokeStub_PayloadEvidenceTests.ObservedDiagnosticsRequireTheExactSemanticFailure(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed Pdd.Tests.PayloadEvidenceTests.ObservedDiagnosticsRequireTheExactSemanticFailure(json: "{\"id\":\"MASK-002-preserve-prefix\",\"exit_code\""···) [96 ms]
+  Error Message:
+   Assert.Equal() Failure: Strings differ
+           ↓ (pos 0)
+Expected: "detected"
+Actual:   "inconclusive"
+           ↑ (pos 0)
+  Stack Trace:
+     at Pdd.Tests.PayloadEvidenceTests.ObservedDiagnosticsRequireTheExactSemanticFailure(String json) in /tmp/s10-shift.Jtyepa/tools/Pdd.Tests/PayloadEvidenceTests.cs:line 21
+   at InvokeStub_PayloadEvidenceTests.ObservedDiagnosticsRequireTheExactSemanticFailure(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+[xUnit.net 00:00:00.92]     Pdd.Tests.MutationTests.PythonDiagnosticFixturesMatch(json: "{\"name\":\"target\",\"record\":{\"exit_code\":4,\"···) [FAIL]
+[xUnit.net 00:00:00.94]     Pdd.Tests.PayloadEvidenceTests.ObservedDiagnosticsRequireTheExactSemanticFailure(json: "{\"id\":\"REASSEMBLY-001-oversized-result\",\"exit"···) [FAIL]
+[xUnit.net 00:00:01.04]     Pdd.Tests.PayloadEvidenceTests.ObservedDiagnosticsRequireTheExactSemanticFailure(json: "{\"id\":\"MASK-003-xor-to-or\",\"exit_code\":4,\"s"···) [FAIL]
+  Failed Pdd.Tests.MutationTests.PythonDiagnosticFixturesMatch(json: "{\"name\":\"target\",\"record\":{\"exit_code\":4,\"···) [93 ms]
+  Error Message:
+   Assert.Equal() Failure: Strings differ
+           ↓ (pos 0)
+Expected: "detected"
+Actual:   "inconclusive"
+           ↑ (pos 0)
+  Stack Trace:
+     at Pdd.Tests.MutationTests.PythonDiagnosticFixturesMatch(String json) in /tmp/s10-shift.Jtyepa/tools/Pdd.Tests/MutationTests.cs:line 19
+   at InvokeStub_MutationTests.PythonDiagnosticFixturesMatch(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed Pdd.Tests.PayloadEvidenceTests.ObservedDiagnosticsRequireTheExactSemanticFailure(json: "{\"id\":\"REASSEMBLY-001-oversized-result\",\"exit"···) [110 ms]
+  Error Message:
+   Assert.Equal() Failure: Strings differ
+           ↓ (pos 0)
+Expected: "detected"
+Actual:   "inconclusive"
+           ↑ (pos 0)
+  Stack Trace:
+     at Pdd.Tests.PayloadEvidenceTests.ObservedDiagnosticsRequireTheExactSemanticFailure(String json) in /tmp/s10-shift.Jtyepa/tools/Pdd.Tests/PayloadEvidenceTests.cs:line 21
+   at InvokeStub_PayloadEvidenceTests.ObservedDiagnosticsRequireTheExactSemanticFailure(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed Pdd.Tests.PayloadEvidenceTests.ObservedDiagnosticsRequireTheExactSemanticFailure(json: "{\"id\":\"MASK-003-xor-to-or\",\"exit_code\":4,\"s"···) [100 ms]
+  Error Message:
+   Assert.Equal() Failure: Strings differ
+           ↓ (pos 0)
+Expected: "detected"
+Actual:   "inconclusive"
+           ↑ (pos 0)
+  Stack Trace:
+     at Pdd.Tests.PayloadEvidenceTests.ObservedDiagnosticsRequireTheExactSemanticFailure(String json) in /tmp/s10-shift.Jtyepa/tools/Pdd.Tests/PayloadEvidenceTests.cs:line 21
+   at InvokeStub_PayloadEvidenceTests.ObservedDiagnosticsRequireTheExactSemanticFailure(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+[xUnit.net 00:00:01.15]     Pdd.Tests.PayloadEvidenceTests.ObservedDiagnosticsRequireTheExactSemanticFailure(json: "{\"id\":\"REASSEMBLY-002-offset-stall\",\"exit_cod"···) [FAIL]
+[xUnit.net 00:00:01.32]     Pdd.Tests.PayloadEvidenceTests.ObservedDiagnosticsRequireTheExactSemanticFailure(json: "{\"id\":\"REASSEMBLY-001-offset-stall\",\"exit_cod"···) [FAIL]
+  Failed Pdd.Tests.PayloadEvidenceTests.ObservedDiagnosticsRequireTheExactSemanticFailure(json: "{\"id\":\"REASSEMBLY-002-offset-stall\",\"exit_cod"···) [110 ms]
+  Error Message:
+   Assert.Equal() Failure: Strings differ
+           ↓ (pos 0)
+Expected: "detected"
+Actual:   "inconclusive"
+           ↑ (pos 0)
+  Stack Trace:
+     at Pdd.Tests.PayloadEvidenceTests.ObservedDiagnosticsRequireTheExactSemanticFailure(String json) in /tmp/s10-shift.Jtyepa/tools/Pdd.Tests/PayloadEvidenceTests.cs:line 21
+   at InvokeStub_PayloadEvidenceTests.ObservedDiagnosticsRequireTheExactSemanticFailure(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed Pdd.Tests.PayloadEvidenceTests.ObservedDiagnosticsRequireTheExactSemanticFailure(json: "{\"id\":\"REASSEMBLY-001-offset-stall\",\"exit_cod"···) [170 ms]
+  Error Message:
+   Assert.Equal() Failure: Strings differ
+           ↓ (pos 0)
+Expected: "detected"
+Actual:   "inconclusive"
+           ↑ (pos 0)
+  Stack Trace:
+     at Pdd.Tests.PayloadEvidenceTests.ObservedDiagnosticsRequireTheExactSemanticFailure(String json) in /tmp/s10-shift.Jtyepa/tools/Pdd.Tests/PayloadEvidenceTests.cs:line 21
+   at InvokeStub_PayloadEvidenceTests.ObservedDiagnosticsRequireTheExactSemanticFailure(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+[xUnit.net 00:00:01.69]     Pdd.Tests.PayloadEvidenceTests.ObservedDiagnosticsRequireTheExactSemanticFailure(json: "{\"id\":\"MASK-002-corrupt-bulk-byte\",\"exit_code"···) [FAIL]
+  Failed Pdd.Tests.PayloadEvidenceTests.ObservedDiagnosticsRequireTheExactSemanticFailure(json: "{\"id\":\"MASK-002-corrupt-bulk-byte\",\"exit_code"···) [174 ms]
+  Error Message:
+   Assert.Equal() Failure: Strings differ
+           ↓ (pos 0)
+Expected: "detected"
+Actual:   "inconclusive"
+           ↑ (pos 0)
+  Stack Trace:
+     at Pdd.Tests.PayloadEvidenceTests.ObservedDiagnosticsRequireTheExactSemanticFailure(String json) in /tmp/s10-shift.Jtyepa/tools/Pdd.Tests/PayloadEvidenceTests.cs:line 21
+   at InvokeStub_PayloadEvidenceTests.ObservedDiagnosticsRequireTheExactSemanticFailure(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+[xUnit.net 00:00:02.37]     Pdd.Tests.MutationTests.SuiteIsolationAndPartialEvidence(mode: "success") [FAIL]
+  Failed Pdd.Tests.MutationTests.SuiteIsolationAndPartialEvidence(mode: "success") [147 ms]
+  Error Message:
+   Assert.Equal() Failure: Strings differ
+           ↓ (pos 0)
+Expected: "passed"
+Actual:   "failed"
+           ↑ (pos 0)
+  Stack Trace:
+     at Pdd.Tests.MutationTests.SuiteIsolationAndPartialEvidence(String mode) in /tmp/s10-shift.Jtyepa/tools/Pdd.Tests/MutationTests.cs:line 98
+--- End of stack trace from previous location ---
+[xUnit.net 00:00:02.92]     Pdd.Tests.PayloadEvidenceTests.PayloadSuiteEditsOneTemporarySourceAtATime [FAIL]
+  Failed Pdd.Tests.PayloadEvidenceTests.PayloadSuiteEditsOneTemporarySourceAtATime [173 ms]
+  Error Message:
+   Assert.Equal() Failure: Strings differ
+           ↓ (pos 0)
+Expected: "passed"
+Actual:   "failed"
+           ↑ (pos 0)
+  Stack Trace:
+     at Pdd.Tests.PayloadEvidenceTests.PayloadSuiteEditsOneTemporarySourceAtATime() in /tmp/s10-shift.Jtyepa/tools/Pdd.Tests/PayloadEvidenceTests.cs:line 136
+--- End of stack trace from previous location ---
+[xUnit.net 00:00:06.98]     Pdd.Tests.ReceiptTests.CaptureFailureSkipsFollowingAndRejectsStaleDirectory [FAIL]
+  Failed Pdd.Tests.ReceiptTests.CaptureFailureSkipsFollowingAndRejectsStaleDirectory [9 ms]
+  Error Message:
+   System.IO.InvalidDataException : fatal: not a git repository (or any of the parent directories): .git
+  Stack Trace:
+     at Pdd.Data.Require(Boolean condition, String message) in /tmp/s10-shift.Jtyepa/tools/Pdd/Models.cs:line 105
+   at Pdd.Processes.Output(String[] command, String cwd, CancellationToken cancellation)
+   at Pdd.Evidence.<Identity>g__Git|21_0(String[] args) in /tmp/s10-shift.Jtyepa/tools/Pdd/Evidence.cs:line 14
+   at Pdd.Evidence.Identity() in /tmp/s10-shift.Jtyepa/tools/Pdd/Evidence.cs:line 15
+   at Pdd.Evidence.Capture(String job, String output, Double budget, CancellationToken cancellation, List`1 commands) in /tmp/s10-shift.Jtyepa/tools/Pdd/Evidence.cs:line 52
+   at Pdd.Tests.ReceiptTests.CaptureFailureSkipsFollowingAndRejectsStaleDirectory() in /tmp/s10-shift.Jtyepa/tools/Pdd.Tests/ReceiptTests.cs:line 171
+--- End of stack trace from previous location ---
+
+Failed!  - Failed:    12, Passed:   250, Skipped:     0, Total:   262, Duration: 13 s - Pdd.Tests.dll (net10.0)
+exit=1 elapsed=14809ms

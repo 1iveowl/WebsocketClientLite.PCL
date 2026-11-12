@@ -1,0 +1,3 @@
+Base commit (recorded 2026-11-11T21:59:16Z, before any other work in S7):
+fa96d59af838e7aa57071de1712a02c7065a6aab
+2026-11-11T22:45:02+01:00 docs: add S11 for a rejected-handshake test that does not race, and lesson 10 (#141)

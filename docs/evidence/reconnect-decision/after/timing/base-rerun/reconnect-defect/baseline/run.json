@@ -1,0 +1,21 @@
+{
+  "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net10.0",
+    "--filter",
+    "FullyQualifiedName~WebsocketClientLiteTest.ReconnectTests|FullyQualifiedName=WebsocketClientLiteTest.RuntimeEvidenceTests.RecordHostRuntime",
+    "--logger",
+    "trx;LogFileName=results.trx",
+    "--results-directory",
+    "/tmp/s6-scratch/timing-out/base-rerun/reconnect-defect/baseline"
+  ],
+  "started_at": "2026-11-11T22:35:07.4430155+00:00",
+  "finished_at": "2026-11-11T22:35:18.5266546+00:00",
+  "status": "passed",
+  "exit_code": 0,
+  "log": "output.log"
+}

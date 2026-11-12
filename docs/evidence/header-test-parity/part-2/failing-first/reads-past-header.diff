@@ -1,0 +1,15 @@
+diff -ruN failing-first-reads-past-header/src/main/WebsocketClientLite/Helper/DataframeParsing.cs copy/src/main/WebsocketClientLite/Helper/DataframeParsing.cs
+--- failing-first-reads-past-header/src/main/WebsocketClientLite/Helper/DataframeParsing.cs	2026-11-11 16:49:07.000000000 +0000
++++ copy/src/main/WebsocketClientLite/Helper/DataframeParsing.cs	2026-11-11 16:51:16.320926087 +0000
+@@ -47,7 +47,11 @@
+                 out status, out length, out _, out _, out _, out _);
+         }
+         if (status != 2)
++        {
++            try { await tcpConnection.ReadHeaderBytesAsync(1, ct).ConfigureAwait(false); }
++            catch (WebsocketClientLiteException) { }
+             throw new WebsocketClientLiteException("Protocol error: invalid server frame header/fragmentation sequence or payload exceeds the configured maximum.");
++        }
+ 
+         byte[] payload;
+         if (length == 0)

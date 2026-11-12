@@ -1,0 +1,14 @@
+  Determining projects to restore...
+  Restored /home/vscode/worktrees/s7/verification/benchmark/MaskingBenchmark.csproj (in 143 ms).
+  MaskingBenchmark -> /home/vscode/worktrees/s7/verification/benchmark/bin/Release/net10.0/MaskingBenchmark.dll
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:00.75
+
+real	0m0.904s
+user	0m0.876s
+sys	0m0.088s
+exit=0

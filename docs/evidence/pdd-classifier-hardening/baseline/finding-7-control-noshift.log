@@ -1,0 +1,14 @@
+source: git archive 29697a494053f8376ad30fae3895055901c97fd6
+copy: /tmp/s10-shift.kZ6TKc
+copy is a git repository with one commit
+mode: noshift (control, no line added)
+  Determining projects to restore...
+  Restored /tmp/s10-shift.kZ6TKc/tools/Pdd/Pdd.csproj (in 44 ms).
+  Restored /tmp/s10-shift.kZ6TKc/tools/Pdd.Tests/Pdd.Tests.csproj (in 120 ms).
+  Pdd -> /tmp/s10-shift.kZ6TKc/tools/Pdd/bin/Release/net10.0/Pdd.dll
+  Pdd.Tests -> /tmp/s10-shift.kZ6TKc/tools/Pdd.Tests/bin/Release/net10.0/Pdd.Tests.dll
+Test run for /tmp/s10-shift.kZ6TKc/tools/Pdd.Tests/bin/Release/net10.0/Pdd.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+
+Passed!  - Failed:     0, Passed:   262, Skipped:     0, Total:   262, Duration: 13 s - Pdd.Tests.dll (net10.0)
+exit=0 elapsed=15497ms

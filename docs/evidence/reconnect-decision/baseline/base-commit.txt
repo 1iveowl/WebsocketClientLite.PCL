@@ -1,0 +1,4 @@
+Base commit recorded 2026-11-11T21:45:49Z, before any other work in step S5.
+origin/releases/10.3.0.0 = fa96d59af838e7aa57071de1712a02c7065a6aab
+branch chore/reconnect-pure-decision created from it; HEAD = fa96d59af838e7aa57071de1712a02c7065a6aab
+git status --porcelain before branching: (empty)

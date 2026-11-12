@@ -27,6 +27,11 @@ internal class TcpConnectionService(
     int maxFrameSize = 0,
     bool checkCertificateRevocation = false) : IDisposable
 {
+    // The error a read raises when the stream ends before the requested bytes arrive.
+    // Tests compare against it to tell end of stream from a rejected frame.
+    internal const string AbortedUnexpectedlyMessage =
+        "Websocket connection aborted unexpectedly. Check connection and socket security version/TLS version).";
+
     private readonly bool _keepTcpClientAlive = !hasTransferTcpSocketLifeCycleOwnership;
     private bool _ownsCreatedTcpClient;
     private Stream? _stream;
@@ -128,7 +133,7 @@ internal class TcpConnectionService(
                 if (read == 0)
                 {
                     // Unexpected EOF
-                    throw new WebsocketClientLiteException("Websocket connection aborted unexpectedly. Check connection and socket security version/TLS version).");
+                    throw new WebsocketClientLiteException(AbortedUnexpectedlyMessage);
                 }
 
                 totalRead += read;

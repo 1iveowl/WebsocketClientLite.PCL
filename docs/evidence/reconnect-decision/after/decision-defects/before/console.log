@@ -1,0 +1,8 @@
+subscribe-ignores-disposal {'reconnect': 'survived', 'other': 'survived'} 
+subscribe-keeps-generation {'reconnect': 'survived', 'other': 'survived'} 
+register-ignores-disposal {'reconnect': 'survived', 'other': 'survived'} 
+connect-ignores-disposal {'reconnect': 'survived', 'other': 'survived'} 
+terminate-ignores-generation {'reconnect': 'detected', 'other': 'survived'} 
+dispose-not-permanent {'reconnect': 'detected', 'other': 'survived'} 
+exit=0
+2026-11-11T22:14:05Z

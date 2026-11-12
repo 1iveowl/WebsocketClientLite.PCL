@@ -1,0 +1,33 @@
+  Determining projects to restore...
+  Restored /tmp/m4-seed-received-is-event-2-PQeNxb/src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj (in 133 ms).
+  Restored /tmp/m4-seed-received-is-event-2-PQeNxb/src/interface/IWebsocketClientLite/IWebsocketClientLite.csproj (in 133 ms).
+  Restored /tmp/m4-seed-received-is-event-2-PQeNxb/src/main/WebsocketClientLite/WebsocketClientLite.csproj (in 135 ms).
+  IWebsocketClientLite -> /tmp/m4-seed-received-is-event-2-PQeNxb/src/interface/IWebsocketClientLite/bin/Release/netstandard2.0/IWebsocketClientLite.dll
+  WebsocketClientLite -> /tmp/m4-seed-received-is-event-2-PQeNxb/src/main/WebsocketClientLite/bin/Release/net10.0/WebsocketClientLite.dll
+  WebsocketClientLiteTest -> /tmp/m4-seed-received-is-event-2-PQeNxb/src/main/WebsocketClientLiteTest/bin/Release/net10.0/WebsocketClientLiteTest.dll
+Test run for /tmp/m4-seed-received-is-event-2-PQeNxb/src/main/WebsocketClientLiteTest/bin/Release/net10.0/WebsocketClientLiteTest.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.14]     WebsocketClientLiteTest.CoreBoundaryTypesTests.WrappersDoNotAllocate [FAIL]
+[xUnit.net 00:00:00.15]     WebsocketClientLiteTest.CoreBoundaryTypesTests.DefaultIsCodeZeroAndNamedZeroInstances [FAIL]
+  Failed WebsocketClientLiteTest.CoreBoundaryTypesTests.WrappersDoNotAllocate [3 ms]
+  Error Message:
+   Assert.Equal() Failure: Values differ
+Expected: 270000
+Actual:   290000
+  Stack Trace:
+     at WebsocketClientLiteTest.CoreBoundaryTypesTests.WrappersDoNotAllocate() in /tmp/m4-seed-received-is-event-2-PQeNxb/src/main/WebsocketClientLiteTest/CoreBoundaryTypesTests.cs:line 261
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed WebsocketClientLiteTest.CoreBoundaryTypesTests.DefaultIsCodeZeroAndNamedZeroInstances [2 ms]
+  Error Message:
+   Assert.Equal() Failure: Collections differ
+              ↓ (pos 1)
+Expected: [0, 1, 2]
+Actual:   [0, 2, 2]
+              ↑ (pos 1)
+  Stack Trace:
+     at WebsocketClientLiteTest.CoreBoundaryTypesTests.DefaultIsCodeZeroAndNamedZeroInstances() in /tmp/m4-seed-received-is-event-2-PQeNxb/src/main/WebsocketClientLiteTest/CoreBoundaryTypesTests.cs:line 104
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+
+Failed!  - Failed:     2, Passed:    15, Skipped:     0, Total:    17, Duration: 34 ms - WebsocketClientLiteTest.dll (net10.0)

@@ -1,0 +1,20 @@
+  Determining projects to restore...
+  Restored /home/vscode/worktrees/s7/src/test/NETCore.Console.Test/NETCore.Console.Test.csproj (in 127 ms).
+  Restored /home/vscode/worktrees/s7/src/interface/IWebsocketClientLite/IWebsocketClientLite.csproj (in 127 ms).
+  Restored /home/vscode/worktrees/s7/src/main/WebsocketClientLite/WebsocketClientLite.csproj (in 128 ms).
+  Restored /home/vscode/worktrees/s7/src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj (in 127 ms).
+  IWebsocketClientLite -> /home/vscode/worktrees/s7/src/interface/IWebsocketClientLite/bin/Release/netstandard2.0/IWebsocketClientLite.dll
+  WebsocketClientLite -> /home/vscode/worktrees/s7/src/main/WebsocketClientLite/bin/Release/netstandard2.1/WebsocketClientLite.dll
+  WebsocketClientLite -> /home/vscode/worktrees/s7/src/main/WebsocketClientLite/bin/Release/netstandard2.0/WebsocketClientLite.dll
+  WebsocketClientLite -> /home/vscode/worktrees/s7/src/main/WebsocketClientLite/bin/Release/net10.0/WebsocketClientLite.dll
+  WebsocketClientLite -> /home/vscode/worktrees/s7/src/main/WebsocketClientLite/bin/Release/net8.0/WebsocketClientLite.dll
+  WebsocketClientLite -> /home/vscode/worktrees/s7/src/main/WebsocketClientLite/bin/Release/net9.0/WebsocketClientLite.dll
+  NETCore.Console.Test -> /home/vscode/worktrees/s7/src/test/NETCore.Console.Test/bin/Release/net10.0/NETCore.Console.Test.dll
+  WebsocketClientLiteTest -> /home/vscode/worktrees/s7/src/main/WebsocketClientLiteTest/bin/Release/net10.0/WebsocketClientLiteTest.dll
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:01.68
+exit=0

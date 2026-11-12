@@ -1,0 +1,42 @@
+{
+ "made": "2026-11-11",
+ "commit": "fa96d59",
+ "copied_from": "baseline/count_region.py",
+ "file": "src/main/WebsocketClientLite/ClientWebSocketRx.cs",
+ "anchors": {
+  "24": "private readonly object _lifecycleGate",
+  "26": "private object? _generation",
+  "248": "return Observable.Create<(IDataframe? dataframe, ConnectionStatus state)>",
+  "307": "});",
+  "327": "protected virtual void Dispose(bool disposing)",
+  "346": "}",
+  "366": "public async ValueTask DisposeAsync()",
+  "379": "}"
+ },
+ "parts": [
+  [
+   "fields",
+   24,
+   26
+  ],
+  [
+   "connect observable",
+   248,
+   307
+  ],
+  [
+   "Dispose(bool)",
+   327,
+   346
+  ],
+  [
+   "DisposeAsync",
+   366,
+   379
+  ]
+ ],
+ "state_patterns": {
+  "S5 pattern": "_lifecycleGate|_disposed|_generation|\\bgeneration\\b"
+ },
+ "new_files": []
+}

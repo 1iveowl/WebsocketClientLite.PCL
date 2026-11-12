@@ -1,0 +1,19 @@
+Runtime: .NET 10.0.14
+bytes,iterations,original_ns,verified_ns,ratio,original_alloc_B,verified_alloc_B
+0,2000000,1.78,2.58,1.445,0,0
+4,2000000,2.38,3.25,1.370,0,0
+125,1073741,34.05,35.01,1.028,0,0
+1024,131072,278.79,281.66,1.010,0,0
+65536,2048,17353.43,17345.90,1.000,0,0
+1048576,128,277689.02,277662.95,1.000,0,0
+copy_bytes,original_ns,verified_ns,ratio,original_alloc_B,verified_alloc_B
+125,51.21,44.24,0.864,0,0
+1024,414.76,366.08,0.883,0,0
+65536,26000.15,22956.65,0.883,0,0
+slice_bytes,original_ns,verified_ns,ratio,original_alloc_B,verified_alloc_B
+125,62.48,51.60,0.826,0,0
+1024,450.40,428.88,0.952,0,0
+65536,28290.20,26532.98,0.938,0,0
+merge_bytes,blockcopy_ns,verified_bulk_ns,verified_scalar_ns
+1024,38.64,39.93,299.09
+65536,1071.88,1068.76,14835.32

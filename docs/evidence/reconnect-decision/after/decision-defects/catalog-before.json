@@ -1,0 +1,60 @@
+{
+  "made": "2026-11-11",
+  "note": "Seeded decision-line defects in ClientWebSocketRx.cs at the base commit fa96d59 (before side). Each changes the rows of verification/reconnect-decision.md listed under rows. The after side seeds the same defects in the pure function (catalog-after.json).",
+  "sides": {
+    "before": { "commit": "fa96d59af838e7aa57071de1712a02c7065a6aab", "plain_tests": false }
+  },
+  "defects": [
+    {
+      "id": "subscribe-ignores-disposal",
+      "side": "before",
+      "rows": [4, 5, 6],
+      "description": "Subscribe admits after disposal and stores the generation (line 253).",
+      "file": "src/main/WebsocketClientLite/ClientWebSocketRx.cs",
+      "edits": [ { "before": "                if (_disposed)\n                {", "after": "                if (false)\n                {" } ]
+    },
+    {
+      "id": "subscribe-keeps-generation",
+      "side": "before",
+      "rows": [1, 2, 3],
+      "description": "Subscribe admits without storing the new generation (line 258).",
+      "file": "src/main/WebsocketClientLite/ClientWebSocketRx.cs",
+      "edits": [ { "before": "                _generation = generation;\n", "after": "                // seeded defect: the generation is not stored\n" } ]
+    },
+    {
+      "id": "register-ignores-disposal",
+      "side": "before",
+      "rows": [10, 11, 12],
+      "description": "Register creates and registers a service after disposal (line 281).",
+      "file": "src/main/WebsocketClientLite/ClientWebSocketRx.cs",
+      "edits": [ { "before": "                            if (_disposed) throw new ObjectDisposedException(nameof(ClientWebSocketRx));\n                            service =", "after": "                            service =" } ]
+    },
+    {
+      "id": "connect-ignores-disposal",
+      "side": "before",
+      "rows": [16, 17, 18],
+      "description": "Connect installs the sender and reports connected after disposal (line 265).",
+      "file": "src/main/WebsocketClientLite/ClientWebSocketRx.cs",
+      "edits": [ { "before": "                    if (_disposed) throw new ObjectDisposedException(nameof(ClientWebSocketRx));\n                    Sender = sender;", "after": "                    Sender = sender;" } ]
+    },
+    {
+      "id": "terminate-ignores-generation",
+      "side": "before",
+      "rows": [19, 21, 22, 24],
+      "description": "Terminate reports not-connected for any generation, the P3-D stale notification (line 303).",
+      "file": "src/main/WebsocketClientLite/ClientWebSocketRx.cs",
+      "edits": [ { "before": "if (ReferenceEquals(_generation, generation)) SetIsConnected(false);", "after": "SetIsConnected(false);" } ]
+    },
+    {
+      "id": "dispose-not-permanent",
+      "side": "before",
+      "rows": [25, 26, 27],
+      "description": "Dispose and DisposeAsync leave admission open (lines 331 and 368).",
+      "file": "src/main/WebsocketClientLite/ClientWebSocketRx.cs",
+      "edits": [
+        { "before": "            lock (_lifecycleGate) _disposed = true;\n", "after": "            // seeded defect: admission stays open\n" },
+        { "before": "        lock (_lifecycleGate) _disposed = true;\n        foreach", "after": "        // seeded defect: admission stays open\n        foreach" }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:01.19
+baseline: passed (21.646s)
+CLOSE-001-duplicate-send: detected (21.148s)
+CLOSE-001-suppressed-send: detected (21.614s)
+CLOSE-002-state-bit-loss: detected (21.451s)
+CLOSE-003-premature-release: inconclusive (90.084s)
+Evidence: /home/runner/work/WebsocketClientLite.PCL/WebsocketClientLite.PCL/artifacts/pdd/protocol/mutations

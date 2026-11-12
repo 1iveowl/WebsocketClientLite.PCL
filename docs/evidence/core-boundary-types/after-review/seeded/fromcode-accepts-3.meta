@@ -1,0 +1,7 @@
+id=fromcode-accepts-3
+commit=3519275
+before=code is 0 or 1 or 2 or 8
+after=code is 0 or 1 or 2 or 3 or 8
+source_sha256=1a3445d1034abf18459a3107a418c1ec1e45ce39fa93b9d20036b35b17c98086
+mutant_sha256=f411d266962c6f87a7d2e4c518e9ceb9df67ac1bbd7b9b4f7b8a95aad200a988
+exit=1

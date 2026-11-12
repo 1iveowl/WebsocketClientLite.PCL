@@ -10,6 +10,7 @@ public sealed class Mutations(string root)
     static readonly Dictionary<string, string> Scopes = new()
     {
         ["ProtocolCore.Protocol.CloseStep"] = "verification/Protocol.dfy",
+        ["ProtocolCore.Protocol.DecodeHeader"] = "verification/Protocol.dfy",
         ["ProtocolCore.Protocol.Merge"] = "verification/Protocol.dfy",
         ["ProtocolCore.Protocol.MergeScalar"] = "verification/Protocol.dfy",
         ["ProtocolCore.Protocol.CopyMasked"] = "verification/Protocol.dfy",
@@ -45,7 +46,7 @@ public sealed class Mutations(string root)
         bool Selected(string id) => scope == "all" || id.StartsWith("CLOSE-", StringComparison.Ordinal) == (scope == "close");
         foreach (var m in catalog.Mutants)
         {
-            Require(Regex.IsMatch(m.Id, @"^(CLOSE|REASSEMBLY|MASK)-[0-9]{3}-[a-z-]+$") && ids.Add(m.Id), "invalid/duplicate mutant ID");
+            Require(Regex.IsMatch(m.Id, @"^(CLOSE|REASSEMBLY|MASK|HEADER)-[0-9]{3}-[a-z-]+$") && ids.Add(m.Id), "invalid/duplicate mutant ID");
             Require(Selected(m.Requirement), "mutant outside selected suite");
             Require(Scopes.TryGetValue(m.Symbol, out var file) && file == m.File, "unsupported mutation scope");
             var req = manifest.Requirements.SingleOrDefault(r => r.Id == m.Requirement);
@@ -69,13 +70,17 @@ public sealed class Mutations(string root)
             Require(catalog.Mutants.Any(m => m.Obligation == o.Id), "uncovered mutation obligation");
         return catalog;
     }
-    static (int Start, int End) Bounds(string source, Mutant m)
+    // The declaration kinds the classifier looks up: the mutated methods and the functions
+    // and predicates a target clause calls. Tests render fixture lines with the same kinds.
+    public const string MethodKinds = @"static\s+method";
+    public const string FunctionKinds = @"(?:(?:static|ghost|opaque)\s+)*(?:function|predicate)";
+    static (int Start, int End) Bounds(string source, Mutant m, string? masked = null)
     {
         Require(Scopes.TryGetValue(m.Symbol, out var file) && file == m.File, "unsupported mutation scope");
-        var masked = Requirements.Masked(source);
-        var declarations = Regex.Matches(masked, @"\bstatic\s+method\s+(?:\{:[^}]*\}\s*)?" + Regex.Escape(m.Symbol.Split('.').Last()) + @"\s*\(");
-        Require(declarations.Count == 1, "missing or ambiguous mutation method");
-        var start = masked.IndexOf('{', declarations[0].Index + declarations[0].Length);
+        masked ??= Requirements.Masked(source);
+        var member = Requirements.DafnyMember(masked, m.Symbol, MethodKinds);
+        Require(member is { Opening: >= 0 }, "missing or ambiguous mutation method");
+        var start = member!.Value.Opening;
         var body = Requirements.Body(masked, start);
         return (start, start + 1 + body.Length);
     }
@@ -101,10 +106,11 @@ public sealed class Mutations(string root)
         var primary = Regex.Matches(output, @"^(.+?)\((\d+),(\d+)\): Error: (.+)$", RegexOptions.Multiline);
         var related = Regex.Matches(output, @"^(.+?)\((\d+),(\d+)\): Related location: (.+)$", RegexOptions.Multiline);
         if (primary.Count != errors || output.Split("Error:").Length - 1 != errors) return Inconclusive();
+        var masked = Requirements.Masked(source);
         int start, end;
-        try { (start, end) = Bounds(source, mutant); } catch (InvalidDataException) { return Inconclusive(); }
-        var firstLine = source[..start].Count(c => c == '\n') + 1;
-        var lastLine = source[..end].Count(c => c == '\n') + 1;
+        try { (start, end) = Bounds(source, mutant, masked); } catch (InvalidDataException) { return Inconclusive(); }
+        var firstLine = Requirements.LineAt(source, start);
+        var lastLine = Requirements.LineAt(source, end);
         var lines = source.Split('\n');
         var matched = new List<string>();
         foreach (Match p in primary)
@@ -131,10 +137,22 @@ public sealed class Mutations(string root)
         }
         if (mutant.Classification == "postcondition")
         {
-            if (related.Count != errors) return Inconclusive();
+            // Dafny may add "this proposition could not be proved" inside a predicate the
+            // failed clause calls. Accept it only inside the body of a predicate named in
+            // the target clause; every error still needs its own postcondition location.
+            const string Postcondition = "this is the postcondition that could not be proved";
+            if (related.Count(p => p.Groups[4].Value == Postcondition) != errors) return Inconclusive();
+            List<(int First, int Last)>? predicates = null;
             foreach (Match p in related)
             {
-                if (p.Groups[1].Value != mutant.File || !int.TryParse(p.Groups[2].Value, out var line) || line < 1 || line > lines.Length || p.Groups[4].Value != "this is the postcondition that could not be proved") return Inconclusive();
+                if (p.Groups[1].Value != mutant.File || !int.TryParse(p.Groups[2].Value, out var line) || line < 1 || line > lines.Length) return Inconclusive();
+                if (p.Groups[4].Value == "this proposition could not be proved")
+                {
+                    try { predicates ??= NamedPredicateLines(masked, mutant); } catch (InvalidDataException) { return Inconclusive(); }
+                    if (!predicates.Any(r => line >= r.First && line <= r.Last)) return Inconclusive();
+                    continue;
+                }
+                if (p.Groups[4].Value != Postcondition) return Inconclusive();
                 var clause = Requirements.LogicalLine(lines, line - 1);
                 if (!mutant.AllowedClauses.Contains(clause)) return Inconclusive();
                 matched.Add(clause);
@@ -143,6 +161,26 @@ public sealed class Mutations(string root)
         else if (related.Count != 0) return Inconclusive();
         if (mutant.Classification == "invariant" && Regex.Matches(output, @"^\s*Related message: loop invariant violation\s*$", RegexOptions.Multiline).Count != errors) return Inconclusive();
         return new(matched.Contains(mutant.TargetClause) ? "detected" : "inconclusive", matched.ToArray());
+    }
+    // The line ranges of the bodies of the functions and predicates the target clause calls,
+    // declared in the module and class of the mutant's symbol, found once per classification
+    // rather than once per related location. A call qualified with another class or module,
+    // or a member call on a value, names no function of that class and is skipped; a call
+    // qualified with the mutant's own class counts. A function without a body has no range.
+    // A body that cannot be read throws, and the caller classifies the run as inconclusive.
+    static List<(int First, int Last)> NamedPredicateLines(string masked, Mutant mutant)
+    {
+        var owner = mutant.Symbol[..mutant.Symbol.LastIndexOf('.')];
+        string[] own = ["", owner[(owner.LastIndexOf('.') + 1)..] + ".", owner + "."];
+        var scope = Requirements.DafnyClass(masked, owner);
+        var ranges = new List<(int First, int Last)>();
+        foreach (var name in Regex.Matches(mutant.TargetClause, @"(?<![\w.])((?:\w+\.)*)(\w+)\s*\(").Where(n => own.Contains(n.Groups[1].Value)).Select(n => n.Groups[2].Value).Distinct())
+        {
+            if (Requirements.DafnyMember(masked, scope, name, FunctionKinds, owner + "." + name) is not { Opening: >= 0 } member) continue;
+            var first = Requirements.LineAt(masked, member.Opening);
+            ranges.Add((first, first + Requirements.Body(masked, member.Opening).Count(c => c == '\n')));
+        }
+        return ranges;
     }
     public delegate Task<ExecutionResult> Executor(string[] command, string tree, string directory, double budget, CancellationToken cancellation);
     public static async Task<JsonObject> Suite(MutationCatalog catalog, Dictionary<string, string> sources, string output, string[] command, double baselineBudget, double mutantBudget, CancellationToken cancellation = default, Executor? executor = null)

@@ -1,0 +1,34 @@
+start=2026-11-11T23:07:33Z head=55ad2f7b51c1f16f17a929a2e041517b8ec981b9 status_porcelain_lines=0
+== source-diff start 2026-11-11T23:07:33Z lock=no: git diff --stat fa96d59 HEAD -- src tools scripts verification/Masking.dfy verification/Protocol.dfy verification/generated verification/requirements.json verification/boundaries.json verification/mutations verification/stryker-close-dispositions.json test-all-tfms.sh GitVersion.yml
+== source-diff exit=0 end 2026-11-11T23:07:33Z
+== build start 2026-11-11T23:07:33Z lock=yes: dotnet build src/main/WebsocketClientLite.sln -c Release --nologo
+== build lock acquired 2026-11-11T23:10:36Z
+== build exit=0 end 2026-11-11T23:10:38Z
+== matrix start 2026-11-11T23:10:38Z lock=yes: ./test-all-tfms.sh Release
+== matrix lock acquired 2026-11-11T23:11:24Z
+== matrix exit=0 end 2026-11-11T23:13:35Z
+== coverage-run start 2026-11-11T23:13:35Z lock=yes: dotnet test src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj -c Release --nologo --collect:XPlat Code Coverage --results-directory /home/vscode/worktrees/s6/artifacts/tip-2026-11-11/coverage
+== coverage-run lock acquired 2026-11-11T23:15:50Z
+== coverage-run exit=0 end 2026-11-11T23:16:18Z
+== coverage-gate start 2026-11-11T23:16:18Z lock=no: ./scripts/check-coverage.sh /home/vscode/worktrees/s6/artifacts/tip-2026-11-11/coverage 70
+== coverage-gate exit=0 end 2026-11-11T23:16:18Z
+== pdd-tests start 2026-11-11T23:16:18Z lock=yes: dotnet test tools/Pdd.Tests/Pdd.Tests.csproj -c Release --nologo
+== pdd-tests lock acquired 2026-11-11T23:17:08Z
+== pdd-tests exit=0 end 2026-11-11T23:17:23Z
+== validate start 2026-11-11T23:17:23Z lock=no: ./scripts/pdd.sh validate
+== validate exit=0 end 2026-11-11T23:17:23Z
+== capture-protocol start 2026-11-11T23:17:23Z lock=yes: ./scripts/pdd.sh capture --job protocol --output /home/vscode/worktrees/s6/artifacts/tip-2026-11-11/pdd/protocol
+== capture-protocol lock acquired 2026-11-11T23:20:48Z
+== capture-protocol exit=0 end 2026-11-11T23:24:13Z
+== capture-tests start 2026-11-11T23:24:13Z lock=yes: ./scripts/pdd.sh capture --job tests --output /home/vscode/worktrees/s6/artifacts/tip-2026-11-11/pdd/tests
+== capture-tests lock acquired 2026-11-11T23:27:01Z
+== capture-tests exit=0 end 2026-11-11T23:29:45Z
+== capture-controlled start 2026-11-11T23:29:45Z lock=yes: ./scripts/pdd.sh capture --job controlled --output /home/vscode/worktrees/s6/artifacts/tip-2026-11-11/pdd/controlled
+== capture-controlled lock acquired 2026-11-11T23:31:10Z
+== capture-controlled exit=0 end 2026-11-11T23:32:21Z
+== capture-stryker start 2026-11-11T23:32:21Z lock=yes: ./scripts/pdd.sh capture --job stryker --output /home/vscode/worktrees/s6/artifacts/tip-2026-11-11/pdd/stryker
+== capture-stryker lock acquired 2026-11-11T23:38:45Z
+== capture-stryker exit=0 end 2026-11-11T23:44:26Z
+== aggregate start 2026-11-11T23:44:26Z lock=no: ./scripts/pdd.sh aggregate --output /home/vscode/worktrees/s6/artifacts/tip-2026-11-11/pdd
+== aggregate exit=0 end 2026-11-11T23:44:27Z
+end=2026-11-11T23:44:27Z head=55ad2f7b51c1f16f17a929a2e041517b8ec981b9 status_porcelain_lines=0

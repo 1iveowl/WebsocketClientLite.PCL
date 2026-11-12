@@ -1,0 +1,11 @@
+--- a/src/main/WebsocketClientLite/ClientWebSocketRx.cs
++++ b/src/main/WebsocketClientLite/ClientWebSocketRx.cs
+@@ -255,7 +255,7 @@
+                     obsTuple.OnError(new ObjectDisposedException(nameof(ClientWebSocketRx)));
+                     return Disposable.Empty;
+                 }
+-                _generation = generation;
++                // seeded defect: the generation is not stored
+             }
+ 
+             void InitSender(ISender sender, IEnumerable<string>? negotiatedSubprotocols)

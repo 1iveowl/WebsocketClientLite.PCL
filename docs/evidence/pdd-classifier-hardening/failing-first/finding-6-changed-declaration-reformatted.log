@@ -1,0 +1,26 @@
+source: working tree of /home/vscode/worktrees/s10 at cad232592f23da30ca559d05f87401a5f9a733b0, with these changes:
+?? docs/evidence/pdd-classifier-hardening/
+copy: /tmp/s10-experiment.a8uwtb6p
+edited verification/Protocol.dfy:
+  - 'static method DecodeHeader('
+  + 'static method  DecodeHeader('
+command: dotnet test tools/Pdd.Tests/Pdd.Tests.csproj -c Release --filter FullyQualifiedName~PropositionLocationMustLieInAPredicateTheTargetNames
+  Determining projects to restore...
+  Restored /tmp/s10-experiment.a8uwtb6p/tools/Pdd/Pdd.csproj (in 40 ms).
+  Restored /tmp/s10-experiment.a8uwtb6p/tools/Pdd.Tests/Pdd.Tests.csproj (in 174 ms).
+  Pdd -> /tmp/s10-experiment.a8uwtb6p/tools/Pdd/bin/Release/net10.0/Pdd.dll
+  Pdd.Tests -> /tmp/s10-experiment.a8uwtb6p/tools/Pdd.Tests/bin/Release/net10.0/Pdd.Tests.dll
+Test run for /tmp/s10-experiment.a8uwtb6p/tools/Pdd.Tests/bin/Release/net10.0/Pdd.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:01.37]     Pdd.Tests.PayloadEvidenceTests.PropositionLocationMustLieInAPredicateTheTargetNames(mode: "signature") [FAIL]
+  Failed Pdd.Tests.PayloadEvidenceTests.PropositionLocationMustLieInAPredicateTheTargetNames(mode: "signature") [216 ms]
+  Error Message:
+   line not found: static method DecodeHeader(
+  Stack Trace:
+     at Pdd.Tests.PayloadEvidenceTests.LineOf(String source, String text) in /tmp/s10-experiment.a8uwtb6p/tools/Pdd.Tests/PayloadEvidenceTests.cs:line 44
+   at Pdd.Tests.PayloadEvidenceTests.PropositionLocationMustLieInAPredicateTheTargetNames(String mode) in /tmp/s10-experiment.a8uwtb6p/tools/Pdd.Tests/PayloadEvidenceTests.cs:line 65
+   at InvokeStub_PayloadEvidenceTests.PropositionLocationMustLieInAPredicateTheTargetNames(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+
+Failed!  - Failed:     1, Passed:     3, Skipped:     0, Total:     4, Duration: 1 s - Pdd.Tests.dll (net10.0)
+exit=1 elapsed=3662ms

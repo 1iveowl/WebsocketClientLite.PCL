@@ -306,3 +306,61 @@ Rx Using installs ownership before setup. No new scheduler or public seam is add
 **EPOCH-PROGRESS:** finite callbacks, external connect/handshake settlement and Rx
 resource disposal remain trusted. Simultaneous active subscription policy is
 explicitly deferred. Human semantic acceptance remains a revision-specific review.
+
+## Header validation intent decisions (2026-11-11, acceptance pending)
+
+These are proposed intent decisions for revision-specific PR review, added on
+2026-11-11 for pull request #136. They do not record approval, and no human
+review of them has been done. The rule they trace is RFC 6455 section 5.2, "the
+minimal number of bytes MUST be used to encode the length". The replay of the
+test against the pre-proof parser is in
+[header-length-validation.md](../docs/header-length-validation.md).
+
+### HEADER-001
+
+DecodeHeader accepts a server header (status 2) only with the minimal length
+encoding, a length at most the configured limit and 0x7fffffff, and the extended
+length read in network byte order from a 2-, 4- or 10-byte header.
+
+Chosen: map the existing DecodeHeader and ReadLength contracts, the existing
+tests, and two mutants that weaken the minimal-length check inside DecodeHeader.
+Rejected alternative: mutating HeaderValid, which is the specification, not the
+implementation.
+
+DecodeHeader sets its status by calling HeaderValid, so the status clause of its
+contract is close to true by construction. The proof's own content is the length
+decoding (ReadLength, Word), the header size and the need-more status. The
+mutants show that the contract catches a decoder that stops calling the
+specification; they do not show more than that. No proof of the stream reader,
+end-of-stream or cancellation handling, or the conversion of MaxFrameSize to the
+limit. No proof of generated C#, compiler/runtime correctness, successful
+allocation, concurrent buffer access or complete RFC conformance.
+
+### HEADER-002
+
+Admit admits or rejects a frame from its header and the parser's message state
+alone, before any payload byte is read or allocated; a rejected frame leaves the
+state and total unchanged.
+
+Chosen: map the existing Admit contract and the tests that count bytes read
+(HugeLengthsRejectOnHeaderOnly) or exclude end of stream
+(RejectsSequenceBeforeAttemptingPayloadRead). Rejected alternative: adding an
+Admit mutant, which owner decision 3 of the 10.3 session plan does not authorize
+as a mutation scope.
+
+The proof covers the decision, not the order of reads in C#; that order is
+tested only for the selected rows. No proof of generated C#, compiler/runtime
+correctness, successful allocation, concurrent buffer access or complete RFC
+conformance.
+
+<a id="boundary-header-adapter"></a>
+### HEADER-ADAPTER
+
+ReadDataframeAsync passes Admit the two prefix bytes, exactly the
+extended-length bytes read after them with their count, the configured limit and
+the parser's message state and retained total; it reads more header bytes only
+on status 0 and reads or allocates the payload only on status 2.
+
+No proof of the C# adapter, the stream reader, end-of-stream or cancellation
+handling, or the conversion of MaxFrameSize to the limit. Human semantic review
+remains not-run.

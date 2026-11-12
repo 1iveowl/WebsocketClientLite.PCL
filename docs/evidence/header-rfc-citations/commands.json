@@ -1,0 +1,34 @@
+[
+  {
+    "run": "before-check",
+    "when": "2026-11-11T13:48:46Z, at 28e30cb, before any edit",
+    "command": "./scripts/dafny-masking.sh --check",
+    "log": "before-check.log",
+    "exit": "exit=0",
+    "outcome": "Dafny program verifier finished with 41 verified, 0 errors"
+  },
+  {
+    "run": "comments-only",
+    "when": "2026-11-11, after the edit",
+    "command": "bash docs/evidence/header-rfc-citations/comments-only.sh 28e30cb",
+    "log": "comments-only.log",
+    "exit": "exit=0",
+    "outcome": "0 removed lines, 0 added non-comment lines, 105 added comment lines; the comment-stripped files are identical."
+  },
+  {
+    "run": "write",
+    "when": "2026-11-11T13:53:49Z, after the edit",
+    "command": "./scripts/dafny-masking.sh --write",
+    "log": "write.log",
+    "exit": "exit=0",
+    "outcome": "Dafny program verifier finished with 41 verified, 0 errors. verification/generated/Masking.g.cs unchanged (git diff empty)."
+  },
+  {
+    "run": "after-check",
+    "when": "2026-11-11T13:54:10Z, after the edit and regeneration",
+    "command": "./scripts/dafny-masking.sh --check",
+    "log": "after-check.log",
+    "exit": "exit=0",
+    "outcome": "Dafny program verifier finished with 41 verified, 0 errors. Identical to before-check. Trusted-boundary audit and generated-code diffs empty."
+  }
+]

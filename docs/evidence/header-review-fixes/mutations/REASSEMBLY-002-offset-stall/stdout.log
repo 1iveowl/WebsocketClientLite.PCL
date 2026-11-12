@@ -1,0 +1,8 @@
+verification/Protocol.dfy(267,32): Error: this invariant could not be proved to be maintained by the loop
+ Related message: loop invariant violation
+    |
+267 |         invariant offset as int == |Parts(parts, p as int)| && offset <= total
+    |                                 ^^
+
+
+Dafny program verifier finished with 573 verified, 1 error

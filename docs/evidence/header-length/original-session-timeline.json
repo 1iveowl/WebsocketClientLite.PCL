@@ -1,0 +1,308 @@
+{
+  "what": "Extract of a local session log of the 7 November 2026 work that became #100 (c482b0c). Made 2026-11-11. The log itself stays local and is not archived; this extract carries only timestamps, the files changed and test result lines.",
+  "log": {
+    "sha256": "47342a652b19a29d769dd2eddb3ba68c36499554d7b30312fd039c32b3ece284",
+    "bytes": 2643208,
+    "lines": 1016,
+    "session_start_utc": "2026-11-07T11:58:26.914Z"
+  },
+  "events": [
+    {
+      "utc": "2026-11-07T12:07:43Z",
+      "event": "Branch feat/dafny-masking-pilot created from releases/10.0.0 at a779602"
+    },
+    {
+      "utc": "2026-11-07T12:17:40.350Z",
+      "log_line": 360,
+      "event": "src/main/WebsocketClientLite/Helper/DataframeParsing.cs switched to the verified protocol core (first edit naming WebsocketClientLite.VerifiedProtocol)"
+    },
+    {
+      "utc": "2026-11-07T12:20:45.283Z",
+      "log_line": 416,
+      "event": "RejectsMalformedFrames first appears, added to PayloadParsingTests.cs with the row { 0x81, 126, 0, 125 }"
+    },
+    {
+      "utc": "2026-11-07T12:49:07Z",
+      "event": "Commit 83a1b67 (tree identical to c482b0c)"
+    },
+    {
+      "utc": "2026-11-07T12:50:50Z",
+      "event": "PR #100 squash-merged as c482b0c (GitHub mergedAt)"
+    }
+  ],
+  "test_and_proof_runs": [
+    {
+      "log_line": 166,
+      "utc": "2026-11-07T12:08:17.585Z",
+      "results": [
+        "Dafny program verifier finished with 6 verified, 0 errors"
+      ],
+      "failed_tests": []
+    },
+    {
+      "log_line": 194,
+      "utc": "2026-11-07T12:09:16.372Z",
+      "results": [
+        "Dafny program verifier finished with 5 verified, 0 errors, 1 time out"
+      ],
+      "failed_tests": []
+    },
+    {
+      "log_line": 208,
+      "utc": "2026-11-07T12:09:30.881Z",
+      "results": [
+        "Dafny program verifier finished with 6 verified, 0 errors"
+      ],
+      "failed_tests": []
+    },
+    {
+      "log_line": 215,
+      "utc": "2026-11-07T12:09:38.957Z",
+      "results": [
+        "Dafny program verifier finished with 6 verified, 0 errors"
+      ],
+      "failed_tests": []
+    },
+    {
+      "log_line": 221,
+      "utc": "2026-11-07T12:10:23.087Z",
+      "results": [
+        "Dafny program verifier finished with 6 verified, 0 errors"
+      ],
+      "failed_tests": []
+    },
+    {
+      "log_line": 231,
+      "utc": "2026-11-07T12:10:38.259Z",
+      "results": [
+        "Passed!  - Failed:     0, Passed:    94, Skipped:     0, Total:    94, Duration: 797 ms - WebsocketClientLiteTest.dll (net10.0)"
+      ],
+      "failed_tests": []
+    },
+    {
+      "log_line": 255,
+      "utc": "2026-11-07T12:11:20.872Z",
+      "results": [
+        "Dafny program verifier finished with 5 verified, 1 error"
+      ],
+      "failed_tests": []
+    },
+    {
+      "log_line": 262,
+      "utc": "2026-11-07T12:11:27.946Z",
+      "results": [
+        "Passed!  - Failed:     0, Passed:    94, Skipped:     0, Total:    94, Duration: 792 ms - WebsocketClientLiteTest.dll (net10.0)",
+        "Passed!  - Failed:     0, Passed:    94, Skipped:     0, Total:    94, Duration: 794 ms - WebsocketClientLiteTest.dll (net10.0)",
+        "Passed!  - Failed:     0, Passed:    94, Skipped:     0, Total:    94, Duration: 795 ms - WebsocketClientLiteTest.dll (net10.0)",
+        "Passed!  - Failed:     0, Passed:    94, Skipped:     0, Total:    94, Duration: 796 ms - WebsocketClientLiteTest.dll (net10.0)",
+        "Passed!  - Failed:     0, Passed:    94, Skipped:     0, Total:    94, Duration: 797 ms - WebsocketClientLiteTest.dll (net10.0)"
+      ],
+      "failed_tests": []
+    },
+    {
+      "log_line": 269,
+      "utc": "2026-11-07T12:12:21.317Z",
+      "results": [
+        "Dafny program verifier finished with 6 verified, 0 errors"
+      ],
+      "failed_tests": []
+    },
+    {
+      "log_line": 363,
+      "utc": "2026-11-07T12:17:40.414Z",
+      "results": [
+        "Dafny program verifier finished with 18 verified, 1 error"
+      ],
+      "failed_tests": []
+    },
+    {
+      "log_line": 393,
+      "utc": "2026-11-07T12:18:52.435Z",
+      "results": [
+        "Dafny program verifier finished with 19 verified, 2 errors, 1 time out"
+      ],
+      "failed_tests": []
+    },
+    {
+      "log_line": 405,
+      "utc": "2026-11-07T12:19:39.953Z",
+      "results": [
+        "Dafny program verifier finished with 21 verified, 0 errors"
+      ],
+      "failed_tests": []
+    },
+    {
+      "log_line": 418,
+      "utc": "2026-11-07T12:20:46.458Z",
+      "results": [
+        "Build FAILED."
+      ],
+      "failed_tests": []
+    },
+    {
+      "log_line": 426,
+      "utc": "2026-11-07T12:20:50.626Z",
+      "results": [
+        "Passed!  - Failed:     0, Passed:   111, Skipped:     0, Total:   111, Duration: 786 ms - WebsocketClientLiteTest.dll (net10.0)"
+      ],
+      "failed_tests": []
+    },
+    {
+      "log_line": 442,
+      "utc": "2026-11-07T12:22:42.600Z",
+      "results": [
+        "Failed!  - Failed:     1, Passed:   148, Skipped:     0, Total:   149, Duration: 843 ms - WebsocketClientLiteTest.dll (net10.0)"
+      ],
+      "failed_tests": [
+        "WebsocketClientLiteTest.HandshakeParserTests.MissingUpgradeTokensFail"
+      ]
+    },
+    {
+      "log_line": 467,
+      "utc": "2026-11-07T12:23:31.341Z",
+      "results": [
+        "Dafny program verifier finished with 23 verified, 1 error",
+        "Failed!  - Failed:     1, Passed:   148, Skipped:     0, Total:   149, Duration: 1 s - WebsocketClientLiteTest.dll (net10.0)"
+      ],
+      "failed_tests": [
+        "WebsocketClientLiteTest.HandshakeParserTests.MissingUpgradeTokensFail"
+      ]
+    },
+    {
+      "log_line": 509,
+      "utc": "2026-11-07T12:24:50.054Z",
+      "results": [
+        "Passed!  - Failed:     0, Passed:   149, Skipped:     0, Total:   149, Duration: 793 ms - WebsocketClientLiteTest.dll (net10.0)"
+      ],
+      "failed_tests": []
+    },
+    {
+      "log_line": 521,
+      "utc": "2026-11-07T12:24:59.079Z",
+      "results": [
+        "Dafny program verifier finished with 23 verified, 0 errors, 1 time out"
+      ],
+      "failed_tests": []
+    },
+    {
+      "log_line": 541,
+      "utc": "2026-11-07T12:25:55.969Z",
+      "results": [
+        "Dafny program verifier finished with 24 verified, 1 error, 1 time out"
+      ],
+      "failed_tests": []
+    },
+    {
+      "log_line": 567,
+      "utc": "2026-11-07T12:26:44.624Z",
+      "results": [
+        "Passed!  - Failed:     0, Passed:   151, Skipped:     0, Total:   151, Duration: 815 ms - WebsocketClientLiteTest.dll (net10.0)"
+      ],
+      "failed_tests": []
+    },
+    {
+      "log_line": 575,
+      "utc": "2026-11-07T12:27:02.302Z",
+      "results": [
+        "Dafny program verifier finished with 23 verified, 0 errors, 1 time out"
+      ],
+      "failed_tests": []
+    },
+    {
+      "log_line": 591,
+      "utc": "2026-11-07T12:27:56.582Z",
+      "results": [
+        "Dafny program verifier finished with 24 verified, 0 errors"
+      ],
+      "failed_tests": []
+    },
+    {
+      "log_line": 605,
+      "utc": "2026-11-07T12:28:25.575Z",
+      "results": [
+        "Dafny program verifier finished with 26 verified, 0 errors"
+      ],
+      "failed_tests": []
+    },
+    {
+      "log_line": 629,
+      "utc": "2026-11-07T12:29:19.119Z",
+      "results": [
+        "Dafny program verifier finished with 26 verified, 0 errors",
+        "Passed!  - Failed:     0, Passed:   152, Skipped:     0, Total:   152, Duration: 797 ms - WebsocketClientLiteTest.dll (net10.0)"
+      ],
+      "failed_tests": []
+    },
+    {
+      "log_line": 652,
+      "utc": "2026-11-07T12:30:23.195Z",
+      "results": [
+        "Dafny program verifier finished with 21 verified, 0 errors, 2 time outs"
+      ],
+      "failed_tests": []
+    },
+    {
+      "log_line": 672,
+      "utc": "2026-11-07T12:31:33.673Z",
+      "results": [
+        "Dafny program verifier finished with 21 verified, 2 errors"
+      ],
+      "failed_tests": []
+    },
+    {
+      "log_line": 686,
+      "utc": "2026-11-07T12:32:57.481Z",
+      "results": [
+        "Dafny program verifier finished with 22 verified, 0 errors, 1 time out"
+      ],
+      "failed_tests": []
+    },
+    {
+      "log_line": 709,
+      "utc": "2026-11-07T12:34:15.030Z",
+      "results": [
+        "Dafny program verifier finished with 22 verified, 0 errors, 1 time out"
+      ],
+      "failed_tests": []
+    },
+    {
+      "log_line": 723,
+      "utc": "2026-11-07T12:34:46.028Z",
+      "results": [
+        "Dafny program verifier finished with 23 verified, 0 errors"
+      ],
+      "failed_tests": []
+    },
+    {
+      "log_line": 741,
+      "utc": "2026-11-07T12:35:27.236Z",
+      "results": [
+        "Dafny program verifier finished with 23 verified, 0 errors",
+        "Passed!  - Failed:     0, Passed:   161, Skipped:     0, Total:   161, Duration: 796 ms - WebsocketClientLiteTest.dll (net10.0)"
+      ],
+      "failed_tests": []
+    },
+    {
+      "log_line": 781,
+      "utc": "2026-11-07T12:38:16.584Z",
+      "results": [
+        "Dafny program verifier finished with 165 verified, 1 error"
+      ],
+      "failed_tests": []
+    },
+    {
+      "log_line": 790,
+      "utc": "2026-11-07T12:39:07.561Z",
+      "results": [
+        "Dafny program verifier finished with 23 verified, 0 errors",
+        "Passed!  - Failed:     0, Passed:   161, Skipped:     0, Total:   161, Duration: 794 ms - WebsocketClientLiteTest.dll (net10.0)",
+        "Passed!  - Failed:     0, Passed:   161, Skipped:     0, Total:   161, Duration: 796 ms - WebsocketClientLiteTest.dll (net10.0)",
+        "Passed!  - Failed:     0, Passed:   161, Skipped:     0, Total:   161, Duration: 799 ms - WebsocketClientLiteTest.dll (net10.0)",
+        "Passed!  - Failed:     0, Passed:   161, Skipped:     0, Total:   161, Duration: 802 ms - WebsocketClientLiteTest.dll (net10.0)",
+        "Passed!  - Failed:     0, Passed:   161, Skipped:     0, Total:   161, Duration: 804 ms - WebsocketClientLiteTest.dll (net10.0)"
+      ],
+      "failed_tests": []
+    }
+  ],
+  "finding": "No test or proof run in the log precedes the parser switch with RejectsMalformedFrames present, and no run shows RejectsMalformedFrames failing. Every [FAIL] line names another test."
+}

@@ -1,0 +1,24 @@
+run: 1
+date (UTC) before lock: 2026-11-11T23:01:35Z
+lock acquired (UTC): 2026-11-11T23:01:35Z
+commit (git rev-parse HEAD in the benchmarked tree): 35192752625fd9b8e937af75272d67b7afeb83b9
+tree changes (git status --porcelain --untracked-files=no | wc -l): 0
+ps -eo pid,etime,comm | grep -E "claude|dotnet|VBCSCompiler" (taken just before the run):
+ 365490    09:57:11 claude
+ 377586    09:17:25 claude
+ 568353    01:18:36 VBCSCompiler
+ 577568       58:08 dotnet
+ 577569       58:08 dotnet
+ 577570       58:08 dotnet
+ 577648       58:07 dotnet
+ 577649       58:07 dotnet
+ 577650       58:07 dotnet
+ 577683       58:07 dotnet
+ 696266       08:44 claude
+ 697348       07:17 claude
+ 697436       07:16 claude
+ 706130       01:27 claude
+uptime:  23:01:35 up 13 days, 14:45,  0 user,  load average: 15.16, 8.80, 4.93
+command: DOTNET_TieredCompilation=0 dotnet run --project verification/benchmark/MaskingBenchmark.csproj -c Release
+exit=0 wall_seconds=8.50
+finished (UTC): 2026-11-11T23:01:44Z

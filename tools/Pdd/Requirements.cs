@@ -89,36 +89,124 @@ public sealed class Requirements(string root)
         Require(matches.Count == 1, $"unresolved or ambiguous {label} ({matches.Count} declarations)");
         return matches[0];
     }
+    // The 1-based line of the character at `index` in `text`.
+    public static int LineAt(string text, int index) => text.AsSpan(0, index).Count('\n') + 1;
+    // The one Dafny declaration lookup, shared by Resolve and the mutation classifier.
+    // `symbol` is Module.Class.Member and `kinds` the keywords before the name, for example
+    // @"static\s+method". The match is limited to that module and class, and allows any
+    // number of attributes before the name. Returns the index of the declaration in `masked`
+    // and of its body's opening brace, which is -1 when the declaration has no body, or null
+    // when the class has no such member. An ambiguous or unbalanced source throws.
+    public static (int Index, int Opening)? DafnyMember(string masked, string symbol, string kinds, string? label = null)
+    {
+        label ??= symbol;
+        Require(symbol.Split('.').Length >= 3, $"invalid qualified symbol: {label}");
+        var name = symbol.LastIndexOf('.');
+        return DafnyMember(masked, DafnyClass(masked, symbol[..name], label), symbol[(name + 1)..], kinds, label);
+    }
+    // The class `owner` (Module.Class) in `masked`: the index of its opening brace and its
+    // body, so that several members of one class are looked up with one class lookup.
+    public static (int Open, string Body) DafnyClass(string masked, string owner, string? label = null)
+    {
+        label ??= owner;
+        var parts = owner.Split('.');
+        Require(parts.Length >= 2, $"invalid qualified symbol: {label}");
+        var module = One(masked, @"\bmodule\s+(?:\{:[^}]*\}\s*)*" + Regex.Escape(string.Join('.', parts[..^1])) + @"\s*\{", label);
+        var moduleOpen = module.Index + module.Length - 1;
+        var cls = One(Body(masked, moduleOpen), @"\bclass\s+" + Regex.Escape(parts[^1]) + @"\b", label);
+        var classOpen = masked.IndexOf('{', moduleOpen + 1 + cls.Index + cls.Length);
+        return (classOpen, Body(masked, classOpen));
+    }
+    public static (int Index, int Opening)? DafnyMember(string masked, (int Open, string Body) scope, string member, string kinds, string label)
+    {
+        var matches = Regex.Matches(scope.Body, @"^\s*" + kinds + @"\s+(?:\{:[^}]*\}\s*)*" + Regex.Escape(member) + @"\s*[(<]", RegexOptions.Multiline);
+        if (matches.Count == 0) return null;
+        Require(matches.Count == 1, $"unresolved or ambiguous {label} ({matches.Count} declarations)");
+        var before = scope.Body[..matches[0].Index];
+        Require(before.Count(c => c == '{') == before.Count(c => c == '}'), $"nested declaration: {label}");
+        var index = scope.Open + 1 + matches[0].Index;
+        return (index, BodyOpening(masked, index + matches[0].Length - 1));
+    }
+    static readonly Regex ClauseStart = new(@"\G(?:requires|ensures|reads|modifies|decreases)\b");
+    // The opening brace of a declaration's body by the repository's Dafny layout, the rule
+    // LogicalLine and Clauses rely on (#145 review, 2026-11-12), or -1 when the declaration has
+    // no body. `from` is the parenthesis or angle bracket after the name. The signature
+    // continues on lines indented more than the declaration. The contract is the lines that
+    // start with a clause keyword, each with its continuation: lines indented more than its
+    // keyword, and lines inside a bracket or brace it opened. The body brace is either on the
+    // signature, outside parentheses, brackets and attributes, or the first character of a
+    // line that continues neither. So a brace in a contract is never the body. Any other line
+    // that continues neither (the next declaration or attribute, the end of the class) ends a
+    // declaration without a body. A layout outside this rule finds no body, or a body that
+    // does not balance, and the callers report that as a missing body or an inconclusive run.
+    static int BodyOpening(string masked, int from)
+    {
+        int Indent(int start)
+        {
+            var at = start;
+            while (at < masked.Length && masked[at] is ' ' or '\t') at++;
+            return at - start;
+        }
+        bool Attribute(int brace)
+        {
+            var at = brace + 1;
+            while (at < masked.Length && char.IsWhiteSpace(masked[at])) at++;
+            return at < masked.Length && masked[at] == ':';
+        }
+        var declaration = Indent(masked.LastIndexOf('\n', from) + 1);
+        int? clause = null;
+        var depth = 0;
+        for (var i = from; i < masked.Length; i++)
+        {
+            var c = masked[i];
+            if (c == '\n')
+            {
+                if (depth > 0) continue;
+                var indent = Indent(i + 1);
+                var first = i + 1 + indent;
+                if (first == masked.Length) return -1;
+                if (masked[first] is '\r' or '\n') continue;
+                if (clause is { } keyword && indent > keyword) continue;
+                if (masked[first] == '{' && !Attribute(first)) return first;
+                if (ClauseStart.IsMatch(masked, first)) clause = indent;
+                else if (clause is not null || indent <= declaration) return -1;
+                i = first - 1;
+            }
+            else if (c == '{' && Attribute(i)) i += Body(masked, i).Length + 1;
+            else if (c == '{' && depth == 0 && clause is null) return i;
+            else if (c is '(' or '[' or '{') depth++;
+            else if (c is ')' or ']' or '}' && --depth < 0) return -1;
+        }
+        return -1;
+    }
     public static string Resolve(string root, SourceReference reference, bool test = false)
     {
         var label = $"{reference.File}:{reference.Symbol}";
         var text = Masked(Source(root, reference.File));
+        if (reference.File.EndsWith(".dfy"))
+        {
+            var member = DafnyMember(text, reference.Symbol, @"static\s+method", label);
+            Require(member is not null, $"unresolved or ambiguous {label} (0 declarations)");
+            Require(!test, $"not an xUnit test declaration: {label}");
+            Require(member!.Value.Opening >= 0, $"missing declaration body: {label}");
+            return text[member.Value.Index..member.Value.Opening];
+        }
+        Require(reference.File.EndsWith(".cs"), $"unsupported source type: {label}");
         var parts = reference.Symbol.Split('.');
         Require(parts.Length >= 3, $"invalid qualified symbol: {label}");
         var owner = parts[^2];
         var method = parts[^1];
         var ns = string.Join('.', parts[..^2]);
-        string scope, prefix;
-        if (reference.File.EndsWith(".dfy"))
-        {
-            var module = One(text, @"\bmodule\s+(?:\{:[^}]*\}\s*)?" + Regex.Escape(ns) + @"\s*\{", label);
-            scope = Body(text, module.Index + module.Length - 1);
-            prefix = @"^\s*static\s+method\s+(?:\{:[^}]*\}\s*)?";
-        }
-        else
-        {
-            Require(reference.File.EndsWith(".cs"), $"unsupported source type: {label}");
-            One(text, @"^namespace\s+" + Regex.Escape(ns) + @"\s*;", label);
-            scope = text;
-            prefix = @"^\s*(?:public|internal|private|protected)\s+(?:(?:static|async|virtual|override)\s+)*[\w<>?,\[\].]+\s+";
-        }
+        One(text, @"^namespace\s+" + Regex.Escape(ns) + @"\s*;", label);
+        var scope = text;
+        var prefix = @"^\s*(?:public|internal|private|protected)\s+(?:(?:static|async|virtual|override)\s+)*[\w<>?,\[\].]+\s+";
         var cls = One(scope, @"\bclass\s+" + Regex.Escape(owner) + @"\b", label);
         scope = Body(scope, scope.IndexOf('{', cls.Index + cls.Length));
         var declaration = One(scope, prefix + Regex.Escape(method) + @"\s*\(", label);
         var before = scope[..declaration.Index];
         Require(before.Count(c => c == '{') == before.Count(c => c == '}'), $"nested declaration: {label}");
         if (test)
-            Require(Regex.IsMatch(before, @"\[(?:Fact|Theory)\](?:\s*\[[^\]]+\])*\s*$"), $"not an xUnit test declaration: {label}");
+            Require(Regex.IsMatch(before, @"\[(?:Fact|Theory)\](?:\s*\[(?:[^\[\]]|\[\])*\])*\s*$"), $"not an xUnit test declaration: {label}");
         var end = scope.IndexOf('{', declaration.Index + declaration.Length);
         if (reference.File.EndsWith(".cs"))
         {

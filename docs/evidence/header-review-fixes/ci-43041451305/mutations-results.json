@@ -1,0 +1,248 @@
+{
+  "schema_version": 1,
+  "status": "failed",
+  "source_hashes": {
+    "verification/Masking.dfy": "6218c3ddcfb208f8fe8e0da80aeb062b2d1ef277c26bc2a1b4bdb07d36f26bf2",
+    "verification/Protocol.dfy": "86d4098ccfc556dd8ed0152732ea9f5dc981edfd1d7b03f0fcde864f112f21e8"
+  },
+  "experiments": [
+    {
+      "id": "baseline",
+      "status": "passed",
+      "source_hashes": {
+        "verification/Masking.dfy": "6218c3ddcfb208f8fe8e0da80aeb062b2d1ef277c26bc2a1b4bdb07d36f26bf2",
+        "verification/Protocol.dfy": "86d4098ccfc556dd8ed0152732ea9f5dc981edfd1d7b03f0fcde864f112f21e8"
+      },
+      "command": [
+        "/home/runner/.cache/websocketclientlite/dafny-4.11.0/dafny/dafny",
+        "verify",
+        "verification/Masking.dfy",
+        "--verify-included-files",
+        "--allow-external-contracts",
+        "--solver-path",
+        "/home/runner/.cache/websocketclientlite/dafny-4.11.0/dafny/z3/bin/z3-4.12.1",
+        "--verification-time-limit",
+        "60",
+        "--cores",
+        "2"
+      ],
+      "budget_seconds": 180,
+      "started_at": "2026-11-11T14:46:10.1441877+00:00",
+      "exit_code": 0,
+      "timed_out": false,
+      "interrupted": false,
+      "cleanup_incomplete": false,
+      "cleanup_seconds": 0,
+      "elapsed_seconds": 21.646,
+      "stdout": "\nDafny program verifier finished with 574 verified, 0 errors\n",
+      "stderr": "",
+      "matched_clauses": []
+    },
+    {
+      "id": "CLOSE-001-duplicate-send",
+      "status": "detected",
+      "requirement": "CLOSE-001",
+      "obligation": "CLOSE-001-MUTATION",
+      "target_clause": "ensures send <==> event == 0 && (state & 5) == 0",
+      "classification": "postcondition",
+      "contract_clause": "ensures send <==> event == 0 && (state & 5) == 0",
+      "source_hashes": {
+        "verification/Masking.dfy": "6218c3ddcfb208f8fe8e0da80aeb062b2d1ef277c26bc2a1b4bdb07d36f26bf2",
+        "verification/Protocol.dfy": "9c78e627c400df4ad089baa3b7a455cdb2fb01c680e7a9465ade7dec81b170f5"
+      },
+      "command": [
+        "/home/runner/.cache/websocketclientlite/dafny-4.11.0/dafny/dafny",
+        "verify",
+        "verification/Masking.dfy",
+        "--verify-included-files",
+        "--allow-external-contracts",
+        "--solver-path",
+        "/home/runner/.cache/websocketclientlite/dafny-4.11.0/dafny/z3/bin/z3-4.12.1",
+        "--verification-time-limit",
+        "60",
+        "--cores",
+        "2"
+      ],
+      "budget_seconds": 90,
+      "started_at": "2026-11-11T14:46:31.8047484+00:00",
+      "exit_code": 4,
+      "timed_out": false,
+      "interrupted": false,
+      "cleanup_incomplete": false,
+      "cleanup_seconds": 0,
+      "elapsed_seconds": 21.148,
+      "stdout": "verification/Protocol.dfy(206,4): Error: a postcondition could not be proved on this return path\n    |\n206 |     {\n    |     ^\n\nverification/Protocol.dfy(200,19): Related location: this is the postcondition that could not be proved\n    |\n200 |       ensures send <==> event == 0 && (state & 5) == 0\n    |                    ^^^^\n\n\nDafny program verifier finished with 573 verified, 1 error\n",
+      "stderr": "",
+      "matched_clauses": [
+        "ensures send <==> event == 0 && (state & 5) == 0"
+      ]
+    },
+    {
+      "id": "CLOSE-001-suppressed-send",
+      "status": "detected",
+      "requirement": "CLOSE-001",
+      "obligation": "CLOSE-001-MUTATION",
+      "target_clause": "ensures send <==> event == 0 && (state & 5) == 0",
+      "classification": "postcondition",
+      "contract_clause": "ensures send <==> event == 0 && (state & 5) == 0",
+      "source_hashes": {
+        "verification/Masking.dfy": "6218c3ddcfb208f8fe8e0da80aeb062b2d1ef277c26bc2a1b4bdb07d36f26bf2",
+        "verification/Protocol.dfy": "86d1e2e71452fd05fce90899775032c0d13c3439a56f34b8c5e92a0d0e05d73f"
+      },
+      "command": [
+        "/home/runner/.cache/websocketclientlite/dafny-4.11.0/dafny/dafny",
+        "verify",
+        "verification/Masking.dfy",
+        "--verify-included-files",
+        "--allow-external-contracts",
+        "--solver-path",
+        "/home/runner/.cache/websocketclientlite/dafny-4.11.0/dafny/z3/bin/z3-4.12.1",
+        "--verification-time-limit",
+        "60",
+        "--cores",
+        "2"
+      ],
+      "budget_seconds": 90,
+      "started_at": "2026-11-11T14:46:52.9637543+00:00",
+      "exit_code": 4,
+      "timed_out": false,
+      "interrupted": false,
+      "cleanup_incomplete": false,
+      "cleanup_seconds": 0,
+      "elapsed_seconds": 21.614,
+      "stdout": "verification/Protocol.dfy(206,4): Error: a postcondition could not be proved on this return path\n    |\n206 |     {\n    |     ^\n\nverification/Protocol.dfy(200,19): Related location: this is the postcondition that could not be proved\n    |\n200 |       ensures send <==> event == 0 && (state & 5) == 0\n    |                    ^^^^\n\n\nDafny program verifier finished with 573 verified, 1 error\n",
+      "stderr": "",
+      "matched_clauses": [
+        "ensures send <==> event == 0 && (state & 5) == 0"
+      ]
+    },
+    {
+      "id": "CLOSE-002-state-bit-loss",
+      "status": "detected",
+      "requirement": "CLOSE-002",
+      "obligation": "CLOSE-002-MUTATION",
+      "target_clause": "ensures next <= 7 && (next & state) == state",
+      "classification": "postcondition",
+      "contract_clause": "ensures next <= 7 && (next & state) == state",
+      "source_hashes": {
+        "verification/Masking.dfy": "6218c3ddcfb208f8fe8e0da80aeb062b2d1ef277c26bc2a1b4bdb07d36f26bf2",
+        "verification/Protocol.dfy": "0dc1fa6fcc0d5ae981689709a4d1538413893d909e361cf3cb867757b05ed81f"
+      },
+      "command": [
+        "/home/runner/.cache/websocketclientlite/dafny-4.11.0/dafny/dafny",
+        "verify",
+        "verification/Masking.dfy",
+        "--verify-included-files",
+        "--allow-external-contracts",
+        "--solver-path",
+        "/home/runner/.cache/websocketclientlite/dafny-4.11.0/dafny/z3/bin/z3-4.12.1",
+        "--verification-time-limit",
+        "60",
+        "--cores",
+        "2"
+      ],
+      "budget_seconds": 90,
+      "started_at": "2026-11-11T14:47:14.5817111+00:00",
+      "exit_code": 4,
+      "timed_out": false,
+      "interrupted": false,
+      "cleanup_incomplete": false,
+      "cleanup_seconds": 0,
+      "elapsed_seconds": 21.451,
+      "stdout": "verification/Protocol.dfy(206,4): Error: a postcondition could not be proved on this return path\n    |\n206 |     {\n    |     ^\n\nverification/Protocol.dfy(199,42): Related location: this is the postcondition that could not be proved\n    |\n199 |       ensures next <= 7 && (next & state) == state\n    |                                           ^^\n\n\nDafny program verifier finished with 573 verified, 1 error\n",
+      "stderr": "",
+      "matched_clauses": [
+        "ensures next <= 7 && (next & state) == state"
+      ]
+    },
+    {
+      "id": "CLOSE-003-premature-release",
+      "status": "inconclusive",
+      "requirement": "CLOSE-003",
+      "obligation": "CLOSE-003-MUTATION",
+      "target_clause": "ensures release <==> (next & 4) != 0 || (next & 3) == 3",
+      "classification": "postcondition",
+      "contract_clause": "ensures release <==> (next & 4) != 0 || (next & 3) == 3",
+      "source_hashes": {
+        "verification/Masking.dfy": "6218c3ddcfb208f8fe8e0da80aeb062b2d1ef277c26bc2a1b4bdb07d36f26bf2",
+        "verification/Protocol.dfy": "6a1eddebbb1cfbb3cc79abb9acd375c79ab857205008553b1c60d9b95c76e348"
+      },
+      "command": [
+        "/home/runner/.cache/websocketclientlite/dafny-4.11.0/dafny/dafny",
+        "verify",
+        "verification/Masking.dfy",
+        "--verify-included-files",
+        "--allow-external-contracts",
+        "--solver-path",
+        "/home/runner/.cache/websocketclientlite/dafny-4.11.0/dafny/z3/bin/z3-4.12.1",
+        "--verification-time-limit",
+        "60",
+        "--cores",
+        "2"
+      ],
+      "budget_seconds": 90,
+      "started_at": "2026-11-11T14:47:36.0368411+00:00",
+      "exit_code": 137,
+      "timed_out": true,
+      "interrupted": false,
+      "cleanup_incomplete": false,
+      "cleanup_seconds": 0,
+      "elapsed_seconds": 90.084,
+      "stdout": "verification/Protocol.dfy(206,4): Error: a postcondition could not be proved on this return path\n    |\n206 |     {\n    |     ^\n\nverification/Protocol.dfy(203,22): Related location: this is the postcondition that could not be proved\n    |\n203 |       ensures release <==> (next & 4) != 0 || (next & 3) == 3\n    |                       ^^^^\n\n",
+      "stderr": "",
+      "matched_clauses": []
+    },
+    {
+      "id": "CLOSE-003-suppressed-release",
+      "status": "not-run"
+    },
+    {
+      "id": "REASSEMBLY-001-offset-stall",
+      "status": "not-run"
+    },
+    {
+      "id": "REASSEMBLY-002-offset-stall",
+      "status": "not-run"
+    },
+    {
+      "id": "REASSEMBLY-001-oversized-result",
+      "status": "not-run"
+    },
+    {
+      "id": "MASK-001-xor-to-or",
+      "status": "not-run"
+    },
+    {
+      "id": "MASK-001-key-write",
+      "status": "not-run"
+    },
+    {
+      "id": "MASK-002-tail-xor-to-or",
+      "status": "not-run"
+    },
+    {
+      "id": "MASK-002-corrupt-bulk-byte",
+      "status": "not-run"
+    },
+    {
+      "id": "MASK-002-preserve-prefix",
+      "status": "not-run"
+    },
+    {
+      "id": "MASK-003-xor-to-or",
+      "status": "not-run"
+    },
+    {
+      "id": "MASK-003-preserve-prefix",
+      "status": "not-run"
+    },
+    {
+      "id": "HEADER-001-short-sixteen-bit",
+      "status": "not-run"
+    },
+    {
+      "id": "HEADER-001-short-sixty-four-bit",
+      "status": "not-run"
+    }
+  ]
+}

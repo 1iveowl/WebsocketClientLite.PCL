@@ -1,0 +1,17 @@
+Test run for /tmp/s11-handshake-scratch/copies/base-mutant/src/main/WebsocketClientLiteTest/bin/Release/net10.0/WebsocketClientLiteTest.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v4.0.1+0f7d528729 (64-bit .NET 10.0.14)
+[xUnit.net 00:00:00.04]   Discovering: WebsocketClientLiteTest
+[xUnit.net 00:00:00.10]   Discovered:  WebsocketClientLiteTest
+[xUnit.net 00:00:00.11]   Starting:    WebsocketClientLiteTest
+[xUnit.net 00:00:00.17]   Finished:    WebsocketClientLiteTest
+  Passed WebsocketClientLiteTest.ReconnectTests.FailedConnectTerminatesAndRemovesRegistration [37 ms]
+  Passed WebsocketClientLiteTest.IntegrationTests.InvalidAcceptNeverConnectsEvenWhenServerStaysOpen(connection: "Upgrade") [37 ms]
+  Passed WebsocketClientLiteTest.IntegrationTests.InvalidAcceptNeverConnectsEvenWhenServerStaysOpen(connection: "close") [3 ms]
+  Passed WebsocketClientLiteTest.IntegrationTests.Non101HandshakeResponse_FailsFast_WithStatusCode [1 ms]
+Results File: /home/vscode/worktrees/s11/docs/evidence/handshake-rejection/runs/baseline-mutant-plain/run-06.trx
+
+Test Run Successful.
+Total tests: 4
+     Passed: 4
+ Total time: 0.3946 Seconds
