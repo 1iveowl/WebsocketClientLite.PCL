@@ -1,0 +1,26 @@
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:00.59
+baseline: passed (10.743s)
+CLOSE-001-duplicate-send: detected (10.054s)
+CLOSE-001-suppressed-send: detected (9.249s)
+CLOSE-002-state-bit-loss: detected (9.449s)
+CLOSE-003-premature-release: detected (9.696s)
+CLOSE-003-suppressed-release: detected (9.713s)
+REASSEMBLY-001-offset-stall: detected (9.668s)
+REASSEMBLY-002-offset-stall: detected (9.672s)
+REASSEMBLY-001-oversized-result: detected (9.608s)
+MASK-001-xor-to-or: detected (9.444s)
+MASK-001-key-write: detected (9.531s)
+MASK-002-tail-xor-to-or: detected (9.775s)
+MASK-002-corrupt-bulk-byte: detected (10.071s)
+MASK-002-preserve-prefix: detected (9.14s)
+MASK-003-xor-to-or: detected (9.803s)
+MASK-003-preserve-prefix: detected (9.327s)
+HEADER-001-short-sixteen-bit: detected (9.873s)
+HEADER-001-short-sixty-four-bit: detected (9.865s)
+Evidence: /home/vscode/worktrees/s9/artifacts/s9-mutations
+exit=0 elapsed=175810ms

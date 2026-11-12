@@ -1,0 +1,5 @@
+Line coverage:   84.3%
+Branch coverage: 79.3%
+Minimum line:    70%
+Line coverage 84.3% meets the 70% minimum.
+coverage gate rc=0
