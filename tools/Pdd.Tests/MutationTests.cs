@@ -14,7 +14,7 @@ public class MutationTests
     [Theory, MemberData(nameof(Cases))]
     public void PythonDiagnosticFixturesMatch(string json)
     {
-        var fixture = Fixtures.Rendered(Data.Parse(json));
+        var fixture = Fixtures.Rendered(Data.Parse(json), Fixtures.Sources);
         var outcome = Mutations.Classify(Data.Model<ExecutionResult>(fixture["record"]!), Source, fixture["mutant"]!.GetValue<bool>() ? Catalog.Mutants[0] : null);
         Assert.Equal(fixture["expected"]![0]!.ToString(), outcome.Status);
         Assert.Equal(fixture["expected"]![1]!.AsArray().Select(c => c!.ToString()), outcome.MatchedClauses);
@@ -57,8 +57,7 @@ public class MutationTests
     static ExecutionResult Passed() => new() { ExitCode = 0, Stdout = "Dafny program verifier finished with 41 verified, 0 errors", ElapsedSeconds = .1 };
     static ExecutionResult Detected(Mutant mutant)
     {
-        var line = Array.IndexOf(Source.Split('\n'), "      " + mutant.TargetClause) + 1;
-        Assert.True(line > 0, $"target clause not found: {mutant.TargetClause}");
+        var line = Fixtures.LineOf(Source, "      " + mutant.TargetClause, exact: true);
         return new()
         {
             ExitCode = 4,

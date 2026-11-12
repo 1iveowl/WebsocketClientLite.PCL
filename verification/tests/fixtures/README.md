@@ -61,3 +61,12 @@ of the observed output. Rendered against the source at `29697a4`, both files are
 what they were before. The conversion and that check are in
 `docs/evidence/pdd-classifier-hardening/`. A comment line added above `CloseStep` now leaves
 the Pdd tests passing; before the change, it made 11 of them fail.
+
+On 2026-11-12, after the review of pull request #145, the anchors are rendered against the
+source each record is classified against: for an observed mutant run in
+`payload-diagnostics.json`, the source with that mutant applied, and for `mutation-cases.json`,
+the unchanged source. The lookup uses the classifier's declaration kinds
+(`Mutations.MethodKinds` and `Mutations.FunctionKinds`), and it finds a body by the layout rule
+the clause reader relies on, not by guessing which braces are set displays. On today's
+`Protocol.dfy` and `Masking.dfy` every declaration has the same body line as before
+(`docs/evidence/pdd-classifier-hardening/review-fixes/`), so the rendered fixtures are unchanged.
