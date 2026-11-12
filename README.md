@@ -245,7 +245,7 @@ await using var client = new ClientWebSocketRx {
 
 ```
 
-`await using` (i.e. `DisposeAsync`) is the preferred lifecycle: when the client goes out of scope, the RFC 6455 close handshake of any still-active connection is awaited before the socket is released. A plain `using`/`Dispose()` also works but is the abrupt variant — the close is attempted best-effort within a bounded time (3 seconds) so synchronous disposal can never hang. Unsubscribing from the connection observable remains the usual way to end a single connection; disposal is for the client object's end of life.
+`await using` (i.e. `DisposeAsync`) is the preferred lifecycle: when the client goes out of scope, the RFC 6455 close handshake of any still-active connection is awaited before the socket is released. That wait is bounded by two separate limits, not one deadline: up to five seconds for the Close frame to be sent and up to five more for the peer's Close. A plain `using`/`Dispose()` also works but is the abrupt variant — the close is attempted best-effort within a bounded time (3 seconds) so synchronous disposal can never hang. Unsubscribing from the connection observable remains the usual way to end a single connection; disposal is for the client object's end of life.
 You can also provide your own `TcpClient` for greater control:
 
 ```csharp
@@ -267,8 +267,9 @@ does not reset the successor's connected status or dispose its transport.
 Disposing the client permanently ends admission: later subscriptions fail with
 `ObjectDisposedException`. Unsubscribe to end one attempt while keeping the client
 available. Use a finite retry policy that stops when you dispose the client.
-The shared Sender/status policy for simultaneous active subscriptions on one
-client is unspecified; use separate clients for independent connections.
+One active subscription at a time is the supported use of a client. What
+`IsConnected` and `Sender` report while two subscriptions are active on one client
+is unspecified; use separate clients for independent connections.
 
 ### Connecting to a WebSocket Server
 
