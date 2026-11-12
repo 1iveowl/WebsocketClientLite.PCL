@@ -261,3 +261,12 @@ change, on two hosted runs a few hours apart. The change touches only the C# cla
 and fixtures, not what Dafny verifies, so the difference is the runner's, not the change's.
 Still no mutant above a third of its budget, and still no explanation for the one 90 s
 timeout.
+
+## Fixes for the #145 review (M6, added 2026-11-12)
+
+`review-fixes/` has the evidence for `5fd8632`: the failing-first runs for review findings 1 to
+3 and 8, the probe showing that all 30 declarations in today's Dafny sources keep their body
+line, and every check on `5fd8632`, run and passed. All 17 mutants have the same status and
+matched clauses as the baseline run above. The CI run on the final commit is reported in the
+M6 receipt on #145. See `review-fixes/README.md`.
+

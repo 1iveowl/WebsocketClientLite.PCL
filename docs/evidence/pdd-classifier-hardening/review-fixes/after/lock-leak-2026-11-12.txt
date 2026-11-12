@@ -1,0 +1,26 @@
+Timing-lock leak through the C# compiler server (M6 fix of #145, 2026-11-12, UTC)
+
+02:51:23  capture --job controlled takes the shared lock (timed.sh: flock <lock> bash -c ...).
+~02:52    a build in that capture starts the Roslyn compiler server, VBCSCompiler (pid 917096,
+          parent 1 after it detaches, PWD /home/vscode/worktrees/s10). It inherits the open
+          lock file as fd 3.
+02:52:35  the capture ends and flock exits, but the lock stays held: a flock(2) lock belongs
+          to the open file description, and VBCSCompiler still has it open.
+02:53     capture --job stryker waits for the lock (flock pid 920204, no child).
+02:57:46  `ls -l /proc/917096/fd` shows 3 -> ~/worktrees/.timing.lock. No dotnet build was
+          running (ps -eo pid,etime,comm listed only VBCSCompiler). kill -TERM 917096; it exited,
+          and the stryker capture took the lock in the same second.
+
+Effect: about five minutes in which neither this session nor any other could take the lock.
+No timed run overlapped another because of it; it only delayed them.
+Not changed here (outside the authorized files): the lock helper. A fix would run the
+command with the lock fd closed (`exec 9>lock; flock 9; cmd 9>&-`) or with
+`dotnet build-server shutdown` / UseSharedCompilation=false for builds under the lock.
+Not established: whether the same leak caused S10's Stryker capture to wait until the
+session's two-hour background limit on 2026-11-12.
+
+The same happened after capture --job stryker (lock 02:57:46 to about 03:03:50): five MSBuild
+reuse nodes (dotnet MSBuild.dll /nodemode:1, pids 921434, 921454-921457) and a new
+VBCSCompiler (921555), all with PWD .../s10/src/main/WebsocketClientLiteTest, kept the lock
+file open after the capture had ended. When the checks were done they were stopped with
+kill -TERM, and no process had the lock file open afterwards.

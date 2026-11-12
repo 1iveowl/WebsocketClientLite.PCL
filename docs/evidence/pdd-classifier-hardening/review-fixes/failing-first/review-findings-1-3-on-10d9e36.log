@@ -1,0 +1,141 @@
+source: git archive 10d9e3615e8a97ec9e207983d7ebf339a2d1430f
+copy: /tmp/s10-experiment.5w26i6t6
+added from the working tree: tools/Pdd.Tests/ClassifierHardeningTests.cs
+command: dotnet test tools/Pdd.Tests/Pdd.Tests.csproj -c Release --filter FullyQualifiedName~ClassifierHardeningTests
+  Determining projects to restore...
+  Restored /tmp/s10-experiment.5w26i6t6/tools/Pdd/Pdd.csproj (in 39 ms).
+  Restored /tmp/s10-experiment.5w26i6t6/tools/Pdd.Tests/Pdd.Tests.csproj (in 110 ms).
+  Pdd -> /tmp/s10-experiment.5w26i6t6/tools/Pdd/bin/Release/net10.0/Pdd.dll
+  Pdd.Tests -> /tmp/s10-experiment.5w26i6t6/tools/Pdd.Tests/bin/Release/net10.0/Pdd.Tests.dll
+Test run for /tmp/s10-experiment.5w26i6t6/tools/Pdd.Tests/bin/Release/net10.0/Pdd.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.37]     Pdd.Tests.ClassifierHardeningTests.BraceInAContractOfTheNamedPredicateIsNotTheBody(contract: "      ensures match first { case 0 => true case _ "···, follower: "") [FAIL]
+[xUnit.net 00:00:00.47]     Pdd.Tests.ClassifierHardeningTests.BraceInAContractOfTheNamedPredicateIsNotTheBody(contract: "      ensures match first {\n        case 0 => tru"···, follower: "") [FAIL]
+[xUnit.net 00:00:00.57]     Pdd.Tests.ClassifierHardeningTests.BraceInAContractOfTheNamedPredicateIsNotTheBody(contract: "      ensures |[first]| == |[second]|", follower: "    least predicate Ready() { true }") [FAIL]
+[xUnit.net 00:00:00.67]     Pdd.Tests.ClassifierHardeningTests.BraceInAContractOfTheNamedPredicateIsNotTheBody(contract: "", follower: "    var count: int") [FAIL]
+[xUnit.net 00:00:00.77]     Pdd.Tests.ClassifierHardeningTests.BraceInAContractOfTheNamedPredicateIsNotTheBody(contract: "      reads *", follower: "    @IsolateAssertions") [FAIL]
+[xUnit.net 00:00:00.89]     Pdd.Tests.ClassifierHardeningTests.BraceInAContractOfTheNamedPredicateIsNotTheBody(contract: "      reads *", follower: "    var count: int") [FAIL]
+[xUnit.net 00:00:01.22]     Pdd.Tests.ClassifierHardeningTests.QualifiedCallNamesTheQualifyingClass(qualifier: "ProtocolCore.Other.", expected: "inconclusive") [FAIL]
+  Failed Pdd.Tests.ClassifierHardeningTests.BraceInAContractOfTheNamedPredicateIsNotTheBody(contract: "      ensures match first { case 0 => true case _ "···, follower: "") [123 ms]
+  Error Message:
+   Assert.Equal() Failure: Strings differ
+           ↓ (pos 0)
+Expected: "detected"
+Actual:   "inconclusive"
+           ↑ (pos 0)
+  Stack Trace:
+     at Pdd.Tests.ClassifierHardeningTests.BraceInAContractOfTheNamedPredicateIsNotTheBody(String contract, String follower) in /tmp/s10-experiment.5w26i6t6/tools/Pdd.Tests/ClassifierHardeningTests.cs:line 140
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)
+  Failed Pdd.Tests.ClassifierHardeningTests.BraceInAContractOfTheNamedPredicateIsNotTheBody(contract: "      ensures match first {\n        case 0 => tru"···, follower: "") [103 ms]
+  Error Message:
+   Assert.Equal() Failure: Strings differ
+           ↓ (pos 0)
+Expected: "detected"
+Actual:   "inconclusive"
+           ↑ (pos 0)
+  Stack Trace:
+     at Pdd.Tests.ClassifierHardeningTests.BraceInAContractOfTheNamedPredicateIsNotTheBody(String contract, String follower) in /tmp/s10-experiment.5w26i6t6/tools/Pdd.Tests/ClassifierHardeningTests.cs:line 140
+   at InvokeStub_ClassifierHardeningTests.BraceInAContractOfTheNamedPredicateIsNotTheBody(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed Pdd.Tests.ClassifierHardeningTests.BraceInAContractOfTheNamedPredicateIsNotTheBody(contract: "      ensures |[first]| == |[second]|", follower: "    least predicate Ready() { true }") [99 ms]
+  Error Message:
+   Assert.Equal() Failure: Strings differ
+           ↓ (pos 0)
+Expected: "detected"
+Actual:   "inconclusive"
+           ↑ (pos 0)
+  Stack Trace:
+     at Pdd.Tests.ClassifierHardeningTests.BraceInAContractOfTheNamedPredicateIsNotTheBody(String contract, String follower) in /tmp/s10-experiment.5w26i6t6/tools/Pdd.Tests/ClassifierHardeningTests.cs:line 140
+   at InvokeStub_ClassifierHardeningTests.BraceInAContractOfTheNamedPredicateIsNotTheBody(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed Pdd.Tests.ClassifierHardeningTests.BraceInAContractOfTheNamedPredicateIsNotTheBody(contract: "", follower: "    var count: int") [99 ms]
+  Error Message:
+   Assert.Equal() Failure: Strings differ
+           ↓ (pos 0)
+Expected: "detected"
+Actual:   "inconclusive"
+           ↑ (pos 0)
+  Stack Trace:
+     at Pdd.Tests.ClassifierHardeningTests.BraceInAContractOfTheNamedPredicateIsNotTheBody(String contract, String follower) in /tmp/s10-experiment.5w26i6t6/tools/Pdd.Tests/ClassifierHardeningTests.cs:line 140
+   at InvokeStub_ClassifierHardeningTests.BraceInAContractOfTheNamedPredicateIsNotTheBody(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed Pdd.Tests.ClassifierHardeningTests.BraceInAContractOfTheNamedPredicateIsNotTheBody(contract: "      reads *", follower: "    @IsolateAssertions") [99 ms]
+  Error Message:
+   Assert.Equal() Failure: Strings differ
+           ↓ (pos 0)
+Expected: "detected"
+Actual:   "inconclusive"
+           ↑ (pos 0)
+  Stack Trace:
+     at Pdd.Tests.ClassifierHardeningTests.BraceInAContractOfTheNamedPredicateIsNotTheBody(String contract, String follower) in /tmp/s10-experiment.5w26i6t6/tools/Pdd.Tests/ClassifierHardeningTests.cs:line 140
+   at InvokeStub_ClassifierHardeningTests.BraceInAContractOfTheNamedPredicateIsNotTheBody(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed Pdd.Tests.ClassifierHardeningTests.BraceInAContractOfTheNamedPredicateIsNotTheBody(contract: "      reads *", follower: "    var count: int") [119 ms]
+  Error Message:
+   Assert.Equal() Failure: Strings differ
+           ↓ (pos 0)
+Expected: "detected"
+Actual:   "inconclusive"
+           ↑ (pos 0)
+  Stack Trace:
+     at Pdd.Tests.ClassifierHardeningTests.BraceInAContractOfTheNamedPredicateIsNotTheBody(String contract, String follower) in /tmp/s10-experiment.5w26i6t6/tools/Pdd.Tests/ClassifierHardeningTests.cs:line 140
+   at InvokeStub_ClassifierHardeningTests.BraceInAContractOfTheNamedPredicateIsNotTheBody(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed Pdd.Tests.ClassifierHardeningTests.QualifiedCallNamesTheQualifyingClass(qualifier: "ProtocolCore.Other.", expected: "inconclusive") [165 ms]
+  Error Message:
+   Assert.Equal() Failure: Strings differ
+           ↓ (pos 0)
+Expected: "inconclusive"
+Actual:   "detected"
+           ↑ (pos 0)
+  Stack Trace:
+     at Pdd.Tests.ClassifierHardeningTests.QualifiedCallNamesTheQualifyingClass(String qualifier, String expected) in /tmp/s10-experiment.5w26i6t6/tools/Pdd.Tests/ClassifierHardeningTests.cs:line 177
+   at InvokeStub_ClassifierHardeningTests.QualifiedCallNamesTheQualifyingClass(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+[xUnit.net 00:00:01.54]     Pdd.Tests.ClassifierHardeningTests.QualifiedCallNamesTheQualifyingClass(qualifier: "Other.", expected: "inconclusive") [FAIL]
+[xUnit.net 00:00:02.27]     Pdd.Tests.ClassifierHardeningTests.BraceInAContractOfTheMutatedMethodIsNotTheBody(contract: "      ensures match status {\n        case _ => tr"···, follower: "    var count: int") [FAIL]
+[xUnit.net 00:00:02.51]     Pdd.Tests.ClassifierHardeningTests.BraceInAContractOfTheMutatedMethodIsNotTheBody(contract: "      decreases *", follower: "    var count: int") [FAIL]
+[xUnit.net 00:00:02.73]     Pdd.Tests.ClassifierHardeningTests.BraceInAContractOfTheMutatedMethodIsNotTheBody(contract: "      ensures match status { case _ => true }", follower: "") [FAIL]
+  Failed Pdd.Tests.ClassifierHardeningTests.QualifiedCallNamesTheQualifyingClass(qualifier: "Other.", expected: "inconclusive") [159 ms]
+  Error Message:
+   Assert.Equal() Failure: Strings differ
+           ↓ (pos 0)
+Expected: "inconclusive"
+Actual:   "detected"
+           ↑ (pos 0)
+  Stack Trace:
+     at Pdd.Tests.ClassifierHardeningTests.QualifiedCallNamesTheQualifyingClass(String qualifier, String expected) in /tmp/s10-experiment.5w26i6t6/tools/Pdd.Tests/ClassifierHardeningTests.cs:line 177
+   at InvokeStub_ClassifierHardeningTests.QualifiedCallNamesTheQualifyingClass(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed Pdd.Tests.ClassifierHardeningTests.BraceInAContractOfTheMutatedMethodIsNotTheBody(contract: "      ensures match status {\n        case _ => tr"···, follower: "    var count: int") [241 ms]
+  Error Message:
+   System.IO.InvalidDataException : mutation must be a unique, changed single line in its method
+  Stack Trace:
+     at Pdd.Data.Require(Boolean condition, String message) in /tmp/s10-experiment.5w26i6t6/tools/Pdd/Models.cs:line 105
+   at Pdd.Mutations.Apply(String source, Mutant m) in /tmp/s10-experiment.5w26i6t6/tools/Pdd/Mutations.cs:line 89
+   at Pdd.Tests.ClassifierHardeningTests.BraceInAContractOfTheMutatedMethodIsNotTheBody(String contract, String follower) in /tmp/s10-experiment.5w26i6t6/tools/Pdd.Tests/ClassifierHardeningTests.cs:line 157
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)
+  Failed Pdd.Tests.ClassifierHardeningTests.BraceInAContractOfTheMutatedMethodIsNotTheBody(contract: "      decreases *", follower: "    var count: int") [242 ms]
+  Error Message:
+   System.IO.InvalidDataException : missing or ambiguous mutation method
+  Stack Trace:
+     at Pdd.Data.Require(Boolean condition, String message) in /tmp/s10-experiment.5w26i6t6/tools/Pdd/Models.cs:line 105
+   at Pdd.Mutations.Bounds(String source, Mutant m) in /tmp/s10-experiment.5w26i6t6/tools/Pdd/Mutations.cs:line 78
+   at Pdd.Mutations.Apply(String source, Mutant m) in /tmp/s10-experiment.5w26i6t6/tools/Pdd/Mutations.cs:line 87
+   at Pdd.Tests.ClassifierHardeningTests.BraceInAContractOfTheMutatedMethodIsNotTheBody(String contract, String follower) in /tmp/s10-experiment.5w26i6t6/tools/Pdd.Tests/ClassifierHardeningTests.cs:line 157
+   at InvokeStub_ClassifierHardeningTests.BraceInAContractOfTheMutatedMethodIsNotTheBody(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed Pdd.Tests.ClassifierHardeningTests.BraceInAContractOfTheMutatedMethodIsNotTheBody(contract: "      ensures match status { case _ => true }", follower: "") [218 ms]
+  Error Message:
+   System.IO.InvalidDataException : mutation must be a unique, changed single line in its method
+  Stack Trace:
+     at Pdd.Data.Require(Boolean condition, String message) in /tmp/s10-experiment.5w26i6t6/tools/Pdd/Models.cs:line 105
+   at Pdd.Mutations.Apply(String source, Mutant m) in /tmp/s10-experiment.5w26i6t6/tools/Pdd/Mutations.cs:line 89
+   at Pdd.Tests.ClassifierHardeningTests.BraceInAContractOfTheMutatedMethodIsNotTheBody(String contract, String follower) in /tmp/s10-experiment.5w26i6t6/tools/Pdd.Tests/ClassifierHardeningTests.cs:line 157
+   at InvokeStub_ClassifierHardeningTests.BraceInAContractOfTheMutatedMethodIsNotTheBody(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+
+Failed!  - Failed:    11, Passed:    12, Skipped:     0, Total:    23, Duration: 3 s - Pdd.Tests.dll (net10.0)
+exit=1 elapsed=6177ms
