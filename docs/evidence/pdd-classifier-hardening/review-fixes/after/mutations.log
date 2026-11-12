@@ -1,0 +1,26 @@
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:00.50
+baseline: passed (9.372s)
+CLOSE-001-duplicate-send: detected (8.99s)
+CLOSE-001-suppressed-send: detected (8.924s)
+CLOSE-002-state-bit-loss: detected (8.792s)
+CLOSE-003-premature-release: detected (8.936s)
+CLOSE-003-suppressed-release: detected (9.042s)
+REASSEMBLY-001-offset-stall: detected (8.7s)
+REASSEMBLY-002-offset-stall: detected (8.958s)
+REASSEMBLY-001-oversized-result: detected (8.88s)
+MASK-001-xor-to-or: detected (8.621s)
+MASK-001-key-write: detected (8.616s)
+MASK-002-tail-xor-to-or: detected (8.744s)
+MASK-002-corrupt-bulk-byte: detected (8.886s)
+MASK-002-preserve-prefix: detected (8.798s)
+MASK-003-xor-to-or: detected (8.868s)
+MASK-003-preserve-prefix: detected (8.983s)
+HEADER-001-short-sixteen-bit: detected (8.541s)
+HEADER-001-short-sixty-four-bit: detected (8.792s)
+Evidence: /home/vscode/worktrees/s10/artifacts/m6-mutations
+exit=0 elapsed=160447ms

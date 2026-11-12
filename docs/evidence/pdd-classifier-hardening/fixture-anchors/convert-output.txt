@@ -1,0 +1,33 @@
+converted verification/tests/fixtures/mutation-cases.json
+verification/tests/fixtures/mutation-cases.json: rendered with the current anchors equals HEAD: True; absolute Dafny locations left: 0
+converted verification/tests/fixtures/payload-diagnostics.json
+verification/tests/fixtures/payload-diagnostics.json: rendered with the current anchors equals HEAD: True; absolute Dafny locations left: 0
+verification/Protocol.dfy ProtocolCore.Protocol.Word 6 6 8
+verification/Protocol.dfy ProtocolCore.Protocol.ReadLength 12 15 22
+verification/Protocol.dfy ProtocolCore.Protocol.Known 27 27 27
+verification/Protocol.dfy ProtocolCore.Protocol.PrefixValid 34 34 38
+verification/Protocol.dfy ProtocolCore.Protocol.HeaderValid 47 47 55
+verification/Protocol.dfy ProtocolCore.Protocol.DecodeHeader 62 72 81
+verification/Protocol.dfy ProtocolCore.Protocol.Step 91 105 119
+verification/Protocol.dfy ProtocolCore.Protocol.Admit 126 145 152
+verification/Protocol.dfy ProtocolCore.Protocol.TxState 159 159 159
+verification/Protocol.dfy ProtocolCore.Protocol.SendStep 167 177 183
+verification/Protocol.dfy ProtocolCore.Protocol.SendFailed 188 188 188
+verification/Protocol.dfy ProtocolCore.Protocol.CloseStep 197 206 211
+verification/Protocol.dfy ProtocolCore.Protocol.Parts 215 218 220
+verification/Protocol.dfy ProtocolCore.Protocol.Merge 228 232 251
+verification/Protocol.dfy ProtocolCore.Protocol.MergeScalar 256 260 288
+verification/Protocol.dfy ProtocolCore.Protocol.PartsPrefix 292 297 299
+verification/Protocol.dfy ProtocolCore.Protocol.WordSnoc 303 305 307
+verification/Protocol.dfy ProtocolCore.Protocol.NetworkWord 311 315 344
+verification/Protocol.dfy ProtocolCore.Protocol.HeaderRoundTrip 353 357 390
+verification/Protocol.dfy ProtocolCore.Protocol.CloseCode 398 398 400
+verification/Protocol.dfy ProtocolCore.Protocol.CloseValid 405 405 407
+verification/Protocol.dfy ProtocolCore.Protocol.HandshakeValid 414 415 417
+verification/Protocol.dfy ProtocolCore.Protocol.Outgoing 426 437 447
+verification/Protocol.dfy ProtocolCore.Protocol.WriteHeader 453 469 483
+verification/Protocol.dfy ProtocolCore.Protocol.CopyMasked 487 497 537
+verification/Protocol.dfy ProtocolCore.Protocol.MaskSlice 542 549 560
+verification/Masking.dfy MaskingCore.Masking.Apply 7 14 26
+verification/Masking.dfy MaskingCore.Masking.XorTwice 28 30 30
+verification/Masking.dfy MaskingCore.Masking.RoundTrip 32 36 40

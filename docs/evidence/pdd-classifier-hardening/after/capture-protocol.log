@@ -1,0 +1,11 @@
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:00.48
+manifest: passed
+fixtures: passed
+proof: passed
+mutations: passed
+exit=0 elapsed=238829ms

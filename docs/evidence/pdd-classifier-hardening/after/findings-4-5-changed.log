@@ -1,0 +1,13 @@
+source: git archive cad232592f23da30ca559d05f87401a5f9a733b0
+copy: /tmp/s10-experiment.yqw1et2h
+command: dotnet test tools/Pdd.Tests/Pdd.Tests.csproj -c Release --filter FullyQualifiedName~ClassifierHardeningTests|FullyQualifiedName~PropositionLocationMustLieInAPredicateTheTargetNames
+  Determining projects to restore...
+  Restored /tmp/s10-experiment.yqw1et2h/tools/Pdd/Pdd.csproj (in 40 ms).
+  Restored /tmp/s10-experiment.yqw1et2h/tools/Pdd.Tests/Pdd.Tests.csproj (in 115 ms).
+  Pdd -> /tmp/s10-experiment.yqw1et2h/tools/Pdd/bin/Release/net10.0/Pdd.dll
+  Pdd.Tests -> /tmp/s10-experiment.yqw1et2h/tools/Pdd.Tests/bin/Release/net10.0/Pdd.Tests.dll
+Test run for /tmp/s10-experiment.yqw1et2h/tools/Pdd.Tests/bin/Release/net10.0/Pdd.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+
+Passed!  - Failed:     0, Passed:    14, Skipped:     0, Total:    14, Duration: 1 s - Pdd.Tests.dll (net10.0)
+exit=0 elapsed=3709ms

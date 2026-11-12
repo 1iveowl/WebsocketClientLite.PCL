@@ -1,0 +1,49 @@
+source: working tree of /home/vscode/worktrees/s10 at 29697a494053f8376ad30fae3895055901c97fd6, with these changes:
+ M tools/Pdd.Tests/MutationTests.cs
+ M tools/Pdd.Tests/PayloadEvidenceTests.cs
+ M tools/Pdd/Mutations.cs
+ M tools/Pdd/Requirements.cs
+ M verification/tests/fixtures/mutation-cases.json
+ M verification/tests/fixtures/payload-diagnostics.json
+?? docs/evidence/pdd-classifier-hardening/
+?? tools/Pdd.Tests/ClassifierHardeningTests.cs
+?? tools/Pdd.Tests/Fixtures.cs
+copy: /tmp/s10-experiment.684hjrhj
+edited tools/Pdd/Mutations.cs:
+  - 'foreach (var name in Regex.Matches(mutant.TargetClause, @"\\b(\\w+)\\s*\\(").Select(n => n.Groups[1].Value).Distinct())'
+  + 'foreach (var name in Regex.Matches(masked, @"\\b(?:function|predicate)\\s+(\\w+)").Select(n => n.Groups[1].Value).Distinct())'
+command: dotnet test tools/Pdd.Tests/Pdd.Tests.csproj -c Release --filter FullyQualifiedName~PropositionLocationMustLieInAPredicateTheTargetNames
+  Determining projects to restore...
+  Restored /tmp/s10-experiment.684hjrhj/tools/Pdd/Pdd.csproj (in 40 ms).
+  Restored /tmp/s10-experiment.684hjrhj/tools/Pdd.Tests/Pdd.Tests.csproj (in 114 ms).
+  Pdd -> /tmp/s10-experiment.684hjrhj/tools/Pdd/bin/Release/net10.0/Pdd.dll
+  Pdd.Tests -> /tmp/s10-experiment.684hjrhj/tools/Pdd.Tests/bin/Release/net10.0/Pdd.Tests.dll
+Test run for /tmp/s10-experiment.684hjrhj/tools/Pdd.Tests/bin/Release/net10.0/Pdd.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.64]     Pdd.Tests.PayloadEvidenceTests.PropositionLocationMustLieInAPredicateTheTargetNames(mode: "Known") [FAIL]
+  Failed Pdd.Tests.PayloadEvidenceTests.PropositionLocationMustLieInAPredicateTheTargetNames(mode: "Known") [341 ms]
+  Error Message:
+   Assert.Equal() Failure: Strings differ
+           ↓ (pos 0)
+Expected: "inconclusive"
+Actual:   "detected"
+           ↑ (pos 0)
+  Stack Trace:
+     at Pdd.Tests.PayloadEvidenceTests.PropositionLocationMustLieInAPredicateTheTargetNames(String mode) in /tmp/s10-experiment.684hjrhj/tools/Pdd.Tests/PayloadEvidenceTests.cs:line 82
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)
+[xUnit.net 00:00:01.56]     Pdd.Tests.PayloadEvidenceTests.PropositionLocationMustLieInAPredicateTheTargetNames(mode: "PrefixValid") [FAIL]
+  Failed Pdd.Tests.PayloadEvidenceTests.PropositionLocationMustLieInAPredicateTheTargetNames(mode: "PrefixValid") [588 ms]
+  Error Message:
+   Assert.Equal() Failure: Strings differ
+           ↓ (pos 0)
+Expected: "inconclusive"
+Actual:   "detected"
+           ↑ (pos 0)
+  Stack Trace:
+     at Pdd.Tests.PayloadEvidenceTests.PropositionLocationMustLieInAPredicateTheTargetNames(String mode) in /tmp/s10-experiment.684hjrhj/tools/Pdd.Tests/PayloadEvidenceTests.cs:line 82
+   at InvokeStub_PayloadEvidenceTests.PropositionLocationMustLieInAPredicateTheTargetNames(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+
+Failed!  - Failed:     2, Passed:     2, Skipped:     0, Total:     4, Duration: 1 s - Pdd.Tests.dll (net10.0)
+exit=1 elapsed=4461ms

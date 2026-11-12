@@ -1,0 +1,16 @@
+2026-11-11T23:32:21Z lock acquired
+ 365490    10:27:56 claude
+ 377586    09:48:10 claude
+ 577568    01:28:53 dotnet
+ 577569    01:28:53 dotnet
+ 577570    01:28:53 dotnet
+ 577648    01:28:53 dotnet
+ 577649    01:28:53 dotnet
+ 577650    01:28:53 dotnet
+ 577683    01:28:53 dotnet
+ 696266       39:29 claude
+ 697348       38:02 claude
+ 697436       38:01 claude
+ 706130       32:12 claude
+ 754701       02:12 claude.exe
+2026-11-11T23:32:36Z lock released

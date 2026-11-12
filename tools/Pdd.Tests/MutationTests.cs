@@ -14,7 +14,7 @@ public class MutationTests
     [Theory, MemberData(nameof(Cases))]
     public void PythonDiagnosticFixturesMatch(string json)
     {
-        var fixture = Data.Parse(json);
+        var fixture = Fixtures.Rendered(Data.Parse(json), Fixtures.Sources);
         var outcome = Mutations.Classify(Data.Model<ExecutionResult>(fixture["record"]!), Source, fixture["mutant"]!.GetValue<bool>() ? Catalog.Mutants[0] : null);
         Assert.Equal(fixture["expected"]![0]!.ToString(), outcome.Status);
         Assert.Equal(fixture["expected"]![1]!.AsArray().Select(c => c!.ToString()), outcome.MatchedClauses);
@@ -57,11 +57,11 @@ public class MutationTests
     static ExecutionResult Passed() => new() { ExitCode = 0, Stdout = "Dafny program verifier finished with 41 verified, 0 errors", ElapsedSeconds = .1 };
     static ExecutionResult Detected(Mutant mutant)
     {
-        var line = Array.IndexOf(Source.Split('\n'), "      " + mutant.TargetClause) + 1;
+        var line = Fixtures.LineOf(Source, "      " + mutant.TargetClause, exact: true);
         return new()
         {
             ExitCode = 4,
-            Stdout = $"verification/Protocol.dfy(206,4): Error: a postcondition could not be proved on this return path\nverification/Protocol.dfy({line},22): Related location: this is the postcondition that could not be proved\nDafny program verifier finished with 40 verified, 1 error\n",
+            Stdout = $"verification/Protocol.dfy({Fixtures.BodyLine(Source, mutant.Symbol)},4): Error: a postcondition could not be proved on this return path\nverification/Protocol.dfy({line},22): Related location: this is the postcondition that could not be proved\nDafny program verifier finished with 40 verified, 1 error\n",
             ElapsedSeconds = .1
         };
     }
