@@ -2,6 +2,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Sockets;
 using System.Security.Authentication;
 using System.Threading;
 using System.Threading.Tasks;
@@ -34,8 +35,6 @@ public class HandshakeRejectionTests
         SendFailed,
     }
 
-    private static readonly TimeSpan Limit = TimeSpan.FromSeconds(10);
-
     [Theory]
     [InlineData(Rejection.NotFound)]
     [InlineData(Rejection.InvalidAccept)]
@@ -43,6 +42,31 @@ public class HandshakeRejectionTests
     [InlineData(Rejection.SendFailed)]
     public async Task RejectedHandshakeThrowsAndNeverInstallsSender(Rejection rejection)
     {
+        var injected = new InvalidOperationException("Injected handshake write failure.");
+        var statuses = new ConcurrentQueue<(ConnectionStatus status, Exception? error)>();
+        void Status(ConnectionStatus status, Exception? error) => statuses.Enqueue((status, error));
+
+        // The test connects the TCP client itself before ConnectWebsocket, which then skips
+        // its own connect. ConnectWebsocket's timeout bounds both the TCP connect and the
+        // handshake, so a slow connect on a loaded host would otherwise end the Timeout row
+        // with a TCP connect error before the handshake runs. Here the timeout bounds only
+        // the handshake.
+        var client = new TcpClient(AddressFamily.InterNetwork);
+        var tcp = new TcpConnectionService(() => false, (_, _, _, _) => true,
+            (_, _) => Task.FromException(new InvalidOperationException("The test connects the TCP client before ConnectWebsocket.")),
+            Status, true, client);
+        // Declared before the server, so it is disposed after it. Only a connect that went on
+        // past the throw (the mutant) leaves a close handshake for DisposeAsync to run. With the
+        // server gone and no peer-close wait, that close ends at once instead of waiting out
+        // its timeouts.
+        await using var connection = new WebsocketConnectionHandler(tcp, new WebsocketParserHandler(tcp), Status,
+            (_, callback) => new WebsocketSenderHandler(tcp, callback, async (stream, bytes, count, ct) =>
+            {
+                if (rejection == Rejection.SendFailed) throw injected;
+                await stream.WriteAsync(bytes.AsMemory(0, count), ct);
+                await stream.FlushAsync(ct);
+            }, false, (_, _) => Task.CompletedTask));
+
         using var server = new LoopbackWebSocketServer();
         switch (rejection)
         {
@@ -58,29 +82,19 @@ public class HandshakeRejectionTests
                 server.Start((_, ct) => Task.Delay(Timeout.Infinite, ct), (_, ct) => Task.Delay(Timeout.Infinite, ct));
                 break;
         }
-
-        var injected = new InvalidOperationException("Injected handshake write failure.");
-        var statuses = new ConcurrentQueue<(ConnectionStatus status, Exception? error)>();
-        void Status(ConnectionStatus status, Exception? error) => statuses.Enqueue((status, error));
-        var tcp = new TcpConnectionService(() => false, (_, _, _, _) => true,
-            (client, uri) => client.ConnectAsync(uri.Host, uri.Port), Status, true);
-        await using var connection = new WebsocketConnectionHandler(tcp, new WebsocketParserHandler(tcp), Status,
-            (_, callback) => new WebsocketSenderHandler(tcp, callback, async (stream, bytes, count, ct) =>
-            {
-                if (rejection == Rejection.SendFailed) throw injected;
-                await stream.WriteAsync(bytes.AsMemory(0, count), ct);
-                await stream.FlushAsync(ct);
-            }, false));
+        await client.ConnectAsync(server.Uri.Host, server.Uri.Port).WaitAsync(TimeSpan.FromSeconds(30));
 
         var senderCalls = 0;
-        // Generous except for the timeout row: the other rows must fail on their own cause.
+        // The handshake timeout is the only bound on the call, and it ends the Timeout row
+        // whatever the load: a slow request write ends in the same HandshakeTimedOut. The other
+        // rows must fail on their own cause, so their bound is generous.
         var handshakeTimeout = rejection == Rejection.Timeout ? TimeSpan.FromMilliseconds(500) : TimeSpan.FromSeconds(30);
         var error = await Record.ExceptionAsync(() => connection.ConnectWebsocket(
-                server.Uri, null, SslProtocols.None, (_, _) => Interlocked.Increment(ref senderCalls),
-                false, default, null, handshakeTimeout, null, null, null, CancellationToken.None)
-            .WaitAsync(Limit));
+            server.Uri, null, SslProtocols.None, (_, _) => Interlocked.Increment(ref senderCalls),
+            false, default, null, handshakeTimeout, null, null, null, CancellationToken.None));
 
-        // ConnectWebsocket has returned or thrown, so no later call can come from it.
+        // Awaited directly, with no outer time limit: ConnectWebsocket has returned or thrown,
+        // so no later call can come from it.
         Assert.Equal(0, Volatile.Read(ref senderCalls));
         var thrown = Assert.IsType<WebsocketClientLiteException>(error);
         var reported = statuses.ToArray();
@@ -92,9 +106,10 @@ public class HandshakeRejectionTests
             case Rejection.NotFound:
             case Rejection.InvalidAccept:
                 // The connect call throws the rejection the status reported, not another error.
+                // The two are separate instances and the exception has no status code, so the
+                // check compares their messages with each other, never with production text.
                 var status = Assert.Single(aborted);
                 Assert.Equal(Assert.IsType<WebsocketClientLiteException>(status).Message, thrown.Message);
-                Assert.Contains(rejection == Rejection.NotFound ? "404" : "101", thrown.Message);
                 break;
             case Rejection.Timeout:
                 Assert.Empty(aborted);
