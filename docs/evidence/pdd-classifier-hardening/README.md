@@ -220,5 +220,44 @@ speed varies by about a factor of two between runs, and the 90 s outlier is stil
 only one seen. One more passing run does not show that it is gone, and its cause is still
 not established. Budgets and `--cores` are unchanged.
 
-The CI run on the final commit is added below in a later commit, because it can only run
-after this one is pushed.
+### The run on the final commit (added 2026-11-12)
+
+`ci-43137975656/`: CI dispatched on `371826a`, the evidence commit on top of `cad2325`
+(`gh workflow run ci.yml --ref chore/pdd-classifier-hardening`). Every job passed
+(`run.json`); `qualify-host` and `contract-change-report` were skipped. The same files
+as for the baseline run. All 17 mutants detected in 10.2 to 11.3 s, with the same
+status and matched clauses as in 43115756212. This folder is added in the commit after
+`371826a` and contains only these files.
+
+| Experiment | 43041451305 (9673862) | 43046774633 (34a8950) | 43062905406 (S4) | 43115756212 (29697a4) | 43137975656 (371826a) |
+| --- | --- | --- | --- | --- | --- |
+| `baseline` | 21.6 s, passed | 21.1 s, passed | 10.9 s, passed | 17.9 s, passed | 10.8 s, passed |
+| `CLOSE-001-duplicate-send` | 21.1 s, detected | 20.9 s, detected | 11.2 s, detected | 17.7 s, detected | 11.2 s, detected |
+| `CLOSE-001-suppressed-send` | 21.6 s, detected | 20.4 s, detected | 10.8 s, detected | 17.6 s, detected | 10.9 s, detected |
+| `CLOSE-002-state-bit-loss` | 21.5 s, detected | 21.0 s, detected | 11.0 s, detected | 17.5 s, detected | 11.0 s, detected |
+| `CLOSE-003-premature-release` | 90.1 s, inconclusive, timed out | 21.0 s, detected | 10.5 s, detected | 17.8 s, detected | 11.3 s, detected |
+| `CLOSE-003-suppressed-release` | not-run | 21.4 s, detected | 10.9 s, detected | 17.6 s, detected | 10.6 s, detected |
+| `REASSEMBLY-001-offset-stall` | not-run | 21.3 s, detected | 10.8 s, detected | 17.6 s, detected | 10.7 s, detected |
+| `REASSEMBLY-002-offset-stall` | not-run | 21.6 s, detected | 10.5 s, detected | 17.5 s, detected | 10.7 s, detected |
+| `REASSEMBLY-001-oversized-result` | not-run | 21.3 s, detected | 10.9 s, detected | 17.6 s, detected | 10.8 s, detected |
+| `MASK-001-xor-to-or` | not-run | 21.2 s, detected | 11.2 s, detected | 17.2 s, detected | 10.7 s, detected |
+| `MASK-001-key-write` | not-run | 20.9 s, detected | 10.9 s, detected | 17.6 s, detected | 10.2 s, detected |
+| `MASK-002-tail-xor-to-or` | not-run | 21.5 s, detected | 11.1 s, detected | 17.4 s, detected | 10.7 s, detected |
+| `MASK-002-corrupt-bulk-byte` | not-run | 21.0 s, detected | 11.5 s, detected | 17.8 s, detected | 10.8 s, detected |
+| `MASK-002-preserve-prefix` | not-run | 21.6 s, detected | 11.1 s, detected | 17.6 s, detected | 10.8 s, detected |
+| `MASK-003-xor-to-or` | not-run | 20.9 s, detected | 11.1 s, detected | 17.5 s, detected | 10.8 s, detected |
+| `MASK-003-preserve-prefix` | not-run | 21.4 s, detected | 11.3 s, detected | 17.3 s, detected | 10.8 s, detected |
+| `HEADER-001-short-sixteen-bit` | not-run | 21.6 s, detected | 11.0 s, detected | 17.5 s, detected | 10.4 s, detected |
+| `HEADER-001-short-sixty-four-bit` | not-run | 21.2 s, detected | 10.8 s, detected | 17.7 s, detected | 10.7 s, detected |
+
+43041451305 (9673862): mutants with a time 4, min 21.1 s, max 90.1 s, over 30 s (a third of the 90 s budget): 1
+43046774633 (34a8950): mutants with a time 17, min 20.4 s, max 21.6 s, over 30 s (a third of the 90 s budget): 0
+43062905406 (S4): mutants with a time 17, min 10.5 s, max 11.5 s, over 30 s (a third of the 90 s budget): 0
+43115756212 (29697a4): mutants with a time 17, min 17.2 s, max 17.8 s, over 30 s (a third of the 90 s budget): 0
+43137975656 (371826a): mutants with a time 17, min 10.2 s, max 11.3 s, over 30 s (a third of the 90 s budget): 0
+
+So the same catalog took 17.2 to 17.8 s per mutant on the base and 10.2 to 11.3 s after the
+change, on two hosted runs a few hours apart. The change touches only the C# classifier
+and fixtures, not what Dafny verifies, so the difference is the runner's, not the change's.
+Still no mutant above a third of its budget, and still no explanation for the one 90 s
+timeout.
