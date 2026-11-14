@@ -1,0 +1,20 @@
+$ ~/.cache/websocketclientlite/dafny-4.11.0/dafny/dafny verify verification/Masking.dfy --verify-included-files --allow-external-contracts --solver-path ~/.cache/websocketclientlite/dafny-4.11.0/dafny/z3/bin/z3-4.12.1 --verification-time-limit 60 --cores 2
+# started 2026-11-14T15:17:56Z
+verification/Protocol.dfy(72,4): Error: a postcondition could not be proved on this return path
+   |
+72 |     {
+   |     ^
+
+verification/Protocol.dfy(68,41): Related location: this is the postcondition that could not be proved
+   |
+68 |       ensures status == 2 ==> HeaderValid(first, second, length, limit) && available >= headerSize - 2
+   |                                          ^
+
+verification/Protocol.dfy(53,67): Related location: this proposition could not be proved
+   |
+53 |        else if marker == 126 then 0 <= length <= 65535 else length >= 65536) &&
+   |                                                                    ^^
+
+
+Dafny program verifier finished with 573 verified, 1 error
+# exit=4 finished 2026-11-14T15:18:05Z

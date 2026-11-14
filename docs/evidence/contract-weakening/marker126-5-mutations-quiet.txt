@@ -1,0 +1,27 @@
+$ ./scripts/pdd.sh mutations --output <out>/marker126-quiet-mutations-evidence
+# started 2026-11-14T15:13:18Z
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:00.06
+baseline: passed (39.29s)
+CLOSE-001-duplicate-send: detected (8.781s)
+CLOSE-001-suppressed-send: detected (8.815s)
+CLOSE-002-state-bit-loss: detected (8.552s)
+CLOSE-003-premature-release: detected (9.075s)
+CLOSE-003-suppressed-release: detected (8.47s)
+REASSEMBLY-001-offset-stall: detected (8.736s)
+REASSEMBLY-002-offset-stall: detected (37.905s)
+REASSEMBLY-001-oversized-result: detected (9.313s)
+MASK-001-xor-to-or: detected (8.741s)
+MASK-001-key-write: detected (9.045s)
+MASK-002-tail-xor-to-or: detected (8.939s)
+MASK-002-corrupt-bulk-byte: detected (76.245s)
+MASK-002-preserve-prefix: detected (9.152s)
+MASK-003-xor-to-or: detected (8.909s)
+MASK-003-preserve-prefix: detected (8.789s)
+HEADER-001-short-sixteen-bit: survived (8.704s)
+Evidence: <out>/marker126-quiet-mutations-evidence
+# exit=1 finished 2026-11-14T15:17:56Z

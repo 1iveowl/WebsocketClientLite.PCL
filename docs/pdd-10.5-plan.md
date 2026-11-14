@@ -93,3 +93,19 @@ comes from, sent to the owner before the release pull request into `main` merges
 ## Lessons
 
 Numbered as they are found, with the evidence.
+
+1. **A target framework change must find hard-coded build paths.** The 10.4 bump (#159) moved
+   `verification/exploration` to `net11.0`, but `run.py` and the replay command in
+   `docs/p3-f-validation.md` still named `bin/Release/net10.0`, so the harness failed. Found in
+   the review of #165, fixed in #166. Grep for `bin/Release/net` when a target changes.
+2. **The mutation runner stops at the first mutant it does not detect.** Later mutants are
+   recorded as `not-run` in `results.json`, so a run with one survivor says nothing about them.
+   Under the weakened 16-bit contract, `HEADER-001-short-sixty-four-bit` was never run and had
+   to be applied by hand (`verification/contract-weakening.md`, section d).
+3. **Dafny mutant times vary by up to nine times on this host.** Most mutants take 8.5 to
+   9.5 s (8.47 s at the fastest). With builds and tests running beside it, one took 77 s; in a rerun with nothing else
+   from this work running, the baseline took 39 s and one mutant 76 s, against a 90 s budget
+   (`docs/evidence/contract-weakening/marker126-4-mutations.txt` and
+   `marker126-5-mutations-quiet.txt`). GitHub-hosted runners were about 2.4 times slower in
+   10.3, so an outlier like that would be inconclusive there. Run mutation suites alone, and
+   keep a slow run rather than rerunning it until it is fast.
