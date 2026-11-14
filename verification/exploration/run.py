@@ -65,7 +65,7 @@ atexit.register(save_identity)
 save_identity()
 run('build.log', ['dotnet', 'build', 'verification/exploration/Exploration.csproj', '-c', 'Release'])
 for i in range(1, 4):
-    run(f'baseline-{i}.jsonl', ['dotnet', 'verification/exploration/bin/Release/net10.0/WebsocketClientLiteTest.dll'])
+    run(f'baseline-{i}.jsonl', ['dotnet', 'verification/exploration/bin/Release/net11.0/WebsocketClientLiteTest.dll'])
 with tempfile.TemporaryDirectory(prefix='p3-f-defect-') as directory:
     copy = Path(directory)
     for p in files:
@@ -82,7 +82,7 @@ with tempfile.TemporaryDirectory(prefix='p3-f-defect-') as directory:
                               sha256=hashlib.sha256(target.read_bytes()).hexdigest())
     run('defect-build.log', ['dotnet', 'build', 'verification/exploration/Exploration.csproj', '-c', 'Release'], copy)
     for i in range(1, 4):
-        run(f'defect-{i}.log', ['dotnet', 'verification/exploration/bin/Release/net10.0/WebsocketClientLiteTest.dll', 'DCPRHXA'], copy, expected=1)
+        run(f'defect-{i}.log', ['dotnet', 'verification/exploration/bin/Release/net11.0/WebsocketClientLiteTest.dll', 'DCPRHXA'], copy, expected=1)
 identity['sourceAfter'] = hashes()
 assert identity['sourceAfter'] == before
 (out / 'identity.json').write_text(json.dumps(identity, indent=2) + '\n')
