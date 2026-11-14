@@ -11,6 +11,7 @@
 [![System.Reactive](https://img.shields.io/badge/Rx-7.0-ff69b4.svg)](https://reactivex.io/)
 [![PDD Proof Driven Development](https://img.shields.io/badge/PDD-Proof_Driven_Development-blue)](verification/README.md)
 [![RFC 6455](https://img.shields.io/badge/WebSocket-RFC%206455-2563EB.svg)](https://tools.ietf.org/html/rfc6455)
+[![Video: Proof vs. vibes](https://img.shields.io/badge/Video-Proof%20vs.%20vibes%2C%20Ep.%201-FF0000?logo=youtube&logoColor=white)](https://youtu.be/2MgbZ3ePsgY)
 
 *Please star this project if you find it useful. Thank you.*
 
@@ -40,6 +41,10 @@ flowchart TD
 This work has brought earlier rejection of malformed frames, safer fragmented sends and buffer ownership, and more reliable teardown and sequential reconnect cleanup. Dafny proofs cover core algorithms under explicit assumptions; controlled tests exercise the surrounding C#. Mutation checks challenge both, while revision-bound evidence makes future regressions easier to detect and investigate.
 
 The result is stronger assurance with explicit limits. Explore the [layers, guarantees and boundaries](docs/protocol-verification.md#layers-of-proof-driven-development).
+
+### Video: Proof vs. vibes
+
+This library is the worked example in *Proof vs. vibes*, a video series about how to trust code an AI agent wrote. Watch episode 1, [The trust gap and the toolbox](https://youtu.be/2MgbZ3ePsgY), on YouTube. If you have just watched it, [What you saw in episode 1](docs/proof-vs-vibes/ep01.md) shows where each part of the episode is in this repository and how to run the checks yourself.
 
 ## Usage Guide
 
