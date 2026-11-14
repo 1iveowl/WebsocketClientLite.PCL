@@ -87,21 +87,27 @@ internal class WebsocketConnectionHandler : IDisposable, IAsyncDisposable
                 _tcpConnectionService,
                 _connectionStatusAction);
 
-        var (handshakeState, handshakeException) = 
+        var outcome =
             await handshakeHandler.Handshake(uri, sender, timeout, ct, origin, headers, subprotocols);
 
-        if(handshakeException is not null)
+        // Exhaustive over the union's cases: a failure always carries its exception. CA1508
+        // calls the last arm always true. It is, for every outcome the handshake creates;
+        // default(HandshakeOutcome) matches no arm and throws, where a discard arm or a
+        // switch statement would let it through as an acceptance.
+#pragma warning disable CA1508
+        WebsocketClientLiteException? handshakeException = outcome switch
+        {
+            HandshakeAccepted => null,
+            HandshakeFailed failed => failed.Error,
+        };
+#pragma warning restore CA1508
+
+        if (handshakeException is not null)
         {
             throw handshakeException;
         }
-        else if (handshakeState is HandshakeStateKind.HandshakeCompletedSuccessfully)
-        {
-            _connectionStatusAction(ConnectionStatus.HandshakeCompletedSuccessfully, null);              
-        }
-        else
-        {
-            throw new WebsocketClientLiteException($"Handshake failed due to unknown error: {handshakeState}");
-        }
+
+        _connectionStatusAction(ConnectionStatus.HandshakeCompletedSuccessfully, null);
 
         setSenderAction(sender, handshakeHandler.NegotiatedSubprotocols);
 

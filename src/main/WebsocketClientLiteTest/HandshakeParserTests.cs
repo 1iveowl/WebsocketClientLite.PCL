@@ -16,11 +16,11 @@ public class HandshakeParserTests
     private static (
         HandshakeParser parser,
         List<ConnectionStatus> statuses,
-        List<(HandshakeStateKind state, WebsocketClientLiteException? ex)> states) Create()
+        List<HandshakeOutcome> states) Create()
     {
         var statuses = new List<ConnectionStatus>();
-        var states = new List<(HandshakeStateKind state, WebsocketClientLiteException? ex)>();
-        var observer = Observer.Create<(HandshakeStateKind state, WebsocketClientLiteException? ex)>(
+        var states = new List<HandshakeOutcome>();
+        var observer = Observer.Create<HandshakeOutcome>(
             states.Add, _ => { }, () => { });
         var parserDelegate = new HandshakeParserDelegate(observer);
         var parserHandler = new HttpCombinedParser(parserDelegate);
@@ -52,7 +52,7 @@ public class HandshakeParserTests
 
         Assert.True(done);
         Assert.DoesNotContain(ConnectionStatus.Aborted, statuses);
-        Assert.Contains(states, s => s.state == HandshakeStateKind.HandshakeCompletedSuccessfully);
+        Assert.Contains(states, s => s is HandshakeAccepted);
     }
 
     [Fact]
@@ -67,10 +67,8 @@ public class HandshakeParserTests
         // The HTTP response is complete, so parsing is done — and the outcome is
         // a failed handshake carrying the server's status code, not success.
         Assert.True(done);
-        var failed = Assert.Single(states);
-        Assert.Equal(HandshakeStateKind.HandshakeFailed, failed.state);
-        Assert.NotNull(failed.ex);
-        Assert.Contains("404", failed.ex!.Message);
+        var failed = Assert.IsType<HandshakeFailed>(Assert.Single(states).Value);
+        Assert.Contains("404", failed.Error.Message);
     }
 
     [Fact]
@@ -87,7 +85,7 @@ public class HandshakeParserTests
 
         Assert.True(done);
         Assert.DoesNotContain(ConnectionStatus.Aborted, statuses);
-        Assert.Contains(states, s => s.state == HandshakeStateKind.HandshakeCompletedSuccessfully);
+        Assert.Contains(states, s => s is HandshakeAccepted);
     }
 
     [Fact]
@@ -108,7 +106,7 @@ public class HandshakeParserTests
             "Sec-WebSocket-Accept: s3pPLMBiTxaQ9kYGzzhZRbK+xOo="), null);
 
         Assert.True(done);
-        Assert.Contains(states, s => s.state == HandshakeStateKind.HandshakeCompletedSuccessfully);
+        Assert.Contains(states, s => s is HandshakeAccepted);
     }
 
     [Fact]
@@ -145,7 +143,7 @@ public class HandshakeParserTests
 
         Assert.True(done);
         Assert.DoesNotContain(ConnectionStatus.Aborted, statuses);
-        Assert.Contains(states, s => s.state == HandshakeStateKind.HandshakeCompletedSuccessfully);
+        Assert.Contains(states, s => s is HandshakeAccepted);
     }
 
     [Fact]
@@ -173,7 +171,7 @@ public class HandshakeParserTests
         var (parser, _, states) = Create();
         parser.Parse(Response("HTTP/1.1 101 Switching Protocols", "Upgrade: websocket", "Connection: keep-alive, Upgrade",
             "Sec-WebSocket-Accept: s3pPLMBiTxaQ9kYGzzhZRbK+xOo=", extra), new[] { "chat", "other" });
-        Assert.Equal(HandshakeStateKind.HandshakeFailed, Assert.Single(states).state);
+        Assert.IsType<HandshakeFailed>(Assert.Single(states).Value);
     }
 
     [Theory]
@@ -184,7 +182,7 @@ public class HandshakeParserTests
         var (parser, _, states) = Create();
         parser.Parse(Response("HTTP/1.1 101 Switching Protocols", upgrade, connection,
             "Sec-WebSocket-Accept: s3pPLMBiTxaQ9kYGzzhZRbK+xOo="), null);
-        Assert.Equal(HandshakeStateKind.HandshakeFailed, Assert.Single(states).state);
+        Assert.IsType<HandshakeFailed>(Assert.Single(states).Value);
     }
 
     [Fact]
@@ -192,11 +190,11 @@ public class HandshakeParserTests
     {
         var (parser, _, states) = Create();
         parser.Parse(Response("HTTP/1.1 101 Switching Protocols", "Upgrade: websocket", "Connection: Upgrade"), null);
-        Assert.Equal(HandshakeStateKind.HandshakeFailed, Assert.Single(states).state);
+        Assert.IsType<HandshakeFailed>(Assert.Single(states).Value);
         (parser, _, states) = Create();
         parser.Parse(Response("HTTP/1.1 101 Switching Protocols", "Upgrade: websocket", "Connection: Upgrade",
             "Sec-WebSocket-Accept: s3pPLMBiTxaQ9kYGzzhZRbK+xOo="), new[] { "chat" });
-        Assert.Equal(HandshakeStateKind.HandshakeCompletedSuccessfully, Assert.Single(states).state);
+        Assert.IsType<HandshakeAccepted>(Assert.Single(states).Value);
     }
 
 }

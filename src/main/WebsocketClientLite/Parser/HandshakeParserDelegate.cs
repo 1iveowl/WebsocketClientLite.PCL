@@ -8,9 +8,9 @@ using WebsocketClientLite.Model;
 namespace WebsocketClientLite.Parser;
 
 internal class HandshakeParserDelegate(
-    IObserver<(HandshakeStateKind handshakeState, WebsocketClientLiteException? ex)> observerHandshakeParserState) : HttpParserDelegate
+    IObserver<HandshakeOutcome> observerHandshakeParserState) : HttpParserDelegate
 {
-    internal Dictionary<string, List<string>> HeaderValues { get; } = new(StringComparer.OrdinalIgnoreCase);
+    internal Dictionary<string, List<string>> HeaderValues { get; } = [with(StringComparer.OrdinalIgnoreCase)];
     internal int StatusCode { get; private set; }
     private string? _header;
 
@@ -46,6 +46,5 @@ internal class HandshakeParserDelegate(
     // HTTP message completion is not WebSocket acceptance. The parser reports
     // the outcome only after checking the response against the sent request.
     internal void Report(bool accepted, string reason) => observerHandshakeParserState.OnNext(
-        accepted ? (HandshakeStateKind.HandshakeCompletedSuccessfully, null)
-        : (HandshakeStateKind.HandshakeFailed, new WebsocketClientLiteException(reason)));
+        accepted ? HandshakeAccepted.Instance : new HandshakeFailed(new WebsocketClientLiteException(reason)));
 }

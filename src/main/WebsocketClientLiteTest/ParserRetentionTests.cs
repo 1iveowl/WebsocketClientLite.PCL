@@ -298,7 +298,7 @@ public class ParserRetentionTests
         }, false);
         var handshake = new HandshakeHandler(connection, (_, _) => { });
         var states = await handshake.Handshake(new Uri("ws://localhost/"), sender, TimeSpan.FromSeconds(15), CancellationToken.None).ToArray();
-        Assert.Equal(HandshakeStateKind.HandshakeCompletedSuccessfully, Assert.Single(states).handshakeState);
+        Assert.IsType<HandshakeAccepted>(Assert.Single(states).Value);
         Assert.True(response!.BytesRead == headerLength && response.Attempts == headerLength, "Handshake consumed first frame or reused stale scratch");
         var result = await Observe(connection);
         Assert.Null(result.Error); Message(result.Frames[0], 2, new byte[] { 17 });
