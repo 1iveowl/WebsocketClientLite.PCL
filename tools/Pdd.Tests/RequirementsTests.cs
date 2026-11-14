@@ -179,13 +179,15 @@ public class RequirementsTests
     [Fact]
     public void EveryDafnyDeclarationIsCited()
     {
-        foreach (var file in Citations.DafnyFiles)
+        var files = Citations.DafnyFiles(Root);
+        Assert.Equal(["verification/Masking.dfy", "verification/Protocol.dfy"], files);
+        foreach (var file in files)
         {
             var text = Data.Text(Path.Combine(Root, file));
-            // Counted independently of the check's pattern: lines that declare a member.
-            var declarations = Requirements.Masked(text).Split('\n').Count(l => Regex.IsMatch(l, @"^\s*(?:(?:static|ghost)\s+)*(?:method|function|predicate|lemma)\b"));
-            Assert.True(declarations > 0, file);
-            Assert.Equal(declarations, Citations.Dafny(file, text));
+            // Every line with a declaration keyword, counted apart from the declaration pattern.
+            var keywordLines = Citations.Masked(text).Split('\n').Count(l => Regex.IsMatch(l, @"\b(?:method|function|predicate|lemma|constructor|iterator)\b"));
+            Assert.True(keywordLines > 0, file);
+            Assert.Equal(keywordLines, Citations.Dafny(file, text));
         }
     }
     [Fact]
@@ -196,22 +198,51 @@ public class RequirementsTests
               // RFC 6455 section 5.3.
               class A {
                 static method First() {}
-                // Section 5.2: the length.
+                // RFC 6455. Section 5.2: the length.
                 static function Second(): bool { true }
                 // RFC 6455 sections 5.2 and 5.5, mixed with library policy.
                 static predicate Third() { true }
                 // Library policy: a choice the RFC leaves open.
                 ghost function Fourth(): int { 0 }
+                // RFC 6455, continued below.
                 // Section 5.7, the example.
                 static method {:isolate_assertions} {:timeLimit 9} Fifth() {}
                 // The words static lemma Hidden() in a comment declare nothing.
                 // Library policy: the next one.
                 static lemma Sixth() {}
+                // RFC 6455 section 5.3, with an attribute line below.
+                @IsolateAssertions
+                static method Seventh(x': int) {}
+                // Library policy: a constructor.
+                constructor (x: int) requires x > 0 {}
+              }
+              // Library policy: an external class and its one member.
+              class {:extern} B extends T {
+                static method {:extern} Copy()
               }
             }
             """;
-        Assert.Equal(6, Citations.Dafny("demo.dfy", text));
+        Assert.Equal(9, Citations.Dafny("demo.dfy", text));
     }
+    // Forms the first version of the check passed or skipped without an error (#169 review).
+    public static IEnumerable<object[]> UncitedForms()
+    {
+        const string cited = "    // RFC 6455 section 5.3.\n    static method M() {}\n";
+        string Module(string members) => "module D {\n  class C {\n" + cited + members + "  }\n}\n";
+        yield return [Module("    constructor (x: int) requires x > 0 {}\n"), "demo.dfy:5: constructor"];
+        yield return [Module("    least predicate P() { true }\n"), "demo.dfy:5: P"];
+        yield return [Module("    greatest lemma L() ensures true {}\n"), "demo.dfy:5: L"];
+        yield return [Module("    iterator I() yields (x: int) ensures true {}\n"), "demo.dfy:5: I"];
+        yield return [Module("    class E { static method F() {} }\n"), "demo.dfy:5: unrecognised declaration form"];
+        // A primed identifier must not hide the declarations after it.
+        yield return [Module("    // RFC 6455 section 5.3.\n    function F2(x': int): int { 0 }\n    function G(): int { 0 }\n    // RFC 6455 section 5.3.\n    function H(t': int): int { 0 }\n"), "demo.dfy:7: G"];
+        yield return [Module("    // RFC 7692 section 7.\n    static method Other() {}\n"), "demo.dfy:6: Other"];
+        yield return [Module("    // See the Dafny reference manual, section 3.\n    static method Manual() {}\n"), "demo.dfy:6: Manual"];
+        yield return [Module("    // Library policy:\n    static method Empty() {}\n"), "demo.dfy:6: Empty"];
+    }
+    [Theory, MemberData(nameof(UncitedForms))]
+    public void UncitedFormFails(string text, string expected) =>
+        Assert.Contains(expected, Assert.Throws<InvalidDataException>(() => Citations.Dafny("demo.dfy", text)).Message);
     [Fact]
     public void ClassCommentCitesOnlyTheFirstMember()
     {

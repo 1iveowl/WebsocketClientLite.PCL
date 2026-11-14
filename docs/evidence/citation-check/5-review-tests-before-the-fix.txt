@@ -1,0 +1,112 @@
+# Run 2026-11-14T15:43:47Z at 32a6374 (the PR head) plus the uncommitted new review tests; SDK 11.0.100
+$ dotnet test tools/Pdd.Tests/Pdd.Tests.csproj -c Release --nologo --filter "FullyQualifiedName~UncitedFormFails|FullyQualifiedName~CitationFormsAccepted|FullyQualifiedName~MalformedManifest"
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  Pdd -> <repo>/tools/Pdd/bin/Release/net11.0/Pdd.dll
+  Pdd.Tests -> <repo>/tools/Pdd.Tests/bin/Release/net11.0/Pdd.Tests.dll
+Test run for <repo>/tools/Pdd.Tests/bin/Release/net11.0/Pdd.Tests.dll (.NETCoreApp,Version=v11.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.45]     Pdd.Tests.RequirementsTests.MalformedManifest(json: "{\"name\":\"origin with an empty policy\",\"path\""···) [FAIL]
+  Failed Pdd.Tests.RequirementsTests.MalformedManifest(json: "{\"name\":\"origin with an empty policy\",\"path\""···) [65 ms]
+  Error Message:
+   Assert.ThrowsAny() Failure: No exception was thrown
+Expected: typeof(System.Exception)
+  Stack Trace:
+     at Pdd.Tests.RequirementsTests.MalformedManifest(String json) in <repo>/tools/Pdd.Tests/RequirementsTests.cs:line 39
+   at InvokeStub_RequirementsTests.MalformedManifest(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+[xUnit.net 00:00:00.47]     Pdd.Tests.RequirementsTests.UncitedFormFails(text: "module D {\n  class C {\n    // RFC 6455 section 5"···, expected: "demo.dfy:6: constructor") [FAIL]
+  Failed Pdd.Tests.RequirementsTests.UncitedFormFails(text: "module D {\n  class C {\n    // RFC 6455 section 5"···, expected: "demo.dfy:6: constructor") [< 1 ms]
+  Error Message:
+   Assert.Throws() Failure: No exception was thrown
+Expected: typeof(System.IO.InvalidDataException)
+  Stack Trace:
+     at Pdd.Tests.RequirementsTests.UncitedFormFails(String text, String expected) in <repo>/tools/Pdd.Tests/RequirementsTests.cs:line 243
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)
+[xUnit.net 00:00:00.47]     Pdd.Tests.RequirementsTests.UncitedFormFails(text: "module D {\n  class C {\n    // RFC 6455 section 5"···, expected: "demo.dfy:6: unrecognised declaration form") [FAIL]
+[xUnit.net 00:00:00.47]     Pdd.Tests.RequirementsTests.UncitedFormFails(text: "module D {\n  class C {\n    // RFC 6455 section 5"···, expected: "demo.dfy:6: I") [FAIL]
+[xUnit.net 00:00:00.47]     Pdd.Tests.RequirementsTests.UncitedFormFails(text: "module D {\n  class C {\n    // RFC 6455 section 5"···, expected: "demo.dfy:6: L") [FAIL]
+[xUnit.net 00:00:00.47]     Pdd.Tests.RequirementsTests.UncitedFormFails(text: "module D {\n  class C {\n    // RFC 6455 section 5"···, expected: "demo.dfy:8: G") [FAIL]
+[xUnit.net 00:00:00.47]     Pdd.Tests.RequirementsTests.UncitedFormFails(text: "module D {\n  class C {\n    // RFC 6455 section 5"···, expected: "demo.dfy:7: Manual") [FAIL]
+[xUnit.net 00:00:00.47]     Pdd.Tests.RequirementsTests.UncitedFormFails(text: "module D {\n  class C {\n    // RFC 6455 section 5"···, expected: "demo.dfy:7: Other") [FAIL]
+[xUnit.net 00:00:00.47]     Pdd.Tests.RequirementsTests.UncitedFormFails(text: "module D {\n  class C {\n    // RFC 6455 section 5"···, expected: "demo.dfy:6: P") [FAIL]
+[xUnit.net 00:00:00.47]     Pdd.Tests.RequirementsTests.UncitedFormFails(text: "module D {\n  class C {\n    // RFC 6455 section 5"···, expected: "demo.dfy:7: Empty") [FAIL]
+[xUnit.net 00:00:00.47]     Pdd.Tests.RequirementsTests.CitationFormsAccepted [FAIL]
+  Failed Pdd.Tests.RequirementsTests.UncitedFormFails(text: "module D {\n  class C {\n    // RFC 6455 section 5"···, expected: "demo.dfy:6: unrecognised declaration form") [< 1 ms]
+  Error Message:
+   Assert.Throws() Failure: No exception was thrown
+Expected: typeof(System.IO.InvalidDataException)
+  Stack Trace:
+     at Pdd.Tests.RequirementsTests.UncitedFormFails(String text, String expected) in <repo>/tools/Pdd.Tests/RequirementsTests.cs:line 243
+   at InvokeStub_RequirementsTests.UncitedFormFails(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed Pdd.Tests.RequirementsTests.UncitedFormFails(text: "module D {\n  class C {\n    // RFC 6455 section 5"···, expected: "demo.dfy:6: I") [< 1 ms]
+  Error Message:
+   Assert.Throws() Failure: No exception was thrown
+Expected: typeof(System.IO.InvalidDataException)
+  Stack Trace:
+     at Pdd.Tests.RequirementsTests.UncitedFormFails(String text, String expected) in <repo>/tools/Pdd.Tests/RequirementsTests.cs:line 243
+   at InvokeStub_RequirementsTests.UncitedFormFails(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed Pdd.Tests.RequirementsTests.UncitedFormFails(text: "module D {\n  class C {\n    // RFC 6455 section 5"···, expected: "demo.dfy:6: L") [< 1 ms]
+  Error Message:
+   Assert.Throws() Failure: No exception was thrown
+Expected: typeof(System.IO.InvalidDataException)
+  Stack Trace:
+     at Pdd.Tests.RequirementsTests.UncitedFormFails(String text, String expected) in <repo>/tools/Pdd.Tests/RequirementsTests.cs:line 243
+   at InvokeStub_RequirementsTests.UncitedFormFails(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed Pdd.Tests.RequirementsTests.UncitedFormFails(text: "module D {\n  class C {\n    // RFC 6455 section 5"···, expected: "demo.dfy:8: G") [< 1 ms]
+  Error Message:
+   Assert.Throws() Failure: No exception was thrown
+Expected: typeof(System.IO.InvalidDataException)
+  Stack Trace:
+     at Pdd.Tests.RequirementsTests.UncitedFormFails(String text, String expected) in <repo>/tools/Pdd.Tests/RequirementsTests.cs:line 243
+   at InvokeStub_RequirementsTests.UncitedFormFails(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed Pdd.Tests.RequirementsTests.UncitedFormFails(text: "module D {\n  class C {\n    // RFC 6455 section 5"···, expected: "demo.dfy:7: Manual") [< 1 ms]
+  Error Message:
+   Assert.Throws() Failure: No exception was thrown
+Expected: typeof(System.IO.InvalidDataException)
+  Stack Trace:
+     at Pdd.Tests.RequirementsTests.UncitedFormFails(String text, String expected) in <repo>/tools/Pdd.Tests/RequirementsTests.cs:line 243
+   at InvokeStub_RequirementsTests.UncitedFormFails(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed Pdd.Tests.RequirementsTests.UncitedFormFails(text: "module D {\n  class C {\n    // RFC 6455 section 5"···, expected: "demo.dfy:7: Other") [< 1 ms]
+  Error Message:
+   Assert.Throws() Failure: No exception was thrown
+Expected: typeof(System.IO.InvalidDataException)
+  Stack Trace:
+     at Pdd.Tests.RequirementsTests.UncitedFormFails(String text, String expected) in <repo>/tools/Pdd.Tests/RequirementsTests.cs:line 243
+   at InvokeStub_RequirementsTests.UncitedFormFails(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed Pdd.Tests.RequirementsTests.UncitedFormFails(text: "module D {\n  class C {\n    // RFC 6455 section 5"···, expected: "demo.dfy:6: P") [< 1 ms]
+  Error Message:
+   Assert.Throws() Failure: No exception was thrown
+Expected: typeof(System.IO.InvalidDataException)
+  Stack Trace:
+     at Pdd.Tests.RequirementsTests.UncitedFormFails(String text, String expected) in <repo>/tools/Pdd.Tests/RequirementsTests.cs:line 243
+   at InvokeStub_RequirementsTests.UncitedFormFails(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed Pdd.Tests.RequirementsTests.UncitedFormFails(text: "module D {\n  class C {\n    // RFC 6455 section 5"···, expected: "demo.dfy:7: Empty") [< 1 ms]
+  Error Message:
+   Assert.Throws() Failure: No exception was thrown
+Expected: typeof(System.IO.InvalidDataException)
+  Stack Trace:
+     at Pdd.Tests.RequirementsTests.UncitedFormFails(String text, String expected) in <repo>/tools/Pdd.Tests/RequirementsTests.cs:line 243
+   at InvokeStub_RequirementsTests.UncitedFormFails(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed Pdd.Tests.RequirementsTests.CitationFormsAccepted [< 1 ms]
+  Error Message:
+   System.IO.InvalidDataException : no RFC 6455 section or "Library policy:" in the comment directly above: demo.dfy:19: Seventh, demo.dfy:25: Copy
+  Stack Trace:
+     at Pdd.Data.Require(Boolean condition, String message) in <repo>/tools/Pdd/Models.cs:line 105
+   at Pdd.Citations.Dafny(String file, String text) in <repo>/tools/Pdd/Citations.cs:line 46
+   at Pdd.Tests.RequirementsTests.CitationFormsAccepted() in <repo>/tools/Pdd.Tests/RequirementsTests.cs:line 223
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+
+Failed!  - Failed:    11, Passed:    25, Skipped:     0, Total:    36, Duration: 164 ms - Pdd.Tests.dll (net11.0)
+VSTEST_ARTIFACTS_DIRECTORY environment variable was not found, falling back to a user-private temporary directory. This is most likely caused by an outdated Microsoft.NET.Test.Sdk package reference in the test project.
+# exit=1

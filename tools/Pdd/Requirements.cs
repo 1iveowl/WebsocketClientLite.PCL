@@ -290,7 +290,7 @@ public sealed class Requirements(string root)
             foreach (var owner in b.Owners)
                 Resolve(sourceRoot, owner);
         }
-        foreach (var file in Citations.DafnyFiles)
+        foreach (var file in Citations.DafnyFiles(sourceRoot))
             Citations.Dafny(file, Source(sourceRoot, file));
         return model;
     }

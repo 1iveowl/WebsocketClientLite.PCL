@@ -1,11 +1,11 @@
 # Run 2026-11-14T14:54:59Z at ce39403 plus the uncommitted new tests; SDK 11.0.100
 $ dotnet test tools/Pdd.Tests/Pdd.Tests.csproj -c Release --nologo --filter "FullyQualifiedName~UncitedDafnyDeclarationFails|FullyQualifiedName~MalformedManifest"
   Determining projects to restore...
-  Restored ~/worktrees/10.5-cite/tools/Pdd/Pdd.csproj (in 41 ms).
-  Restored ~/worktrees/10.5-cite/tools/Pdd.Tests/Pdd.Tests.csproj (in 117 ms).
-  Pdd -> ~/worktrees/10.5-cite/tools/Pdd/bin/Release/net11.0/Pdd.dll
-  Pdd.Tests -> ~/worktrees/10.5-cite/tools/Pdd.Tests/bin/Release/net11.0/Pdd.Tests.dll
-Test run for ~/worktrees/10.5-cite/tools/Pdd.Tests/bin/Release/net11.0/Pdd.Tests.dll (.NETCoreApp,Version=v11.0)
+  Restored <repo>/tools/Pdd/Pdd.csproj (in 41 ms).
+  Restored <repo>/tools/Pdd.Tests/Pdd.Tests.csproj (in 117 ms).
+  Pdd -> <repo>/tools/Pdd/bin/Release/net11.0/Pdd.dll
+  Pdd.Tests -> <repo>/tools/Pdd.Tests/bin/Release/net11.0/Pdd.Tests.dll
+Test run for <repo>/tools/Pdd.Tests/bin/Release/net11.0/Pdd.Tests.dll (.NETCoreApp,Version=v11.0)
 A total of 1 test files matched the specified pattern.
 [xUnit.net 00:00:00.40]     Pdd.Tests.RequirementsTests.MalformedManifest(json: "{\"name\":\"origin with a lowercase policy label\""···) [FAIL]
 [xUnit.net 00:00:00.48]     Pdd.Tests.RequirementsTests.MalformedManifest(json: "{\"name\":\"origin cites another RFC\",\"path\":[\"···) [FAIL]
@@ -14,7 +14,7 @@ A total of 1 test files matched the specified pattern.
    Assert.ThrowsAny() Failure: No exception was thrown
 Expected: typeof(System.Exception)
   Stack Trace:
-     at Pdd.Tests.RequirementsTests.MalformedManifest(String json) in ~/worktrees/10.5-cite/tools/Pdd.Tests/RequirementsTests.cs:line 38
+     at Pdd.Tests.RequirementsTests.MalformedManifest(String json) in <repo>/tools/Pdd.Tests/RequirementsTests.cs:line 38
    at InvokeStub_RequirementsTests.MalformedManifest(Object, Span`1)
    at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
   Failed Pdd.Tests.RequirementsTests.MalformedManifest(json: "{\"name\":\"origin cites another RFC\",\"path\":[\"···) [63 ms]
@@ -22,7 +22,7 @@ Expected: typeof(System.Exception)
    Assert.ThrowsAny() Failure: No exception was thrown
 Expected: typeof(System.Exception)
   Stack Trace:
-     at Pdd.Tests.RequirementsTests.MalformedManifest(String json) in ~/worktrees/10.5-cite/tools/Pdd.Tests/RequirementsTests.cs:line 38
+     at Pdd.Tests.RequirementsTests.MalformedManifest(String json) in <repo>/tools/Pdd.Tests/RequirementsTests.cs:line 38
    at InvokeStub_RequirementsTests.MalformedManifest(Object, Span`1)
    at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
 [xUnit.net 00:00:00.56]     Pdd.Tests.RequirementsTests.MalformedManifest(json: "{\"name\":\"origin without citation\",\"path\":[\""···) [FAIL]
@@ -31,7 +31,7 @@ Expected: typeof(System.Exception)
    Assert.ThrowsAny() Failure: No exception was thrown
 Expected: typeof(System.Exception)
   Stack Trace:
-     at Pdd.Tests.RequirementsTests.MalformedManifest(String json) in ~/worktrees/10.5-cite/tools/Pdd.Tests/RequirementsTests.cs:line 38
+     at Pdd.Tests.RequirementsTests.MalformedManifest(String json) in <repo>/tools/Pdd.Tests/RequirementsTests.cs:line 38
    at InvokeStub_RequirementsTests.MalformedManifest(Object, Span`1)
    at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
 [xUnit.net 00:00:00.67]     Pdd.Tests.RequirementsTests.UncitedDafnyDeclarationFails(file: "verification/Masking.dfy", declaration: "static method Apply(", comment: "    // Masks the data with the key.", name: "Apply") [FAIL]
@@ -41,7 +41,7 @@ Expected: typeof(System.Exception)
    Assert.Throws() Failure: No exception was thrown
 Expected: typeof(System.IO.InvalidDataException)
   Stack Trace:
-     at Pdd.Tests.RequirementsTests.UncitedDafnyDeclarationFails(String file, String declaration, String comment, String name) in ~/worktrees/10.5-cite/tools/Pdd.Tests/RequirementsTests.cs:line 174
+     at Pdd.Tests.RequirementsTests.UncitedDafnyDeclarationFails(String file, String declaration, String comment, String name) in <repo>/tools/Pdd.Tests/RequirementsTests.cs:line 174
    at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
    at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)
   Failed Pdd.Tests.RequirementsTests.UncitedDafnyDeclarationFails(file: "verification/Protocol.dfy", declaration: "class NativeCopy {", comment: null, name: "CopySlice") [66 ms]
@@ -49,7 +49,7 @@ Expected: typeof(System.IO.InvalidDataException)
    Assert.Throws() Failure: No exception was thrown
 Expected: typeof(System.IO.InvalidDataException)
   Stack Trace:
-     at Pdd.Tests.RequirementsTests.UncitedDafnyDeclarationFails(String file, String declaration, String comment, String name) in ~/worktrees/10.5-cite/tools/Pdd.Tests/RequirementsTests.cs:line 174
+     at Pdd.Tests.RequirementsTests.UncitedDafnyDeclarationFails(String file, String declaration, String comment, String name) in <repo>/tools/Pdd.Tests/RequirementsTests.cs:line 174
    at InvokeStub_RequirementsTests.UncitedDafnyDeclarationFails(Object, Span`1)
    at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
 [xUnit.net 00:00:00.80]     Pdd.Tests.RequirementsTests.UncitedDafnyDeclarationFails(file: "verification/Protocol.dfy", declaration: "static function HeaderValid(", comment: null, name: "HeaderValid") [FAIL]
@@ -59,7 +59,7 @@ Expected: typeof(System.IO.InvalidDataException)
    Assert.Throws() Failure: No exception was thrown
 Expected: typeof(System.IO.InvalidDataException)
   Stack Trace:
-     at Pdd.Tests.RequirementsTests.UncitedDafnyDeclarationFails(String file, String declaration, String comment, String name) in ~/worktrees/10.5-cite/tools/Pdd.Tests/RequirementsTests.cs:line 174
+     at Pdd.Tests.RequirementsTests.UncitedDafnyDeclarationFails(String file, String declaration, String comment, String name) in <repo>/tools/Pdd.Tests/RequirementsTests.cs:line 174
    at InvokeStub_RequirementsTests.UncitedDafnyDeclarationFails(Object, Span`1)
    at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
   Failed Pdd.Tests.RequirementsTests.UncitedDafnyDeclarationFails(file: "verification/Protocol.dfy", declaration: "HeaderRoundTrip(", comment: "    // Follows the library policy; see the section"···, name: "HeaderRoundTrip") [69 ms]
@@ -67,10 +67,11 @@ Expected: typeof(System.IO.InvalidDataException)
    Assert.Throws() Failure: No exception was thrown
 Expected: typeof(System.IO.InvalidDataException)
   Stack Trace:
-     at Pdd.Tests.RequirementsTests.UncitedDafnyDeclarationFails(String file, String declaration, String comment, String name) in ~/worktrees/10.5-cite/tools/Pdd.Tests/RequirementsTests.cs:line 174
+     at Pdd.Tests.RequirementsTests.UncitedDafnyDeclarationFails(String file, String declaration, String comment, String name) in <repo>/tools/Pdd.Tests/RequirementsTests.cs:line 174
    at InvokeStub_RequirementsTests.UncitedDafnyDeclarationFails(Object, Span`1)
    at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
 
 Failed!  - Failed:     7, Passed:    22, Skipped:     0, Total:    29, Duration: 556 ms - Pdd.Tests.dll (net11.0)
 VSTEST_ARTIFACTS_DIRECTORY environment variable was not found, falling back to a user-private temporary directory. This is most likely caused by an outdated Microsoft.NET.Test.Sdk package reference in the test project.
 # exit=1
+# Note added after the #169 review: this ran before the branch was rebased onto da6e61f. The tests were then a8bc07b (now e9797f6) on ce39403; the check was uncommitted (now 772b275). The review reran file 1 at e9797f6 with the same 7 failures.

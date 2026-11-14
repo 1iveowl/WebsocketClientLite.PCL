@@ -2,3 +2,4 @@
 $ ./scripts/pdd.sh validate
 pdd: no RFC 6455 section or "Library policy:" in the comment directly above: verification/Masking.dfy:28: XorTwice, verification/Masking.dfy:32: RoundTrip
 # exit=1
+# Note added after the #169 review: this ran before the branch was rebased onto da6e61f. The tests were then a8bc07b (now e9797f6) on ce39403; the check was uncommitted (now 772b275). The review reran file 1 at e9797f6 with the same 7 failures.

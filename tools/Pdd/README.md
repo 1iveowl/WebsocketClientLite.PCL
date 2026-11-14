@@ -10,16 +10,25 @@ dotnet test tools/Pdd.Tests/Pdd.Tests.csproj -c Release
 ```
 
 `validate` also checks RFC citations, rule 1 of the [rules for verification
-work](../../verification/README.md#rules-for-verification-work). Every method,
-function, predicate and lemma in `verification/Protocol.dfy` and
-`verification/Masking.dfy`, the `{:extern}` declaration included, needs an RFC
-6455 section ("RFC 6455 section 5.3", "Section 5.2:", "sections 5.2 and 5.5") or
-`Library policy:` in the comment block directly above it. For the first member
-of a class, the block above the class counts too. Every requirement's `origin`
-in `verification/requirements.json` needs an RFC 6455 section link
-(`https://www.rfc-editor.org/rfc/rfc6455.html#section-…`) or an entry that
-starts with `Library policy:`. The check sees that a citation is there, not that
-it is the right one; that stays a review question.
+work](../../verification/README.md#rules-for-verification-work):
+
+- Every method, function, predicate, lemma, constructor and iterator in each
+  `verification/*.dfy` file, the `{:extern}` declaration included, needs a
+  citation in the block of `//` lines directly above it. `@` attribute lines may
+  sit between; a blank line or a `/* */` comment may not. For the first member
+  of a class, the block directly above the class line counts too.
+- A citation names RFC 6455 and a section number in the same block ("RFC 6455
+  section 5.3", or "RFC 6455 sections 5.2 and 5.5" followed by "Section 5.2:"),
+  or says `Library policy:` and then what the policy is.
+- A line with a declaration keyword that does not start a declaration the check
+  reads, such as a member on the same line as its class, fails as an
+  unrecognised declaration form, so that no declaration is skipped.
+- Every requirement's `origin` in `verification/requirements.json` needs an RFC
+  6455 section link (`https://www.rfc-editor.org/rfc/rfc6455.html#section-…`) or
+  an entry that starts with `Library policy:` and states the policy.
+
+The check sees that a citation is there, not that it is the right one; that stays
+a review question.
 
 There is one console project and one test project. Neither is in the production
 solution or referenced by a published package. The console uses only standard
@@ -47,7 +56,7 @@ can be used directly with the same arguments.
 
 | Command | Purpose |
 | --- | --- |
-| `validate [manifest.json]` | Validate requirements, boundaries, references and catalog-independent obligations, and the RFC citations below. |
+| `validate [manifest.json]` | Validate requirements, boundaries, references and catalog-independent obligations, and the RFC citations above. |
 | `contract-report --target REF --head HEAD --output FILE` | Compare committed trees from the actual target's unique merge base; requires semantic PR review. |
 | `mutations [--scope all|close|payload] [--output DIR]` | Verify baseline and isolated catalog edits (default: all 17). |
 | `capture --job protocol --output DIR` | Capture manifest, tooling tests, proof/audit/generated-source check and Dafny mutations. |
