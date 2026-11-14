@@ -6,6 +6,41 @@ This work implements the five stages in the [adoption plan](../docs/dafny-pdd-pl
 
 The proposed [PDD phase 2 plan for 10.2.0.0](../docs/pdd-phase-2-plan.md) adds requirement traceability, repeatable mutation checks, boundary review, CI receipts and controlled asynchronous tests, starting with Close handling.
 
+## Rules for verification work
+
+These rules hold for every change to the Dafny contracts, the [requirement map](requirements.json),
+the [boundary register](boundaries.json), the mutation catalogs and the tests that check the protocol
+core, whoever makes it.
+
+1. **The RFC wins.** When a requirement is in question, RFC 6455 decides: not an agent's reading of
+   it, and not the owner's. Each proved contract names the RFC section it comes from, or says
+   "Library policy:" and what the policy is. Library policy covers choices the RFC leaves to the
+   implementation, such as size limits, and never overrides a MUST. Where the code, a contract or a
+   test disagrees with the RFC, the disagreement is written down and resolved in the RFC's favour.
+   The RFC's errata are reviewed before a contract is frozen ([adoption plan](../docs/dafny-pdd-plan.md));
+   a reported erratum is named beside the contract it concerns, as for the Close reason in `CloseValid`.
+   The one deliberate departure is opt-in and outside the proved core: `ExcludeZeroApplicationDataInPong`
+   sends the one-byte empty Pong that Slack's RTM API expects (see the README), with no RFC framing
+   guarantee.
+2. **Expected bytes never come from production code.** A test takes its expected bytes from the RFC,
+   such as the masked "Hello" of section 5.7 in `Decode_MatchesRfc6455HelloVector`, writes them out
+   by hand, or computes them in the test from the RFC's rule, as `Decode_PreservesScratchKeyAndRoundTrips`
+   does with `b ^ key[i % 4]` from section 5.3. It never computes them with production helpers, which
+   would let the code check itself. A verified reference such as the generated `MergeScalar` may be
+   compared beside independent bytes, never instead of them
+   (`BulkMergeMatchesScalarProofAndIndependentConcatenation`). This was a plan rule for phase 3
+   ([`docs/pdd-phase-3-plan.md`](../docs/pdd-phase-3-plan.md), lines 612 and 613: "Keep independent
+   expected bytes; do not let production helpers calculate their own oracle") and is now a standing
+   rule.
+3. **See a new test fail on the old code.** Before the fix that makes a new test pass is trusted, the
+   test is run against the code before the fix and seen to fail, for the reason the test names. A test
+   that passes on the old code, or fails there for another reason, does not show the fix. The failing
+   run is recorded: the commit it ran at, the command, the failure line, and any change the test needed
+   to run on the old code. The
+   [header length replay](../docs/header-length-validation.md) shows why: the test for non-minimal
+   lengths first passed on the 9.2.0 parser for the wrong reason. That parser accepted the header and
+   then failed on the missing payload, with the exception type the test expected.
+
 ## Requirement maps (phase 2, increments A and F)
 
 The [manifest](requirements.json), [v2 JSON Schema](requirements.schema.json) and
