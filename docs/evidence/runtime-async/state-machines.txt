@@ -1,0 +1,2 @@
+  139264 bytes  state machines  48  runtime-async methods   0  bin-off/WebsocketClientLite.dll
+  104448 bytes  state machines   0  runtime-async methods  48  bin-on/WebsocketClientLite.dll
