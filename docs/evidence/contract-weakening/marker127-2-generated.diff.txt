@@ -1,0 +1,22 @@
+diff --git a/verification/generated/Masking.g.cs b/verification/generated/Masking.g.cs
+index 385a590..838f951 100644
+--- a/verification/generated/Masking.g.cs
++++ b/verification/generated/Masking.g.cs
+@@ -111,7 +111,7 @@ static function HeaderValid(first: bv8, second: bv8, length: bv64, limit: bv64):
+       length <= limit &&
+       length <= 2147483647 &&
+       length & 9223372036854775808 == 0 &&
+-      (if marker < 126 then length == marker as bv64 else if marker == 126 then 126 <= length <= 65535 else length >= 65536) &&
++      (if marker < 126 then length == marker as bv64 else if marker == 126 then 126 <= length <= 65535 else length >= 0) &&
+       (op < 8 || (first & 128 != 0 && length <= 125))
+     }
+ 
+@@ -702,7 +702,7 @@ public static bool HeaderValid(byte first, byte second, ulong length, ulong limi
+     {
+       byte _0_op = (byte)((first) & ((byte)(15)));
+       byte _1_marker = (byte)((second) & ((byte)(127)));
+-      return (((((WebsocketClientLite.VerifiedProtocol.Protocol.PrefixValid(first, second)) && ((length) <= (limit))) && ((length) <= (2147483647UL))) && (((length) & (9223372036854775808UL)) == (0UL))) && ((((_1_marker) < ((byte)(126))) ? ((length) == ((ulong)(_1_marker))) : ((((_1_marker) == ((byte)(126))) ? (((126UL) <= (length)) && ((length) <= (65535UL))) : ((length) >= (65536UL))))))) && (((_0_op) < ((byte)(8))) || ((((byte)((first) & ((byte)(128)))) != ((byte)(0))) && ((length) <= (125UL))));
++      return (((((WebsocketClientLite.VerifiedProtocol.Protocol.PrefixValid(first, second)) && ((length) <= (limit))) && ((length) <= (2147483647UL))) && (((length) & (9223372036854775808UL)) == (0UL))) && ((((_1_marker) < ((byte)(126))) ? ((length) == ((ulong)(_1_marker))) : ((((_1_marker) == ((byte)(126))) ? (((126UL) <= (length)) && ((length) <= (65535UL))) : ((length) >= (0UL))))))) && (((_0_op) < ((byte)(8))) || ((((byte)((first) & ((byte)(128)))) != ((byte)(0))) && ((length) <= (125UL))));
+     }
+     public static void DecodeHeader(byte first, byte second, byte[] extended, uint available, ulong limit, out byte status, out ulong length, out uint headerSize)
+     {

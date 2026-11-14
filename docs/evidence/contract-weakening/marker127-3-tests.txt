@@ -1,0 +1,185 @@
+$ ./test-all-tfms.sh Release
+# started 2026-11-14T15:02:24Z
+==================================================================
+  Testing against library build: netstandard2.0 (config: Release)
+==================================================================
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  IWebsocketClientLite -> <worktree>/src/interface/IWebsocketClientLite/bin/Release/netstandard2.0/IWebsocketClientLite.dll
+  WebsocketClientLite -> <worktree>/src/main/WebsocketClientLite/bin/Release/netstandard2.0/WebsocketClientLite.dll
+  WebsocketClientLiteTest -> <worktree>/src/main/WebsocketClientLiteTest/bin/Release/net11.0/WebsocketClientLiteTest.dll
+Test run for <worktree>/src/main/WebsocketClientLiteTest/bin/Release/net11.0/WebsocketClientLiteTest.dll (.NETCoreApp,Version=v11.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.22]     WebsocketClientLiteTest.ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(header: [129, 127, 0, 0, 0, ···], limit: 0, read: 10) [FAIL]
+[xUnit.net 00:00:00.23]     WebsocketClientLiteTest.PayloadParsingTests.RejectsMalformedFrames(bytes: [129, 127, 0, 0, 0, ···]) [FAIL]
+  Failed WebsocketClientLiteTest.ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(header: [129, 127, 0, 0, 0, ···], limit: 0, read: 10) [7 ms]
+  Error Message:
+   Assert.Throws() Failure: No exception was thrown
+Expected: typeof(WebsocketClientLite.CustomException.WebsocketClientLiteException)
+  Stack Trace:
+     at WebsocketClientLiteTest.ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(Byte[] header, Int32 limit, Int32 read) in <worktree>/src/main/WebsocketClientLiteTest/ParserRetentionTests.cs:line 186
+--- End of stack trace from previous location ---
+  Failed WebsocketClientLiteTest.PayloadParsingTests.RejectsMalformedFrames(bytes: [129, 127, 0, 0, 0, ···]) [< 1 ms]
+  Error Message:
+   Assert.Throws() Failure: No exception was thrown
+Expected: typeof(WebsocketClientLite.CustomException.WebsocketClientLiteException)
+  Stack Trace:
+     at WebsocketClientLiteTest.PayloadParsingTests.RejectsMalformedFrames(Byte[] bytes) in <worktree>/src/main/WebsocketClientLiteTest/PayloadParsingTests.cs:line 267
+--- End of stack trace from previous location ---
+
+Failed!  - Failed:     2, Passed:   326, Skipped:     0, Total:   328, Duration: 24 s - WebsocketClientLiteTest.dll (net11.0)
+VSTEST_ARTIFACTS_DIRECTORY environment variable was not found, falling back to a user-private temporary directory. This is most likely caused by an outdated Microsoft.NET.Test.Sdk package reference in the test project.
+FAILED: netstandard2.0
+==================================================================
+  Testing against library build: netstandard2.1 (config: Release)
+==================================================================
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  IWebsocketClientLite -> <worktree>/src/interface/IWebsocketClientLite/bin/Release/netstandard2.0/IWebsocketClientLite.dll
+  WebsocketClientLite -> <worktree>/src/main/WebsocketClientLite/bin/Release/netstandard2.1/WebsocketClientLite.dll
+  WebsocketClientLiteTest -> <worktree>/src/main/WebsocketClientLiteTest/bin/Release/net11.0/WebsocketClientLiteTest.dll
+Test run for <worktree>/src/main/WebsocketClientLiteTest/bin/Release/net11.0/WebsocketClientLiteTest.dll (.NETCoreApp,Version=v11.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.23]     WebsocketClientLiteTest.ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(header: [129, 127, 0, 0, 0, ···], limit: 0, read: 10) [FAIL]
+[xUnit.net 00:00:00.23]     WebsocketClientLiteTest.PayloadParsingTests.RejectsMalformedFrames(bytes: [129, 127, 0, 0, 0, ···]) [FAIL]
+  Failed WebsocketClientLiteTest.ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(header: [129, 127, 0, 0, 0, ···], limit: 0, read: 10) [7 ms]
+  Error Message:
+   Assert.Throws() Failure: No exception was thrown
+Expected: typeof(WebsocketClientLite.CustomException.WebsocketClientLiteException)
+  Stack Trace:
+     at WebsocketClientLiteTest.ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(Byte[] header, Int32 limit, Int32 read) in <worktree>/src/main/WebsocketClientLiteTest/ParserRetentionTests.cs:line 186
+--- End of stack trace from previous location ---
+  Failed WebsocketClientLiteTest.PayloadParsingTests.RejectsMalformedFrames(bytes: [129, 127, 0, 0, 0, ···]) [< 1 ms]
+  Error Message:
+   Assert.Throws() Failure: No exception was thrown
+Expected: typeof(WebsocketClientLite.CustomException.WebsocketClientLiteException)
+  Stack Trace:
+     at WebsocketClientLiteTest.PayloadParsingTests.RejectsMalformedFrames(Byte[] bytes) in <worktree>/src/main/WebsocketClientLiteTest/PayloadParsingTests.cs:line 267
+--- End of stack trace from previous location ---
+
+Failed!  - Failed:     2, Passed:   326, Skipped:     0, Total:   328, Duration: 24 s - WebsocketClientLiteTest.dll (net11.0)
+VSTEST_ARTIFACTS_DIRECTORY environment variable was not found, falling back to a user-private temporary directory. This is most likely caused by an outdated Microsoft.NET.Test.Sdk package reference in the test project.
+FAILED: netstandard2.1
+==================================================================
+  Testing against library build: net8.0 (config: Release)
+==================================================================
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  IWebsocketClientLite -> <worktree>/src/interface/IWebsocketClientLite/bin/Release/netstandard2.0/IWebsocketClientLite.dll
+  WebsocketClientLite -> <worktree>/src/main/WebsocketClientLite/bin/Release/net8.0/WebsocketClientLite.dll
+  WebsocketClientLiteTest -> <worktree>/src/main/WebsocketClientLiteTest/bin/Release/net11.0/WebsocketClientLiteTest.dll
+Test run for <worktree>/src/main/WebsocketClientLiteTest/bin/Release/net11.0/WebsocketClientLiteTest.dll (.NETCoreApp,Version=v11.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.24]     WebsocketClientLiteTest.ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(header: [129, 127, 0, 0, 0, ···], limit: 0, read: 10) [FAIL]
+  Failed WebsocketClientLiteTest.ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(header: [129, 127, 0, 0, 0, ···], limit: 0, read: 10) [8 ms]
+  Error Message:
+   Assert.Throws() Failure: No exception was thrown
+Expected: typeof(WebsocketClientLite.CustomException.WebsocketClientLiteException)
+  Stack Trace:
+     at WebsocketClientLiteTest.ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(Byte[] header, Int32 limit, Int32 read) in <worktree>/src/main/WebsocketClientLiteTest/ParserRetentionTests.cs:line 186
+--- End of stack trace from previous location ---
+[xUnit.net 00:00:00.24]     WebsocketClientLiteTest.PayloadParsingTests.RejectsMalformedFrames(bytes: [129, 127, 0, 0, 0, ···]) [FAIL]
+  Failed WebsocketClientLiteTest.PayloadParsingTests.RejectsMalformedFrames(bytes: [129, 127, 0, 0, 0, ···]) [< 1 ms]
+  Error Message:
+   Assert.Throws() Failure: No exception was thrown
+Expected: typeof(WebsocketClientLite.CustomException.WebsocketClientLiteException)
+  Stack Trace:
+     at WebsocketClientLiteTest.PayloadParsingTests.RejectsMalformedFrames(Byte[] bytes) in <worktree>/src/main/WebsocketClientLiteTest/PayloadParsingTests.cs:line 267
+--- End of stack trace from previous location ---
+
+Failed!  - Failed:     2, Passed:   326, Skipped:     0, Total:   328, Duration: 24 s - WebsocketClientLiteTest.dll (net11.0)
+VSTEST_ARTIFACTS_DIRECTORY environment variable was not found, falling back to a user-private temporary directory. This is most likely caused by an outdated Microsoft.NET.Test.Sdk package reference in the test project.
+FAILED: net8.0
+==================================================================
+  Testing against library build: net9.0 (config: Release)
+==================================================================
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  IWebsocketClientLite -> <worktree>/src/interface/IWebsocketClientLite/bin/Release/netstandard2.0/IWebsocketClientLite.dll
+  WebsocketClientLite -> <worktree>/src/main/WebsocketClientLite/bin/Release/net9.0/WebsocketClientLite.dll
+  WebsocketClientLiteTest -> <worktree>/src/main/WebsocketClientLiteTest/bin/Release/net11.0/WebsocketClientLiteTest.dll
+Test run for <worktree>/src/main/WebsocketClientLiteTest/bin/Release/net11.0/WebsocketClientLiteTest.dll (.NETCoreApp,Version=v11.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.24]     WebsocketClientLiteTest.ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(header: [129, 127, 0, 0, 0, ···], limit: 0, read: 10) [FAIL]
+[xUnit.net 00:00:00.24]     WebsocketClientLiteTest.PayloadParsingTests.RejectsMalformedFrames(bytes: [129, 127, 0, 0, 0, ···]) [FAIL]
+  Failed WebsocketClientLiteTest.ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(header: [129, 127, 0, 0, 0, ···], limit: 0, read: 10) [11 ms]
+  Error Message:
+   Assert.Throws() Failure: No exception was thrown
+Expected: typeof(WebsocketClientLite.CustomException.WebsocketClientLiteException)
+  Stack Trace:
+     at WebsocketClientLiteTest.ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(Byte[] header, Int32 limit, Int32 read) in <worktree>/src/main/WebsocketClientLiteTest/ParserRetentionTests.cs:line 186
+--- End of stack trace from previous location ---
+  Failed WebsocketClientLiteTest.PayloadParsingTests.RejectsMalformedFrames(bytes: [129, 127, 0, 0, 0, ···]) [< 1 ms]
+  Error Message:
+   Assert.Throws() Failure: No exception was thrown
+Expected: typeof(WebsocketClientLite.CustomException.WebsocketClientLiteException)
+  Stack Trace:
+     at WebsocketClientLiteTest.PayloadParsingTests.RejectsMalformedFrames(Byte[] bytes) in <worktree>/src/main/WebsocketClientLiteTest/PayloadParsingTests.cs:line 267
+--- End of stack trace from previous location ---
+
+Failed!  - Failed:     2, Passed:   326, Skipped:     0, Total:   328, Duration: 24 s - WebsocketClientLiteTest.dll (net11.0)
+VSTEST_ARTIFACTS_DIRECTORY environment variable was not found, falling back to a user-private temporary directory. This is most likely caused by an outdated Microsoft.NET.Test.Sdk package reference in the test project.
+FAILED: net9.0
+==================================================================
+  Testing against library build: net10.0 (config: Release)
+==================================================================
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  IWebsocketClientLite -> <worktree>/src/interface/IWebsocketClientLite/bin/Release/netstandard2.0/IWebsocketClientLite.dll
+  WebsocketClientLite -> <worktree>/src/main/WebsocketClientLite/bin/Release/net10.0/WebsocketClientLite.dll
+  WebsocketClientLiteTest -> <worktree>/src/main/WebsocketClientLiteTest/bin/Release/net11.0/WebsocketClientLiteTest.dll
+Test run for <worktree>/src/main/WebsocketClientLiteTest/bin/Release/net11.0/WebsocketClientLiteTest.dll (.NETCoreApp,Version=v11.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.24]     WebsocketClientLiteTest.ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(header: [129, 127, 0, 0, 0, ···], limit: 0, read: 10) [FAIL]
+[xUnit.net 00:00:00.24]     WebsocketClientLiteTest.PayloadParsingTests.RejectsMalformedFrames(bytes: [129, 127, 0, 0, 0, ···]) [FAIL]
+  Failed WebsocketClientLiteTest.ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(header: [129, 127, 0, 0, 0, ···], limit: 0, read: 10) [8 ms]
+  Error Message:
+   Assert.Throws() Failure: No exception was thrown
+Expected: typeof(WebsocketClientLite.CustomException.WebsocketClientLiteException)
+  Stack Trace:
+     at WebsocketClientLiteTest.ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(Byte[] header, Int32 limit, Int32 read) in <worktree>/src/main/WebsocketClientLiteTest/ParserRetentionTests.cs:line 186
+--- End of stack trace from previous location ---
+  Failed WebsocketClientLiteTest.PayloadParsingTests.RejectsMalformedFrames(bytes: [129, 127, 0, 0, 0, ···]) [< 1 ms]
+  Error Message:
+   Assert.Throws() Failure: No exception was thrown
+Expected: typeof(WebsocketClientLite.CustomException.WebsocketClientLiteException)
+  Stack Trace:
+     at WebsocketClientLiteTest.PayloadParsingTests.RejectsMalformedFrames(Byte[] bytes) in <worktree>/src/main/WebsocketClientLiteTest/PayloadParsingTests.cs:line 267
+--- End of stack trace from previous location ---
+
+Failed!  - Failed:     2, Passed:   326, Skipped:     0, Total:   328, Duration: 24 s - WebsocketClientLiteTest.dll (net11.0)
+VSTEST_ARTIFACTS_DIRECTORY environment variable was not found, falling back to a user-private temporary directory. This is most likely caused by an outdated Microsoft.NET.Test.Sdk package reference in the test project.
+FAILED: net10.0
+==================================================================
+  Testing against library build: net11.0 (config: Release)
+==================================================================
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  IWebsocketClientLite -> <worktree>/src/interface/IWebsocketClientLite/bin/Release/netstandard2.0/IWebsocketClientLite.dll
+  WebsocketClientLite -> <worktree>/src/main/WebsocketClientLite/bin/Release/net11.0/WebsocketClientLite.dll
+  WebsocketClientLiteTest -> <worktree>/src/main/WebsocketClientLiteTest/bin/Release/net11.0/WebsocketClientLiteTest.dll
+Test run for <worktree>/src/main/WebsocketClientLiteTest/bin/Release/net11.0/WebsocketClientLiteTest.dll (.NETCoreApp,Version=v11.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.23]     WebsocketClientLiteTest.PayloadParsingTests.RejectsMalformedFrames(bytes: [129, 127, 0, 0, 0, ···]) [FAIL]
+[xUnit.net 00:00:00.23]     WebsocketClientLiteTest.ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(header: [129, 127, 0, 0, 0, ···], limit: 0, read: 10) [FAIL]
+  Failed WebsocketClientLiteTest.PayloadParsingTests.RejectsMalformedFrames(bytes: [129, 127, 0, 0, 0, ···]) [< 1 ms]
+  Error Message:
+   Assert.Throws() Failure: No exception was thrown
+Expected: typeof(WebsocketClientLite.CustomException.WebsocketClientLiteException)
+  Stack Trace:
+     at WebsocketClientLiteTest.PayloadParsingTests.RejectsMalformedFrames(Byte[] bytes) in <worktree>/src/main/WebsocketClientLiteTest/PayloadParsingTests.cs:line 267
+--- End of stack trace from previous location ---
+  Failed WebsocketClientLiteTest.ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(header: [129, 127, 0, 0, 0, ···], limit: 0, read: 10) [6 ms]
+  Error Message:
+   Assert.Throws() Failure: No exception was thrown
+Expected: typeof(WebsocketClientLite.CustomException.WebsocketClientLiteException)
+  Stack Trace:
+     at WebsocketClientLiteTest.ParserRetentionTests.InvalidHeadersRejectBeforePayloadRead(Byte[] header, Int32 limit, Int32 read) in <worktree>/src/main/WebsocketClientLiteTest/ParserRetentionTests.cs:line 186
+--- End of stack trace from previous location ---
+
+Failed!  - Failed:     2, Passed:   326, Skipped:     0, Total:   328, Duration: 24 s - WebsocketClientLiteTest.dll (net11.0)
+VSTEST_ARTIFACTS_DIRECTORY environment variable was not found, falling back to a user-private temporary directory. This is most likely caused by an outdated Microsoft.NET.Test.Sdk package reference in the test project.
+FAILED: net11.0
+==================================================================
+  RESULT: one or more target frameworks FAILED.
+# exit=1 finished 2026-11-14T15:05:05Z

@@ -1,0 +1,22 @@
+diff --git a/verification/Protocol.dfy b/verification/Protocol.dfy
+index d4aeecc..baa39ed 100644
+--- a/verification/Protocol.dfy
++++ b/verification/Protocol.dfy
+@@ -50,7 +50,7 @@ module {:extern "WebsocketClientLite.VerifiedProtocol"} ProtocolCore {
+       PrefixValid(first, second) &&
+       length <= limit && length <= 0x7fffffff && (length & 0x8000000000000000) == 0 &&
+       (if marker < 126 then length == marker as bv64
+-       else if marker == 126 then 126 <= length <= 65535 else length >= 65536) &&
++       else if marker == 126 then 0 <= length <= 65535 else length >= 65536) &&
+       (op < 8 || ((first & 128) != 0 && length <= 125))
+     }
+ 
+@@ -77,7 +77,7 @@ module {:extern "WebsocketClientLite.VerifiedProtocol"} ProtocolCore {
+       if available < headerSize - 2 { status := 0; return; }
+       if marker <= 125 { length := marker as bv64; }
+       else { length := ReadLength(extended, headerSize - 2); }
+-      status := if HeaderValid(first, second, length, limit) then 2 else 1;
++      status := if HeaderValid(first, second, length, limit) || (PrefixValid(first, second) && marker == 127 && length == 65535 && length <= limit) then 2 else 1;
+     }
+ 
+     // RFC 6455 sections 5.4, 5.5 and 5.5.1, mixed with library policy. Section 5.4: a

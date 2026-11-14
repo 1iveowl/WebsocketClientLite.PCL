@@ -1,0 +1,46 @@
+$ bash scripts/dafny-masking.sh --check
+# started 2026-11-14T15:01:29Z
+4.11.0+fcb2042d6d043a2634f0854338c08feeaaaf4ae2
+Z3 version 4.12.1 - 64 bit
+verification/Protocol.dfy(101,17): Warning: unusual indentation in right-hand operand of <==> (which ends at line 104, column 97); do you perhaps need parentheses?
+verification/Protocol.dfy(135,26): Warning: unusual indentation in right-hand operand of ==> (which ends at line 140, column 20); do you perhaps need parentheses?
+verification/Protocol.dfy(141,46): Warning: unusual indentation in right-hand operand of ==> (which ends at line 142, column 84); do you perhaps need parentheses?
+verification/Protocol.dfy(172,9): Warning: unusual indentation in else branch of if-then-else (which ends at line 173, column 87); do you perhaps need parentheses?
+verification/Protocol.dfy(180,9): Warning: unusual indentation in else branch of if-then-else (which ends at line 181, column 87); do you perhaps need parentheses?
+verification/Protocol.dfy(432,27): Warning: unusual indentation in right-hand operand of ==> (which ends at line 433, column 104); do you perhaps need parentheses?
+verification/Protocol.dfy(434,17): Warning: unusual indentation in right-hand operand of <==> (which ends at line 436, column 93); do you perhaps need parentheses?
+verification/Protocol.dfy(494,48): Warning: unusual indentation in right-hand operand of ==> (which ends at line 495, column 93); do you perhaps need parentheses?
+verification/Protocol.dfy(501,48): Warning: unusual indentation in right-hand operand of ==> (which ends at line 502, column 95); do you perhaps need parentheses?
+verification/Protocol.dfy(528,48): Warning: unusual indentation in right-hand operand of ==> (which ends at line 529, column 95); do you perhaps need parentheses?
+Dafny auditor completed with 2 findings
+
+Dafny program verifier did not attempt verification
+
+Dafny program verifier finished with 41 verified, 0 errors
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:00.05
+--- verification/generated/Masking.g.cs	2026-11-14 15:01:29.333344749 +0000
++++ artifacts/dafny/Masking.cs	2026-11-14 15:02:14.601813216 +0000
+@@ -111,7 +111,7 @@
+       length <= limit &&
+       length <= 2147483647 &&
+       length & 9223372036854775808 == 0 &&
+-      (if marker < 126 then length == marker as bv64 else if marker == 126 then 126 <= length <= 65535 else length >= 65536) &&
++      (if marker < 126 then length == marker as bv64 else if marker == 126 then 126 <= length <= 65535 else length >= 0) &&
+       (op < 8 || (first & 128 != 0 && length <= 125))
+     }
+ 
+@@ -702,7 +702,7 @@
+     {
+       byte _0_op = (byte)((first) & ((byte)(15)));
+       byte _1_marker = (byte)((second) & ((byte)(127)));
+-      return (((((WebsocketClientLite.VerifiedProtocol.Protocol.PrefixValid(first, second)) && ((length) <= (limit))) && ((length) <= (2147483647UL))) && (((length) & (9223372036854775808UL)) == (0UL))) && ((((_1_marker) < ((byte)(126))) ? ((length) == ((ulong)(_1_marker))) : ((((_1_marker) == ((byte)(126))) ? (((126UL) <= (length)) && ((length) <= (65535UL))) : ((length) >= (65536UL))))))) && (((_0_op) < ((byte)(8))) || ((((byte)((first) & ((byte)(128)))) != ((byte)(0))) && ((length) <= (125UL))));
++      return (((((WebsocketClientLite.VerifiedProtocol.Protocol.PrefixValid(first, second)) && ((length) <= (limit))) && ((length) <= (2147483647UL))) && (((length) & (9223372036854775808UL)) == (0UL))) && ((((_1_marker) < ((byte)(126))) ? ((length) == ((ulong)(_1_marker))) : ((((_1_marker) == ((byte)(126))) ? (((126UL) <= (length)) && ((length) <= (65535UL))) : ((length) >= (0UL))))))) && (((_0_op) < ((byte)(8))) || ((((byte)((first) & ((byte)(128)))) != ((byte)(0))) && ((length) <= (125UL))));
+     }
+     public static void DecodeHeader(byte first, byte second, byte[] extended, uint available, ulong limit, out byte status, out ulong length, out uint headerSize)
+     {
+# exit=1 finished 2026-11-14T15:02:14Z

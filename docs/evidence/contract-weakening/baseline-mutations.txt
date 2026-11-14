@@ -1,0 +1,28 @@
+$ ./scripts/pdd.sh mutations --output <out>/baseline-mutations-evidence
+# started 2026-11-14T15:09:33Z
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:00.04
+baseline: passed (9.325s)
+CLOSE-001-duplicate-send: detected (8.76s)
+CLOSE-001-suppressed-send: detected (8.98s)
+CLOSE-002-state-bit-loss: detected (8.446s)
+CLOSE-003-premature-release: detected (8.871s)
+CLOSE-003-suppressed-release: detected (8.788s)
+REASSEMBLY-001-offset-stall: detected (8.811s)
+REASSEMBLY-002-offset-stall: detected (8.996s)
+REASSEMBLY-001-oversized-result: detected (9.037s)
+MASK-001-xor-to-or: detected (9.406s)
+MASK-001-key-write: detected (8.528s)
+MASK-002-tail-xor-to-or: detected (8.741s)
+MASK-002-corrupt-bulk-byte: detected (8.773s)
+MASK-002-preserve-prefix: detected (8.722s)
+MASK-003-xor-to-or: detected (8.743s)
+MASK-003-preserve-prefix: detected (8.867s)
+HEADER-001-short-sixteen-bit: detected (8.749s)
+HEADER-001-short-sixty-four-bit: detected (8.974s)
+Evidence: <out>/baseline-mutations-evidence
+# exit=0 finished 2026-11-14T15:12:13Z

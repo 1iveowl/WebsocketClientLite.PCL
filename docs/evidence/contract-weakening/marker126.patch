@@ -1,0 +1,13 @@
+diff --git a/verification/Protocol.dfy b/verification/Protocol.dfy
+index d4aeecc..7b4fc55 100644
+--- a/verification/Protocol.dfy
++++ b/verification/Protocol.dfy
+@@ -50,7 +50,7 @@ module {:extern "WebsocketClientLite.VerifiedProtocol"} ProtocolCore {
+       PrefixValid(first, second) &&
+       length <= limit && length <= 0x7fffffff && (length & 0x8000000000000000) == 0 &&
+       (if marker < 126 then length == marker as bv64
+-       else if marker == 126 then 126 <= length <= 65535 else length >= 65536) &&
++       else if marker == 126 then 0 <= length <= 65535 else length >= 65536) &&
+       (op < 8 || ((first & 128) != 0 && length <= 125))
+     }
+ 

@@ -1,0 +1,669 @@
+{
+  "schema_version": 1,
+  "status": "failed",
+  "source_hashes": {
+    "verification/Masking.dfy": "6218c3ddcfb208f8fe8e0da80aeb062b2d1ef277c26bc2a1b4bdb07d36f26bf2",
+    "verification/Protocol.dfy": "3123fd9ed756de3f22480f0ac1c9db13f2e307bad77318f00d405679d6657360"
+  },
+  "experiments": [
+    {
+      "id": "baseline",
+      "status": "passed",
+      "source_hashes": {
+        "verification/Masking.dfy": "6218c3ddcfb208f8fe8e0da80aeb062b2d1ef277c26bc2a1b4bdb07d36f26bf2",
+        "verification/Protocol.dfy": "3123fd9ed756de3f22480f0ac1c9db13f2e307bad77318f00d405679d6657360"
+      },
+      "command": [
+        "~/.cache/websocketclientlite/dafny-4.11.0/dafny/dafny",
+        "verify",
+        "verification/Masking.dfy",
+        "--verify-included-files",
+        "--allow-external-contracts",
+        "--solver-path",
+        "~/.cache/websocketclientlite/dafny-4.11.0/dafny/z3/bin/z3-4.12.1",
+        "--verification-time-limit",
+        "60",
+        "--cores",
+        "2"
+      ],
+      "budget_seconds": 180,
+      "started_at": "2026-11-14T14:54:57.9304023+00:00",
+      "exit_code": 0,
+      "timed_out": false,
+      "interrupted": false,
+      "cleanup_incomplete": false,
+      "cleanup_seconds": 0,
+      "elapsed_seconds": 8.867,
+      "stdout": "\nDafny program verifier finished with 574 verified, 0 errors\n",
+      "stderr": "",
+      "matched_clauses": []
+    },
+    {
+      "id": "CLOSE-001-duplicate-send",
+      "status": "detected",
+      "requirement": "CLOSE-001",
+      "obligation": "CLOSE-001-MUTATION",
+      "target_clause": "ensures send <==> event == 0 && (state & 5) == 0",
+      "classification": "postcondition",
+      "contract_clause": "ensures send <==> event == 0 && (state & 5) == 0",
+      "source_hashes": {
+        "verification/Masking.dfy": "6218c3ddcfb208f8fe8e0da80aeb062b2d1ef277c26bc2a1b4bdb07d36f26bf2",
+        "verification/Protocol.dfy": "00a804955c2eaccc5ff086f9dc473c6c97c3e0e574b75b23ae36f5bb5bf571ff"
+      },
+      "command": [
+        "~/.cache/websocketclientlite/dafny-4.11.0/dafny/dafny",
+        "verify",
+        "verification/Masking.dfy",
+        "--verify-included-files",
+        "--allow-external-contracts",
+        "--solver-path",
+        "~/.cache/websocketclientlite/dafny-4.11.0/dafny/z3/bin/z3-4.12.1",
+        "--verification-time-limit",
+        "60",
+        "--cores",
+        "2"
+      ],
+      "budget_seconds": 90,
+      "started_at": "2026-11-14T14:55:06.8025374+00:00",
+      "exit_code": 4,
+      "timed_out": false,
+      "interrupted": false,
+      "cleanup_incomplete": false,
+      "cleanup_seconds": 0,
+      "elapsed_seconds": 8.536,
+      "stdout": "verification/Protocol.dfy(206,4): Error: a postcondition could not be proved on this return path\n    |\n206 |     {\n    |     ^\n\nverification/Protocol.dfy(200,19): Related location: this is the postcondition that could not be proved\n    |\n200 |       ensures send <==> event == 0 && (state & 5) == 0\n    |                    ^^^^\n\n\nDafny program verifier finished with 573 verified, 1 error\n",
+      "stderr": "",
+      "matched_clauses": [
+        "ensures send <==> event == 0 && (state & 5) == 0"
+      ]
+    },
+    {
+      "id": "CLOSE-001-suppressed-send",
+      "status": "detected",
+      "requirement": "CLOSE-001",
+      "obligation": "CLOSE-001-MUTATION",
+      "target_clause": "ensures send <==> event == 0 && (state & 5) == 0",
+      "classification": "postcondition",
+      "contract_clause": "ensures send <==> event == 0 && (state & 5) == 0",
+      "source_hashes": {
+        "verification/Masking.dfy": "6218c3ddcfb208f8fe8e0da80aeb062b2d1ef277c26bc2a1b4bdb07d36f26bf2",
+        "verification/Protocol.dfy": "01b5d91cc63184333b68d625c48318aed866217bb5f50ee71f80f8cbcf7b2875"
+      },
+      "command": [
+        "~/.cache/websocketclientlite/dafny-4.11.0/dafny/dafny",
+        "verify",
+        "verification/Masking.dfy",
+        "--verify-included-files",
+        "--allow-external-contracts",
+        "--solver-path",
+        "~/.cache/websocketclientlite/dafny-4.11.0/dafny/z3/bin/z3-4.12.1",
+        "--verification-time-limit",
+        "60",
+        "--cores",
+        "2"
+      ],
+      "budget_seconds": 90,
+      "started_at": "2026-11-14T14:55:15.3494695+00:00",
+      "exit_code": 4,
+      "timed_out": false,
+      "interrupted": false,
+      "cleanup_incomplete": false,
+      "cleanup_seconds": 0,
+      "elapsed_seconds": 77.185,
+      "stdout": "verification/Protocol.dfy(206,4): Error: a postcondition could not be proved on this return path\n    |\n206 |     {\n    |     ^\n\nverification/Protocol.dfy(200,19): Related location: this is the postcondition that could not be proved\n    |\n200 |       ensures send <==> event == 0 && (state & 5) == 0\n    |                    ^^^^\n\n\nDafny program verifier finished with 573 verified, 1 error\n",
+      "stderr": "",
+      "matched_clauses": [
+        "ensures send <==> event == 0 && (state & 5) == 0"
+      ]
+    },
+    {
+      "id": "CLOSE-002-state-bit-loss",
+      "status": "detected",
+      "requirement": "CLOSE-002",
+      "obligation": "CLOSE-002-MUTATION",
+      "target_clause": "ensures next <= 7 && (next & state) == state",
+      "classification": "postcondition",
+      "contract_clause": "ensures next <= 7 && (next & state) == state",
+      "source_hashes": {
+        "verification/Masking.dfy": "6218c3ddcfb208f8fe8e0da80aeb062b2d1ef277c26bc2a1b4bdb07d36f26bf2",
+        "verification/Protocol.dfy": "cad1b937911485ca69107d4f18db6bebfc12bf8838f7cf04c98a94659d9e68f1"
+      },
+      "command": [
+        "~/.cache/websocketclientlite/dafny-4.11.0/dafny/dafny",
+        "verify",
+        "verification/Masking.dfy",
+        "--verify-included-files",
+        "--allow-external-contracts",
+        "--solver-path",
+        "~/.cache/websocketclientlite/dafny-4.11.0/dafny/z3/bin/z3-4.12.1",
+        "--verification-time-limit",
+        "60",
+        "--cores",
+        "2"
+      ],
+      "budget_seconds": 90,
+      "started_at": "2026-11-14T14:56:32.5374568+00:00",
+      "exit_code": 4,
+      "timed_out": false,
+      "interrupted": false,
+      "cleanup_incomplete": false,
+      "cleanup_seconds": 0,
+      "elapsed_seconds": 37.161,
+      "stdout": "verification/Protocol.dfy(206,4): Error: a postcondition could not be proved on this return path\n    |\n206 |     {\n    |     ^\n\nverification/Protocol.dfy(199,42): Related location: this is the postcondition that could not be proved\n    |\n199 |       ensures next <= 7 && (next & state) == state\n    |                                           ^^\n\n\nDafny program verifier finished with 573 verified, 1 error\n",
+      "stderr": "",
+      "matched_clauses": [
+        "ensures next <= 7 && (next & state) == state"
+      ]
+    },
+    {
+      "id": "CLOSE-003-premature-release",
+      "status": "detected",
+      "requirement": "CLOSE-003",
+      "obligation": "CLOSE-003-MUTATION",
+      "target_clause": "ensures release <==> (next & 4) != 0 || (next & 3) == 3",
+      "classification": "postcondition",
+      "contract_clause": "ensures release <==> (next & 4) != 0 || (next & 3) == 3",
+      "source_hashes": {
+        "verification/Masking.dfy": "6218c3ddcfb208f8fe8e0da80aeb062b2d1ef277c26bc2a1b4bdb07d36f26bf2",
+        "verification/Protocol.dfy": "5dd4d80792783c3ac0843011ed2b39354fecf3b812f514c2918771bb05d6bc1e"
+      },
+      "command": [
+        "~/.cache/websocketclientlite/dafny-4.11.0/dafny/dafny",
+        "verify",
+        "verification/Masking.dfy",
+        "--verify-included-files",
+        "--allow-external-contracts",
+        "--solver-path",
+        "~/.cache/websocketclientlite/dafny-4.11.0/dafny/z3/bin/z3-4.12.1",
+        "--verification-time-limit",
+        "60",
+        "--cores",
+        "2"
+      ],
+      "budget_seconds": 90,
+      "started_at": "2026-11-14T14:57:09.7077485+00:00",
+      "exit_code": 4,
+      "timed_out": false,
+      "interrupted": false,
+      "cleanup_incomplete": false,
+      "cleanup_seconds": 0,
+      "elapsed_seconds": 9.491,
+      "stdout": "verification/Protocol.dfy(206,4): Error: a postcondition could not be proved on this return path\n    |\n206 |     {\n    |     ^\n\nverification/Protocol.dfy(203,22): Related location: this is the postcondition that could not be proved\n    |\n203 |       ensures release <==> (next & 4) != 0 || (next & 3) == 3\n    |                       ^^^^\n\n\nDafny program verifier finished with 573 verified, 1 error\n",
+      "stderr": "",
+      "matched_clauses": [
+        "ensures release <==> (next & 4) != 0 || (next & 3) == 3"
+      ]
+    },
+    {
+      "id": "CLOSE-003-suppressed-release",
+      "status": "detected",
+      "requirement": "CLOSE-003",
+      "obligation": "CLOSE-003-MUTATION",
+      "target_clause": "ensures release <==> (next & 4) != 0 || (next & 3) == 3",
+      "classification": "postcondition",
+      "contract_clause": "ensures release <==> (next & 4) != 0 || (next & 3) == 3",
+      "source_hashes": {
+        "verification/Masking.dfy": "6218c3ddcfb208f8fe8e0da80aeb062b2d1ef277c26bc2a1b4bdb07d36f26bf2",
+        "verification/Protocol.dfy": "ca8520bf8cd8c516a917c2c0abc34f3249dfc4b66f093eebcdfdee58a79c2813"
+      },
+      "command": [
+        "~/.cache/websocketclientlite/dafny-4.11.0/dafny/dafny",
+        "verify",
+        "verification/Masking.dfy",
+        "--verify-included-files",
+        "--allow-external-contracts",
+        "--solver-path",
+        "~/.cache/websocketclientlite/dafny-4.11.0/dafny/z3/bin/z3-4.12.1",
+        "--verification-time-limit",
+        "60",
+        "--cores",
+        "2"
+      ],
+      "budget_seconds": 90,
+      "started_at": "2026-11-14T14:57:19.2007741+00:00",
+      "exit_code": 4,
+      "timed_out": false,
+      "interrupted": false,
+      "cleanup_incomplete": false,
+      "cleanup_seconds": 0,
+      "elapsed_seconds": 9.367,
+      "stdout": "verification/Protocol.dfy(206,4): Error: a postcondition could not be proved on this return path\n    |\n206 |     {\n    |     ^\n\nverification/Protocol.dfy(203,22): Related location: this is the postcondition that could not be proved\n    |\n203 |       ensures release <==> (next & 4) != 0 || (next & 3) == 3\n    |                       ^^^^\n\n\nDafny program verifier finished with 573 verified, 1 error\n",
+      "stderr": "",
+      "matched_clauses": [
+        "ensures release <==> (next & 4) != 0 || (next & 3) == 3"
+      ]
+    },
+    {
+      "id": "REASSEMBLY-001-offset-stall",
+      "status": "detected",
+      "requirement": "REASSEMBLY-001",
+      "obligation": "REASSEMBLY-001-MUTATION",
+      "target_clause": "invariant offset as int == |Parts(parts, p as int)| && offset <= total",
+      "classification": "invariant",
+      "contract_clause": "ensures fresh(result) && result[..] == Parts(parts, parts.Length)",
+      "source_hashes": {
+        "verification/Masking.dfy": "6218c3ddcfb208f8fe8e0da80aeb062b2d1ef277c26bc2a1b4bdb07d36f26bf2",
+        "verification/Protocol.dfy": "bbf6fc0cd382abd2d32f0344630ca1190f999c72135780aa94f75eefe37404cf"
+      },
+      "command": [
+        "~/.cache/websocketclientlite/dafny-4.11.0/dafny/dafny",
+        "verify",
+        "verification/Masking.dfy",
+        "--verify-included-files",
+        "--allow-external-contracts",
+        "--solver-path",
+        "~/.cache/websocketclientlite/dafny-4.11.0/dafny/z3/bin/z3-4.12.1",
+        "--verification-time-limit",
+        "60",
+        "--cores",
+        "2"
+      ],
+      "budget_seconds": 90,
+      "started_at": "2026-11-14T14:57:28.5698201+00:00",
+      "exit_code": 4,
+      "timed_out": false,
+      "interrupted": false,
+      "cleanup_incomplete": false,
+      "cleanup_seconds": 0,
+      "elapsed_seconds": 39.2,
+      "stdout": "verification/Protocol.dfy(239,32): Error: this invariant could not be proved to be maintained by the loop\n Related message: loop invariant violation\n    |\n239 |         invariant offset as int == |Parts(parts, p as int)| && offset <= total\n    |                                 ^^\n\n\nDafny program verifier finished with 573 verified, 1 error\n",
+      "stderr": "",
+      "matched_clauses": [
+        "invariant offset as int == |Parts(parts, p as int)| && offset <= total"
+      ]
+    },
+    {
+      "id": "REASSEMBLY-002-offset-stall",
+      "status": "detected",
+      "requirement": "REASSEMBLY-002",
+      "obligation": "REASSEMBLY-002-MUTATION",
+      "target_clause": "invariant offset as int == |Parts(parts, p as int)| && offset <= total",
+      "classification": "invariant",
+      "contract_clause": "ensures fresh(result) && result[..] == Parts(parts, parts.Length)",
+      "source_hashes": {
+        "verification/Masking.dfy": "6218c3ddcfb208f8fe8e0da80aeb062b2d1ef277c26bc2a1b4bdb07d36f26bf2",
+        "verification/Protocol.dfy": "deb592d1d838c68bac1319cc4de41bc35f7af47fb26d90cd6f1edf6001e8cc31"
+      },
+      "command": [
+        "~/.cache/websocketclientlite/dafny-4.11.0/dafny/dafny",
+        "verify",
+        "verification/Masking.dfy",
+        "--verify-included-files",
+        "--allow-external-contracts",
+        "--solver-path",
+        "~/.cache/websocketclientlite/dafny-4.11.0/dafny/z3/bin/z3-4.12.1",
+        "--verification-time-limit",
+        "60",
+        "--cores",
+        "2"
+      ],
+      "budget_seconds": 90,
+      "started_at": "2026-11-14T14:58:07.7735258+00:00",
+      "exit_code": 4,
+      "timed_out": false,
+      "interrupted": false,
+      "cleanup_incomplete": false,
+      "cleanup_seconds": 0,
+      "elapsed_seconds": 37.591,
+      "stdout": "verification/Protocol.dfy(267,32): Error: this invariant could not be proved to be maintained by the loop\n Related message: loop invariant violation\n    |\n267 |         invariant offset as int == |Parts(parts, p as int)| && offset <= total\n    |                                 ^^\n\n\nDafny program verifier finished with 573 verified, 1 error\n",
+      "stderr": "",
+      "matched_clauses": [
+        "invariant offset as int == |Parts(parts, p as int)| && offset <= total"
+      ]
+    },
+    {
+      "id": "REASSEMBLY-001-oversized-result",
+      "status": "detected",
+      "requirement": "REASSEMBLY-001",
+      "obligation": "REASSEMBLY-001-MUTATION",
+      "target_clause": "ensures fresh(result) && result[..] == Parts(parts, parts.Length)",
+      "classification": "postcondition",
+      "contract_clause": "ensures fresh(result) && result[..] == Parts(parts, parts.Length)",
+      "source_hashes": {
+        "verification/Masking.dfy": "6218c3ddcfb208f8fe8e0da80aeb062b2d1ef277c26bc2a1b4bdb07d36f26bf2",
+        "verification/Protocol.dfy": "15521e2f5216ba6d7555f4478b93e826d99aadfe1cd57bb3da6e8b012aa30e27"
+      },
+      "command": [
+        "~/.cache/websocketclientlite/dafny-4.11.0/dafny/dafny",
+        "verify",
+        "verification/Masking.dfy",
+        "--verify-included-files",
+        "--allow-external-contracts",
+        "--solver-path",
+        "~/.cache/websocketclientlite/dafny-4.11.0/dafny/z3/bin/z3-4.12.1",
+        "--verification-time-limit",
+        "60",
+        "--cores",
+        "2"
+      ],
+      "budget_seconds": 90,
+      "started_at": "2026-11-14T14:58:45.3681061+00:00",
+      "exit_code": 4,
+      "timed_out": false,
+      "interrupted": false,
+      "cleanup_incomplete": false,
+      "cleanup_seconds": 0,
+      "elapsed_seconds": 8.866,
+      "stdout": "verification/Protocol.dfy(232,4): Error: a postcondition could not be proved on this return path\n    |\n232 |     {\n    |     ^\n\nverification/Protocol.dfy(231,42): Related location: this is the postcondition that could not be proved\n    |\n231 |       ensures fresh(result) && result[..] == Parts(parts, parts.Length)\n    |                                           ^^\n\n\nDafny program verifier finished with 573 verified, 1 error\n",
+      "stderr": "",
+      "matched_clauses": [
+        "ensures fresh(result) && result[..] == Parts(parts, parts.Length)"
+      ]
+    },
+    {
+      "id": "MASK-001-xor-to-or",
+      "status": "detected",
+      "requirement": "MASK-001",
+      "obligation": "MASK-001-MUTATION",
+      "target_clause": "invariant forall j :: 0 <= j < i as int ==> data[j] == old(data[j]) ^ key[j % 4]",
+      "classification": "invariant",
+      "contract_clause": "ensures forall j :: 0 <= j < data.Length ==> data[j] == old(data[j]) ^ key[j % 4]",
+      "source_hashes": {
+        "verification/Masking.dfy": "decce9c7f02762ddb881b8e82ef3ded25bd49a68a95a8e293da96f38289cade7",
+        "verification/Protocol.dfy": "3123fd9ed756de3f22480f0ac1c9db13f2e307bad77318f00d405679d6657360"
+      },
+      "command": [
+        "~/.cache/websocketclientlite/dafny-4.11.0/dafny/dafny",
+        "verify",
+        "verification/Masking.dfy",
+        "--verify-included-files",
+        "--allow-external-contracts",
+        "--solver-path",
+        "~/.cache/websocketclientlite/dafny-4.11.0/dafny/z3/bin/z3-4.12.1",
+        "--verification-time-limit",
+        "60",
+        "--cores",
+        "2"
+      ],
+      "budget_seconds": 90,
+      "started_at": "2026-11-14T14:58:54.2374983+00:00",
+      "exit_code": 4,
+      "timed_out": false,
+      "interrupted": false,
+      "cleanup_incomplete": false,
+      "cleanup_seconds": 0,
+      "elapsed_seconds": 36.706,
+      "stdout": "verification/Masking.dfy(18,18): Error: this invariant could not be proved to be maintained by the loop\n Related message: loop invariant violation\n   |\n18 |         invariant forall j :: 0 <= j < i as int ==>\n   |                   ^^^^^^\n\n\nDafny program verifier finished with 573 verified, 1 error\n",
+      "stderr": "",
+      "matched_clauses": [
+        "invariant forall j :: 0 <= j < i as int ==> data[j] == old(data[j]) ^ key[j % 4]"
+      ]
+    },
+    {
+      "id": "MASK-001-key-write",
+      "status": "detected",
+      "requirement": "MASK-001",
+      "obligation": "MASK-001-MUTATION",
+      "target_clause": "modifies data",
+      "classification": "frame",
+      "contract_clause": "modifies data",
+      "source_hashes": {
+        "verification/Masking.dfy": "53ecc2f566a29e01d42dadd173336a1fb06e8e16875a541395cecbf98af44125",
+        "verification/Protocol.dfy": "3123fd9ed756de3f22480f0ac1c9db13f2e307bad77318f00d405679d6657360"
+      },
+      "command": [
+        "~/.cache/websocketclientlite/dafny-4.11.0/dafny/dafny",
+        "verify",
+        "verification/Masking.dfy",
+        "--verify-included-files",
+        "--allow-external-contracts",
+        "--solver-path",
+        "~/.cache/websocketclientlite/dafny-4.11.0/dafny/z3/bin/z3-4.12.1",
+        "--verification-time-limit",
+        "60",
+        "--cores",
+        "2"
+      ],
+      "budget_seconds": 90,
+      "started_at": "2026-11-14T14:59:30.9448198+00:00",
+      "exit_code": 4,
+      "timed_out": false,
+      "interrupted": false,
+      "cleanup_incomplete": false,
+      "cleanup_seconds": 0,
+      "elapsed_seconds": 8.491,
+      "stdout": "verification/Masking.dfy(23,44): Error: assignment might update an array element not in the enclosing context's modifies clause\n   |\n23 |         data[i] := data[i] ^ key[i % 4]; key[0] := 0;\n   |                                             ^\n\n\nDafny program verifier finished with 573 verified, 1 error\n",
+      "stderr": "",
+      "matched_clauses": [
+        "modifies data"
+      ]
+    },
+    {
+      "id": "MASK-002-tail-xor-to-or",
+      "status": "detected",
+      "requirement": "MASK-002",
+      "obligation": "MASK-002-MUTATION",
+      "target_clause": "invariant forall j :: 0 <= j < i as int ==> dest[offset as int + j] == source[j] ^ (if j % 4 == 0 then k0 else if j % 4 == 1 then k1 else if j % 4 == 2 then k2 else k3)",
+      "classification": "invariant",
+      "contract_clause": "ensures forall j :: 0 <= j < count as int ==> dest[offset as int + j] == source[j] ^ (if j % 4 == 0 then k0 else if j % 4 == 1 then k1 else if j % 4 == 2 then k2 else k3)",
+      "source_hashes": {
+        "verification/Masking.dfy": "6218c3ddcfb208f8fe8e0da80aeb062b2d1ef277c26bc2a1b4bdb07d36f26bf2",
+        "verification/Protocol.dfy": "a228c7375e8a5ac8c2923e626a1df7410c1637986cc109ace494b96db8002e26"
+      },
+      "command": [
+        "~/.cache/websocketclientlite/dafny-4.11.0/dafny/dafny",
+        "verify",
+        "verification/Masking.dfy",
+        "--verify-included-files",
+        "--allow-external-contracts",
+        "--solver-path",
+        "~/.cache/websocketclientlite/dafny-4.11.0/dafny/z3/bin/z3-4.12.1",
+        "--verification-time-limit",
+        "60",
+        "--cores",
+        "2"
+      ],
+      "budget_seconds": 90,
+      "started_at": "2026-11-14T14:59:39.4397249+00:00",
+      "exit_code": 4,
+      "timed_out": false,
+      "interrupted": false,
+      "cleanup_incomplete": false,
+      "cleanup_seconds": 0,
+      "elapsed_seconds": 9.456,
+      "stdout": "verification/Protocol.dfy(528,18): Error: this invariant could not be proved to be maintained by the loop\n Related message: loop invariant violation\n    |\n528 |         invariant forall j :: 0 <= j < i as int ==> dest[offset as int + j] == source[j] ^\n    |                   ^^^^^^\n\n\nDafny program verifier finished with 573 verified, 1 error\n",
+      "stderr": "",
+      "matched_clauses": [
+        "invariant forall j :: 0 <= j < i as int ==> dest[offset as int + j] == source[j] ^ (if j % 4 == 0 then k0 else if j % 4 == 1 then k1 else if j % 4 == 2 then k2 else k3)"
+      ]
+    },
+    {
+      "id": "MASK-002-corrupt-bulk-byte",
+      "status": "detected",
+      "requirement": "MASK-002",
+      "obligation": "MASK-002-MUTATION",
+      "target_clause": "invariant forall j :: 0 <= j < i as int ==> dest[offset as int + j] == source[j] ^ (if j % 4 == 0 then k0 else if j % 4 == 1 then k1 else if j % 4 == 2 then k2 else k3)",
+      "classification": "invariant",
+      "contract_clause": "ensures forall j :: 0 <= j < count as int ==> dest[offset as int + j] == source[j] ^ (if j % 4 == 0 then k0 else if j % 4 == 1 then k1 else if j % 4 == 2 then k2 else k3)",
+      "source_hashes": {
+        "verification/Masking.dfy": "6218c3ddcfb208f8fe8e0da80aeb062b2d1ef277c26bc2a1b4bdb07d36f26bf2",
+        "verification/Protocol.dfy": "19d42bb2147692e338255414e1113e497933dd6ba21a335201e9ce7b5ed7161b"
+      },
+      "command": [
+        "~/.cache/websocketclientlite/dafny-4.11.0/dafny/dafny",
+        "verify",
+        "verification/Masking.dfy",
+        "--verify-included-files",
+        "--allow-external-contracts",
+        "--solver-path",
+        "~/.cache/websocketclientlite/dafny-4.11.0/dafny/z3/bin/z3-4.12.1",
+        "--verification-time-limit",
+        "60",
+        "--cores",
+        "2"
+      ],
+      "budget_seconds": 90,
+      "started_at": "2026-11-14T14:59:48.9009812+00:00",
+      "exit_code": 4,
+      "timed_out": false,
+      "interrupted": false,
+      "cleanup_incomplete": false,
+      "cleanup_seconds": 0,
+      "elapsed_seconds": 37.105,
+      "stdout": "verification/Protocol.dfy(501,18): Error: this invariant could not be proved to be maintained by the loop\n Related message: loop invariant violation\n    |\n501 |         invariant forall j :: 0 <= j < i as int ==> dest[offset as int + j] == source[j] ^\n    |                   ^^^^^^\n\n\nDafny program verifier finished with 576 verified, 1 error\n",
+      "stderr": "",
+      "matched_clauses": [
+        "invariant forall j :: 0 <= j < i as int ==> dest[offset as int + j] == source[j] ^ (if j % 4 == 0 then k0 else if j % 4 == 1 then k1 else if j % 4 == 2 then k2 else k3)"
+      ]
+    },
+    {
+      "id": "MASK-002-preserve-prefix",
+      "status": "detected",
+      "requirement": "MASK-002",
+      "obligation": "MASK-002-MUTATION",
+      "target_clause": "invariant forall j :: 0 <= j < dest.Length && !(offset as int <= j < offset as int + i as int) ==> dest[j] == old(dest[j])",
+      "classification": "invariant",
+      "contract_clause": "ensures forall j :: 0 <= j < dest.Length && !(offset as int <= j < offset as int + count as int) ==> dest[j] == old(dest[j])",
+      "source_hashes": {
+        "verification/Masking.dfy": "6218c3ddcfb208f8fe8e0da80aeb062b2d1ef277c26bc2a1b4bdb07d36f26bf2",
+        "verification/Protocol.dfy": "f240c3998c768fb1f7ea64ae0da021b1146293ee94268727c49a72798e7b79a2"
+      },
+      "command": [
+        "~/.cache/websocketclientlite/dafny-4.11.0/dafny/dafny",
+        "verify",
+        "verification/Masking.dfy",
+        "--verify-included-files",
+        "--allow-external-contracts",
+        "--solver-path",
+        "~/.cache/websocketclientlite/dafny-4.11.0/dafny/z3/bin/z3-4.12.1",
+        "--verification-time-limit",
+        "60",
+        "--cores",
+        "2"
+      ],
+      "budget_seconds": 90,
+      "started_at": "2026-11-14T15:00:26.0125375+00:00",
+      "exit_code": 4,
+      "timed_out": false,
+      "interrupted": false,
+      "cleanup_incomplete": false,
+      "cleanup_seconds": 0,
+      "elapsed_seconds": 8.757,
+      "stdout": "verification/Protocol.dfy(528,18): Error: this invariant could not be proved to be maintained by the loop\n Related message: loop invariant violation\n    |\n528 |         invariant forall j :: 0 <= j < i as int ==> dest[offset as int + j] == source[j] ^\n    |                   ^^^^^^\n\nverification/Protocol.dfy(530,18): Error: this invariant could not be proved to be maintained by the loop\n Related message: loop invariant violation\n    |\n530 |         invariant forall j :: 0 <= j < dest.Length && !(offset as int <= j < offset as int + i as int) ==> dest[j] == old(dest[j])\n    |                   ^^^^^^\n\n\nDafny program verifier finished with 575 verified, 2 errors\n",
+      "stderr": "",
+      "matched_clauses": [
+        "invariant forall j :: 0 <= j < i as int ==> dest[offset as int + j] == source[j] ^ (if j % 4 == 0 then k0 else if j % 4 == 1 then k1 else if j % 4 == 2 then k2 else k3)",
+        "invariant forall j :: 0 <= j < dest.Length && !(offset as int <= j < offset as int + i as int) ==> dest[j] == old(dest[j])"
+      ]
+    },
+    {
+      "id": "MASK-003-xor-to-or",
+      "status": "detected",
+      "requirement": "MASK-003",
+      "obligation": "MASK-003-MUTATION",
+      "target_clause": "invariant forall j :: 0 <= j < i as int ==> dest[offset as int + j] == old(dest[offset as int + j]) ^ old(dest[keyOffset as int + j % 4])",
+      "classification": "invariant",
+      "contract_clause": "ensures forall j :: 0 <= j < count as int ==> dest[offset as int + j] == old(dest[offset as int + j]) ^ old(dest[keyOffset as int + j % 4])",
+      "source_hashes": {
+        "verification/Masking.dfy": "6218c3ddcfb208f8fe8e0da80aeb062b2d1ef277c26bc2a1b4bdb07d36f26bf2",
+        "verification/Protocol.dfy": "b90c119ada631eb1c0da95882bc6cad67208d569b035107d957929ba0044fdcc"
+      },
+      "command": [
+        "~/.cache/websocketclientlite/dafny-4.11.0/dafny/dafny",
+        "verify",
+        "verification/Masking.dfy",
+        "--verify-included-files",
+        "--allow-external-contracts",
+        "--solver-path",
+        "~/.cache/websocketclientlite/dafny-4.11.0/dafny/z3/bin/z3-4.12.1",
+        "--verification-time-limit",
+        "60",
+        "--cores",
+        "2"
+      ],
+      "budget_seconds": 90,
+      "started_at": "2026-11-14T15:00:34.7772538+00:00",
+      "exit_code": 4,
+      "timed_out": false,
+      "interrupted": false,
+      "cleanup_incomplete": false,
+      "cleanup_seconds": 0,
+      "elapsed_seconds": 8.784,
+      "stdout": "verification/Protocol.dfy(553,18): Error: this invariant could not be proved to be maintained by the loop\n Related message: loop invariant violation\n    |\n553 |         invariant forall j :: 0 <= j < i as int ==> dest[offset as int + j] == old(dest[offset as int + j]) ^ old(dest[keyOffset as int + j % 4])\n    |                   ^^^^^^\n\n\nDafny program verifier finished with 573 verified, 1 error\n",
+      "stderr": "",
+      "matched_clauses": [
+        "invariant forall j :: 0 <= j < i as int ==> dest[offset as int + j] == old(dest[offset as int + j]) ^ old(dest[keyOffset as int + j % 4])"
+      ]
+    },
+    {
+      "id": "MASK-003-preserve-prefix",
+      "status": "detected",
+      "requirement": "MASK-003",
+      "obligation": "MASK-003-MUTATION",
+      "target_clause": "invariant forall j :: 0 <= j < dest.Length && !(offset as int <= j < offset as int + i as int) ==> dest[j] == old(dest[j])",
+      "classification": "invariant",
+      "contract_clause": "ensures forall j :: 0 <= j < dest.Length && !(offset as int <= j < offset as int + count as int) ==> dest[j] == old(dest[j])",
+      "source_hashes": {
+        "verification/Masking.dfy": "6218c3ddcfb208f8fe8e0da80aeb062b2d1ef277c26bc2a1b4bdb07d36f26bf2",
+        "verification/Protocol.dfy": "331d5bde7f98c57560e9b8ea9235618a8d1176700ab04f40140209a3dae2a53e"
+      },
+      "command": [
+        "~/.cache/websocketclientlite/dafny-4.11.0/dafny/dafny",
+        "verify",
+        "verification/Masking.dfy",
+        "--verify-included-files",
+        "--allow-external-contracts",
+        "--solver-path",
+        "~/.cache/websocketclientlite/dafny-4.11.0/dafny/z3/bin/z3-4.12.1",
+        "--verification-time-limit",
+        "60",
+        "--cores",
+        "2"
+      ],
+      "budget_seconds": 90,
+      "started_at": "2026-11-14T15:00:43.5668275+00:00",
+      "exit_code": 4,
+      "timed_out": false,
+      "interrupted": false,
+      "cleanup_incomplete": false,
+      "cleanup_seconds": 0,
+      "elapsed_seconds": 8.635,
+      "stdout": "verification/Protocol.dfy(554,18): Error: this invariant could not be proved to be maintained by the loop\n Related message: loop invariant violation\n    |\n554 |         invariant forall j :: 0 <= j < dest.Length && !(offset as int <= j < offset as int + i as int) ==> dest[j] == old(dest[j])\n    |                   ^^^^^^\n\n\nDafny program verifier finished with 573 verified, 1 error\n",
+      "stderr": "",
+      "matched_clauses": [
+        "invariant forall j :: 0 <= j < dest.Length && !(offset as int <= j < offset as int + i as int) ==> dest[j] == old(dest[j])"
+      ]
+    },
+    {
+      "id": "HEADER-001-short-sixteen-bit",
+      "status": "survived",
+      "requirement": "HEADER-001",
+      "obligation": "HEADER-001-MUTATION",
+      "target_clause": "ensures status == 2 ==> HeaderValid(first, second, length, limit) && available >= headerSize - 2",
+      "classification": "postcondition",
+      "contract_clause": "ensures status == 2 ==> HeaderValid(first, second, length, limit) && available >= headerSize - 2",
+      "source_hashes": {
+        "verification/Masking.dfy": "6218c3ddcfb208f8fe8e0da80aeb062b2d1ef277c26bc2a1b4bdb07d36f26bf2",
+        "verification/Protocol.dfy": "d9bd36bcc88361d0ebb4bd90de07c8900ac26e5e42fcbe2a6362705ecd61e192"
+      },
+      "command": [
+        "~/.cache/websocketclientlite/dafny-4.11.0/dafny/dafny",
+        "verify",
+        "verification/Masking.dfy",
+        "--verify-included-files",
+        "--allow-external-contracts",
+        "--solver-path",
+        "~/.cache/websocketclientlite/dafny-4.11.0/dafny/z3/bin/z3-4.12.1",
+        "--verification-time-limit",
+        "60",
+        "--cores",
+        "2"
+      ],
+      "budget_seconds": 90,
+      "started_at": "2026-11-14T15:00:52.2055911+00:00",
+      "exit_code": 0,
+      "timed_out": false,
+      "interrupted": false,
+      "cleanup_incomplete": false,
+      "cleanup_seconds": 0,
+      "elapsed_seconds": 37.12,
+      "stdout": "\nDafny program verifier finished with 574 verified, 0 errors\n",
+      "stderr": "",
+      "matched_clauses": []
+    },
+    {
+      "id": "HEADER-001-short-sixty-four-bit",
+      "status": "not-run"
+    }
+  ]
+}

@@ -147,6 +147,8 @@ report does not aggregate evidence or close E's asynchronous testing gaps.
 
 Dafny verifies the implementations and mathematical lemmas in our `.dfy` source. The compiler translates executable implementations into C#; it omits proof-only lemmas. Dafny does not separately verify the generated C# text, and it does not verify any of our handwritten C# implementations or test harnesses. We trust the verifier, solver, compiler and runtimes, and test the compiled integration.
 
+A proof shows that the code meets its contract, not that the contract says what the RFC says. [Weakening the header length contract](contract-weakening.md) weakens `HeaderValid` in two places and records what the verifier, the generated-code check, the tests and the mutation suite each do.
+
 A lemma supports a proof of the Dafny implementation. It is not a proof that handwritten C# is logically equivalent to that implementation. The C# callers remain responsible for establishing preconditions, preserving buffer ownership and applying the generated decisions correctly.
 
 `NativeCopy.CopySlice` is the one explicit external implementation contract. Its handwritten C# adapter calls `.NET Buffer.BlockCopy`; Dafny assumes the contract rather than proving that implementation. Production `Merge` has a concatenation proof conditional on that assumption. `MergeScalar` proves the scalar algorithm without the external copy contract.
