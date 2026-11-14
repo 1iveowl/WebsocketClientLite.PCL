@@ -1,6 +1,6 @@
 # Targeted protocol negative proof checks
 
-Run `./scripts/pdd.sh mutations` using its absolute path from any directory. The .NET 10 SDK,
+Run `./scripts/pdd.sh mutations` using its absolute path from any directory. The .NET 11 SDK,
 Linux x64, curl and unzip are required. `scripts/dafny-toolchain.sh` shares the
 existing checksum-pinned Dafny 4.11.0 / Z3 4.12.1 bootstrap with generation; the
 runner checks versions and explicitly selects that solver. It does not use a

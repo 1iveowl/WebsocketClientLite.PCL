@@ -6,7 +6,7 @@
 [![Publish](https://github.com/1iveowl/WebsocketClientLite.PCL/actions/workflows/build.yml/badge.svg)](https://github.com/1iveowl/WebsocketClientLite.PCL/actions/workflows/build.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](License.md)
 
-[![.NET](https://img.shields.io/badge/.NET-8.0%20%7C%209.0%20%7C%2010.0-512BD4?logo=dotnet&logoColor=white)](https://dotnet.microsoft.com/)
+[![.NET](https://img.shields.io/badge/.NET-8.0%20%7C%209.0%20%7C%2010.0%20%7C%2011.0-512BD4?logo=dotnet&logoColor=white)](https://dotnet.microsoft.com/)
 [![.NET Standard](https://img.shields.io/badge/.NET%20Standard-2.0%20%7C%202.1-red.svg)](https://learn.microsoft.com/dotnet/standard/net-standard)
 [![System.Reactive](https://img.shields.io/badge/Rx-7.0-ff69b4.svg)](https://reactivex.io/)
 [![PDD Proof Driven Development](https://img.shields.io/badge/PDD-Proof_Driven_Development-blue)](verification/README.md)

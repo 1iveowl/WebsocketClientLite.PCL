@@ -4,7 +4,7 @@ This pilot adds empirical mutation testing for handwritten C# alongside the Dafn
 
 ## Run
 
-From the repository root with the .NET 10 SDK:
+From the repository root with the .NET 11 SDK:
 
 ```bash
 ./scripts/stryker-close.sh
