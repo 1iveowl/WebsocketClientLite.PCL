@@ -1,0 +1,40 @@
+Tool 'dotnet-stryker' (version '5.0.0') was restored. Available commands: dotnet-stryker
+
+Restore was successful.
+Stryker log: /tmp/claude-1000/-workspaces-WebsocketClientLite-PCL/0e6a52b1-9b8c-45fa-8a16-735a5dd5bd6d/scratchpad/stryker-with/run-irGX28.log
+
+   _____ _              _               _   _ ______ _______  
+  / ____| |            | |             | \ | |  ____|__   __| 
+ | (___ | |_ _ __ _   _| | _____ _ __  |  \| | |__     | |    
+  \___ \| __| '__| | | | |/ / _ \ '__| | . ` |  __|    | |    
+  ____) | |_| |  | |_| |   <  __/ |    | |\  | |____   | |    
+ |_____/ \__|_|   \__, |_|\_\___|_| (_)|_| \_|______|  |_|    
+                   __/ |                                      
+                  |___/                                       
+
+
+Version: 5.0.0
+
+[12:56:59 INF] Stryker will use a max of 8 parallel testsessions.
+[12:57:00 INF] Analysis starting.
+[12:57:00 INF] Using project configuration/platform 'Release|`default`'.
+[12:57:00 INF] Analyzing 1 test project(s).
+[12:57:00 WRN] Project WebsocketClientLiteTest.csproj simulated build failed. Trying again with a nuget restore.
+[12:57:01 WRN] Project WebsocketClientLiteTest.csproj simulated build failed again. Last attempt, forcing the target framework.
+[12:57:02 WRN] Project WebsocketClientLiteTest.csproj simulated build failed. Use '--diag' option to have the build log.
+[12:57:02 WRN] Analysis of project WebsocketClientLiteTest.csproj failed for frameworks $(TestHostTfm).
+[12:57:02 INF] Found project src/main/WebsocketClientLite/WebsocketClientLite.csproj to mutate.
+[12:57:02 INF] Analysis complete.
+[12:57:02 INF] Building test project src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj (1/1)
+[12:57:02 INF] Building project WebsocketClientLiteTest.csproj using dotnet build WebsocketClientLiteTest.csproj -c Release --property:Platform=AnyCPU (directory src/main/WebsocketClientLiteTest.)
+[12:57:04 INF] Number of tests found: 328 for project src/main/WebsocketClientLite/WebsocketClientLite.csproj. Initial test run started.
+[12:58:02 WRN] An unidentified mutation in src/main/WebsocketClientLite/Parser/HandshakeParserDelegate.cs resulted in a compile error (at 12:71) with id: CS8652, message: The feature 'collection expression arguments' is currently in Preview and *unsupported*. To use Preview features, use the 'preview' language version. (Source code: with(StringComparer.OrdinalIgnoreCase))
+[12:58:02 INF] Safe Mode! Stryker will remove all mutations in whole file and mark them as 'compile error'.
+[12:58:02 WRN] An unidentified mutation in src/main/WebsocketClientLite/Parser/HandshakeParserDelegate.cs resulted in a compile error (at 12:71) with id: CS8652, message: The feature 'collection expression arguments' is currently in Preview and *unsupported*. To use Preview features, use the 'preview' language version. (Source code: with(StringComparer.OrdinalIgnoreCase))
+[12:58:02 INF] Safe Mode! Stryker will remove all mutations in whole file and mark them as 'compile error'.
+[12:58:02 WRN] Unable to fix error(s) in file src/main/WebsocketClientLite/Parser/HandshakeParserDelegate.cs.
+[12:58:02 ERR] Failed to restore the project to a buildable state. Please report the issue. Stryker can not proceed further
+[12:58:02 FTL] Compilation failed: One or more errors occurred. (Failed to build mutated version.).
+[12:58:02 FTL] Run with --diag to get more diagnotic information.
+[12:58:02 INF] Time Elapsed 00:01:03.0158123
+[12:58:02 INF] The final mutation score is 0.00 %

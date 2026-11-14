@@ -23,7 +23,7 @@ internal class HandshakeHandler(
     /// </summary>
     internal IEnumerable<string>? NegotiatedSubprotocols { get; private set; }
 
-    internal IObservable<(HandshakeStateKind handshakeState, WebsocketClientLiteException? ex)> Handshake(
+    internal IObservable<HandshakeOutcome> Handshake(
         Uri uri,
         WebsocketSenderHandler sender,
         TimeSpan timeout,
@@ -33,17 +33,17 @@ internal class HandshakeHandler(
         IEnumerable<string>? subprotocols = null)
     {
         subprotocols = subprotocols?.ToArray();
-        return Observable.Create<(HandshakeStateKind handshakeState, WebsocketClientLiteException? ex)>(async obs =>
+        return Observable.Create<HandshakeOutcome>(async obs =>
         {
             using var parserDelegate = new HandshakeParserDelegate(obs);
             using var parserHandler = new HttpCombinedParser(parserDelegate);
 
-            var sendResult = await SendHandshake(uri, sender, ct, origin, headers, subprotocols).ConfigureAwait(false);
+            var sendFailure = await SendHandshake(uri, sender, ct, origin, headers, subprotocols).ConfigureAwait(false);
 
-            if (sendResult.handshakeState is HandshakeStateKind.HandshakeSendFailed)
+            if (sendFailure is not null)
             {
                 // No point waiting for a response to a request that never went out.
-                obs.OnNext(sendResult);
+                obs.OnNext(sendFailure);
                 obs.OnCompleted();
                 return;
             }
@@ -58,12 +58,9 @@ internal class HandshakeHandler(
             obs.OnCompleted();
         })
         .Timeout(timeout)
-        .Catch<
-            (HandshakeStateKind handshakeState, WebsocketClientLiteException? ex),
-            TimeoutException>(
-                tx => Observable.Return<(HandshakeStateKind, WebsocketClientLiteException?)>(
-                    (HandshakeStateKind.HandshakeTimedOut,
-                    new WebsocketClientLiteException("Handshake timed out.", tx))
+        .Catch<HandshakeOutcome, TimeoutException>(
+                tx => Observable.Return<HandshakeOutcome>(
+                    new HandshakeFailed(new WebsocketClientLiteException("Handshake timed out.", tx))
                 )
             );
 
@@ -93,10 +90,11 @@ internal class HandshakeHandler(
     }
 
     [SuppressMessage("Design", "CA1031:Do not catch general exception types",
-        Justification = "Nothing is swallowed: the exception is converted into the HandshakeSendFailed result " +
+        Justification = "Nothing is swallowed: the exception is converted into a HandshakeFailed result " +
                         "state (with the original exception preserved) which the connect path observes and throws. " +
                         "Any write-failure type must take this path, so the catch is intentionally broad.")]
-    private async Task<(HandshakeStateKind handshakeState, WebsocketClientLiteException? ex)>
+    // Null when the request was sent; otherwise why it was not.
+    private async Task<HandshakeFailed?>
         SendHandshake(
             Uri uri,
             WebsocketSenderHandler websocketSenderHandler,
@@ -118,12 +116,9 @@ internal class HandshakeHandler(
         }
         catch (Exception ex)
         {
-            return (
-                HandshakeStateKind.HandshakeSendFailed, 
-                new WebsocketClientLiteException("Handshake send failed.", ex)
-            );
+            return new HandshakeFailed(new WebsocketClientLiteException("Handshake send failed.", ex));
         }
 
-        return (HandshakeStateKind.HandshakeSend, null);
+        return null;
     }
 }
