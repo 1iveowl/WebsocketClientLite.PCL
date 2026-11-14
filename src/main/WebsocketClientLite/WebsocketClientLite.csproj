@@ -24,6 +24,14 @@ Easily and effectively observe incoming message using Reactive Extensions (Rx)</
     <AnalysisMode>AllEnabledByDefault</AnalysisMode>
   </PropertyGroup>
 
+  <!-- The net11.0 build uses .NET 11 Runtime Async: the runtime, not compiler-generated state
+       machines, suspends and resumes its async methods. The other builds keep state machines.
+       -p:WebsocketRuntimeAsync=false builds net11.0 without it, for comparison
+       (verification/runtime-async.md). -->
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'net11.0' And '$(WebsocketRuntimeAsync)' != 'false' ">
+    <Features>$(Features);runtime-async=on</Features>
+  </PropertyGroup>
+
   <ItemGroup>
     <None Include="..\..\..\README.md">
       <Pack>True</Pack>

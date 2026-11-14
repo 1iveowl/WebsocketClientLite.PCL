@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- End-to-end loopback benchmark for the Runtime Async decision (docs/net11-10.4-plan.md, P3).
+       compare.sh builds it twice, with -p:WebsocketRuntimeAsync=false and =true. -->
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net11.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <IsPackable>false</IsPackable>
+    <ServerGarbageCollection>false</ServerGarbageCollection>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="../../src/main/WebsocketClientLiteTest/LoopbackWebSocketServer.cs" Link="LoopbackWebSocketServer.cs" />
+    <ProjectReference Include="../../src/main/WebsocketClientLite/WebsocketClientLite.csproj" />
+  </ItemGroup>
+</Project>
