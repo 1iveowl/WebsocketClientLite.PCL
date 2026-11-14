@@ -1,0 +1,57 @@
+# Run 2026-11-14T16:03:59Z at 1ca3ecb (the PR head) plus the uncommitted scanner-review tests; SDK 11.0.100
+$ dotnet test tools/Pdd.Tests/Pdd.Tests.csproj -c Release --nologo --filter "FullyQualifiedName~UncitedFormFails|FullyQualifiedName~CitationFormsAccepted|FullyQualifiedName~EveryDafnyDeclarationIsCited"
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  Pdd -> <repo>/tools/Pdd/bin/Release/net11.0/Pdd.dll
+  Pdd.Tests -> <repo>/tools/Pdd.Tests/bin/Release/net11.0/Pdd.Tests.dll
+Test run for <repo>/tools/Pdd.Tests/bin/Release/net11.0/Pdd.Tests.dll (.NETCoreApp,Version=v11.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.36]     Pdd.Tests.RequirementsTests.UncitedFormFails(text: "module D {\n  class C {\n    // RFC 6455 section 5"···, expected: "demo.dfy:6: Hidden") [FAIL]
+[xUnit.net 00:00:00.36]     Pdd.Tests.RequirementsTests.UncitedFormFails(text: "module D {\n  class C {\n    // RFC 6455 section 5"···, expected: "demo.dfy:7: unrecognised declaration form") [FAIL]
+  Failed Pdd.Tests.RequirementsTests.UncitedFormFails(text: "module D {\n  class C {\n    // RFC 6455 section 5"···, expected: "demo.dfy:6: Hidden") [1 ms]
+  Error Message:
+   Assert.Throws() Failure: No exception was thrown
+Expected: typeof(System.IO.InvalidDataException)
+  Stack Trace:
+     at Pdd.Tests.RequirementsTests.UncitedFormFails(String text, String expected) in <repo>/tools/Pdd.Tests/RequirementsTests.cs:line 279
+   at InvokeStub_RequirementsTests.UncitedFormFails(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed Pdd.Tests.RequirementsTests.UncitedFormFails(text: "module D {\n  class C {\n    // RFC 6455 section 5"···, expected: "demo.dfy:7: unrecognised declaration form") [< 1 ms]
+  Error Message:
+   Assert.Throws() Failure: No exception was thrown
+Expected: typeof(System.IO.InvalidDataException)
+  Stack Trace:
+     at Pdd.Tests.RequirementsTests.UncitedFormFails(String text, String expected) in <repo>/tools/Pdd.Tests/RequirementsTests.cs:line 279
+   at InvokeStub_RequirementsTests.UncitedFormFails(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+[xUnit.net 00:00:00.37]     Pdd.Tests.RequirementsTests.UncitedFormFails(text: "module D {\n  class C {\n    // RFC 6455 section 5"···, expected: "demo.dfy:5: unrecognised declaration form") [FAIL]
+[xUnit.net 00:00:00.37]     Pdd.Tests.RequirementsTests.UncitedFormFails(text: "module D {\n  class C {\n    // RFC 6455 section 5"···, expected: "demo.dfy:6: A") [FAIL]
+[xUnit.net 00:00:00.37]     Pdd.Tests.RequirementsTests.UncitedFormFails(text: "module D {\n  class C {\n    // RFC 6455 section 5"···, expected: "demo.dfy:6: unrecognised declaration form") [FAIL]
+  Failed Pdd.Tests.RequirementsTests.UncitedFormFails(text: "module D {\n  class C {\n    // RFC 6455 section 5"···, expected: "demo.dfy:5: unrecognised declaration form") [< 1 ms]
+  Error Message:
+   Assert.Throws() Failure: No exception was thrown
+Expected: typeof(System.IO.InvalidDataException)
+  Stack Trace:
+     at Pdd.Tests.RequirementsTests.UncitedFormFails(String text, String expected) in <repo>/tools/Pdd.Tests/RequirementsTests.cs:line 279
+   at InvokeStub_RequirementsTests.UncitedFormFails(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed Pdd.Tests.RequirementsTests.UncitedFormFails(text: "module D {\n  class C {\n    // RFC 6455 section 5"···, expected: "demo.dfy:6: A") [< 1 ms]
+  Error Message:
+   Assert.Throws() Failure: No exception was thrown
+Expected: typeof(System.IO.InvalidDataException)
+  Stack Trace:
+     at Pdd.Tests.RequirementsTests.UncitedFormFails(String text, String expected) in <repo>/tools/Pdd.Tests/RequirementsTests.cs:line 279
+   at InvokeStub_RequirementsTests.UncitedFormFails(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed Pdd.Tests.RequirementsTests.UncitedFormFails(text: "module D {\n  class C {\n    // RFC 6455 section 5"···, expected: "demo.dfy:6: unrecognised declaration form") [< 1 ms]
+  Error Message:
+   Assert.Throws() Failure: No exception was thrown
+Expected: typeof(System.IO.InvalidDataException)
+  Stack Trace:
+     at Pdd.Tests.RequirementsTests.UncitedFormFails(String text, String expected) in <repo>/tools/Pdd.Tests/RequirementsTests.cs:line 279
+   at InvokeStub_RequirementsTests.UncitedFormFails(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+
+Failed!  - Failed:     5, Passed:    15, Skipped:     0, Total:    20, Duration: 20 ms - Pdd.Tests.dll (net11.0)
+VSTEST_ARTIFACTS_DIRECTORY environment variable was not found, falling back to a user-private temporary directory. This is most likely caused by an outdated Microsoft.NET.Test.Sdk package reference in the test project.
+# exit=1

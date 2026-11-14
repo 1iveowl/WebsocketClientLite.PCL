@@ -1,0 +1,25 @@
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:00.04
+baseline: passed (9.281s)
+CLOSE-001-duplicate-send: detected (8.791s)
+CLOSE-001-suppressed-send: detected (9.344s)
+CLOSE-002-state-bit-loss: detected (8.578s)
+CLOSE-003-premature-release: detected (9.394s)
+CLOSE-003-suppressed-release: detected (8.618s)
+REASSEMBLY-001-offset-stall: detected (8.945s)
+REASSEMBLY-002-offset-stall: detected (8.605s)
+REASSEMBLY-001-oversized-result: detected (9.178s)
+MASK-001-xor-to-or: detected (8.805s)
+MASK-001-key-write: detected (8.779s)
+MASK-002-tail-xor-to-or: detected (8.456s)
+MASK-002-corrupt-bulk-byte: detected (8.757s)
+MASK-002-preserve-prefix: detected (8.814s)
+MASK-003-xor-to-or: detected (9.052s)
+MASK-003-preserve-prefix: detected (8.81s)
+HEADER-001-short-sixteen-bit: detected (9.212s)
+HEADER-001-short-sixty-four-bit: detected (9.1s)
+Evidence: <out>/protocol/mutations

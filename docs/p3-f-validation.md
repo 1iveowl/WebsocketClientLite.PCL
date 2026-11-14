@@ -109,8 +109,11 @@ Run manually from the repository root:
 ```sh
 python3 verification/exploration/run.py
 # Replay one baseline order after building:
-dotnet verification/exploration/bin/Release/net10.0/WebsocketClientLiteTest.dll DCPRHXA
+dotnet verification/exploration/bin/Release/net11.0/WebsocketClientLiteTest.dll DCPRHXA
 ```
+
+The harness has targeted `net11.0` since 10.4 (#159). The results below were measured on `net10.0`
+and stay as they were recorded.
 
 The runner builds baseline, executes three fresh processes, then builds one
 isolated temporary source copy changing only `_writeGate = new(1, 1)` to

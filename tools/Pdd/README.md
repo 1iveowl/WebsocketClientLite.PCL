@@ -9,6 +9,33 @@ dotnet test tools/Pdd.Tests/Pdd.Tests.csproj -c Release
 ./scripts/pdd.sh validate
 ```
 
+`validate` also checks RFC citations, rule 1 of the [rules for verification
+work](../../verification/README.md#rules-for-verification-work):
+
+- Every method, function, predicate, lemma, constructor and iterator in each
+  `verification/*.dfy` file, the `{:extern}` declaration included, needs a
+  citation in the block of `//` lines directly above it. `@` attribute lines may
+  sit between; a blank line or a `/* */` comment may not. For the first member
+  of a class with no comment of its own, the block directly above the class
+  line, past its `@` lines, is read instead. Comments, strings (verbatim ones
+  too) and character literals are blanked before declarations are looked for;
+  block comments nest, and a prime after a name (`x'`) is part of the name.
+- A citation names RFC 6455 and a section number in the same block ("RFC 6455
+  section 5.3", or "RFC 6455 sections 5.2 and 5.5" followed by "Section 5.2:"),
+  or says `Library policy:` and then what the policy is. Both may be anywhere in
+  the block.
+- A line with a declaration keyword that does not start a declaration the check
+  reads, such as a member on the same line as its class, fails as an
+  unrecognised declaration form, and so does a second declaration on one line,
+  so that no declaration is skipped. The `by method` of a function by method
+  belongs to the function. Only the text after `//` counts as the citation.
+- Every requirement's `origin` in `verification/requirements.json` needs an RFC
+  6455 section link (`https://www.rfc-editor.org/rfc/rfc6455.html#section-…`) or
+  an entry that starts with `Library policy:` and states the policy.
+
+The check sees that a citation is there, not that it is the right one; that stays
+a review question.
+
 There is one console project and one test project. Neither is in the production
 solution or referenced by a published package. The console uses only standard
 .NET facilities; the test project uses the repository's existing xUnit and
@@ -35,7 +62,7 @@ can be used directly with the same arguments.
 
 | Command | Purpose |
 | --- | --- |
-| `validate [manifest.json]` | Validate requirements, boundaries, references and catalog-independent obligations. |
+| `validate [manifest.json]` | Validate requirements, boundaries, references and catalog-independent obligations, and the RFC citations above. |
 | `contract-report --target REF --head HEAD --output FILE` | Compare committed trees from the actual target's unique merge base; requires semantic PR review. |
 | `mutations [--scope all|close|payload] [--output DIR]` | Verify baseline and isolated catalog edits (default: all 17). |
 | `capture --job protocol --output DIR` | Capture manifest, tooling tests, proof/audit/generated-source check and Dafny mutations. |
@@ -179,11 +206,11 @@ P3-C adds `retention-defects --output <fresh-directory>` to controlled capture.
 Two isolated control-total and late-scratch edits must fail named assertions;
 aggregation checks Release configuration, exact source/edit, cases, execution and
 runtime. The existing REASSEMBLY-001-TEST adapter obligation includes the new
-five-target tests without expanding its proof. See [parser retention](../../verification/parser-retention.md).
+six-target tests without expanding its proof. See [parser retention](../../verification/parser-retention.md).
 
 P3-D adds `reconnect-defect --output <fresh-directory>` to controlled capture.
 The missing-removal edit must fail the old service identity assertion after all
-nine reconnect cases pass. EPOCH-001-TEST requires five-target tests and this
+nine reconnect cases pass. EPOCH-001-TEST requires six-target tests and this
 source-bound experiment. Concurrent active subscription policy remains deferred.
 
 P3-G bounds post-kill process/output draining at two seconds. If an escaped orphan

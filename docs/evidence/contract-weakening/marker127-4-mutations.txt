@@ -1,0 +1,28 @@
+$ ./scripts/pdd.sh mutations --output <out>/marker127-mutations-evidence
+# started 2026-11-14T15:05:05Z
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:00.06
+baseline: passed (9.379s)
+CLOSE-001-duplicate-send: detected (8.768s)
+CLOSE-001-suppressed-send: detected (43.696s)
+CLOSE-002-state-bit-loss: detected (8.95s)
+CLOSE-003-premature-release: detected (46.953s)
+CLOSE-003-suppressed-release: detected (9.234s)
+REASSEMBLY-001-offset-stall: detected (43.285s)
+REASSEMBLY-002-offset-stall: detected (8.848s)
+REASSEMBLY-001-oversized-result: detected (8.774s)
+MASK-001-xor-to-or: detected (8.453s)
+MASK-001-key-write: detected (8.467s)
+MASK-002-tail-xor-to-or: detected (8.936s)
+MASK-002-corrupt-bulk-byte: detected (8.685s)
+MASK-002-preserve-prefix: detected (8.994s)
+MASK-003-xor-to-or: detected (8.455s)
+MASK-003-preserve-prefix: detected (9.252s)
+HEADER-001-short-sixteen-bit: detected (9.004s)
+HEADER-001-short-sixty-four-bit: survived (8.682s)
+Evidence: <out>/marker127-mutations-evidence
+# exit=1 finished 2026-11-14T15:09:33Z

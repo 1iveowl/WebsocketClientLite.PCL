@@ -253,6 +253,7 @@ public sealed class Requirements(string root)
         foreach (var req in model.Requirements)
         {
             Require(ids.Add(req.Id), $"duplicate requirement ID: {req.Id}");
+            Citations.Origin(req.Id, req.Origin);
             Require(review.Contains($"### {req.Id}\n"), $"missing intent review: {req.Id}");
             Require(req.Assumptions.All(boundaryIds.Contains), $"{req.Id}: dangling boundary reference");
             foreach (var c in req.Contracts)
@@ -289,6 +290,8 @@ public sealed class Requirements(string root)
             foreach (var owner in b.Owners)
                 Resolve(sourceRoot, owner);
         }
+        foreach (var file in Citations.DafnyFiles(sourceRoot))
+            Citations.Dafny(file, Source(sourceRoot, file));
         return model;
     }
 }

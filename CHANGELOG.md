@@ -3,6 +3,18 @@
 One section per release, newest first. The publish workflow uses the section `## New in Version <x.y.z>` for the version being released as the text of its GitHub release, so keep that heading format. The README has a one-line summary of each release in its release history table.
 
 
+## New in Version 10.5.0
+
+Version 10.5.0 changes no public API, no library behaviour and no Dafny contract. It records what happens when the header length contract itself is wrong, writes down the rules the verification work follows, and turns one of them into a check.
+
+- **A weakened contract still verifies.** [`verification/contract-weakening.md`](verification/contract-weakening.md) weakens the two length bounds of `HeaderValid`, the RFC 6455 section 5.2 rule that a length uses the fewest bytes. With either bound weakened the verifier still reports `41 verified, 0 errors`, because the decoder calls the contract and changes with it. The generated-code check fails, but only because the C# was not regenerated. After regenerating, the tests built from the RFC catch both: two tests fail on one row each, on all six targets, and nothing else fails. The header mutant written for the weakened bound survives. No open gap was found for these two bounds. The weakened contract is not in the shipped code or the mutation catalog; the patches, commands and outputs are in [`docs/evidence/contract-weakening/`](docs/evidence/contract-weakening/).
+- **Rules for verification work.** [`verification/README.md`](verification/README.md#rules-for-verification-work) states three rules: when a requirement is in question, the RFC wins; expected bytes never come from production code; a new test is seen to fail on the old code, and that run is recorded, before its fix is trusted. `AGENTS.md` points to them and to the boundary register.
+- **RFC citations are checked.** `./scripts/pdd.sh validate` fails when a declaration in the Dafny sources has neither an RFC 6455 section nor a stated "Library policy:" in the comment directly above it, or a requirement's origin has neither. A declaration form the check does not read fails too, so none is skipped. Its first run found two masking lemmas without a citation; they now cite section 5.3. The comments are not embedded in the generated C#, so `Masking.g.cs` is unchanged. The rules are in [`tools/Pdd/README.md`](tools/Pdd/README.md) and the runs in [`docs/evidence/citation-check/`](docs/evidence/citation-check/).
+- The README links to *Proof vs. vibes*, a video series that uses this library as its worked example, and [`docs/proof-vs-vibes/`](docs/proof-vs-vibes/README.md) guides viewers through what episode 1 shows. Every line reference in the guide names `8f8f207` (10.3.0), the version the episode shows, except the 2016 code at `3e60ed1`.
+- The exploration harness (`verification/exploration/run.py`) starts its `net11.0` build and runs again, and the README's .NET badge and the mutation and Stryker guides name .NET 11. The 10.4 bump had missed them.
+
+No new public API and no new production dependency. The library's C# and the generated code are the same as in 10.4.0. The [10.5 plan](docs/pdd-10.5-plan.md) has the steps, decisions and lessons.
+
 ## New in Version 10.4.0
 
 Version 10.4.0 adds .NET 11 and changes no public API or documented behaviour. It is the first release built with the .NET 11 SDK.

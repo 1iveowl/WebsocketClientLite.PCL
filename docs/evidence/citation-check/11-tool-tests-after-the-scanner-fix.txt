@@ -1,0 +1,18 @@
+# Run 2026-11-14T16:04:22Z at 1ca3ecb plus the uncommitted scanner-review fix; SDK 11.0.100
+$ dotnet test tools/Pdd.Tests/Pdd.Tests.csproj -c Release --nologo
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  Pdd -> <repo>/tools/Pdd/bin/Release/net11.0/Pdd.dll
+  Pdd.Tests -> <repo>/tools/Pdd.Tests/bin/Release/net11.0/Pdd.Tests.dll
+Test run for <repo>/tools/Pdd.Tests/bin/Release/net11.0/Pdd.Tests.dll (.NETCoreApp,Version=v11.0)
+A total of 1 test files matched the specified pattern.
+
+Passed!  - Failed:     0, Passed:   318, Skipped:     0, Total:   318, Duration: 13 s - Pdd.Tests.dll (net11.0)
+VSTEST_ARTIFACTS_DIRECTORY environment variable was not found, falling back to a user-private temporary directory. This is most likely caused by an outdated Microsoft.NET.Test.Sdk package reference in the test project.
+# exit=0
+$ ./scripts/pdd.sh validate
+Validated 16 requirements (structure and references only; no evidence executed).
+# exit=0
+$ bash scripts/dafny-masking.sh --check
+Dafny program verifier finished with 41 verified, 0 errors
+# exit=0

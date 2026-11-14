@@ -1,4 +1,5 @@
 using System.Text.Json.Nodes;
+using System.Text.RegularExpressions;
 using Pdd;
 using Xunit;
 
@@ -120,6 +121,177 @@ public class RequirementsTests
         Directory.CreateDirectory(Path.Combine(tree.Path, "verification"));
         File.WriteAllText(Path.Combine(tree.Path, "verification/boundaries.json"), "{\"schema_version\":1,\"schema_version\":1}");
         Assert.Contains("duplicate JSON key", Assert.Throws<InvalidDataException>(() => new Requirements(Root).Validate(sourceRoot: tree.Path)).Message);
+    }
+    // A copy of the files Validate reads (verification/ and the C# sources), so that one
+    // Dafny comment can be changed without touching the repository.
+    static TemporaryTree SourceCopy()
+    {
+        var tree = new TemporaryTree();
+        var files = Directory.EnumerateFiles(Path.Combine(Root, "verification"))
+            .Concat(Directory.EnumerateFiles(Path.Combine(Root, "src"), "*.cs", SearchOption.AllDirectories));
+        foreach (var file in files)
+        {
+            var relative = Path.GetRelativePath(Root, file);
+            if (relative.Split(Path.DirectorySeparatorChar).Any(p => p is "bin" or "obj")) continue;
+            var target = Path.Combine(tree.Path, relative);
+            Directory.CreateDirectory(Path.GetDirectoryName(target)!);
+            File.Copy(file, target);
+        }
+        return tree;
+    }
+    // The comment block directly above the line that contains `declaration`, replaced by
+    // `comment` (one line), or removed when `comment` is null.
+    static void ReplaceComment(string path, string declaration, string? comment)
+    {
+        var lines = File.ReadAllText(path).Split('\n').ToList();
+        var index = lines.FindIndex(l => l.Contains(declaration, StringComparison.Ordinal));
+        Assert.True(index > 0, $"declaration not found: {declaration}");
+        var start = index;
+        while (start > 0 && lines[start - 1].TrimStart().StartsWith("//", StringComparison.Ordinal)) start--;
+        Assert.True(start < index, $"no comment above: {declaration}");
+        lines.RemoveRange(start, index - start);
+        if (comment is not null) lines.Insert(start, comment);
+        File.WriteAllText(path, string.Join('\n', lines));
+    }
+    // Rule 1 of "Rules for verification work" (verification/README.md): every declaration in
+    // the Dafny core names an RFC 6455 section or "Library policy:" in the comment block
+    // directly above it. Each row removes or replaces one such block in a copy of the sources.
+    public static IEnumerable<object?[]> UncitedDeclarations()
+    {
+        // No comment: the block above HeaderValid removed.
+        yield return ["verification/Protocol.dfy", "static function HeaderValid(", null, "HeaderValid"];
+        // A comment that names neither.
+        yield return ["verification/Masking.dfy", "static method Apply(", "    // Masks the data with the key.", "Apply"];
+        // "section" with no number, and "library policy" without the label's form.
+        yield return ["verification/Protocol.dfy", "HeaderRoundTrip(", "    // Follows the library policy; see the section above.", "HeaderRoundTrip"];
+        // The external contract: the block above its class removed.
+        yield return ["verification/Protocol.dfy", "class NativeCopy {", null, "CopySlice"];
+    }
+    [Theory, MemberData(nameof(UncitedDeclarations))]
+    public void UncitedDafnyDeclarationFails(string file, string declaration, string? comment, string name)
+    {
+        using var tree = SourceCopy();
+        ReplaceComment(Path.Combine(tree.Path, file), declaration, comment);
+        var message = Assert.Throws<InvalidDataException>(() => new Requirements(Root).Validate(sourceRoot: tree.Path)).Message;
+        Assert.Contains(file + ":", message);
+        Assert.Contains(name, message);
+    }
+    [Fact]
+    public void EveryDafnyDeclarationIsCited()
+    {
+        var files = Citations.DafnyFiles(Root);
+        Assert.Equal(["verification/Masking.dfy", "verification/Protocol.dfy"], files);
+        foreach (var file in files)
+        {
+            var text = Data.Text(Path.Combine(Root, file));
+            // Every line with a declaration keyword, counted apart from the declaration pattern.
+            // Declaration keywords, counted apart from the declaration pattern; the method of a
+            // function by method is part of its function.
+            var masked = Citations.Masked(text);
+            var keywords = Regex.Matches(masked, @"\b(?:method|function|predicate|lemma|constructor|iterator)\b").Count - Regex.Matches(masked, @"\bby\s+method\b").Count;
+            Assert.True(keywords > 0, file);
+            Assert.Equal(keywords, Citations.Dafny(file, text));
+        }
+    }
+    [Fact]
+    public void CitationFormsAccepted()
+    {
+        const string text = """
+            module Demo {
+              // RFC 6455 section 5.3.
+              class A {
+                static method First() {}
+                // RFC 6455. Section 5.2: the length.
+                static function Second(): bool { true }
+                // RFC 6455 sections 5.2 and 5.5, mixed with library policy.
+                static predicate Third() { true }
+                // Library policy: a choice the RFC leaves open.
+                ghost function Fourth(): int { 0 }
+                // RFC 6455, continued below.
+                // Section 5.7, the example.
+                static method {:isolate_assertions} {:timeLimit 9} Fifth() {}
+                // The words static lemma Hidden() in a comment declare nothing.
+                // Library policy: the next one.
+                static lemma Sixth() {}
+                // RFC 6455 section 5.3, with an attribute line below.
+                @IsolateAssertions
+                static method Seventh(x': int) {}
+                // Library policy: a constructor.
+                constructor (x: int) requires x > 0 {}
+              }
+              // Library policy: an external class and its one member.
+              class {:extern} B extends T {
+                static method {:extern} Copy()
+              }
+              class F {
+                /* outer /* inner */ static method Old() {} the lemma here */
+                // RFC 6455 section 5.3: a function by method.
+                function Tenth(): int { 0 }
+                by method
+                { return 0; }
+              }
+              // Library policy: a class line with a trailing comment.
+              class D { // a note
+                static method Only() {}
+              }
+              // RFC 6455 section 5.3.
+              @Something
+              class E {
+                static method First() {}
+                // RFC 6455 section 5.3: a function by method on one line.
+                function Once(): int { 0 } by method { return 0; }
+              }
+            }
+            """;
+        Assert.Equal(13, Citations.Dafny("demo.dfy", text));
+    }
+    // Forms the first version of the check passed or skipped without an error (#169 review).
+    public static IEnumerable<object[]> UncitedForms()
+    {
+        const string cited = "    // RFC 6455 section 5.3.\n    static method M() {}\n";
+        string Module(string members) => "module D {\n  class C {\n" + cited + members + "  }\n}\n";
+        yield return [Module("    constructor (x: int) requires x > 0 {}\n"), "demo.dfy:5: constructor"];
+        yield return [Module("    least predicate P() { true }\n"), "demo.dfy:5: P"];
+        yield return [Module("    greatest lemma L() ensures true {}\n"), "demo.dfy:5: L"];
+        yield return [Module("    iterator I() yields (x: int) ensures true {}\n"), "demo.dfy:5: I"];
+        yield return [Module("    class E { static method F() {} }\n"), "demo.dfy:5: unrecognised declaration form"];
+        // A primed identifier must not hide the declarations after it.
+        yield return [Module("    // RFC 6455 section 5.3.\n    function F2(x': int): int { 0 }\n    function G(): int { 0 }\n    // RFC 6455 section 5.3.\n    function H(t': int): int { 0 }\n"), "demo.dfy:7: G"];
+        yield return [Module("    // RFC 7692 section 7.\n    static method Other() {}\n"), "demo.dfy:6: Other"];
+        yield return [Module("    // See the Dafny reference manual, section 3.\n    static method Manual() {}\n"), "demo.dfy:6: Manual"];
+        yield return [Module("    // Library policy:\n    static method Empty() {}\n"), "demo.dfy:6: Empty"];
+        // Strings and comments that the first mask misread (#169 re-review).
+        yield return [Module("    // RFC 6455 section 5.3.\n    const S := @\"line\n/* not a comment\";\n    function G(): int { 0 }\n    /* real */\n    // RFC 6455 section 5.3.\n    function H(): int { 0 }\n"), "demo.dfy:8: G"];
+        yield return [Module("    const P := @\"C:\\\"; const Q := \"/*\";\n    function G(): int { 0 }\n    /* real */\n"), "demo.dfy:6: G"];
+        yield return [Module("    /*\n    // RFC 6455 section 5.3.\n    */ method A() {}\n"), "demo.dfy:7: A"];
+        // A second declaration on one line, a character outside the BMP, a backslash before a
+        // newline, and a block comment before a line comment (#169 scanner review).
+        yield return [Module("    // RFC 6455 section 5.3.\n    method A() {} method B() {}\n"), "demo.dfy:6: unrecognised declaration form"];
+        yield return [Module("    // RFC 6455 section 5.3.\n    function F(): int { 0 }\n    } by method { return 0; } method Hidden() {}\n"), "demo.dfy:7: unrecognised declaration form"];
+        yield return [Module("    const E := ['\U0001F600','\"']; method Hidden() {}\n"), "demo.dfy:5: unrecognised declaration form"];
+        yield return [Module("    const S := \"a\\\n    method Hidden() {}\";\n"), "demo.dfy:6: Hidden"];
+        yield return [Module("    /* RFC 6455 section 5.3. */ // see\n    method A() {}\n"), "demo.dfy:6: A"];
+        // Primes beside character literals and a quote in a string hide nothing.
+        yield return [Module("    // RFC 6455 section 5.3.\n    function F(x': char): bool { x' == '/' || x' == '\\'' || \"it's\" == \"\" }\n    function G(): int { 0 }\n"), "demo.dfy:7: G"];
+    }
+    [Theory, MemberData(nameof(UncitedForms))]
+    public void UncitedFormFails(string text, string expected) =>
+        Assert.Contains(expected, Assert.Throws<InvalidDataException>(() => Citations.Dafny("demo.dfy", text)).Message);
+    [Fact]
+    public void ClassCommentCitesOnlyTheFirstMember()
+    {
+        const string text = """
+            module Demo {
+              // Library policy: one external copy.
+              class B {
+                static method One() {}
+                static method Two() {}
+              }
+            }
+            """;
+        var message = Assert.Throws<InvalidDataException>(() => Citations.Dafny("demo.dfy", text)).Message;
+        Assert.Contains("demo.dfy:5: Two", message);
+        Assert.DoesNotContain("One", message);
     }
     [Fact]
     public void ResolverRejectsCommentsCallsDuplicatesWrongScopeAndStrings()

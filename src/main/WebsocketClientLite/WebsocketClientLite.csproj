@@ -8,18 +8,18 @@
     <LangVersion>15.0</LangVersion>
     <PackageIcon>images\1iveowl-logo.png</PackageIcon>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <Version>10.4.0</Version>
+    <Version>10.5.0</Version>
     <Authors>Jasper Hedegaard Bojsen</Authors>
     <Copyright>1iveowl Development 2025</Copyright>
     <PackageProjectUrl>https://github.com/1iveowl/WebsocketClientLite.PCL</PackageProjectUrl>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <RepositoryUrl>https://github.com/1iveowl/WebsocketClientLite.PCL</RepositoryUrl>
-    <AssemblyVersion>10.4.0</AssemblyVersion>
-    <FileVersion>10.4.0</FileVersion>
+    <AssemblyVersion>10.5.0</AssemblyVersion>
+    <FileVersion>10.5.0</FileVersion>
     <Description>A simple and light WebSocket client.
 Can be set to ignore SSL/TLS server certificate issues (use with care!).
 Easily and effectively observe incoming message using Reactive Extensions (Rx)</Description>
-    <PackageReleaseNotes>v10.4.0: Adds the net11.0 target, built with .NET 11 Runtime Async. No public API or behaviour change. net8.0 and net9.0 remain. Built and tested with the .NET 11 SDK. See README.md and verification/runtime-async.md.</PackageReleaseNotes>
+    <PackageReleaseNotes>v10.5.0: No public API, behaviour or Dafny contract change. Records an experiment that weakens the header length contract and what catches it, states the rules for the verification work, and makes the PDD validation fail on a Dafny declaration or requirement without an RFC 6455 citation. See CHANGELOG.md and verification/contract-weakening.md.</PackageReleaseNotes>
     <EnableNETAnalyzers>true</EnableNETAnalyzers>
     <AnalysisMode>AllEnabledByDefault</AnalysisMode>
   </PropertyGroup>

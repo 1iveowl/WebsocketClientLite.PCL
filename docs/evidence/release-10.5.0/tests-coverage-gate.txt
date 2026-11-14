@@ -1,0 +1,4 @@
+Line coverage:   84.6%
+Branch coverage: 80.3%
+Minimum line:    70%
+Line coverage 84.6% meets the 70% minimum.

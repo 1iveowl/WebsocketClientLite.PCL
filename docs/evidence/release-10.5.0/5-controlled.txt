@@ -1,0 +1,15 @@
+$ ./scripts/pdd.sh capture --job controlled --output <out>/controlled --command-budget 480
+# started 2026-11-14T16:22:03Z at e752ffcd62000e51264ec81771ebf1a9014f8b0e
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:00.06
+defect: passed
+boundaries: passed
+queued: passed
+leases: passed
+retention: passed
+reconnect: passed
+# exit=0 finished 2026-11-14T16:23:23Z
