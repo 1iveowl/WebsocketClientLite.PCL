@@ -150,7 +150,7 @@ public sealed partial class Evidence
                 Require(Passed(jobs["controlled"]?["runs"]?["defect"]), "unsuccessful defect command");
                 var defect = Read(Path.Combine(directory, "controlled/defect/results.json"));
                 Require(Equal(defect["source"], Node(expected)) && Equal(defect["source_after"], Node(expected)), "defect source mismatch");
-                Require(S(defect, "status") == "passed" && S(defect, "library_target") == "net10.0", "incomplete defect experiment");
+                Require(S(defect, "status") == "passed" && S(defect, "library_target") == PrimaryTfm, "incomplete defect experiment");
                 var runtime = ValidateDefect(Path.Combine(directory, "controlled/defect"), defect["baseline"]!, defect["mutant"]!);
                 controlled["status"] = "passed"; controlled["host_runtime"] = runtime; controlled["evidence"] = defect;
             }
@@ -399,7 +399,7 @@ public sealed partial class Evidence
     }
     public static string Summary(JsonObject receipt)
     {
-        var lines = new List<string> { "# PDD verification receipt", "", $"Machine evidence gate: **{receipt["gate"]!["status"]}**", "", receipt["gate"]!["scope"]!.ToString(), "", $"Tested commit: `{receipt["source"]!["tested_commit"]}`", $"PR source head: `{receipt["source"]!["pr_source_head"]}`", "", "Five library builds use the actual hosts recorded below; they are not five independently tested runtimes.", "" };
+        var lines = new List<string> { "# PDD verification receipt", "", $"Machine evidence gate: **{receipt["gate"]!["status"]}**", "", receipt["gate"]!["scope"]!.ToString(), "", $"Tested commit: `{receipt["source"]!["tested_commit"]}`", $"PR source head: `{receipt["source"]!["pr_source_head"]}`", "", $"{Tfms.Length} library builds use the actual hosts recorded below; they are not {Tfms.Length} independently tested runtimes.", "" };
         foreach (var (tfm, result) in receipt["framework_matrix"]!.AsObject())
             lines.Add($"- {tfm}: {result!["status"]}; host: {result["host_runtime"]}");
         lines.AddRange(["", "| Obligation | Status |", "| --- | --- |"]);

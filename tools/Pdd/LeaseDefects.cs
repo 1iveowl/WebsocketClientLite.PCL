@@ -31,7 +31,7 @@ public sealed partial class Evidence
     {
         Fresh(output);
         var report = new JsonObject { ["status"] = "failed", ["source"] = Node(await Identity()), ["ci"] = Node(CiIdentity()),
-            ["started_at"] = Now(), ["library_target"] = "net10.0", ["experiments"] = new JsonArray() };
+            ["started_at"] = Now(), ["library_target"] = PrimaryTfm, ["experiments"] = new JsonArray() };
         using var copy = new TemporaryTree();
         try
         {
@@ -46,7 +46,7 @@ public sealed partial class Evidence
             }
             var runner = new Evidence(copy.Path);
             async Task<CommandReceipt> Run(string name, string filter) => await runner.Execute(
-                ["dotnet", "test", Project, "-c", "Release", "-p:LibTfm=net10.0", "--filter", filter + "|FullyQualifiedName=" + RuntimeTest,
+                ["dotnet", "test", Project, "-c", "Release", "-p:LibTfm=" + PrimaryTfm, "--filter", filter + "|FullyQualifiedName=" + RuntimeTest,
                     "--logger", "trx;LogFileName=results.trx", "--results-directory", Path.Combine(output, name)], Path.Combine(output, name), 180, cancellation);
             report["baseline"] = Node(await Run("baseline", "FullyQualifiedName~WebsocketClientLiteTest.PayloadLeaseTests"));
             Require(Passed(report["baseline"]), "Lease baseline failed");
@@ -77,7 +77,7 @@ public sealed partial class Evidence
 
     public static void ValidateLeaseReport(string directory, JsonNode report, string sourceHash)
     {
-        Require(S(report, "status") == "passed" && S(report, "library_target") == "net10.0" && Passed(report["baseline"]), "Incomplete lease baseline/report");
+        Require(S(report, "status") == "passed" && S(report, "library_target") == PrimaryTfm && Passed(report["baseline"]), "Incomplete lease baseline/report");
         XNamespace ns = "http://microsoft.com/schemas/VisualStudio/TeamTest/2010";
         var baseline = XDocument.Load(Path.Combine(directory, "baseline/results.trx")).Descendants(ns + "UnitTestResult").ToArray();
         Require(baseline.Length == 15 && baseline.All(r => (string?)r.Attribute("outcome") == "Passed"), "Incomplete lease baseline cases");
@@ -119,7 +119,7 @@ public sealed partial class Evidence
             for (int i = 0; i < 50; i++)
             {
                 var path = Path.Combine(output, i.ToString("D2"));
-                var run = await Execute(["dotnet", "test", Project, "-c", "Release", "-p:LibTfm=net10.0",
+                var run = await Execute(["dotnet", "test", Project, "-c", "Release", "-p:LibTfm=" + PrimaryTfm,
                     "--filter", "FullyQualifiedName~WebsocketClientLiteTest.PayloadLeaseTests|FullyQualifiedName=" + RuntimeTest,
                     "--logger", "trx;LogFileName=results.trx", "--results-directory", path], path, 180, cancellation);
                 report["runs"]!.AsArray().Add(Node(run));

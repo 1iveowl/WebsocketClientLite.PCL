@@ -5,21 +5,23 @@
 	<Nullable>enable</Nullable>
     <AssemblyName>IWebsocketClientLite</AssemblyName>
     <RootNamespace>IWebsocketClientLite</RootNamespace>
-	<LangVersion>14.0</LangVersion>
+	<LangVersion>15.0</LangVersion>
 	<PackageIcon>images\1iveowl-logo.png</PackageIcon>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <Version>10.3.0</Version>
+    <Version>10.4.0</Version>
     <Authors>Jasper Hedegaard Bojsen</Authors>
     <Copyright>1iveowl Development 2025</Copyright>
     <PackageProjectUrl>https://github.com/1iveowl/IWebsocketClientLite.PCL</PackageProjectUrl>
     <RepositoryUrl>https://github.com/1iveowl/WebsocketClientLite.PCL</RepositoryUrl>
-    <AssemblyVersion>10.3.0</AssemblyVersion>
-    <FileVersion>10.3.0</FileVersion>
+    <AssemblyVersion>10.4.0</AssemblyVersion>
+    <FileVersion>10.4.0</FileVersion>
     <Description>Interface for WebSocket Client Lite.</Description>
   </PropertyGroup>
 
   <ItemGroup>
-    <!-- IAsyncDisposable for the netstandard2.0 surface (IWebSocketClientRx). -->
+    <!-- IAsyncDisposable for the netstandard2.0 surface (IWebSocketClientRx).
+         Stay on 10.0.x while net8.0 and net9.0 are supported: 11.0.0 warns that it does not
+         support them, and this unconditional reference passes that warning to every consumer. -->
     <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="10.0.14" />
   </ItemGroup>
 

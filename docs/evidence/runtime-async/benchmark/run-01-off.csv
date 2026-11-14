@@ -1,0 +1,8 @@
+Runtime: .NET 11.0.0
+Library: <output>/bin-off/WebsocketClientLite.dll
+Library async state machine types: 48; methods marked async to the runtime: 0
+workload,operations,median_us,min_us,max_us,alloc_B_per_op
+connect-handshake-close,300,241.24,224.53,316.88,65526
+echo-32B,20000,12.06,11.63,12.82,1579
+echo-4KiB,10000,23.14,16.18,24.37,22008
+echo-64KiB,2000,82.24,79.66,83.89,329354

@@ -7,7 +7,11 @@
 	"workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
 	"features": {
 		"ghcr.io/devcontainers/features/azure-cli:1": {},
-		"ghcr.io/devcontainers/features/dotnet:2": {},
+		// The image brings the .NET 10 SDK on Ubuntu 24.04; the .NET 11 images are Ubuntu 26.04
+		// only. The feature adds the .NET 11 SDK, which builds every target and hosts the tests.
+		"ghcr.io/devcontainers/features/dotnet:2": {
+			"version": "11.0"
+		},
 		"ghcr.io/devcontainers/features/github-cli:1": {},
 		"ghcr.io/devcontainers/features/node:2": {
 			"version": "lts"

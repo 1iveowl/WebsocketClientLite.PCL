@@ -10,7 +10,7 @@ Open an [issue](https://github.com/1iveowl/WebsocketClientLite.PCL/issues) with 
 
 1. Fork the repository and create a branch for your change.
 2. Build and test as described in [docs/development.md](docs/development.md): `dotnet build src/main/WebsocketClientLite.sln` and `./test-all-tfms.sh`. The repository's [dev container](docs/development.md#dev-container) has everything installed.
-3. Keep the change compatible with every target framework (`netstandard2.0`, `netstandard2.1`, `net8.0`, `net9.0`, `net10.0`) and add or update tests. Local validation and release CI require at least 70 % line coverage. Run the [full local evidence checks](verification/README.md#ci-verification-receipts-phase-2-increment-d) before merging; routine pushes and pull requests into release branches do not run GitHub CI.
+3. Keep the change compatible with every target framework (`netstandard2.0`, `netstandard2.1`, `net8.0`, `net9.0`, `net10.0`, `net11.0`) and add or update tests. Local validation and release CI require at least 70 % line coverage. Run the [full local evidence checks](verification/README.md#ci-verification-receipts-phase-2-increment-d) before merging; routine pushes and pull requests into release branches do not run GitHub CI.
 4. Open the pull request against `main`. The maintainer moves it onto the release it will ship in.
 
 Commit messages start with a short prefix: `feat:`, `fix:`, `docs:` or `chore:`.

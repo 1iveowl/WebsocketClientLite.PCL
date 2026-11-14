@@ -4,4 +4,4 @@ set -euo pipefail
 root="$(cd "$(dirname "$0")/.." && pwd)"
 # Build output stays outside source identity; exec forwards cancellation directly.
 dotnet build "$root/tools/Pdd/Pdd.csproj" -c Release --nologo -v quiet >&2
-exec dotnet "$root/tools/Pdd/bin/Release/net10.0/Pdd.dll" "$@"
+exec dotnet "$root/tools/Pdd/bin/Release/net11.0/Pdd.dll" "$@"

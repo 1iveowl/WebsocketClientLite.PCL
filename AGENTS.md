@@ -68,8 +68,8 @@ The full process is in [CONTRIBUTING.md](CONTRIBUTING.md). What an agent must fo
 
 ## Project-specific guidance
 
-- Build: `dotnet build src/main/WebsocketClientLite.sln`. The .NET 10 SDK builds every
-  target framework (`netstandard2.0`, `netstandard2.1`, `net8.0`, `net9.0`, `net10.0`).
+- Build: `dotnet build src/main/WebsocketClientLite.sln`. The .NET 11 SDK builds every
+  target framework (`netstandard2.0`, `netstandard2.1`, `net8.0`, `net9.0`, `net10.0`, `net11.0`).
 - Test: `./test-all-tfms.sh` runs the unit tests against each library build; CI runs it in
   Release and requires at least 70 % line coverage (`scripts/check-coverage.sh`).
 - Keep changes compatible with every target framework; conditional code uses `#if`.

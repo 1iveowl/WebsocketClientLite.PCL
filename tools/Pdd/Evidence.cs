@@ -6,7 +6,10 @@ namespace Pdd;
 
 public sealed partial class Evidence(string root)
 {
-    public static readonly string[] Tfms = ["netstandard2.0", "netstandard2.1", "net8.0", "net9.0", "net10.0"];
+    public static readonly string[] Tfms = ["netstandard2.0", "netstandard2.1", "net8.0", "net9.0", "net10.0", "net11.0"];
+    // The newest library build: the controlled experiments, the Stryker runtime probe and the
+    // test host default use it, because it is the build whose compiler and runtime changed last.
+    public const string PrimaryTfm = "net11.0";
     public const string Project = "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj";
     public static Dictionary<string, string?> CiIdentity() => new[] { "GITHUB_SERVER_URL", "GITHUB_REPOSITORY", "GITHUB_RUN_ID", "GITHUB_RUN_ATTEMPT", "GITHUB_EVENT_NAME", "GITHUB_JOB", "GITHUB_SHA" }.ToDictionary(k => k, Environment.GetEnvironmentVariable);
     public async Task<SourceIdentity> Identity()
@@ -19,7 +22,7 @@ public sealed partial class Evidence(string root)
         return new(await Git("rev-parse", "HEAD"), Environment.GetEnvironmentVariable("PDD_PR_HEAD") is { Length: > 0 } head ? head : null, (await Git("status", "--porcelain")).Length > 0, hashes);
     }
     public static List<(string Name, string[] Command)> Commands(string job, string output) => job == "stryker" ?
-        [("runtime", ["dotnet", "test", Project, "-c", "Release", "-p:LibTfm=net10.0", "--filter", "FullyQualifiedName=" + RuntimeTest, "--logger", "trx;LogFileName=runtime.trx", "--results-directory", Path.Combine(output, "runtime")]), ("stryker", ["./scripts/stryker-close.sh"])] : job == "controlled" ?
+        [("runtime", ["dotnet", "test", Project, "-c", "Release", "-p:LibTfm=" + PrimaryTfm, "--filter", "FullyQualifiedName=" + RuntimeTest, "--logger", "trx;LogFileName=runtime.trx", "--results-directory", Path.Combine(output, "runtime")]), ("stryker", ["./scripts/stryker-close.sh"])] : job == "controlled" ?
         [("defect", ["./scripts/pdd.sh", "controlled-defect", "--output", Path.Combine(output, "defect")]), ("boundaries", ["./scripts/pdd.sh", "boundary-defects", "--output", Path.Combine(output, "boundaries")]), ("queued", ["./scripts/pdd.sh", "queued-defect", "--output", Path.Combine(output, "queued")]), ("leases", ["./scripts/pdd.sh", "lease-defects", "--output", Path.Combine(output, "leases")]), ("retention", ["./scripts/pdd.sh", "retention-defects", "--output", Path.Combine(output, "retention")]), ("reconnect", ["./scripts/pdd.sh", "reconnect-defect", "--output", Path.Combine(output, "reconnect")])] : job == "protocol" ?
         [("manifest", ["./scripts/pdd.sh", "validate"]), ("fixtures", ["dotnet", "test", "tools/Pdd.Tests/Pdd.Tests.csproj", "-c", "Release", "--nologo"]), ("proof", ["./scripts/dafny-masking.sh", "--check"]), ("mutations", ["./scripts/pdd.sh", "mutations", "--output", Path.Combine(output, "mutations")])] :
         [("restore", ["dotnet", "restore", "src/main/WebsocketClientLite.sln"]), ("build", ["dotnet", "build", "src/main/WebsocketClientLite.sln", "--configuration", "Release", "--no-restore"]), ("matrix", ["./test-all-tfms.sh", "Release"]), ("coverage-run", ["dotnet", "test", Project, "--configuration", "Release", "--collect:XPlat Code Coverage", "--results-directory", Path.Combine(output, "coverage")]), ("coverage-gate", ["./scripts/check-coverage.sh", Path.Combine(output, "coverage"), "70"])];

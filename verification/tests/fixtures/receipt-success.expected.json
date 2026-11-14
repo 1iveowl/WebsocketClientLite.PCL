@@ -108,6 +108,17 @@
         "WebsocketClientLiteTest.TeardownTests.DisposeAsyncKeepsTransportOpenUntilDelayedPeerClose": "passed",
         "WebsocketClientLiteTest.TeardownTests.DisposeAsync_AwaitsCloseHandshake_AndCompletesSubscriber": "passed"
       }
+    },
+    "net11.0": {
+      "status": "passed",
+      "host_runtime": ".NET 11.0.0",
+      "tests": {
+        "WebsocketClientLiteTest.ProtocolStateTests.CloseResponseTimeoutMakesTheTransportTerminal": "passed",
+        "WebsocketClientLiteTest.ProtocolStateTests.ClosingRequiresBothDirectionsOrTerminalEvent": "passed",
+        "WebsocketClientLiteTest.RuntimeEvidenceTests.RecordHostRuntime": "passed",
+        "WebsocketClientLiteTest.TeardownTests.DisposeAsyncKeepsTransportOpenUntilDelayedPeerClose": "passed",
+        "WebsocketClientLiteTest.TeardownTests.DisposeAsync_AwaitsCloseHandshake_AndCompletesSubscriber": "passed"
+      }
     }
   },
   "coverage": "passed",

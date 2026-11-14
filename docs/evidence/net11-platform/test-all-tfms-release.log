@@ -1,0 +1,81 @@
+==================================================================
+  Testing against library build: netstandard2.0 (config: Release)
+==================================================================
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  IWebsocketClientLite -> /workspaces/WebsocketClientLite.PCL/src/interface/IWebsocketClientLite/bin/Release/netstandard2.0/IWebsocketClientLite.dll
+  WebsocketClientLite -> /workspaces/WebsocketClientLite.PCL/src/main/WebsocketClientLite/bin/Release/netstandard2.0/WebsocketClientLite.dll
+  WebsocketClientLiteTest -> /workspaces/WebsocketClientLite.PCL/src/main/WebsocketClientLiteTest/bin/Release/net11.0/WebsocketClientLiteTest.dll
+Test run for /workspaces/WebsocketClientLite.PCL/src/main/WebsocketClientLiteTest/bin/Release/net11.0/WebsocketClientLiteTest.dll (.NETCoreApp,Version=v11.0)
+A total of 1 test files matched the specified pattern.
+
+Passed!  - Failed:     0, Passed:   328, Skipped:     0, Total:   328, Duration: 24 s - WebsocketClientLiteTest.dll (net11.0)
+VSTEST_ARTIFACTS_DIRECTORY environment variable was not found, falling back to a user-private temporary directory. This is most likely caused by an outdated Microsoft.NET.Test.Sdk package reference in the test project.
+==================================================================
+  Testing against library build: netstandard2.1 (config: Release)
+==================================================================
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  IWebsocketClientLite -> /workspaces/WebsocketClientLite.PCL/src/interface/IWebsocketClientLite/bin/Release/netstandard2.0/IWebsocketClientLite.dll
+  WebsocketClientLite -> /workspaces/WebsocketClientLite.PCL/src/main/WebsocketClientLite/bin/Release/netstandard2.1/WebsocketClientLite.dll
+  WebsocketClientLiteTest -> /workspaces/WebsocketClientLite.PCL/src/main/WebsocketClientLiteTest/bin/Release/net11.0/WebsocketClientLiteTest.dll
+Test run for /workspaces/WebsocketClientLite.PCL/src/main/WebsocketClientLiteTest/bin/Release/net11.0/WebsocketClientLiteTest.dll (.NETCoreApp,Version=v11.0)
+A total of 1 test files matched the specified pattern.
+
+Passed!  - Failed:     0, Passed:   328, Skipped:     0, Total:   328, Duration: 24 s - WebsocketClientLiteTest.dll (net11.0)
+VSTEST_ARTIFACTS_DIRECTORY environment variable was not found, falling back to a user-private temporary directory. This is most likely caused by an outdated Microsoft.NET.Test.Sdk package reference in the test project.
+==================================================================
+  Testing against library build: net8.0 (config: Release)
+==================================================================
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  IWebsocketClientLite -> /workspaces/WebsocketClientLite.PCL/src/interface/IWebsocketClientLite/bin/Release/netstandard2.0/IWebsocketClientLite.dll
+  WebsocketClientLite -> /workspaces/WebsocketClientLite.PCL/src/main/WebsocketClientLite/bin/Release/net8.0/WebsocketClientLite.dll
+  WebsocketClientLiteTest -> /workspaces/WebsocketClientLite.PCL/src/main/WebsocketClientLiteTest/bin/Release/net11.0/WebsocketClientLiteTest.dll
+Test run for /workspaces/WebsocketClientLite.PCL/src/main/WebsocketClientLiteTest/bin/Release/net11.0/WebsocketClientLiteTest.dll (.NETCoreApp,Version=v11.0)
+A total of 1 test files matched the specified pattern.
+
+Passed!  - Failed:     0, Passed:   328, Skipped:     0, Total:   328, Duration: 24 s - WebsocketClientLiteTest.dll (net11.0)
+VSTEST_ARTIFACTS_DIRECTORY environment variable was not found, falling back to a user-private temporary directory. This is most likely caused by an outdated Microsoft.NET.Test.Sdk package reference in the test project.
+==================================================================
+  Testing against library build: net9.0 (config: Release)
+==================================================================
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  IWebsocketClientLite -> /workspaces/WebsocketClientLite.PCL/src/interface/IWebsocketClientLite/bin/Release/netstandard2.0/IWebsocketClientLite.dll
+  WebsocketClientLite -> /workspaces/WebsocketClientLite.PCL/src/main/WebsocketClientLite/bin/Release/net9.0/WebsocketClientLite.dll
+  WebsocketClientLiteTest -> /workspaces/WebsocketClientLite.PCL/src/main/WebsocketClientLiteTest/bin/Release/net11.0/WebsocketClientLiteTest.dll
+Test run for /workspaces/WebsocketClientLite.PCL/src/main/WebsocketClientLiteTest/bin/Release/net11.0/WebsocketClientLiteTest.dll (.NETCoreApp,Version=v11.0)
+A total of 1 test files matched the specified pattern.
+
+Passed!  - Failed:     0, Passed:   328, Skipped:     0, Total:   328, Duration: 24 s - WebsocketClientLiteTest.dll (net11.0)
+VSTEST_ARTIFACTS_DIRECTORY environment variable was not found, falling back to a user-private temporary directory. This is most likely caused by an outdated Microsoft.NET.Test.Sdk package reference in the test project.
+==================================================================
+  Testing against library build: net10.0 (config: Release)
+==================================================================
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  IWebsocketClientLite -> /workspaces/WebsocketClientLite.PCL/src/interface/IWebsocketClientLite/bin/Release/netstandard2.0/IWebsocketClientLite.dll
+  WebsocketClientLite -> /workspaces/WebsocketClientLite.PCL/src/main/WebsocketClientLite/bin/Release/net10.0/WebsocketClientLite.dll
+  WebsocketClientLiteTest -> /workspaces/WebsocketClientLite.PCL/src/main/WebsocketClientLiteTest/bin/Release/net11.0/WebsocketClientLiteTest.dll
+Test run for /workspaces/WebsocketClientLite.PCL/src/main/WebsocketClientLiteTest/bin/Release/net11.0/WebsocketClientLiteTest.dll (.NETCoreApp,Version=v11.0)
+A total of 1 test files matched the specified pattern.
+
+Passed!  - Failed:     0, Passed:   328, Skipped:     0, Total:   328, Duration: 24 s - WebsocketClientLiteTest.dll (net11.0)
+VSTEST_ARTIFACTS_DIRECTORY environment variable was not found, falling back to a user-private temporary directory. This is most likely caused by an outdated Microsoft.NET.Test.Sdk package reference in the test project.
+==================================================================
+  Testing against library build: net11.0 (config: Release)
+==================================================================
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  IWebsocketClientLite -> /workspaces/WebsocketClientLite.PCL/src/interface/IWebsocketClientLite/bin/Release/netstandard2.0/IWebsocketClientLite.dll
+  WebsocketClientLite -> /workspaces/WebsocketClientLite.PCL/src/main/WebsocketClientLite/bin/Release/net11.0/WebsocketClientLite.dll
+  WebsocketClientLiteTest -> /workspaces/WebsocketClientLite.PCL/src/main/WebsocketClientLiteTest/bin/Release/net11.0/WebsocketClientLiteTest.dll
+Test run for /workspaces/WebsocketClientLite.PCL/src/main/WebsocketClientLiteTest/bin/Release/net11.0/WebsocketClientLiteTest.dll (.NETCoreApp,Version=v11.0)
+A total of 1 test files matched the specified pattern.
+
+Passed!  - Failed:     0, Passed:   328, Skipped:     0, Total:   328, Duration: 24 s - WebsocketClientLiteTest.dll (net11.0)
+VSTEST_ARTIFACTS_DIRECTORY environment variable was not found, falling back to a user-private temporary directory. This is most likely caused by an outdated Microsoft.NET.Test.Sdk package reference in the test project.
+==================================================================
+  RESULT: all target frameworks passed.
+exit=0

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 #
 # Runs the unit-test suite against every target-framework build of the library
-# (netstandard2.0, netstandard2.1, net8.0, net9.0, net10.0).
+# (netstandard2.0, netstandard2.1, net8.0, net9.0, net10.0, net11.0).
 #
 # The test project itself targets a single runnable TFM, but -p:LibTfm forces it
 # to link a specific library build. A netstandard2.0/2.1 assembly runs fine on a
@@ -11,7 +11,7 @@
 # Usage: ./test-all-tfms.sh [Debug|Release]
 set -uo pipefail
 
-TFMS=(netstandard2.0 netstandard2.1 net8.0 net9.0 net10.0)
+TFMS=(netstandard2.0 netstandard2.1 net8.0 net9.0 net10.0 net11.0)
 PROJECT="src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj"
 CONFIG="${1:-Debug}"
 

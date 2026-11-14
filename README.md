@@ -289,6 +289,7 @@ For more see here: [WebSocket client not connecting to the socket.io server](htt
 
 | Version | Released | Summary |
 | --- | --- | --- |
+| [10.4.0](CHANGELOG.md#new-in-version-1040) | 2026-11-14 | .NET 11 target with Runtime Async; no API or behaviour change |
 | [10.3.0](CHANGELOG.md#new-in-version-1030) | 2026-11-12 | No behaviour change: header length rule traced to RFC 6455, stronger header tests, typed core boundary |
 | [10.2.0](CHANGELOG.md#new-in-version-1020) | 2026-11-08 | Stronger cancellation, teardown and sequential reconnect |
 | [10.1.0](CHANGELOG.md#new-in-version-1010) | 2026-11-07 | Dafny core extended to receive admission, sending and closing |
@@ -313,9 +314,9 @@ This library was developed using the following reference documentation:
 
 ## Building and Contributing
 
-This library targets .NET Standard 2.0, .NET Standard 2.1, .NET 8, .NET 9, and .NET 10. Please keep changes compatible with all of them. GitHub Actions builds, tests, and publishes the packages. See [CONTRIBUTING.md](CONTRIBUTING.md) for how to send a pull request and how changes become releases.
+This library targets .NET Standard 2.0, .NET Standard 2.1, .NET 8, .NET 9, .NET 10, and .NET 11. Please keep changes compatible with all of them. GitHub Actions builds, tests, and publishes the packages. See [CONTRIBUTING.md](CONTRIBUTING.md) for how to send a pull request and how changes become releases.
 
-With the [.NET 10 SDK](https://dotnet.microsoft.com/download/dotnet/10.0), which builds every target framework:
+With the [.NET 11 SDK](https://dotnet.microsoft.com/download/dotnet/11.0), which builds every target framework:
 
 ```bash
 dotnet build src/main/WebsocketClientLite.sln

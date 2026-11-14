@@ -15,7 +15,7 @@ public sealed partial class Evidence
         var report = new System.Text.Json.Nodes.JsonObject
         {
             ["status"] = "failed", ["source"] = Node(source), ["ci"] = Node(CiIdentity()),
-            ["started_at"] = Now(), ["library_target"] = "net10.0", ["experiment"] = "dispose-before-close-completion"
+            ["started_at"] = Now(), ["library_target"] = PrimaryTfm, ["experiment"] = "dispose-before-close-completion"
         };
         try
         {
@@ -30,7 +30,7 @@ public sealed partial class Evidence
             }
             var runner = new Evidence(copy);
             async Task<CommandReceipt> Run(string name) => await runner.Execute(
-                ["dotnet", "test", Project, "-c", "Release", "-p:LibTfm=net10.0", "--filter", $"FullyQualifiedName~{CriticalTest}|FullyQualifiedName={RuntimeTest}", "--logger", "trx;LogFileName=results.trx", "--results-directory", Path.Combine(output, name)], Path.Combine(output, name), 180, cancellation);
+                ["dotnet", "test", Project, "-c", "Release", "-p:LibTfm=" + PrimaryTfm, "--filter", $"FullyQualifiedName~{CriticalTest}|FullyQualifiedName={RuntimeTest}", "--logger", "trx;LogFileName=results.trx", "--results-directory", Path.Combine(output, name)], Path.Combine(output, name), 180, cancellation);
             report["baseline"] = Node(await Run("baseline"));
             Require(Passed(report["baseline"]), "Ordering baseline did not pass");
             var file = Path.Combine(copy, "src/main/WebsocketClientLite/Service/WebsocketConnectionHandler.cs");

@@ -3,6 +3,18 @@
 One section per release, newest first. The publish workflow uses the section `## New in Version <x.y.z>` for the version being released as the text of its GitHub release, so keep that heading format. The README has a one-line summary of each release in its release history table.
 
 
+## New in Version 10.4.0
+
+Version 10.4.0 adds .NET 11 and changes no public API or documented behaviour. It is the first release built with the .NET 11 SDK.
+
+- **New target: `net11.0`.** The package now has six builds: .NET Standard 2.0 and 2.1, .NET 8, .NET 9, .NET 10 and .NET 11. .NET 8 and .NET 9 reached end of support on 2026-11-10; their builds stay, so nobody on them is moved to a different build in a release that promises no behaviour change.
+- **The .NET 11 build uses Runtime Async.** On .NET 11 the runtime, not compiler-generated state machines, suspends and resumes the library's async methods. The `net11.0` assembly has none of the 48 state machines left and is 102 KiB instead of 136 KiB. In an end-to-end loopback benchmark every measured path allocates 216 to 351 bytes less per operation, and none is measurably slower. Live stack traces and debugger call stacks show fewer frames; exception stack traces are unchanged. The other five builds are compiled as before. The report is [`verification/runtime-async.md`](verification/runtime-async.md).
+- The library is compiled with C# 15 (`LangVersion` 15) but does not yet use C# 15 syntax. A union for the internal handshake result is written and tested, but Stryker.NET, which runs the mutation checks for every release, cannot compile C# 15 yet. It waits for a Stryker release that can. The [10.4 plan](docs/net11-10.4-plan.md) has the details.
+- `Microsoft.Bcl.AsyncInterfaces` stays on 10.0.x: version 11.0.0 warns that it does not support .NET 8 or .NET 9, and the interface package would pass that warning to every .NET 8 and 9 build that uses it.
+- Tests, tooling, CI and the dev container use the .NET 11 SDK. All six library builds are tested on a .NET 11 host, and the controlled ordering experiments and Stryker run against the `net11.0` build.
+
+No new public API and no new production dependency. The Dafny proofs, their scope and the generated code are unchanged. The evidence and its limits are in the [10.4 plan](docs/net11-10.4-plan.md).
+
 ## New in Version 10.3.0
 
 Version 10.3.0 adds no feature and changes no public behaviour. It ties the header length rule to RFC 6455, makes the header tests fail when the check they name is removed, and records two experiments about the boundary between the C# client and the verified protocol core. One is adopted and one is not.

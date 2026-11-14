@@ -26,7 +26,7 @@ public sealed partial class Evidence
         var report = new System.Text.Json.Nodes.JsonObject
         {
             ["status"] = "failed", ["source"] = Node(source), ["ci"] = Node(CiIdentity()),
-            ["started_at"] = Now(), ["library_target"] = "net10.0", ["experiment"] = "frame-overlap"
+            ["started_at"] = Now(), ["library_target"] = PrimaryTfm, ["experiment"] = "frame-overlap"
         };
         try
         {
@@ -41,7 +41,7 @@ public sealed partial class Evidence
             }
             var runner = new Evidence(copy);
             async Task<CommandReceipt> Run(string name) => await runner.Execute(
-                ["dotnet", "test", Project, "-c", "Release", "-p:LibTfm=net10.0", "--filter", $"FullyQualifiedName~{QueuedTest}|FullyQualifiedName={RuntimeTest}", "--logger", "trx;LogFileName=results.trx", "--results-directory", Path.Combine(output, name)], Path.Combine(output, name), 180, cancellation);
+                ["dotnet", "test", Project, "-c", "Release", "-p:LibTfm=" + PrimaryTfm, "--filter", $"FullyQualifiedName~{QueuedTest}|FullyQualifiedName={RuntimeTest}", "--logger", "trx;LogFileName=results.trx", "--results-directory", Path.Combine(output, name)], Path.Combine(output, name), 180, cancellation);
             report["baseline"] = Node(await Run("baseline"));
             Require(Passed(report["baseline"]), "Queued baseline did not pass");
             var file = Path.Combine(copy, QueuedSource);
@@ -75,7 +75,7 @@ public sealed partial class Evidence
             for (int i = 0; i < 50; i++)
             {
                 var path = Path.Combine(output, i.ToString("D2"));
-                var run = await Execute(["dotnet", "test", Project, "-c", "Release", "-p:LibTfm=net10.0",
+                var run = await Execute(["dotnet", "test", Project, "-c", "Release", "-p:LibTfm=" + PrimaryTfm,
                     "--filter", "FullyQualifiedName~WebsocketClientLiteTest.QueuedWriteTests|FullyQualifiedName=WebsocketClientLiteTest.ControlledCloseTests.CancellationBetweenFragmentsAllowsOnlyClose|FullyQualifiedName=" + RuntimeTest,
                     "--logger", "trx;LogFileName=results.trx", "--results-directory", path], path, 180, cancellation);
                 report["runs"]!.AsArray().Add(Node(run));
@@ -95,7 +95,7 @@ public sealed partial class Evidence
     }
     public static void ValidateQueuedReport(string directory, System.Text.Json.Nodes.JsonNode report, string sourceHash)
     {
-        Require(S(report, "status") == "passed" && S(report, "library_target") == "net10.0", "Incomplete queued experiment");
+        Require(S(report, "status") == "passed" && S(report, "library_target") == PrimaryTfm, "Incomplete queued experiment");
         var edit = report["mutation"]!;
         Require(S(edit, "file") == QueuedSource && S(edit, "before") == QueuedBefore && S(edit, "after") == QueuedAfter &&
             S(edit, "original_hash") == sourceHash && S(edit, "mutant_hash").Length == 64 && S(edit, "mutant_hash") != sourceHash,
