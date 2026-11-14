@@ -14,7 +14,8 @@ core, whoever makes it.
 
 1. **The RFC wins.** When a requirement is in question, RFC 6455 decides: not an agent's reading of
    it, and not the owner's. Each proved contract names the RFC section it comes from, or says
-   "Library policy:" and what the policy is. Library policy covers choices the RFC leaves to the
+   "Library policy:" and what the policy is; `./scripts/pdd.sh validate` fails when one is missing
+   ([tools/Pdd/README.md](../tools/Pdd/README.md)). Library policy covers choices the RFC leaves to the
    implementation, such as size limits, and never overrides a MUST. Where the code, a contract or a
    test disagrees with the RFC, the disagreement is written down and resolved in the RFC's favour.
    The RFC's errata are reviewed before a contract is frozen ([adoption plan](../docs/dafny-pdd-plan.md));

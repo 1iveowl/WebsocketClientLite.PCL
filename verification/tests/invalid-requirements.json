@@ -20,5 +20,9 @@
   {"name":"proof without contract","path":["requirements",0,"contracts"],"value":[],"error":"proof requires a contract"},
   {"name":"missing obligations","path":["requirements",0,"obligations"],"value":[],"error":"too few entries"},
   {"name":"run result in manifest","path":["requirements",0,"passed"],"value":true,"error":"unknown fields"},
-  {"name":"unsupported deferred increment","path":["requirements",0,"obligations",2,"delivery"],"value":"Z","error":"invalid choice"}
+  {"name":"unsupported deferred increment","path":["requirements",0,"obligations",2,"delivery"],"value":"Z","error":"invalid choice"},
+  {"name":"origin without citation","path":["requirements",0,"origin"],"value":["Sequential Close state model"],"error":"origin has no RFC 6455 section link"},
+  {"name":"origin cites another RFC","path":["requirements",0,"origin"],"value":["https://www.rfc-editor.org/rfc/rfc7692.html#section-7"],"error":"origin has no RFC 6455 section link"},
+  {"name":"origin with a lowercase policy label","path":["requirements",0,"origin"],"value":["library policy: sequential Close state model"],"error":"origin has no RFC 6455 section link"},
+  {"name":"origin with an empty policy","path":["requirements",0,"origin"],"value":["Library policy:  "],"error":"origin has no RFC 6455 section link"}
 ]

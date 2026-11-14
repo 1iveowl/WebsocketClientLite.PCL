@@ -36,11 +36,13 @@ test is seen to fail on the old code before the fix that makes it pass is truste
 
 **P4.** `pdd.sh validate` fails when a citation is missing. It reads two inputs:
 
-- Each contract-bearing method, function, predicate and lemma in `verification/Protocol.dfy`
-  and `verification/Masking.dfy` that Dafny proves. The comment block directly above it must
-  name an RFC 6455 section (for example "RFC 6455 section 5.3", "Section 5.2:" or "sections
-  5.2 and 5.5") or contain "Library policy:". A `{:extern}` declaration is not proved, but it
-  is held to the same rule so that an assumption is never uncited.
+- Every method, function, predicate and lemma in `verification/Protocol.dfy` and
+  `verification/Masking.dfy`, with or without a contract, since a function such as `HeaderValid`
+  is itself the specification. The comment block directly above it must name an RFC 6455
+  section (for example "RFC 6455 section 5.3", "Section 5.2:" or "sections 5.2 and 5.5") or
+  contain "Library policy:"; for the first member of a class, the block above the class counts
+  too. A `{:extern}` declaration is not proved, but it is held to the same rule so that an
+  assumption is never uncited.
 - Each requirement's `origin` in `verification/requirements.json`. It must hold an RFC 6455
   section link (`https://www.rfc-editor.org/rfc/rfc6455.html#section-…`) or an entry that
   starts with "Library policy:".
@@ -81,6 +83,9 @@ comes from, sent to the owner before the release pull request into `main` merges
    as an open gap, and the owner is told. No test is added for it without the owner's decision.
 6. No repository setting changes in 10.5. Which status checks `main` requires is the owner's
    decision; R lists the candidates and the command.
+7. Rule 2 in P3 allows expected bytes computed in the test from the RFC's rule, never with
+   production helpers, and a verified reference beside independent bytes, never instead of
+   them (asked during the #167 review, which found tests that compute their bytes).
 
 ## Facts checked on 2026-11-14
 
@@ -109,3 +114,15 @@ Numbered as they are found, with the evidence.
    `marker126-5-mutations-quiet.txt`). GitHub-hosted runners were about 2.4 times slower in
    10.3, so an outlier like that would be inconclusive there. Run mutation suites alone, and
    keep a slow run rather than rerunning it until it is fast.
+4. **A citation pass on one file left the other uncited.** The 10.3 pass (#136) cited every
+   contract in `Protocol.dfy`; `XorTwice` and `RoundTrip` in `Masking.dfy` had no comment. The
+   #167 review found them, and the new check's first run failed on them
+   (`docs/evidence/citation-check/2-validate-finds-the-uncited-lemmas.txt`). A rule that a check
+   enforces finds what a manual pass misses.
+5. **A check that reads source needs a reader for that language.** The first citation check
+   reused the C# comment mask on Dafny. Three review rounds of #169, each probing with small
+   snippets, found declarations it never saw: after a primed name (`x'`), inside a verbatim
+   string, past a nested comment, and second on a line. The fix was a Dafny scanner and a
+   fail-closed rule: every declaration keyword must belong to a declaration the check read.
+   Each hole was written as a test and seen failing before it was fixed
+   (`docs/evidence/citation-check/5-…`, `8-…` and `10-…`).
