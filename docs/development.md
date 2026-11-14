@@ -10,7 +10,7 @@ How to build and test WebsocketClientLite.PCL, and the optional ways to work on 
 
 ## Build and test on your machine
 
-You need the [.NET 10 SDK](https://dotnet.microsoft.com/download/dotnet/10.0) and git. The .NET 10 SDK builds every target framework (`netstandard2.0`, `netstandard2.1`, `net8.0`, `net9.0`, `net10.0`), and the tests run on the .NET 10 runtime. You do not need the older SDKs.
+You need the [.NET 11 SDK](https://dotnet.microsoft.com/download/dotnet/11.0) and git. The .NET 11 SDK builds every target framework (`netstandard2.0`, `netstandard2.1`, `net8.0`, `net9.0`, `net10.0`, `net11.0`), and the tests run on the .NET 11 runtime. You do not need the older SDKs.
 
 ```bash
 git clone https://github.com/1iveowl/WebsocketClientLite.PCL.git
@@ -24,7 +24,7 @@ Run the [full local evidence checks](../verification/README.md#ci-verification-r
 
 The scripts need bash: macOS, Linux, WSL or Git Bash.
 
-The test project targets `net10.0` and links one library build at a time through the `LibTfm` property, so a single runtime exercises each build's `#if` code paths. To test one build:
+The test project targets `net11.0` and links one library build at a time through the `LibTfm` property, so a single runtime exercises each build's `#if` code paths. To test one build:
 
 ```bash
 dotnet test src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj -p:LibTfm=netstandard2.0
@@ -52,7 +52,7 @@ The repository has a [dev container](https://containers.dev/) with everything al
 
 | Tool | Notes |
 |---|---|
-| .NET 10 SDK | Builds and tests every target framework, as above |
+| .NET 11 SDK | Builds and tests every target framework, as above. The image is the .NET 10 one on Ubuntu 24.04; the `dotnet` feature adds .NET 11 |
 | Node.js LTS, GitHub CLI, Azure CLI | `gh` and `az` logins survive a rebuild |
 | Claude Code, Codex | CLIs and VS Code extensions, plus GitHub Copilot and Copilot Chat extensions |
 | [Herdr](#herdr) | A terminal workspace for running several agents side by side |
@@ -189,7 +189,7 @@ source or the generated code; the historical script name now covers the full cor
 ## Actual runtime and OS qualification
 
 `LibTfm` selects a library build. It does not change the test process runtime.
-The existing test project also accepts `TestHostTfm`, defaulting to `net10.0`:
+The existing test project also accepts `TestHostTfm`, defaulting to `net11.0`:
 
 ```bash
 dotnet test src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj -c Release \
@@ -204,7 +204,7 @@ PDD tool to capture and check those cells. The focused host receipt does not
 replace the full local four-job aggregate.
 
 The CI workflow's manual `host_qualification=true` input runs two fresh jobs per
-selected .NET 10 OS without repeating proof or mutation tools. The default remains
+selected .NET 11 OS without repeating proof or mutation tools. The default remains
 full release validation. Windows mandatory promotion and macOS weekly scheduling
-are deferred under the release-only CI policy; .NET 8/9 checks are transitional,
+are deferred under the release-only CI policy; .NET 8/9/10 host checks are transitional,
 not an ongoing support promise. Every published library target is retained.

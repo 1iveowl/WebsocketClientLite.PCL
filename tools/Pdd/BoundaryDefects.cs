@@ -24,7 +24,7 @@ public sealed partial class Evidence
     {
         Fresh(output);
         var report = new JsonObject { ["status"] = "failed", ["source"] = Node(await Identity()), ["ci"] = Node(CiIdentity()),
-            ["started_at"] = Now(), ["library_target"] = "net10.0", ["experiments"] = new JsonArray() };
+            ["started_at"] = Now(), ["library_target"] = PrimaryTfm, ["experiments"] = new JsonArray() };
         using var copy = new TemporaryTree();
         try
         {
@@ -39,7 +39,7 @@ public sealed partial class Evidence
             }
             var runner = new Evidence(copy.Path);
             async Task<CommandReceipt> Run(string name, string filter) => await runner.Execute(
-                ["dotnet", "test", Project, "-c", "Release", "-p:LibTfm=net10.0", "--filter", filter + "|FullyQualifiedName=" + RuntimeTest,
+                ["dotnet", "test", Project, "-c", "Release", "-p:LibTfm=" + PrimaryTfm, "--filter", filter + "|FullyQualifiedName=" + RuntimeTest,
                     "--logger", "trx;LogFileName=results.trx", "--results-directory", Path.Combine(output, name)], Path.Combine(output, name), 180, cancellation);
             report["baseline"] = Node(await Run("baseline", "FullyQualifiedName~WebsocketClientLiteTest.CloseBoundaryTests"));
             Require(Passed(report["baseline"]), "Boundary baseline failed");
@@ -73,7 +73,7 @@ public sealed partial class Evidence
 
     public static void ValidateBoundaryReport(string directory, JsonNode report, string sourceHash)
     {
-        Require(S(report, "status") == "passed" && S(report, "library_target") == "net10.0" && Passed(report["baseline"]), "Incomplete boundary baseline/report");
+        Require(S(report, "status") == "passed" && S(report, "library_target") == PrimaryTfm && Passed(report["baseline"]), "Incomplete boundary baseline/report");
         XNamespace ns = "http://microsoft.com/schemas/VisualStudio/TeamTest/2010";
         ValidateAssertionExecution(Path.Combine(directory, "baseline"), 0);
         var baseline = XDocument.Load(Path.Combine(directory, "baseline/results.trx")).Descendants(ns + "UnitTestResult").ToArray();

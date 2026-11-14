@@ -150,7 +150,7 @@ public sealed partial class Evidence
                 Require(Passed(jobs["controlled"]?["runs"]?["defect"]), "unsuccessful defect command");
                 var defect = Read(Path.Combine(directory, "controlled/defect/results.json"));
                 Require(Equal(defect["source"], Node(expected)) && Equal(defect["source_after"], Node(expected)), "defect source mismatch");
-                Require(S(defect, "status") == "passed" && S(defect, "library_target") == "net10.0", "incomplete defect experiment");
+                Require(S(defect, "status") == "passed" && S(defect, "library_target") == PrimaryTfm, "incomplete defect experiment");
                 var runtime = ValidateDefect(Path.Combine(directory, "controlled/defect"), defect["baseline"]!, defect["mutant"]!);
                 controlled["status"] = "passed"; controlled["host_runtime"] = runtime; controlled["evidence"] = defect;
             }

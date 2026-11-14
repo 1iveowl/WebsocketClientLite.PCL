@@ -1,11 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;netstandard2.1;net8.0;net9.0;net10.0</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;netstandard2.1;net8.0;net9.0;net10.0;net11.0</TargetFrameworks>
 	<Nullable>enable</Nullable>
     <AssemblyName>WebsocketClientLite</AssemblyName>
     <RootNamespace>WebsocketClientLite</RootNamespace>
-    <LangVersion>14.0</LangVersion>
+    <LangVersion>15.0</LangVersion>
     <PackageIcon>images\1iveowl-logo.png</PackageIcon>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <Version>10.3.0</Version>
@@ -42,7 +42,7 @@ Easily and effectively observe incoming message using Reactive Extensions (Rx)</
     <PackageReference Include="System.Reactive" Version="7.0.0" />
     <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="10.0.14" Condition=" '$(TargetFramework)' == 'netstandard2.0' " />
     <PackageReference Include="System.Memory" Version="4.6.3" Condition=" '$(TargetFramework)' == 'netstandard2.0' " />  
-    <PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="10.0.403" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="11.0.100" PrivateAssets="all" />
   </ItemGroup>
 
   <ItemGroup>

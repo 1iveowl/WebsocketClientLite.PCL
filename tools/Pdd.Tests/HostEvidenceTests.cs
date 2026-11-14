@@ -7,12 +7,12 @@ namespace Pdd.Tests;
 
 public class HostEvidenceTests
 {
-    static HostCell Cell => Evidence.FindHostCell("linux-10-net10.0");
+    static HostCell Cell => Evidence.FindHostCell("linux-11-net11.0");
     static SourceIdentity Source => new("revision", null, false, new() { ["source.cs"] = "hash" });
     static JsonNode Host => Data.Parse("""
-        {"runtime":".NET 10.0.14","runtime_version":"10.0.14","test_framework":".NETCoreApp,Version=v10.0",
+        {"runtime":".NET 11.0.0","runtime_version":"11.0.0","test_framework":".NETCoreApp,Version=v11.0",
          "os":"linux","os_description":"Ubuntu 24.04.1 LTS","os_version":"Unix 6.8.0.0","os_release":"ID=ubuntu\nVERSION_ID=\"24.04\"\n",
-         "os_architecture":"X64","process_architecture":"X64","library_framework":".NETCoreApp,Version=v10.0",
+         "os_architecture":"X64","process_architecture":"X64","library_framework":".NETCoreApp,Version=v11.0",
          "library_name":"WebsocketClientLite, Version=1.0.0.0","library_path":"/checkout/bin/WebsocketClientLite.dll",
          "library_sha256":"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","library_mvid":"dcac2be4-d8bc-40f8-be82-b8f8f39f728c"}
         """);
@@ -29,7 +29,7 @@ public class HostEvidenceTests
         {
             var path = name == "test" ? target : Path.Combine(directory, name);
             Directory.CreateDirectory(path);
-            var command = new[] { "dotnet", name, "-p:LibTfm=net10.0", "-p:TestHostTfm=net10.0", "-c", "Release" };
+            var command = new[] { "dotnet", name, "-p:LibTfm=net11.0", "-p:TestHostTfm=net11.0", "-c", "Release" };
             var run = new CommandReceipt { Command = command, Status = "passed", ExitCode = 0, StartedAt = Data.Now(), FinishedAt = Data.Now() };
             report.Runs[name] = run;
             Data.Save(Path.Combine(path, "run.json"), run);
@@ -64,14 +64,14 @@ public class HostEvidenceTests
         Assert.NotEmpty(result.Stdout);
     }
     [Theory]
-    [InlineData("macos-10-net10.0", "macos", "macOS 15.8.2", "Unix 15.8.2", "Arm64")]
-    [InlineData("windows-10-net10.0", "windows", "Microsoft Windows 10.0.20348", "Microsoft Windows NT 10.0.20348.0", "X64")]
+    [InlineData("macos-11-net11.0", "macos", "macOS 15.8.2", "Unix 15.8.2", "Arm64")]
+    [InlineData("windows-11-net11.0", "windows", "Microsoft Windows 10.0.20348", "Microsoft Windows NT 10.0.20348.0", "X64")]
     public void RecognizesQualifiedOsVersionFormats(string id, string os, string description, string version, string arch)
     {
         var host = Host;
         host["os"] = os; host["os_description"] = description; host["os_version"] = version;
         host["os_architecture"] = arch; host["process_architecture"] = arch;
-        Evidence.ValidateHostIdentity(Evidence.FindHostCell(id), host, ".NET 10.0.14");
+        Evidence.ValidateHostIdentity(Evidence.FindHostCell(id), host, ".NET 11.0.0");
     }
     [Fact]
     public void PositiveSourceBoundHostReceipt()
@@ -126,7 +126,7 @@ public class HostEvidenceTests
             case "restore": report["runs"]!["restore"]!["status"] = "failed"; break;
             case "assembly": File.WriteAllText(Path.Combine(directory, "expected-library.dll"), "substituted"); break;
             case "timeout":
-                var execution = Path.Combine(directory, "tests/net10.0/execution.json");
+                var execution = Path.Combine(directory, "tests/net11.0/execution.json");
                 var data = Data.Read(execution); data["timed_out"] = true; Data.Save(execution, data); break;
         }
         Data.Save(path, report);

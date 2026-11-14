@@ -70,3 +70,16 @@ the unchanged source. The lookup uses the classifier's declaration kinds
 the clause reader relies on, not by guessing which braces are set displays. On today's
 `Protocol.dfy` and `Masking.dfy` every declaration has the same body line as before
 (`docs/evidence/pdd-classifier-hardening/review-fixes/`), so the rendered fixtures are unchanged.
+
+## Sixth library target added on 2026-11-14
+
+Release 10.4.0 adds `net11.0` to `Evidence.Tfms`, so the aggregator now requires six target
+directories in the corpus. `evidence/tests/tests/net11.0/` is a copy of the `net10.0`
+directory with two changes: the recorded command says `-p:LibTfm=net11.0`, and the runtime
+line the TRX reports is `PDD_HOST_RUNTIME=.NET 11.0.0`, because a .NET 10 host cannot load a
+`net11.0` library. In `receipt-success.expected.json` and in every expected value of
+`receipt-cases.json` that has a `net10.0` matrix entry, a `net11.0` entry was added as a
+copy of it, with `host_runtime` `.NET 11.0.0`. No other value changed: the cases, their
+operations and every requirement, obligation, job and coverage status are as Python
+produced them. The edit was a JSON round trip that reproduces the unchanged files byte for
+byte.

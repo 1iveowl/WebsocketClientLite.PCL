@@ -11,11 +11,12 @@ public sealed partial class Evidence
 {
     public static readonly HostCell[] HostCells =
     [
-        .. Tfms.Select(t => new HostCell("linux-10-" + t, "net10.0", t, "linux", "X64", "mandatory")),
-        .. new[] { "net10.0", "netstandard2.0" }.Select(t => new HostCell("windows-10-" + t, "net10.0", t, "windows", "X64", "manual-candidate")),
-        .. new[] { "net10.0", "netstandard2.0" }.Select(t => new HostCell("macos-10-" + t, "net10.0", t, "macos", "Arm64", "scheduled-candidate")),
+        .. Tfms.Select(t => new HostCell("linux-11-" + t, "net11.0", t, "linux", "X64", "mandatory")),
+        .. new[] { "net11.0", "netstandard2.0" }.Select(t => new HostCell("windows-11-" + t, "net11.0", t, "windows", "X64", "manual-candidate")),
+        .. new[] { "net11.0", "netstandard2.0" }.Select(t => new HostCell("macos-11-" + t, "net11.0", t, "macos", "Arm64", "scheduled-candidate")),
         new("linux-8-net8.0", "net8.0", "net8.0", "linux", "X64", "manual-transitional"),
-        new("linux-9-net9.0", "net9.0", "net9.0", "linux", "X64", "manual-transitional")
+        new("linux-9-net9.0", "net9.0", "net9.0", "linux", "X64", "manual-transitional"),
+        new("linux-10-net10.0", "net10.0", "net10.0", "linux", "X64", "manual-transitional")
     ];
     public static HostCell FindHostCell(string id) => HostCells.SingleOrDefault(c => c.Id == id) ?? throw new ArgumentException("Unknown host cell: " + id);
     public static string FrameworkName(string tfm) => (tfm.StartsWith("netstandard", StringComparison.Ordinal) ? ".NETStandard,Version=v" + tfm[11..] : ".NETCoreApp,Version=v" + tfm[3..]);

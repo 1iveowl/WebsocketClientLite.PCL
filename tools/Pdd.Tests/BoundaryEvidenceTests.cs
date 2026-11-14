@@ -36,7 +36,7 @@ public class BoundaryEvidenceTests
                 entries.Add(new JsonObject { ["id"] = name, ["status"] = "passed", ["source_hash"] = Hash, ["mutant_hash"] = new string('b', 64),
                     ["test"] = c.Test, ["assertion"] = c.Assertion, ["before"] = c.Before, ["after"] = c.After, ["run"] = Run(false), ["host_runtime"] = ".NET 10 fixture" });
             }
-        return new JsonObject { ["status"] = "passed", ["library_target"] = "net10.0", ["baseline"] = Run(true), ["experiments"] = entries };
+        return new JsonObject { ["status"] = "passed", ["library_target"] = Evidence.PrimaryTfm, ["baseline"] = Run(true), ["experiments"] = entries };
     }
     [Fact]
     public void CompleteAssertionEvidenceIsAccepted()
