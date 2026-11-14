@@ -399,7 +399,7 @@ public sealed partial class Evidence
     }
     public static string Summary(JsonObject receipt)
     {
-        var lines = new List<string> { "# PDD verification receipt", "", $"Machine evidence gate: **{receipt["gate"]!["status"]}**", "", receipt["gate"]!["scope"]!.ToString(), "", $"Tested commit: `{receipt["source"]!["tested_commit"]}`", $"PR source head: `{receipt["source"]!["pr_source_head"]}`", "", "Five library builds use the actual hosts recorded below; they are not five independently tested runtimes.", "" };
+        var lines = new List<string> { "# PDD verification receipt", "", $"Machine evidence gate: **{receipt["gate"]!["status"]}**", "", receipt["gate"]!["scope"]!.ToString(), "", $"Tested commit: `{receipt["source"]!["tested_commit"]}`", $"PR source head: `{receipt["source"]!["pr_source_head"]}`", "", $"{Tfms.Length} library builds use the actual hosts recorded below; they are not {Tfms.Length} independently tested runtimes.", "" };
         foreach (var (tfm, result) in receipt["framework_matrix"]!.AsObject())
             lines.Add($"- {tfm}: {result!["status"]}; host: {result["host_runtime"]}");
         lines.AddRange(["", "| Obligation | Status |", "| --- | --- |"]);
