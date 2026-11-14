@@ -179,11 +179,11 @@ P3-C adds `retention-defects --output <fresh-directory>` to controlled capture.
 Two isolated control-total and late-scratch edits must fail named assertions;
 aggregation checks Release configuration, exact source/edit, cases, execution and
 runtime. The existing REASSEMBLY-001-TEST adapter obligation includes the new
-five-target tests without expanding its proof. See [parser retention](../../verification/parser-retention.md).
+six-target tests without expanding its proof. See [parser retention](../../verification/parser-retention.md).
 
 P3-D adds `reconnect-defect --output <fresh-directory>` to controlled capture.
 The missing-removal edit must fail the old service identity assertion after all
-nine reconnect cases pass. EPOCH-001-TEST requires five-target tests and this
+nine reconnect cases pass. EPOCH-001-TEST requires six-target tests and this
 source-bound experiment. Concurrent active subscription policy remains deferred.
 
 P3-G bounds post-kill process/output draining at two seconds. If an escaped orphan
