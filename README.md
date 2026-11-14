@@ -289,6 +289,7 @@ For more see here: [WebSocket client not connecting to the socket.io server](htt
 
 | Version | Released | Summary |
 | --- | --- | --- |
+| [10.4.0](CHANGELOG.md#new-in-version-1040) | 2026-11-14 | .NET 11 target with Runtime Async; no API or behaviour change |
 | [10.3.0](CHANGELOG.md#new-in-version-1030) | 2026-11-12 | No behaviour change: header length rule traced to RFC 6455, stronger header tests, typed core boundary |
 | [10.2.0](CHANGELOG.md#new-in-version-1020) | 2026-11-08 | Stronger cancellation, teardown and sequential reconnect |
 | [10.1.0](CHANGELOG.md#new-in-version-1010) | 2026-11-07 | Dafny core extended to receive admission, sending and closing |
