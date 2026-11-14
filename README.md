@@ -44,7 +44,7 @@ The result is stronger assurance with explicit limits. Explore the [layers, guar
 
 ### Video: Proof vs. vibes
 
-This library is the worked example in *Proof vs. vibes*, a video series about how to trust code an AI agent wrote. Watch [episode 1, The trust gap and the toolbox](https://youtu.be/2MgbZ3ePsgY), on YouTube. If you have just watched it, [What you saw in episode 1](docs/proof-vs-vibes/ep01.md) shows where each part of the episode is in this repository and how to run the checks yourself.
+This library is the worked example in *Proof vs. vibes*, a video series about how to trust code an AI agent wrote. Watch episode 1, [The trust gap and the toolbox](https://youtu.be/2MgbZ3ePsgY), on YouTube. If you have just watched it, [What you saw in episode 1](docs/proof-vs-vibes/ep01.md) shows where each part of the episode is in this repository and how to run the checks yourself.
 
 ## Usage Guide
 
