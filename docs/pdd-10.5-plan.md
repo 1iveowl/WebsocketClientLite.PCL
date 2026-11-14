@@ -79,10 +79,18 @@ comes from, sent to the owner before the release pull request into `main` merges
 4. P2 leaves the weakened contract out of the shipped code and out of the mutation catalog. A
    contract mutation that the tests catch, rather than the verifier, is a different kind of
    check; adding one to the mutation suite needs the owner's decision.
+   **Answer (owner, 2026-11-14):** no contract mutations in the mutation suite for now. The
+   mutation catalogs keep only code mutations that the verifier must reject, and
+   `tools/Pdd/Mutations.cs` refuses edits to contracts and proof clauses; the two weakened bounds
+   stay a documented experiment (`verification/contract-weakening.md`).
 5. If no test catches a weakened bound in P2, `verification/contract-weakening.md` records it
    as an open gap, and the owner is told. No test is added for it without the owner's decision.
-6. No repository setting changes in 10.5. Which status checks `main` requires is the owner's
-   decision; R lists the candidates and the command.
+6. No pull request in 10.5 changes a repository setting. Which status checks `main` requires is
+   the owner's decision. Today it requires only `build-and-test`. The candidates sent to the
+   owner with R are the CI jobs `verify-protocol`, `controlled-close`, `stryker-close` and
+   `evidence-gate` (`.github/workflows/ci.yml`), beside `build-and-test`.
+   **Answer (owner, 2026-11-14):** the owner sets the required checks on `main`, outside
+   this release's pull requests.
 7. Rule 2 in P3 allows expected bytes computed in the test from the RFC's rule, never with
    production helpers, and a verified reference beside independent bytes, never instead of
    them (asked during the #167 review, which found tests that compute their bytes).
