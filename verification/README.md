@@ -22,10 +22,13 @@ core, whoever makes it.
    The one deliberate departure is opt-in and outside the proved core: `ExcludeZeroApplicationDataInPong`
    sends the one-byte empty Pong that Slack's RTM API expects (see the README), with no RFC framing
    guarantee.
-2. **Expected bytes come from the RFC or are written out by hand.** A test takes its expected bytes
-   from the RFC, such as the masked "Hello" of section 5.7 in `Decode_MatchesRfc6455HelloVector`, or
-   writes them out by hand from the rule. It never computes them with production helpers, which would
-   let the code check itself. This was a plan rule for phase 3
+2. **Expected bytes never come from production code.** A test takes its expected bytes from the RFC,
+   such as the masked "Hello" of section 5.7 in `Decode_MatchesRfc6455HelloVector`, writes them out
+   by hand, or computes them in the test from the RFC's rule, as `Decode_PreservesScratchKeyAndRoundTrips`
+   does with `b ^ key[i % 4]` from section 5.3. It never computes them with production helpers, which
+   would let the code check itself. A verified reference such as the generated `MergeScalar` may be
+   compared beside independent bytes, never instead of them
+   (`BulkMergeMatchesScalarProofAndIndependentConcatenation`). This was a plan rule for phase 3
    ([`docs/pdd-phase-3-plan.md`](../docs/pdd-phase-3-plan.md), lines 612 and 613: "Keep independent
    expected bytes; do not let production helpers calculate their own oracle") and is now a standing
    rule.
