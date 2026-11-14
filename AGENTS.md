@@ -78,6 +78,8 @@ The full process is in [CONTRIBUTING.md](CONTRIBUTING.md). What an agent must fo
 - Verification work follows the [rules in verification/README.md](verification/README.md#rules-for-verification-work):
   the RFC wins, expected bytes come from the RFC or are written out by hand, and a new test is seen
   to fail on the old code before its fix is trusted.
-- The assumptions the proofs and the C# around them rely on are listed in
-  [verification/boundaries.json](verification/boundaries.json), the boundary register. Read the
-  entries for the code you change before you change it.
+- [verification/boundaries.json](verification/boundaries.json), the boundary register, lists what
+  the proofs and the C# around them assume, with its owners, exclusions and tests. Read the entries
+  for the code you change before you change it. The Dafny external contracts are audited separately
+  in [verification/trusted-boundaries.md](verification/trusted-boundaries.md), and UTF-8 and
+  handshake parsing are not in the register yet.

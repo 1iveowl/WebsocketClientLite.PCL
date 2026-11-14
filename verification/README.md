@@ -17,6 +17,11 @@ core, whoever makes it.
    "Library policy:" and what the policy is. Library policy covers choices the RFC leaves to the
    implementation, such as size limits, and never overrides a MUST. Where the code, a contract or a
    test disagrees with the RFC, the disagreement is written down and resolved in the RFC's favour.
+   The RFC's errata are reviewed before a contract is frozen ([adoption plan](../docs/dafny-pdd-plan.md));
+   a reported erratum is named beside the contract it concerns, as for the Close reason in `CloseValid`.
+   The one deliberate departure is opt-in and outside the proved core: `ExcludeZeroApplicationDataInPong`
+   sends the one-byte empty Pong that Slack's RTM API expects (see the README), with no RFC framing
+   guarantee.
 2. **Expected bytes come from the RFC or are written out by hand.** A test takes its expected bytes
    from the RFC, such as the masked "Hello" of section 5.7 in `Decode_MatchesRfc6455HelloVector`, or
    writes them out by hand from the rule. It never computes them with production helpers, which would
@@ -26,7 +31,9 @@ core, whoever makes it.
    rule.
 3. **See a new test fail on the old code.** Before the fix that makes a new test pass is trusted, the
    test is run against the code before the fix and seen to fail, for the reason the test names. A test
-   that passes on the old code, or fails there for another reason, does not show the fix. The
+   that passes on the old code, or fails there for another reason, does not show the fix. The failing
+   run is recorded: the commit it ran at, the command, the failure line, and any change the test needed
+   to run on the old code. The
    [header length replay](../docs/header-length-validation.md) shows why: the test for non-minimal
    lengths first passed on the 9.2.0 parser for the wrong reason. That parser accepted the header and
    then failed on the missing payload, with the exception type the test expected.
