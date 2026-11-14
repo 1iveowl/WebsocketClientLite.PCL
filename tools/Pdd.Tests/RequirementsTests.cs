@@ -121,6 +121,60 @@ public class RequirementsTests
         File.WriteAllText(Path.Combine(tree.Path, "verification/boundaries.json"), "{\"schema_version\":1,\"schema_version\":1}");
         Assert.Contains("duplicate JSON key", Assert.Throws<InvalidDataException>(() => new Requirements(Root).Validate(sourceRoot: tree.Path)).Message);
     }
+    // A copy of the files Validate reads (verification/ and the C# sources), so that one
+    // Dafny comment can be changed without touching the repository.
+    static TemporaryTree SourceCopy()
+    {
+        var tree = new TemporaryTree();
+        var files = Directory.EnumerateFiles(Path.Combine(Root, "verification"))
+            .Concat(Directory.EnumerateFiles(Path.Combine(Root, "src"), "*.cs", SearchOption.AllDirectories));
+        foreach (var file in files)
+        {
+            var relative = Path.GetRelativePath(Root, file);
+            if (relative.Split(Path.DirectorySeparatorChar).Any(p => p is "bin" or "obj")) continue;
+            var target = Path.Combine(tree.Path, relative);
+            Directory.CreateDirectory(Path.GetDirectoryName(target)!);
+            File.Copy(file, target);
+        }
+        return tree;
+    }
+    // The comment block directly above the line that contains `declaration`, replaced by
+    // `comment` (one line), or removed when `comment` is null.
+    static void ReplaceComment(string path, string declaration, string? comment)
+    {
+        var lines = File.ReadAllText(path).Split('\n').ToList();
+        var index = lines.FindIndex(l => l.Contains(declaration, StringComparison.Ordinal));
+        Assert.True(index > 0, $"declaration not found: {declaration}");
+        var start = index;
+        while (start > 0 && lines[start - 1].TrimStart().StartsWith("//", StringComparison.Ordinal)) start--;
+        Assert.True(start < index, $"no comment above: {declaration}");
+        lines.RemoveRange(start, index - start);
+        if (comment is not null) lines.Insert(start, comment);
+        File.WriteAllText(path, string.Join('\n', lines));
+    }
+    // Rule 1 of "Rules for verification work" (verification/README.md): every declaration in
+    // the Dafny core names an RFC 6455 section or "Library policy:" in the comment block
+    // directly above it. Each row removes or replaces one such block in a copy of the sources.
+    public static IEnumerable<object?[]> UncitedDeclarations()
+    {
+        // No comment: the block above HeaderValid removed.
+        yield return ["verification/Protocol.dfy", "static function HeaderValid(", null, "HeaderValid"];
+        // A comment that names neither.
+        yield return ["verification/Masking.dfy", "static method Apply(", "    // Masks the data with the key.", "Apply"];
+        // "section" with no number, and "library policy" without the label's form.
+        yield return ["verification/Protocol.dfy", "HeaderRoundTrip(", "    // Follows the library policy; see the section above.", "HeaderRoundTrip"];
+        // The external contract: the block above its class removed.
+        yield return ["verification/Protocol.dfy", "class NativeCopy {", null, "CopySlice"];
+    }
+    [Theory, MemberData(nameof(UncitedDeclarations))]
+    public void UncitedDafnyDeclarationFails(string file, string declaration, string? comment, string name)
+    {
+        using var tree = SourceCopy();
+        ReplaceComment(Path.Combine(tree.Path, file), declaration, comment);
+        var message = Assert.Throws<InvalidDataException>(() => new Requirements(Root).Validate(sourceRoot: tree.Path)).Message;
+        Assert.Contains(file + ":", message);
+        Assert.Contains(name, message);
+    }
     [Fact]
     public void ResolverRejectsCommentsCallsDuplicatesWrongScopeAndStrings()
     {
