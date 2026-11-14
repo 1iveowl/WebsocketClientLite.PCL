@@ -1,0 +1,36 @@
+# Run 2026-11-14T15:34:12Z at 193ea64, the committed branch; SDK 11.0.100
+$ ./scripts/pdd.sh capture --job protocol --output <out>
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:00.75
+manifest: passed
+fixtures: passed
+proof: passed
+mutations: passed
+# exit=0
+
+# Extract of the job's own logs in <out> (not committed):
+manifest.log: Validated 16 requirements (structure and references only; no evidence executed).
+fixtures.log: Passed!  - Failed:     0, Passed:   299, Skipped:     0, Total:   299, Duration: 13 s - Pdd.Tests.dll (net11.0)
+proof.log: Dafny program verifier finished with 41 verified, 0 errors
+mutations.log: baseline: passed (9.41s)
+mutations.log: CLOSE-001-duplicate-send: detected (8.834s)
+mutations.log: CLOSE-001-suppressed-send: detected (8.717s)
+mutations.log: CLOSE-002-state-bit-loss: detected (8.691s)
+mutations.log: CLOSE-003-premature-release: detected (8.928s)
+mutations.log: CLOSE-003-suppressed-release: detected (8.66s)
+mutations.log: REASSEMBLY-001-offset-stall: detected (8.995s)
+mutations.log: REASSEMBLY-002-offset-stall: detected (9.143s)
+mutations.log: REASSEMBLY-001-oversized-result: detected (9.269s)
+mutations.log: MASK-001-xor-to-or: detected (8.492s)
+mutations.log: MASK-001-key-write: detected (8.415s)
+mutations.log: MASK-002-tail-xor-to-or: detected (8.77s)
+mutations.log: MASK-002-corrupt-bulk-byte: detected (8.818s)
+mutations.log: MASK-002-preserve-prefix: detected (8.681s)
+mutations.log: MASK-003-xor-to-or: detected (9.116s)
+mutations.log: MASK-003-preserve-prefix: detected (8.875s)
+mutations.log: HEADER-001-short-sixteen-bit: detected (9.012s)
+mutations.log: HEADER-001-short-sixty-four-bit: detected (8.725s)
