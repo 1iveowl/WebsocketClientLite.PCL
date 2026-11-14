@@ -185,9 +185,12 @@ public class RequirementsTests
         {
             var text = Data.Text(Path.Combine(Root, file));
             // Every line with a declaration keyword, counted apart from the declaration pattern.
-            var keywordLines = Citations.Masked(text).Split('\n').Count(l => Regex.IsMatch(l, @"\b(?:method|function|predicate|lemma|constructor|iterator)\b"));
-            Assert.True(keywordLines > 0, file);
-            Assert.Equal(keywordLines, Citations.Dafny(file, text));
+            // Declaration keywords, counted apart from the declaration pattern; the method of a
+            // function by method is part of its function.
+            var masked = Citations.Masked(text);
+            var keywords = Regex.Matches(masked, @"\b(?:method|function|predicate|lemma|constructor|iterator)\b").Count - Regex.Matches(masked, @"\bby\s+method\b").Count;
+            Assert.True(keywords > 0, file);
+            Assert.Equal(keywords, Citations.Dafny(file, text));
         }
     }
     [Fact]
@@ -235,10 +238,12 @@ public class RequirementsTests
               @Something
               class E {
                 static method First() {}
+                // RFC 6455 section 5.3: a function by method on one line.
+                function Once(): int { 0 } by method { return 0; }
               }
             }
             """;
-        Assert.Equal(12, Citations.Dafny("demo.dfy", text));
+        Assert.Equal(13, Citations.Dafny("demo.dfy", text));
     }
     // Forms the first version of the check passed or skipped without an error (#169 review).
     public static IEnumerable<object[]> UncitedForms()
@@ -259,6 +264,13 @@ public class RequirementsTests
         yield return [Module("    // RFC 6455 section 5.3.\n    const S := @\"line\n/* not a comment\";\n    function G(): int { 0 }\n    /* real */\n    // RFC 6455 section 5.3.\n    function H(): int { 0 }\n"), "demo.dfy:8: G"];
         yield return [Module("    const P := @\"C:\\\"; const Q := \"/*\";\n    function G(): int { 0 }\n    /* real */\n"), "demo.dfy:6: G"];
         yield return [Module("    /*\n    // RFC 6455 section 5.3.\n    */ method A() {}\n"), "demo.dfy:7: A"];
+        // A second declaration on one line, a character outside the BMP, a backslash before a
+        // newline, and a block comment before a line comment (#169 scanner review).
+        yield return [Module("    // RFC 6455 section 5.3.\n    method A() {} method B() {}\n"), "demo.dfy:6: unrecognised declaration form"];
+        yield return [Module("    // RFC 6455 section 5.3.\n    function F(): int { 0 }\n    } by method { return 0; } method Hidden() {}\n"), "demo.dfy:7: unrecognised declaration form"];
+        yield return [Module("    const E := ['\U0001F600','\"']; method Hidden() {}\n"), "demo.dfy:5: unrecognised declaration form"];
+        yield return [Module("    const S := \"a\\\n    method Hidden() {}\";\n"), "demo.dfy:6: Hidden"];
+        yield return [Module("    /* RFC 6455 section 5.3. */ // see\n    method A() {}\n"), "demo.dfy:6: A"];
         // Primes beside character literals and a quote in a string hide nothing.
         yield return [Module("    // RFC 6455 section 5.3.\n    function F(x': char): bool { x' == '/' || x' == '\\'' || \"it's\" == \"\" }\n    function G(): int { 0 }\n"), "demo.dfy:7: G"];
     }

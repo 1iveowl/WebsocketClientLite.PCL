@@ -119,3 +119,10 @@ Numbered as they are found, with the evidence.
    #167 review found them, and the new check's first run failed on them
    (`docs/evidence/citation-check/2-validate-finds-the-uncited-lemmas.txt`). A rule that a check
    enforces finds what a manual pass misses.
+5. **A check that reads source needs a reader for that language.** The first citation check
+   reused the C# comment mask on Dafny. Three review rounds of #169, each probing with small
+   snippets, found declarations it never saw: after a primed name (`x'`), inside a verbatim
+   string, past a nested comment, and second on a line. The fix was a Dafny scanner and a
+   fail-closed rule: every declaration keyword must belong to a declaration the check read.
+   Each hole was written as a test and seen failing before it was fixed
+   (`docs/evidence/citation-check/5-…`, `8-…` and `10-…`).

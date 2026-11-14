@@ -26,8 +26,9 @@ work](../../verification/README.md#rules-for-verification-work):
   the block.
 - A line with a declaration keyword that does not start a declaration the check
   reads, such as a member on the same line as its class, fails as an
-  unrecognised declaration form, so that no declaration is skipped. The `by
-  method` line of a function by method belongs to the function.
+  unrecognised declaration form, and so does a second declaration on one line,
+  so that no declaration is skipped. The `by method` of a function by method
+  belongs to the function. Only the text after `//` counts as the citation.
 - Every requirement's `origin` in `verification/requirements.json` needs an RFC
   6455 section link (`https://www.rfc-editor.org/rfc/rfc6455.html#section-…`) or
   an entry that starts with `Library policy:` and states the policy.
