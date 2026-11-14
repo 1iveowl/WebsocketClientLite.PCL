@@ -1,4 +1,5 @@
 using System.Text.Json.Nodes;
+using System.Text.RegularExpressions;
 using Pdd;
 using Xunit;
 
@@ -174,6 +175,58 @@ public class RequirementsTests
         var message = Assert.Throws<InvalidDataException>(() => new Requirements(Root).Validate(sourceRoot: tree.Path)).Message;
         Assert.Contains(file + ":", message);
         Assert.Contains(name, message);
+    }
+    [Fact]
+    public void EveryDafnyDeclarationIsCited()
+    {
+        foreach (var file in Citations.DafnyFiles)
+        {
+            var text = Data.Text(Path.Combine(Root, file));
+            // Counted independently of the check's pattern: lines that declare a member.
+            var declarations = Requirements.Masked(text).Split('\n').Count(l => Regex.IsMatch(l, @"^\s*(?:(?:static|ghost)\s+)*(?:method|function|predicate|lemma)\b"));
+            Assert.True(declarations > 0, file);
+            Assert.Equal(declarations, Citations.Dafny(file, text));
+        }
+    }
+    [Fact]
+    public void CitationFormsAccepted()
+    {
+        const string text = """
+            module Demo {
+              // RFC 6455 section 5.3.
+              class A {
+                static method First() {}
+                // Section 5.2: the length.
+                static function Second(): bool { true }
+                // RFC 6455 sections 5.2 and 5.5, mixed with library policy.
+                static predicate Third() { true }
+                // Library policy: a choice the RFC leaves open.
+                ghost function Fourth(): int { 0 }
+                // Section 5.7, the example.
+                static method {:isolate_assertions} {:timeLimit 9} Fifth() {}
+                // The words static lemma Hidden() in a comment declare nothing.
+                // Library policy: the next one.
+                static lemma Sixth() {}
+              }
+            }
+            """;
+        Assert.Equal(6, Citations.Dafny("demo.dfy", text));
+    }
+    [Fact]
+    public void ClassCommentCitesOnlyTheFirstMember()
+    {
+        const string text = """
+            module Demo {
+              // Library policy: one external copy.
+              class B {
+                static method One() {}
+                static method Two() {}
+              }
+            }
+            """;
+        var message = Assert.Throws<InvalidDataException>(() => Citations.Dafny("demo.dfy", text)).Message;
+        Assert.Contains("demo.dfy:5: Two", message);
+        Assert.DoesNotContain("One", message);
     }
     [Fact]
     public void ResolverRejectsCommentsCallsDuplicatesWrongScopeAndStrings()

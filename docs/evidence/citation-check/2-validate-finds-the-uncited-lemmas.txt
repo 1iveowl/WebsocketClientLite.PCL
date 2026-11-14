@@ -1,0 +1,4 @@
+# Run 2026-11-14T14:55:52Z at a8bc07b plus the uncommitted check; the Dafny sources as committed
+$ ./scripts/pdd.sh validate
+pdd: no RFC 6455 section or "Library policy:" in the comment directly above: verification/Masking.dfy:28: XorTwice, verification/Masking.dfy:32: RoundTrip
+# exit=1

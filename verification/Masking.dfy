@@ -25,10 +25,13 @@ module {:extern "WebsocketClientLite.Verified"} MaskingCore {
       }
     }
 
+    // RFC 6455 section 5.3: the same steps mask and unmask the data. XOR with the same key
+    // byte twice restores the byte.
     static lemma XorTwice(value: bv8, key: bv8)
       ensures (value ^ key) ^ key == value
     {}
 
+    // RFC 6455 section 5.3: unmasking masked data with the same key restores every byte.
     static lemma RoundTrip(data: seq<bv8>, key: seq<bv8>)
       requires |key| >= 4
       ensures forall j :: 0 <= j < |data| ==>
