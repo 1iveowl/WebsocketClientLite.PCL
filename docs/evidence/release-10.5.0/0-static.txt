@@ -1,0 +1,34 @@
+$ python3 -I <scratch>/bin/static-recount.py
+# started 2026-11-14T16:08:51Z at e752ffcd62000e51264ec81771ebf1a9014f8b0e
+lines verification/Protocol.dfy	574
+lines verification/Masking.dfy	45
+lines verification/generated/Masking.g.cs	1129
+C# lines src/main/WebsocketClientLite	2853 in 25 files (*.cs, bin/obj excluded)
+C# lines src/interface/IWebsocketClientLite	591 in 8 files (*.cs, bin/obj excluded)
+C# lines src/main/WebsocketClientLiteTest	4483 in 26 files (*.cs, bin/obj excluded)
+C# lines tools/Pdd	2658 in 17 files (*.cs, bin/obj excluded)
+C# lines tools/Pdd.Tests	2027 in 16 files (*.cs, bin/obj excluded)
+requirements (verification/requirements.json)	16
+obligations by kind	{'mutation': 9, 'proof': 10, 'review': 16, 'test': 18}
+obligations by delivery	{'existing': 53}
+obligations total	53
+boundaries (verification/boundaries.json)	12
+Dafny mutants in catalogs	17
+Stryker must-kill (required_killed)	16
+Stryker dispositions	54: {'out-of-scope': 27, 'equivalent': 7, 'accepted-gap': 20}
+HeaderValid RFC citation line	[39]
+HeaderValid	[47]
+length rule (marker 126/127 bounds)	[53]
+DecodeHeader	[62]
+decoder's status == 2 clause	[68]
+HeaderRoundTrip	[353]
+Outgoing	[426]
+81 7E 00 7D row	[241]
+RejectsMalformedFrames	[261]
+DataframeParsing.cs Protocol.Admit calls (Admit calls DecodeHeader)	[41, 48]
+Admit calls DecodeHeader (Protocol.dfy)	[147]
+stricter validation sentence	['CHANGELOG.md:82', 'docs/protocol-verification.md:161']
+executable specifications sentence	['verification/README.md:251']
+HeaderValid body unchanged since 8f8f207	True
+HEAD	e752ffcd62000e51264ec81771ebf1a9014f8b0e
+# exit=0 finished 2026-11-14T16:08:51Z
