@@ -59,7 +59,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: 10.0.x
+          dotnet-version: 11.0.x
       - name: Capture protocol verification and mutation evidence
         run: ./scripts/pdd.sh capture --job protocol --output artifacts/pdd/protocol
       - name: Upload verification evidence
@@ -89,7 +89,7 @@ jobs:
           ref: ${{ github.event.pull_request.head.sha }}
       - uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: 10.0.x
+          dotnet-version: 11.0.x
       - name: Compare actual PR target merge base with source head
         env:
           PR_BASE_SHA: ${{ github.event.pull_request.base.sha }}
@@ -119,6 +119,7 @@ jobs:
             8.0.x
             9.0.x
             10.0.x
+            11.0.x
 
       - uses: actions/cache@v4
         with:
@@ -146,7 +147,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: 10.0.x
+          dotnet-version: 11.0.x
       - name: Detect isolated disposal ordering defect
         run: ./scripts/pdd.sh capture --job controlled --output artifacts/pdd/controlled --command-budget 480
       - uses: actions/upload-artifact@v4
@@ -165,7 +166,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: 10.0.x
+          dotnet-version: 11.0.x
       - name: Capture separate Close mutation evidence
         run: ./scripts/pdd.sh capture --job stryker --stryker-concurrency 2 --output artifacts/pdd/stryker --command-budget 1800
       - uses: actions/upload-artifact@v4
@@ -183,7 +184,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: 10.0.x
+          dotnet-version: 11.0.x
       - name: Download available evidence
         uses: actions/download-artifact@v4
         with:
@@ -219,9 +220,9 @@ jobs:
       matrix:
         repetition: [1, 2]
         host:
-          - { runner: ubuntu-24.04, prefix: linux-10, runtime: '10.0.x', targets: 'netstandard2.0,netstandard2.1,net8.0,net9.0,net10.0' }
-          - { runner: windows-2022, prefix: windows-10, runtime: '10.0.x', targets: 'net10.0,netstandard2.0' }
-          - { runner: macos-15, prefix: macos-10, runtime: '10.0.x', targets: 'net10.0,netstandard2.0' }
+          - { runner: ubuntu-24.04, prefix: linux-11, runtime: '11.0.x', targets: 'netstandard2.0,netstandard2.1,net8.0,net9.0,net10.0,net11.0' }
+          - { runner: windows-2022, prefix: windows-11, runtime: '11.0.x', targets: 'net11.0,netstandard2.0' }
+          - { runner: macos-15, prefix: macos-11, runtime: '11.0.x', targets: 'net11.0,netstandard2.0' }
     runs-on: ${{ matrix.host.runner }}
     env:
       # Hash the same source bytes on all hosts, including Windows checkout.
@@ -235,7 +236,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: 10.0.x
+          dotnet-version: 11.0.x
       - name: Build receipt tooling
         run: dotnet build tools/Pdd/Pdd.csproj -c Release
       - name: Check host receipts and process log readback
@@ -251,10 +252,10 @@ jobs:
           foreach ($tfm in $env:LIBRARY_TARGETS.Split(',')) {
             $cell = "$env:CELL_PREFIX-$tfm"
             $cells += $cell
-            dotnet tools/Pdd/bin/Release/net10.0/Pdd.dll test-host --cell $cell --output "artifacts/hosts/$cell"
+            dotnet tools/Pdd/bin/Release/net11.0/Pdd.dll test-host --cell $cell --output "artifacts/hosts/$cell"
             if ($LASTEXITCODE -ne 0) { $failed = $true }
           }
-          dotnet tools/Pdd/bin/Release/net10.0/Pdd.dll aggregate --host-cells ($cells -join ',') --output artifacts/hosts
+          dotnet tools/Pdd/bin/Release/net11.0/Pdd.dll aggregate --host-cells ($cells -join ',') --output artifacts/hosts
           if ($LASTEXITCODE -ne 0 -or $failed) { exit 1 }
       - uses: actions/upload-artifact@v4
         if: always()

@@ -23,7 +23,7 @@ public class QueuedEvidenceTests
                     new XElement(Ns + "Output", i == 0 ? "Overlapping frame delegates" : "PDD_HOST_RUNTIME=.NET 10 fixture")))))).Save(Path.Combine(path, "results.trx"));
             Data.Save(Path.Combine(path, "execution.json"), new { exit_code = phase == "baseline" ? 0 : 1, timed_out = false, interrupted = false });
         }
-        return new JsonObject { ["status"] = "passed", ["library_target"] = "net10.0", ["host_runtime"] = ".NET 10 fixture", ["baseline"] = Run(true), ["mutant"] = Run(false),
+        return new JsonObject { ["status"] = "passed", ["library_target"] = Evidence.PrimaryTfm, ["host_runtime"] = ".NET 10 fixture", ["baseline"] = Run(true), ["mutant"] = Run(false),
             ["mutation"] = new JsonObject { ["file"] = Evidence.QueuedSource, ["before"] = Evidence.QueuedBefore, ["after"] = Evidence.QueuedAfter, ["original_hash"] = Hash, ["mutant_hash"] = new string('b', 64) } };
     }
     [Fact]

@@ -10,7 +10,7 @@ The proposed [PDD phase 2 plan for 10.2.0.0](../docs/pdd-phase-2-plan.md) adds r
 
 The [manifest](requirements.json), [v2 JSON Schema](requirements.schema.json) and
 [intent review](close-intent-review.md) separate sequential Close decisions from
-asynchronous caller responsibilities. Validate them with the .NET 10 SDK (standard library only):
+asynchronous caller responsibilities. Validate them with the .NET 11 SDK (standard library only):
 
 ```bash
 ./scripts/pdd.sh validate
@@ -204,7 +204,7 @@ Run from the repository root in the Linux x64 dev container:
 ./scripts/dafny-masking.sh --check
 ```
 
-The script retains its pilot name but verifies both modules, including included files. It downloads the checksum-pinned official Dafny 4.11.0 archive and uses its Z3 4.12.1 solver explicitly. The .NET 10 SDK, curl and unzip are required. Verification errors and assertion timeouts fail the command. The tool cache is outside the repository.
+The script retains its pilot name but verifies both modules, including included files. It downloads the checksum-pinned official Dafny 4.11.0 archive and uses its Z3 4.12.1 solver explicitly. The .NET 11 SDK, curl and unzip are required. Verification errors and assertion timeouts fail the command. The tool cache is outside the repository.
 
 The generated file is checked in; ordinary builds and package consumers do not need Dafny or Z3. Never edit generated methods. Postprocessing only normalizes the machine-specific solver path in embedded metadata, marks generated partial classes internal, and adds generated-code/nullable headers. CI compares regenerated output byte-for-byte and uploads logs and artifacts. Dafny's compiler, solver, runtime and this limited postprocessing are trusted.
 
@@ -222,7 +222,7 @@ dotnet test src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj -c R
 DOTNET_TieredCompilation=0 dotnet run --project verification/benchmark/MaskingBenchmark.csproj -c Release
 ```
 
-Use an empty coverage directory for each run because the existing coverage checker selects its first report. Generated source stays in the coverage report; handwritten adapters are not excluded. The test host is .NET 10 for every library TFM, including netstandard builds; this does not test every supported runtime/JIT.
+Use an empty coverage directory for each run because the existing coverage checker selects its first report. Generated source stays in the coverage report; handwritten adapters are not excluded. The test host is .NET 11 for every library TFM, including netstandard builds; this does not test every supported runtime/JIT.
 
 Tests cover canonical length boundaries through 65536, integer limits without huge allocations, truncated headers, invalid masks/RSV/opcodes, control constraints, fragmentation transitions, message caps, UTF-8 split across fragments, Close payloads, request-specific accept validation, malformed negotiation and failure delivery with an open server connection. Byte-level tests compare with independent expected values, including the RFC Hello masking vector.
 
@@ -314,8 +314,8 @@ Every target has a fresh result directory and a recorded test command. TRX test
 identities are resolved through `TestDefinitions/TestMethod`, including every
 case of a named parameterized test. The host runtime comes from
 `RuntimeInformation.FrameworkDescription` emitted **inside the test process**.
-All five library targets currently use a .NET 10 test project; this is not a
-five-runtime test matrix. The ordinary `./test-all-tfms.sh Release` command still
+All six library targets currently use a .NET 11 test project; this is not a
+six-runtime test matrix. The ordinary `./test-all-tfms.sh Release` command still
 works; CI capture sets `PDD_TEST_RESULTS` to collect per-target evidence.
 
 The machine gate requires successful manifest/fixture checks, proof plus audit

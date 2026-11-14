@@ -21,7 +21,7 @@ public class LeaseEvidenceTests
         }
         var runtime = ("RecordHostRuntime", "Passed", "PDD_HOST_RUNTIME=.NET 10 fixture");
         Write("baseline", Evidence.LeaseCaseCounts.SelectMany(c => Enumerable.Range(0, c.Value).Select(i => ("PayloadLeaseTests." + c.Key + "(" + i + ")", "Passed", ""))).Append(runtime));
-        var report = new JsonObject { ["status"] = "passed", ["library_target"] = "net10.0", ["baseline"] = Run(true), ["experiments"] = new JsonArray() };
+        var report = new JsonObject { ["status"] = "passed", ["library_target"] = Evidence.PrimaryTfm, ["baseline"] = Run(true), ["experiments"] = new JsonArray() };
         foreach (var c in Evidence.LeaseCases)
         {
             Write(c.Id, new[] { (Evidence.LeaseTest, "Failed", c.Assertion), runtime });

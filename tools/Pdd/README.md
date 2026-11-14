@@ -1,6 +1,6 @@
 # Repository PDD tooling
 
-`Pdd` is a standalone .NET 10 console tool for this repository. Build it without
+`Pdd` is a standalone .NET 11 console tool for this repository. Build it without
 building the WebSocket solution:
 
 ```bash
@@ -30,7 +30,7 @@ cost lines. Favor clear code over ceremony or compressed line counts.
 The shell entrypoint builds only the console and forwards its exit code and
 signals. Its absolute path works from another directory; relative output paths
 resolve from the calling directory. Source references always resolve from the
-repository root. After building, `dotnet tools/Pdd/bin/Release/net10.0/Pdd.dll`
+repository root. After building, `dotnet tools/Pdd/bin/Release/net11.0/Pdd.dll`
 can be used directly with the same arguments.
 
 | Command | Purpose |
@@ -39,7 +39,7 @@ can be used directly with the same arguments.
 | `contract-report --target REF --head HEAD --output FILE` | Compare committed trees from the actual target's unique merge base; requires semantic PR review. |
 | `mutations [--scope all|close|payload] [--output DIR]` | Verify baseline and isolated catalog edits (default: all 17). |
 | `capture --job protocol --output DIR` | Capture manifest, tooling tests, proof/audit/generated-source check and Dafny mutations. |
-| `capture --job tests --output DIR` | Capture Release restore/build, five library targets and the 70% coverage gate. |
+| `capture --job tests --output DIR` | Capture Release restore/build, six library targets and the 70% coverage gate. |
 | `test-target --tfm TFM --output DIR` | Run one library target and capture TRX plus actual host-runtime evidence. |
 | `aggregate [--output artifacts/pdd]` | Validate and combine `protocol/`, `tests/`, `controlled/` and `stryker/` into `receipt.json` and `summary.md`. |
 | `normalize-generated --file FILE --tool-directory DIR` | Apply the existing generated-C# normalization byte-for-byte. Called by `dafny-masking.sh`. |
@@ -81,7 +81,7 @@ coverage or test output directories.
 
 ## Compatibility and resolved findings
 
-Schema versions, requirement IDs, receipt/job field names, five library targets,
+Schema versions, requirement IDs, receipt/job field names, the library targets (six since 10.4.0),
 raw artifact locations and targeted Dafny diagnostic rules are retained. The
 Python baseline tests were run before removal. Reference JSON, TRX and log
 fixtures and Python-produced expected semantic outputs are retained under

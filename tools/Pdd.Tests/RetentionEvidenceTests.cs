@@ -10,7 +10,7 @@ public class RetentionEvidenceTests
     static readonly XNamespace Ns = "http://microsoft.com/schemas/VisualStudio/TeamTest/2010";
     const string Hash = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
     static readonly Dictionary<string, string?> Hashes = new() { [Evidence.RetentionSource] = Hash, [Evidence.HeaderSource] = Hash };
-    static JsonNode Run(bool pass) => Data.Node(new CommandReceipt { Command = ["dotnet", "test", "-c", "Release", "-p:LibTfm=net10.0"], Status = pass ? "passed" : "failed", ExitCode = pass ? 0 : 1, StartedAt = Data.Now(), FinishedAt = Data.Now() });
+    static JsonNode Run(bool pass) => Data.Node(new CommandReceipt { Command = ["dotnet", "test", "-c", "Release", "-p:LibTfm=" + Evidence.PrimaryTfm], Status = pass ? "passed" : "failed", ExitCode = pass ? 0 : 1, StartedAt = Data.Now(), FinishedAt = Data.Now() });
     static JsonNode Fixture(string directory)
     {
         void Write(string phase, IEnumerable<(string Name, string Outcome, string Message)> rows)
@@ -22,7 +22,7 @@ public class RetentionEvidenceTests
         }
         var runtime = ("RecordHostRuntime", "Passed", "PDD_HOST_RUNTIME=.NET 10 fixture");
         Write("baseline", Evidence.RetentionCaseCounts.SelectMany(c => Enumerable.Range(0, c.Value).Select(i => ("ParserRetentionTests." + c.Key + "(" + i + ")", "Passed", ""))).Append(runtime));
-        var report = new JsonObject { ["status"] = "passed", ["library_target"] = "net10.0", ["baseline"] = Run(true), ["experiments"] = new JsonArray() };
+        var report = new JsonObject { ["status"] = "passed", ["library_target"] = Evidence.PrimaryTfm, ["baseline"] = Run(true), ["experiments"] = new JsonArray() };
         foreach (var c in Evidence.RetentionCases)
         {
             Write(c.Id, new[] { (c.Test, "Failed", c.Assertion), runtime });

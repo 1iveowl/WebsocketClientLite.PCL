@@ -76,7 +76,7 @@ public sealed partial class Evidence
         var runtime = System.Text.RegularExpressions.Regex.Match(runtimeResult.Value, @"PDD_HOST_RUNTIME=(.+)");
         Require(runtime.Success, "Missing Stryker test host runtime");
         result["host_runtime"] = runtime.Groups[1].Value.Trim();
-        result["library_target"] = "net10.0";
+        result["library_target"] = PrimaryTfm;
         result["tool_version"] = "5.0.0";
         result["config_sha256"] = expected.SourceHashes["src/main/WebsocketClientLiteTest/stryker-config.json"];
         var execution = Read(Path.Combine(directory, "commands/stryker/execution.json"));
