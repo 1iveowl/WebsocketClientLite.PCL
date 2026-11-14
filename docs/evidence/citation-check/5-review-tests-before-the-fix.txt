@@ -110,3 +110,4 @@ Expected: typeof(System.IO.InvalidDataException)
 Failed!  - Failed:    11, Passed:    25, Skipped:     0, Total:    36, Duration: 164 ms - Pdd.Tests.dll (net11.0)
 VSTEST_ARTIFACTS_DIRECTORY environment variable was not found, falling back to a user-private temporary directory. This is most likely caused by an outdated Microsoft.NET.Test.Sdk package reference in the test project.
 # exit=1
+# Note added after the #169 re-review: after this run the expected line numbers of the UncitedFormFails rows were corrected by one (for example demo.dfy:6: constructor became demo.dfy:5: constructor), because the Module helper puts the first member on line 5. Each row failed here with "No exception was thrown", before its line was compared.

@@ -1,0 +1,49 @@
+# Run 2026-11-14T15:55:34Z at cb09233 (the PR head) plus the uncommitted re-review tests; SDK 11.0.100
+$ dotnet test tools/Pdd.Tests/Pdd.Tests.csproj -c Release --nologo --filter "FullyQualifiedName~UncitedFormFails|FullyQualifiedName~CitationFormsAccepted"
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  Pdd -> <repo>/tools/Pdd/bin/Release/net11.0/Pdd.dll
+  Pdd.Tests -> <repo>/tools/Pdd.Tests/bin/Release/net11.0/Pdd.Tests.dll
+Test run for <repo>/tools/Pdd.Tests/bin/Release/net11.0/Pdd.Tests.dll (.NETCoreApp,Version=v11.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.32]     Pdd.Tests.RequirementsTests.UncitedFormFails(text: "module D {\n  class C {\n    // RFC 6455 section 5"···, expected: "demo.dfy:8: G") [FAIL]
+[xUnit.net 00:00:00.32]     Pdd.Tests.RequirementsTests.UncitedFormFails(text: "module D {\n  class C {\n    // RFC 6455 section 5"···, expected: "demo.dfy:7: A") [FAIL]
+  Failed Pdd.Tests.RequirementsTests.UncitedFormFails(text: "module D {\n  class C {\n    // RFC 6455 section 5"···, expected: "demo.dfy:8: G") [1 ms]
+  Error Message:
+   Assert.Throws() Failure: No exception was thrown
+Expected: typeof(System.IO.InvalidDataException)
+  Stack Trace:
+     at Pdd.Tests.RequirementsTests.UncitedFormFails(String text, String expected) in <repo>/tools/Pdd.Tests/RequirementsTests.cs:line 265
+   at InvokeStub_RequirementsTests.UncitedFormFails(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed Pdd.Tests.RequirementsTests.UncitedFormFails(text: "module D {\n  class C {\n    // RFC 6455 section 5"···, expected: "demo.dfy:7: A") [< 1 ms]
+  Error Message:
+   Assert.Throws() Failure: No exception was thrown
+Expected: typeof(System.IO.InvalidDataException)
+  Stack Trace:
+     at Pdd.Tests.RequirementsTests.UncitedFormFails(String text, String expected) in <repo>/tools/Pdd.Tests/RequirementsTests.cs:line 265
+   at InvokeStub_RequirementsTests.UncitedFormFails(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+[xUnit.net 00:00:00.33]     Pdd.Tests.RequirementsTests.UncitedFormFails(text: "module D {\n  class C {\n    // RFC 6455 section 5"···, expected: "demo.dfy:6: G") [FAIL]
+[xUnit.net 00:00:00.33]     Pdd.Tests.RequirementsTests.CitationFormsAccepted [FAIL]
+  Failed Pdd.Tests.RequirementsTests.UncitedFormFails(text: "module D {\n  class C {\n    // RFC 6455 section 5"···, expected: "demo.dfy:6: G") [< 1 ms]
+  Error Message:
+   Assert.Throws() Failure: No exception was thrown
+Expected: typeof(System.IO.InvalidDataException)
+  Stack Trace:
+     at Pdd.Tests.RequirementsTests.UncitedFormFails(String text, String expected) in <repo>/tools/Pdd.Tests/RequirementsTests.cs:line 265
+   at InvokeStub_RequirementsTests.UncitedFormFails(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+  Failed Pdd.Tests.RequirementsTests.CitationFormsAccepted [< 1 ms]
+  Error Message:
+   System.IO.InvalidDataException : no RFC 6455 section or "Library policy:" with the policy in the comment directly above: demo.dfy:28: Old, demo.dfy:36: Only, demo.dfy:41: First, demo.dfy:31: unrecognised declaration form
+  Stack Trace:
+     at Pdd.Data.Require(Boolean condition, String message) in <repo>/tools/Pdd/Models.cs:line 105
+   at Pdd.Citations.Dafny(String file, String text) in <repo>/tools/Pdd/Citations.cs:line 76
+   at Pdd.Tests.RequirementsTests.CitationFormsAccepted() in <repo>/tools/Pdd.Tests/RequirementsTests.cs:line 241
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+
+Failed!  - Failed:     4, Passed:     9, Skipped:     0, Total:    13, Duration: 19 ms - Pdd.Tests.dll (net11.0)
+VSTEST_ARTIFACTS_DIRECTORY environment variable was not found, falling back to a user-private temporary directory. This is most likely caused by an outdated Microsoft.NET.Test.Sdk package reference in the test project.
+# exit=1

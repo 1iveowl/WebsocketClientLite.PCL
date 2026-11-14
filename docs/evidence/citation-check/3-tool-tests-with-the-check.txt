@@ -10,4 +10,4 @@ A total of 1 test files matched the specified pattern.
 Passed!  - Failed:     0, Passed:   299, Skipped:     0, Total:   299, Duration: 13 s - Pdd.Tests.dll (net11.0)
 VSTEST_ARTIFACTS_DIRECTORY environment variable was not found, falling back to a user-private temporary directory. This is most likely caused by an outdated Microsoft.NET.Test.Sdk package reference in the test project.
 # exit=0
-# Note added after the #169 review: this ran before the branch was rebased onto da6e61f. The tests were then a8bc07b (now e9797f6) on ce39403; the check was uncommitted (now 772b275). The review reran file 1 at e9797f6 with the same 7 failures.
+# Note added after the #169 review: this ran before the branch was rebased onto da6e61f. The tests were then a8bc07b (now e9797f6) on ce39403; the check was uncommitted (now 772b275).

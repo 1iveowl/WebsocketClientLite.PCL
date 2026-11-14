@@ -220,9 +220,25 @@ public class RequirementsTests
               class {:extern} B extends T {
                 static method {:extern} Copy()
               }
+              class F {
+                /* outer /* inner */ static method Old() {} the lemma here */
+                // RFC 6455 section 5.3: a function by method.
+                function Tenth(): int { 0 }
+                by method
+                { return 0; }
+              }
+              // Library policy: a class line with a trailing comment.
+              class D { // a note
+                static method Only() {}
+              }
+              // RFC 6455 section 5.3.
+              @Something
+              class E {
+                static method First() {}
+              }
             }
             """;
-        Assert.Equal(9, Citations.Dafny("demo.dfy", text));
+        Assert.Equal(12, Citations.Dafny("demo.dfy", text));
     }
     // Forms the first version of the check passed or skipped without an error (#169 review).
     public static IEnumerable<object[]> UncitedForms()
@@ -239,6 +255,12 @@ public class RequirementsTests
         yield return [Module("    // RFC 7692 section 7.\n    static method Other() {}\n"), "demo.dfy:6: Other"];
         yield return [Module("    // See the Dafny reference manual, section 3.\n    static method Manual() {}\n"), "demo.dfy:6: Manual"];
         yield return [Module("    // Library policy:\n    static method Empty() {}\n"), "demo.dfy:6: Empty"];
+        // Strings and comments that the first mask misread (#169 re-review).
+        yield return [Module("    // RFC 6455 section 5.3.\n    const S := @\"line\n/* not a comment\";\n    function G(): int { 0 }\n    /* real */\n    // RFC 6455 section 5.3.\n    function H(): int { 0 }\n"), "demo.dfy:8: G"];
+        yield return [Module("    const P := @\"C:\\\"; const Q := \"/*\";\n    function G(): int { 0 }\n    /* real */\n"), "demo.dfy:6: G"];
+        yield return [Module("    /*\n    // RFC 6455 section 5.3.\n    */ method A() {}\n"), "demo.dfy:7: A"];
+        // Primes beside character literals and a quote in a string hide nothing.
+        yield return [Module("    // RFC 6455 section 5.3.\n    function F(x': char): bool { x' == '/' || x' == '\\'' || \"it's\" == \"\" }\n    function G(): int { 0 }\n"), "demo.dfy:7: G"];
     }
     [Theory, MemberData(nameof(UncitedForms))]
     public void UncitedFormFails(string text, string expected) =>

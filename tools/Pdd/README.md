@@ -16,13 +16,18 @@ work](../../verification/README.md#rules-for-verification-work):
   `verification/*.dfy` file, the `{:extern}` declaration included, needs a
   citation in the block of `//` lines directly above it. `@` attribute lines may
   sit between; a blank line or a `/* */` comment may not. For the first member
-  of a class, the block directly above the class line counts too.
+  of a class with no comment of its own, the block directly above the class
+  line, past its `@` lines, is read instead. Comments, strings (verbatim ones
+  too) and character literals are blanked before declarations are looked for;
+  block comments nest, and a prime after a name (`x'`) is part of the name.
 - A citation names RFC 6455 and a section number in the same block ("RFC 6455
   section 5.3", or "RFC 6455 sections 5.2 and 5.5" followed by "Section 5.2:"),
-  or says `Library policy:` and then what the policy is.
+  or says `Library policy:` and then what the policy is. Both may be anywhere in
+  the block.
 - A line with a declaration keyword that does not start a declaration the check
   reads, such as a member on the same line as its class, fails as an
-  unrecognised declaration form, so that no declaration is skipped.
+  unrecognised declaration form, so that no declaration is skipped. The `by
+  method` line of a function by method belongs to the function.
 - Every requirement's `origin` in `verification/requirements.json` needs an RFC
   6455 section link (`https://www.rfc-editor.org/rfc/rfc6455.html#section-…`) or
   an entry that starts with `Library policy:` and states the policy.
