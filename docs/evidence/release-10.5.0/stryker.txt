@@ -1,0 +1,50 @@
+Tool 'dotnet-stryker' (version '5.0.0') was restored. Available commands: dotnet-stryker
+
+Restore was successful.
+Stryker log: <out>/stryker/reports/run-bi1ZBa.log
+
+   _____ _              _               _   _ ______ _______  
+  / ____| |            | |             | \ | |  ____|__   __| 
+ | (___ | |_ _ __ _   _| | _____ _ __  |  \| | |__     | |    
+  \___ \| __| '__| | | | |/ / _ \ '__| | . ` |  __|    | |    
+  ____) | |_| |  | |_| |   <  __/ |    | |\  | |____   | |    
+ |_____/ \__|_|   \__, |_|\_\___|_| (_)|_| \_|______|  |_|    
+                   __/ |                                      
+                  |___/                                       
+
+
+Version: 5.0.0
+
+[16:15:20 INF] Stryker will use a max of 8 parallel testsessions.
+[16:15:20 INF] Analysis starting.
+[16:15:20 INF] Using project configuration/platform 'Release|`default`'.
+[16:15:20 INF] Analyzing 1 test project(s).
+[16:15:21 INF] Found project <worktree>/src/main/WebsocketClientLite/WebsocketClientLite.csproj to mutate.
+[16:15:21 INF] Analysis complete.
+[16:15:21 INF] Building test project <worktree>/src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj (1/1)
+[16:15:21 INF] Building project WebsocketClientLiteTest.csproj using dotnet build WebsocketClientLiteTest.csproj -c Release --property:Platform=AnyCPU (directory <worktree>/src/main/WebsocketClientLiteTest.)
+[16:15:23 INF] Number of tests found: 328 for project <worktree>/src/main/WebsocketClientLite/WebsocketClientLite.csproj. Initial test run started.
+[16:16:22 INF] 960 mutants created
+[16:16:22 INF] Capture mutant coverage using 'CoverageBasedTest, DisableMixMutants' mode.
+Hint: by passing "--open-report or -o" the report will open automatically and 
+update the report in real-time.
+[16:17:19 INF] 48    mutants got status CompileError. Reason: Mutant caused compile errors
+[16:17:19 INF] 7     mutants got status NoCoverage.   Reason: Not covered by any test.
+[16:17:19 INF] 26    mutants got status Ignored.      Reason: Removed by block already covered filter
+[16:17:19 INF] 810   mutants got status Ignored.      Reason: Removed by mutate filter
+[16:17:19 INF] 891   total mutants are skipped for the above mentioned reasons
+[16:17:19 INF] 69    total mutants will be tested
+.........S..SS..SSSSSSS.SSSSSSS........S...SS...S...........S.S.SS.SS
+
+Your json report has been generated at:
+<path replaced: a wrapped line of the scratch path>
+<path replaced: a wrapped line of the scratch path>
+json
+
+Your html report has been generated at:
+<path replaced: a wrapped line of the scratch path>
+<path replaced: a wrapped line of the scratch path>
+html
+You can open it in your browser of choice.
+[16:21:18 INF] Time Elapsed 00:05:58.5903527
+[16:21:18 INF] The final mutation score is 55.26 %

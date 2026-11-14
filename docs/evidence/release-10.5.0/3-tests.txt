@@ -1,0 +1,14 @@
+$ ./scripts/pdd.sh capture --job tests --output <out>/tests
+# started 2026-11-14T16:12:07Z at e752ffcd62000e51264ec81771ebf1a9014f8b0e
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:00.06
+restore: passed
+build: passed
+matrix: passed
+coverage-run: passed
+coverage-gate: passed
+# exit=0 finished 2026-11-14T16:15:18Z
