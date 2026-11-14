@@ -15,14 +15,25 @@ The runs below were made in a throwaway worktree.
 
 ## What was run
 
-- **Commit:** `d3308a0` (the 10.4.0 release merge; `releases/10.5.0` differs from it only in
-  documentation at the time of the runs).
+- **Commit:** `d3308a0` (the 10.4.0 release merge). During the runs `releases/10.5.0` differed
+  from it in documentation and in `verification/exploration/run.py` (#166), which none of these
+  checks use.
 - **Host:** Linux x86-64 dev container, kernel 7.2.11, .NET SDK 11.0.100, Dafny 4.11.0 with
   Z3 4.12.1 from `scripts/dafny-toolchain.sh`.
-- **Script:** [`run.sh`](../docs/evidence/contract-weakening/run.sh) runs the two cases and a
-  clean mutation baseline, then [`quiet-rerun.sh`](../docs/evidence/contract-weakening/quiet-rerun.sh)
-  repeats one mutation run and applies one mutant by hand. Both take a throwaway worktree made
-  with `git worktree add --detach <path> d3308a0` and an empty output directory.
+- **Scripts**, all in [`docs/evidence/contract-weakening/`](../docs/evidence/contract-weakening/),
+  each taking a throwaway worktree made with `git worktree add --detach <path> d3308a0`:
+  1. Before the scripts, in the same worktree: `bash scripts/dafny-masking.sh --check >
+     baseline-check.txt` and `./test-all-tfms.sh Release > baseline-tests.txt`, each followed by
+     its exit code. These two files have no command header.
+  2. `run.sh` runs the two cases and then a clean mutation baseline (`baseline-mutations.txt`).
+  3. `quiet-rerun.sh` repeats the marker 126 mutation run and applies one mutant by hand.
+  4. `check-after-write.sh` regenerates each case and runs `--check` again.
+- **Outputs.** Every output is kept as text. Paths were replaced after capture: `<worktree>` for
+  the throwaway worktree, `<out>` for the output directory and `~` for the home directory. Of each
+  mutation run's output directory, `results.json`, `tool-versions.json` and the console output
+  of the baseline and the two header mutants are kept (`.log` renamed to `.stdout.txt`); the
+  other mutants' console output, the copied sources, catalog and requirements, and the toolchain
+  logs are left out.
 
 The two patches change line 53, one bound each:
 
@@ -31,7 +42,8 @@ The two patches change line 53, one bound each:
 | Marker 126 (16-bit length) | `126 <= length <= 65535` | `0 <= length <= 65535` | [`marker126.patch`](../docs/evidence/contract-weakening/marker126.patch) |
 | Marker 127 (64-bit length) | `length >= 65536` | `length >= 0` | [`marker127.patch`](../docs/evidence/contract-weakening/marker127.patch) |
 
-For each case, in order:
+For each case, in order (`run.sh` makes the edit by text replacement, which gives the same file
+as the patch):
 
 ```bash
 git apply marker126.patch                     # or marker127.patch
@@ -70,8 +82,11 @@ contract; nothing in it compares the contract with the RFC.
 `scripts/dafny-masking.sh --check` fails, but not because it finds the bug. It regenerates the C#
 and compares it with the checked-in `verification/generated/Masking.g.cs`. `HeaderValid` is
 compiled into that file, so any edit to it that is not regenerated fails the check: a correct
-edit as much as a wrong one. After `--write` the check passes with the weakened contract. It
-shows that the C# is current, not that the contract is right. The diffs are in
+edit as much as a wrong one. After `--write` the check passes with the weakened contract:
+`41 verified, 0 errors`, exit 0, in both cases
+([`marker126-7-check-after-write.txt`](../docs/evidence/contract-weakening/marker126-7-check-after-write.txt),
+[`marker127-7-check-after-write.txt`](../docs/evidence/contract-weakening/marker127-7-check-after-write.txt)).
+It shows that the C# is current, not that the contract is right. The diffs are in
 [`marker126-2-generated.diff.txt`](../docs/evidence/contract-weakening/marker126-2-generated.diff.txt)
 and [`marker127-2-generated.diff.txt`](../docs/evidence/contract-weakening/marker127-2-generated.diff.txt):
 line 114, in the copy of the Dafny source the file carries, and line 705, in the compiled
@@ -133,12 +148,12 @@ The other 15 mutants are detected in every run.
   regenerated, and passes once the C# is regenerated.
 - The tests catch both weakenings, because their expected results come from the RFC, not from
   the code. Each is caught by a single row.
-- The mutation suite fails too, for a reason that is easy to misread: a mutant that the real
-  contract catches survives under the weakened one. That signal is only as good as the catalog.
+- The mutation suite fails too, but it does not find the wrong contract. It fails because a
+  mutant that the real contract catches survives under the weakened one. That signal is only as good as the catalog.
   A mutant that "survives" after a contract change says the contract moved, and the answer is to
   review the contract, not to drop the mutant.
-- No open gap was found for these two bounds. Both are caught by the tests and by the mutation
-  suite.
+- No open gap was found for these two bounds. The tests catch both. The catching rows sit on the
+  bounds, 125 and 65535, so any weaker lower bound in either place is caught by the same row.
 
 ## Limits
 
@@ -147,10 +162,11 @@ The other 15 mutants are detected in every run.
 - The pull request check that lists contract changes for review (`contract-change-report` in
   `.github/workflows/ci.yml`) was not run in this experiment.
 - Timings: the first marker 126 mutation run shared the machine with other builds, and several
-  mutants took 37 to 77 s instead of about 9 s. `quiet-rerun.sh` repeated it with nothing else
+  mutants took 37 to 77 s instead of about 9 s. The marker 127 run, also beside other work, had
+  three mutants at 43 to 47 s. `quiet-rerun.sh` repeated it with nothing else
   from this work running, and still saw 39 s for the baseline and 76 s for
   `MASK-002-corrupt-bulk-byte`; the budget is 90 s. The outcomes were the same in both runs. Both
   runs are kept ([`marker126-4-mutations.txt`](../docs/evidence/contract-weakening/marker126-4-mutations.txt),
   [`marker126-5-mutations-quiet.txt`](../docs/evidence/contract-weakening/marker126-5-mutations-quiet.txt)).
-- After every case the worktree was restored; `final-status.txt` and `final-status-2.txt` are the
-  empty `git status --short` after each script.
+- After every case the worktree was restored; `final-status.txt`, `final-status-2.txt` and
+  `final-status-3.txt` are the empty `git status --short` after each script.
