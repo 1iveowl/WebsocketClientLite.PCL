@@ -78,6 +78,12 @@ The full process is in [CONTRIBUTING.md](CONTRIBUTING.md). What an agent must fo
 - Verification work follows the [rules in verification/README.md](verification/README.md#rules-for-verification-work):
   the RFC wins, expected bytes never come from production code, and a new test is seen to fail on
   the old code before its fix is trusted.
+  For tests: a new test of existing behaviour fails on an isolated copy without the check it names,
+  inputs are complete, no sleep orders anything, a suspected defect is reproduced first, results are
+  reported as they are, and intent is the owner's (rules 4 to 9). To write or change a test of the
+  protocol core, a boundary register owner or the asynchronous lifecycle, follow the
+  [write-protocol-test skill](.claude/skills/write-protocol-test/SKILL.md); Claude Code and GitHub
+  Copilot load it from `.claude/skills/`, and other agents read that file directly.
 - [verification/boundaries.json](verification/boundaries.json), the boundary register, lists what
   the proofs and the C# around them assume, with its owners, exclusions and tests. Read the entries
   for the code you change before you change it. The Dafny external contracts are audited separately
