@@ -80,7 +80,7 @@ public sealed partial class Evidence
         Require(S(report, "status") == "passed" && S(report, "library_target") == PrimaryTfm && Passed(report["baseline"]), "Incomplete lease baseline/report");
         XNamespace ns = "http://microsoft.com/schemas/VisualStudio/TeamTest/2010";
         var baseline = XDocument.Load(Path.Combine(directory, "baseline/results.trx")).Descendants(ns + "UnitTestResult").ToArray();
-        Require(baseline.Length == 15 && baseline.All(r => (string?)r.Attribute("outcome") == "Passed"), "Incomplete lease baseline cases");
+        Require(baseline.Length == LeaseCaseCounts.Values.Sum() + 1 && baseline.All(r => (string?)r.Attribute("outcome") == "Passed"), "Incomplete lease baseline cases");
         foreach (var (test, count) in LeaseCaseCounts)
             Require(baseline.Count(r => ((string?)r.Attribute("testName"))?.Contains("PayloadLeaseTests." + test, StringComparison.Ordinal) == true) == count, "Missing named lease baseline case");
         ValidateLeaseExecution(Path.Combine(directory, "baseline"), 0);
@@ -126,7 +126,7 @@ public sealed partial class Evidence
                 Require(Passed(Node(run)), "Lease probe failed at repetition " + i);
                 XNamespace ns = "http://microsoft.com/schemas/VisualStudio/TeamTest/2010";
                 var rows = XDocument.Load(Path.Combine(path, "results.trx")).Descendants(ns + "UnitTestResult").ToArray();
-                Require(rows.Length == 15 && rows.All(r => (string?)r.Attribute("outcome") == "Passed"), "Incomplete lease probe cases");
+                Require(rows.Length == LeaseCaseCounts.Values.Sum() + 1 && rows.All(r => (string?)r.Attribute("outcome") == "Passed"), "Incomplete lease probe cases");
                 foreach (var (name, count) in LeaseCaseCounts)
                     Require(rows.Count(r => ((string?)r.Attribute("testName"))?.Contains("PayloadLeaseTests." + name, StringComparison.Ordinal) == true) == count, "Missing lease probe schedule");
                 Console.WriteLine($"Lease probe {i + 1}/50 passed");
