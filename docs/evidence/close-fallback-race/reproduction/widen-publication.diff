@@ -1,0 +1,12 @@
+diff -ruN -x bin -x obj untouched/src/main/WebsocketClientLite/Service/WebsocketConnectionHandler.cs widened/src/main/WebsocketClientLite/Service/WebsocketConnectionHandler.cs
+--- untouched/src/main/WebsocketClientLite/Service/WebsocketConnectionHandler.cs	2026-11-17 16:15:34.000000000 +0000
++++ widened/src/main/WebsocketClientLite/Service/WebsocketConnectionHandler.cs	2026-11-17 16:35:54.959777327 +0000
+@@ -135,7 +135,7 @@
+         // IsValueCreated is still false, deadlocking a re-entrant Dispose. It
+         // also keeps the close off the caller's synchronization context.
+         var closeOnce = new Lazy<Task>(
+-            () => Task.Run(() => DisconnectWebsocket(sender)),
++            () => { var close = Task.Run(() => DisconnectWebsocket(sender)); Thread.Sleep(500); return close; },
+             LazyThreadSafetyMode.ExecutionAndPublication);
+ 
+         Task CloseOnceAsync() => closeOnce.Value;

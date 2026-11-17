@@ -1,0 +1,13 @@
+  Determining projects to restore...
+  Restored /tmp/pdd-7a4f2d0b49e3408d8bdde1c49eebfb9f/src/main/WebsocketClientLite/WebsocketClientLite.csproj (in 109 ms).
+  Restored /tmp/pdd-7a4f2d0b49e3408d8bdde1c49eebfb9f/src/interface/IWebsocketClientLite/IWebsocketClientLite.csproj (in 107 ms).
+  Restored /tmp/pdd-7a4f2d0b49e3408d8bdde1c49eebfb9f/src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj (in 107 ms).
+  IWebsocketClientLite -> /tmp/pdd-7a4f2d0b49e3408d8bdde1c49eebfb9f/src/interface/IWebsocketClientLite/bin/Release/netstandard2.0/IWebsocketClientLite.dll
+  WebsocketClientLite -> /tmp/pdd-7a4f2d0b49e3408d8bdde1c49eebfb9f/src/main/WebsocketClientLite/bin/Release/net11.0/WebsocketClientLite.dll
+  WebsocketClientLiteTest -> /tmp/pdd-7a4f2d0b49e3408d8bdde1c49eebfb9f/src/main/WebsocketClientLiteTest/bin/Release/net11.0/WebsocketClientLiteTest.dll
+Test run for /tmp/pdd-7a4f2d0b49e3408d8bdde1c49eebfb9f/src/main/WebsocketClientLiteTest/bin/Release/net11.0/WebsocketClientLiteTest.dll (.NETCoreApp,Version=v11.0)
+A total of 1 test files matched the specified pattern.
+Results File: <scratch>/out/checks/boundary-defects/baseline/results.trx
+
+Passed!  - Failed:     0, Passed:    10, Skipped:     0, Total:    10, Duration: 91 ms - WebsocketClientLiteTest.dll (net11.0)
+VSTEST_ARTIFACTS_DIRECTORY environment variable was not found, falling back to a user-private temporary directory. This is most likely caused by an outdated Microsoft.NET.Test.Sdk package reference in the test project.

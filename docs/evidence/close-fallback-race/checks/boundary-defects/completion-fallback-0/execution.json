@@ -1,0 +1,26 @@
+{
+  "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.CloseBoundaryTests.ParserCompletionAwaitsFallbackCloseBeforeObserverCompletion|FullyQualifiedName=WebsocketClientLiteTest.RuntimeEvidenceTests.RecordHostRuntime",
+    "--logger",
+    "trx;LogFileName=results.trx",
+    "--results-directory",
+    "<scratch>/out/checks/boundary-defects/completion-fallback-0"
+  ],
+  "budget_seconds": 180,
+  "started_at": "2026-11-17T16:42:04.1346147+00:00",
+  "exit_code": 1,
+  "timed_out": false,
+  "interrupted": false,
+  "cleanup_incomplete": false,
+  "cleanup_seconds": 0,
+  "elapsed_seconds": 2.244,
+  "stdout": "  Determining projects to restore...\n  All projects are up-to-date for restore.\n  IWebsocketClientLite -> /tmp/pdd-7a4f2d0b49e3408d8bdde1c49eebfb9f/src/interface/IWebsocketClientLite/bin/Release/netstandard2.0/IWebsocketClientLite.dll\n  WebsocketClientLite -> /tmp/pdd-7a4f2d0b49e3408d8bdde1c49eebfb9f/src/main/WebsocketClientLite/bin/Release/net11.0/WebsocketClientLite.dll\n  WebsocketClientLiteTest -> /tmp/pdd-7a4f2d0b49e3408d8bdde1c49eebfb9f/src/main/WebsocketClientLiteTest/bin/Release/net11.0/WebsocketClientLiteTest.dll\nTest run for /tmp/pdd-7a4f2d0b49e3408d8bdde1c49eebfb9f/src/main/WebsocketClientLiteTest/bin/Release/net11.0/WebsocketClientLiteTest.dll (.NETCoreApp,Version=v11.0)\nA total of 1 test files matched the specified pattern.\n  Failed WebsocketClientLiteTest.CloseBoundaryTests.ParserCompletionAwaitsFallbackCloseBeforeObserverCompletion [38 ms]\n  Error Message:\n   Parser completion did not start fallback Close\n  Stack Trace:\n     at WebsocketClientLiteTest.CloseBoundaryTests.ParserCompletionAwaitsFallbackCloseBeforeObserverCompletion() in /tmp/pdd-7a4f2d0b49e3408d8bdde1c49eebfb9f/src/main/WebsocketClientLiteTest/CloseBoundaryTests.cs:line 114\n   at WebsocketClientLiteTest.CloseBoundaryTests.ParserCompletionAwaitsFallbackCloseBeforeObserverCompletion() in /tmp/pdd-7a4f2d0b49e3408d8bdde1c49eebfb9f/src/main/WebsocketClientLiteTest/CloseBoundaryTests.cs:line 121\n--- End of stack trace from previous location ---\n  Standard Output Messages:\n SendingHandshakeToWebsocketServer -> HandshakeCompletedSuccessfully -> WebsocketConnected -> observer-completed -> SingleFrameSending -> Close -> peer-wait -> Disconnected\n\n\nResults File: <scratch>/out/checks/boundary-defects/completion-fallback-0/results.trx\n\nFailed!  - Failed:     1, Passed:     1, Skipped:     0, Total:     2, Duration: 46 ms - WebsocketClientLiteTest.dll (net11.0)\nVSTEST_ARTIFACTS_DIRECTORY environment variable was not found, falling back to a user-private temporary directory. This is most likely caused by an outdated Microsoft.NET.Test.Sdk package reference in the test project.\n",
+  "stderr": "[xUnit.net 00:00:00.20]     WebsocketClientLiteTest.CloseBoundaryTests.ParserCompletionAwaitsFallbackCloseBeforeObserverCompletion [FAIL]\n"
+}

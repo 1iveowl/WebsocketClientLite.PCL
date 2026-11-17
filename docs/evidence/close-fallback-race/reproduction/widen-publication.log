@@ -1,0 +1,40 @@
+  Determining projects to restore...
+  Restored <scratch>/widened/src/main/WebsocketClientLite/WebsocketClientLite.csproj (in 218 ms).
+  Restored <scratch>/widened/src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj (in 216 ms).
+  Restored <scratch>/widened/src/interface/IWebsocketClientLite/IWebsocketClientLite.csproj (in 216 ms).
+  IWebsocketClientLite -> <scratch>/widened/src/interface/IWebsocketClientLite/bin/Release/netstandard2.0/IWebsocketClientLite.dll
+  WebsocketClientLite -> <scratch>/widened/src/main/WebsocketClientLite/bin/Release/netstandard2.0/WebsocketClientLite.dll
+  WebsocketClientLiteTest -> <scratch>/widened/src/main/WebsocketClientLiteTest/bin/Release/net11.0/WebsocketClientLiteTest.dll
+Test run for <scratch>/widened/src/main/WebsocketClientLiteTest/bin/Release/net11.0/WebsocketClientLiteTest.dll (.NETCoreApp,Version=v11.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v4.0.1+0f7d528729 (64-bit .NET 11.0.0)
+[xUnit.net 00:00:00.09]   Discovering: WebsocketClientLiteTest
+[xUnit.net 00:00:00.14]   Discovered:  WebsocketClientLiteTest
+[xUnit.net 00:00:00.15]   Starting:    WebsocketClientLiteTest
+[xUnit.net 00:00:00.71]     WebsocketClientLiteTest.CloseBoundaryTests.ParserCompletionAwaitsFallbackCloseBeforeObserverCompletion [FAIL]
+[xUnit.net 00:00:00.71]       Parser completion did not start fallback Close
+[xUnit.net 00:00:00.71]       Stack Trace:
+[xUnit.net 00:00:00.71]         <scratch>/widened/src/main/WebsocketClientLiteTest/CloseBoundaryTests.cs(112,0): at WebsocketClientLiteTest.CloseBoundaryTests.ParserCompletionAwaitsFallbackCloseBeforeObserverCompletion()
+[xUnit.net 00:00:00.71]         <scratch>/widened/src/main/WebsocketClientLiteTest/CloseBoundaryTests.cs(119,0): at WebsocketClientLiteTest.CloseBoundaryTests.ParserCompletionAwaitsFallbackCloseBeforeObserverCompletion()
+[xUnit.net 00:00:00.71]         --- End of stack trace from previous location ---
+[xUnit.net 00:00:00.71]       Output:
+[xUnit.net 00:00:00.71]         SendingHandshakeToWebsocketServer -> HandshakeCompletedSuccessfully -> WebsocketConnected -> SingleFrameSending -> Close -> write-entered -> write-completed -> peer-wait -> Disconnected
+[xUnit.net 00:00:00.72]   Finished:    WebsocketClientLiteTest
+  Failed WebsocketClientLiteTest.CloseBoundaryTests.ParserCompletionAwaitsFallbackCloseBeforeObserverCompletion [537 ms]
+  Error Message:
+   Parser completion did not start fallback Close
+  Stack Trace:
+     at WebsocketClientLiteTest.CloseBoundaryTests.ParserCompletionAwaitsFallbackCloseBeforeObserverCompletion() in <scratch>/widened/src/main/WebsocketClientLiteTest/CloseBoundaryTests.cs:line 112
+   at WebsocketClientLiteTest.CloseBoundaryTests.ParserCompletionAwaitsFallbackCloseBeforeObserverCompletion() in <scratch>/widened/src/main/WebsocketClientLiteTest/CloseBoundaryTests.cs:line 119
+--- End of stack trace from previous location ---
+  Standard Output Messages:
+ SendingHandshakeToWebsocketServer -> HandshakeCompletedSuccessfully -> WebsocketConnected -> SingleFrameSending -> Close -> write-entered -> write-completed -> peer-wait -> Disconnected
+
+
+Results File: <scratch>/out/widen-publication.trx
+
+Test Run Failed.
+Total tests: 1
+     Failed: 1
+ Total time: 0.9019 Seconds
+VSTEST_ARTIFACTS_DIRECTORY environment variable was not found, falling back to a user-private temporary directory. This is most likely caused by an outdated Microsoft.NET.Test.Sdk package reference in the test project.

@@ -1,0 +1,22 @@
+  Determining projects to restore...
+  Restored <scratch>/f-widened/src/interface/IWebsocketClientLite/IWebsocketClientLite.csproj (in 107 ms).
+  Restored <scratch>/f-widened/src/main/WebsocketClientLite/WebsocketClientLite.csproj (in 111 ms).
+  Restored <scratch>/f-widened/src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj (in 107 ms).
+  IWebsocketClientLite -> <scratch>/f-widened/src/interface/IWebsocketClientLite/bin/Release/netstandard2.0/IWebsocketClientLite.dll
+  WebsocketClientLite -> <scratch>/f-widened/src/main/WebsocketClientLite/bin/Release/netstandard2.0/WebsocketClientLite.dll
+  WebsocketClientLiteTest -> <scratch>/f-widened/src/main/WebsocketClientLiteTest/bin/Release/net11.0/WebsocketClientLiteTest.dll
+Test run for <scratch>/f-widened/src/main/WebsocketClientLiteTest/bin/Release/net11.0/WebsocketClientLiteTest.dll (.NETCoreApp,Version=v11.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v4.0.1+0f7d528729 (64-bit .NET 11.0.0)
+[xUnit.net 00:00:00.07]   Discovering: WebsocketClientLiteTest
+[xUnit.net 00:00:00.12]   Discovered:  WebsocketClientLiteTest
+[xUnit.net 00:00:00.14]   Starting:    WebsocketClientLiteTest
+[xUnit.net 00:00:00.71]   Finished:    WebsocketClientLiteTest
+  Passed WebsocketClientLiteTest.CloseBoundaryTests.ParserCompletionAwaitsFallbackCloseBeforeObserverCompletion [546 ms]
+Results File: <scratch>/out/fixed-widened.trx
+
+Test Run Successful.
+Total tests: 1
+     Passed: 1
+ Total time: 0.8909 Seconds
+VSTEST_ARTIFACTS_DIRECTORY environment variable was not found, falling back to a user-private temporary directory. This is most likely caused by an outdated Microsoft.NET.Test.Sdk package reference in the test project.

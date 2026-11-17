@@ -1,0 +1,26 @@
+{
+  "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--filter",
+    "FullyQualifiedName~WebsocketClientLiteTest.CloseBoundaryTests|FullyQualifiedName=WebsocketClientLiteTest.RuntimeEvidenceTests.RecordHostRuntime",
+    "--logger",
+    "trx;LogFileName=results.trx",
+    "--results-directory",
+    "<scratch>/out/checks/boundary-defects/baseline"
+  ],
+  "budget_seconds": 180,
+  "started_at": "2026-11-17T16:41:51.0106481+00:00",
+  "exit_code": 0,
+  "timed_out": false,
+  "interrupted": false,
+  "cleanup_incomplete": false,
+  "cleanup_seconds": 0,
+  "elapsed_seconds": 1.91,
+  "stdout": "  Determining projects to restore...\n  Restored /tmp/pdd-7a4f2d0b49e3408d8bdde1c49eebfb9f/src/main/WebsocketClientLite/WebsocketClientLite.csproj (in 109 ms).\n  Restored /tmp/pdd-7a4f2d0b49e3408d8bdde1c49eebfb9f/src/interface/IWebsocketClientLite/IWebsocketClientLite.csproj (in 107 ms).\n  Restored /tmp/pdd-7a4f2d0b49e3408d8bdde1c49eebfb9f/src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj (in 107 ms).\n  IWebsocketClientLite -> /tmp/pdd-7a4f2d0b49e3408d8bdde1c49eebfb9f/src/interface/IWebsocketClientLite/bin/Release/netstandard2.0/IWebsocketClientLite.dll\n  WebsocketClientLite -> /tmp/pdd-7a4f2d0b49e3408d8bdde1c49eebfb9f/src/main/WebsocketClientLite/bin/Release/net11.0/WebsocketClientLite.dll\n  WebsocketClientLiteTest -> /tmp/pdd-7a4f2d0b49e3408d8bdde1c49eebfb9f/src/main/WebsocketClientLiteTest/bin/Release/net11.0/WebsocketClientLiteTest.dll\nTest run for /tmp/pdd-7a4f2d0b49e3408d8bdde1c49eebfb9f/src/main/WebsocketClientLiteTest/bin/Release/net11.0/WebsocketClientLiteTest.dll (.NETCoreApp,Version=v11.0)\nA total of 1 test files matched the specified pattern.\nResults File: <scratch>/out/checks/boundary-defects/baseline/results.trx\n\nPassed!  - Failed:     0, Passed:    10, Skipped:     0, Total:    10, Duration: 91 ms - WebsocketClientLiteTest.dll (net11.0)\nVSTEST_ARTIFACTS_DIRECTORY environment variable was not found, falling back to a user-private temporary directory. This is most likely caused by an outdated Microsoft.NET.Test.Sdk package reference in the test project.\n",
+  "stderr": ""
+}

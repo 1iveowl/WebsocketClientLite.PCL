@@ -1,0 +1,3 @@
+run=current commit=63441fd change=none target=netstandard2.0 date=2026-11-17T16:38:01Z
+sha256 fab51b416150ff9b5658ce37c94c70cefbce6c40dc779f3dc36445d3a30dda9e src/main/WebsocketClientLite/Service/WebsocketConnectionHandler.cs
+sha256 8875aded6d7789a0935e782640bb85d4fae38bed5adb66a662669e9ba359a053 src/main/WebsocketClientLiteTest/CloseBoundaryTests.cs
