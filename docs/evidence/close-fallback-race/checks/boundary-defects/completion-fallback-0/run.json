@@ -1,0 +1,21 @@
+{
+  "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.CloseBoundaryTests.ParserCompletionAwaitsFallbackCloseBeforeObserverCompletion|FullyQualifiedName=WebsocketClientLiteTest.RuntimeEvidenceTests.RecordHostRuntime",
+    "--logger",
+    "trx;LogFileName=results.trx",
+    "--results-directory",
+    "<scratch>/out/checks/boundary-defects/completion-fallback-0"
+  ],
+  "started_at": "2026-11-17T16:42:04.1344894+00:00",
+  "finished_at": "2026-11-17T16:42:06.3790240+00:00",
+  "status": "failed",
+  "exit_code": 1,
+  "log": "output.log"
+}

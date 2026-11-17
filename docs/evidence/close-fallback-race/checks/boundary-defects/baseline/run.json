@@ -1,0 +1,21 @@
+{
+  "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--filter",
+    "FullyQualifiedName~WebsocketClientLiteTest.CloseBoundaryTests|FullyQualifiedName=WebsocketClientLiteTest.RuntimeEvidenceTests.RecordHostRuntime",
+    "--logger",
+    "trx;LogFileName=results.trx",
+    "--results-directory",
+    "<scratch>/out/checks/boundary-defects/baseline"
+  ],
+  "started_at": "2026-11-17T16:41:51.0080812+00:00",
+  "finished_at": "2026-11-17T16:41:52.9212618+00:00",
+  "status": "passed",
+  "exit_code": 0,
+  "log": "output.log"
+}

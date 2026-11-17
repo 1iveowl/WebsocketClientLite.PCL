@@ -1,0 +1,12 @@
+diff -ruN -x bin -x obj f-untouched/src/main/WebsocketClientLite/Service/WebsocketConnectionHandler.cs f-mutant/src/main/WebsocketClientLite/Service/WebsocketConnectionHandler.cs
+--- f-untouched/src/main/WebsocketClientLite/Service/WebsocketConnectionHandler.cs	2026-11-17 16:36:18.000000000 +0000
++++ f-mutant/src/main/WebsocketClientLite/Service/WebsocketConnectionHandler.cs	2026-11-17 16:37:37.080559441 +0000
+@@ -267,7 +267,7 @@
+             // would only race that cascade.
+             if (!ct.IsCancellationRequested)
+             {
+-                await closeOnceAsync().ConfigureAwait(false);
++                ;
+             }
+         }
+ 

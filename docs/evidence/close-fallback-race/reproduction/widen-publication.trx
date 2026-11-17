@@ -1,0 +1,56 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="dd4980e6-500f-474c-9c0a-c1ab30407e8c" name="@a920b7ae3df2 2026-11-17 16:36:02" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-11-17T16:36:02.9530774+00:00" queuing="2026-11-17T16:36:02.9530775+00:00" start="2026-11-17T16:36:02.0458729+00:00" finish="2026-11-17T16:36:02.9550584+00:00" />
+  <TestSettings name="default" id="07291c28-2bd6-4689-9025-b6585f31a824">
+    <Deployment runDeploymentRoot="_a920b7ae3df2_2026-11-17_16_36_02" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="94b35b40-6818-49c7-8144-c698770b21d5" testId="08fe393a-355e-8c41-b4ab-28dd6cde385c" testName="WebsocketClientLiteTest.CloseBoundaryTests.ParserCompletionAwaitsFallbackCloseBeforeObserverCompletion" computerName="a920b7ae3df2" duration="00:00:00.5373568" startTime="2026-11-17T16:36:02.3647231+00:00" endTime="2026-11-17T16:36:02.9114760+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="94b35b40-6818-49c7-8144-c698770b21d5">
+      <Output>
+        <StdOut>SendingHandshakeToWebsocketServer -&gt; HandshakeCompletedSuccessfully -&gt; WebsocketConnected -&gt; SingleFrameSending -&gt; Close -&gt; write-entered -&gt; write-completed -&gt; peer-wait -&gt; Disconnected</StdOut>
+        <ErrorInfo>
+          <Message>Parser completion did not start fallback Close</Message>
+          <StackTrace>   at WebsocketClientLiteTest.CloseBoundaryTests.ParserCompletionAwaitsFallbackCloseBeforeObserverCompletion() in <scratch>/widened/src/main/WebsocketClientLiteTest/CloseBoundaryTests.cs:line 112
+   at WebsocketClientLiteTest.CloseBoundaryTests.ParserCompletionAwaitsFallbackCloseBeforeObserverCompletion() in <scratch>/widened/src/main/WebsocketClientLiteTest/CloseBoundaryTests.cs:line 119
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="WebsocketClientLiteTest.CloseBoundaryTests.ParserCompletionAwaitsFallbackCloseBeforeObserverCompletion" storage="<scratch>/widened/src/main/websocketclientlitetest/bin/release/net11.0/websocketclientlitetest.dll" id="08fe393a-355e-8c41-b4ab-28dd6cde385c">
+      <Execution id="94b35b40-6818-49c7-8144-c698770b21d5" />
+      <TestMethod codeBase="<scratch>/widened/src/main/WebsocketClientLiteTest/bin/Release/net11.0/WebsocketClientLiteTest.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="WebsocketClientLiteTest.CloseBoundaryTests" name="ParserCompletionAwaitsFallbackCloseBeforeObserverCompletion" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="08fe393a-355e-8c41-b4ab-28dd6cde385c" executionId="94b35b40-6818-49c7-8144-c698770b21d5" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="1" executed="1" passed="0" failed="1" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v4.0.1+0f7d528729 (64-bit .NET 11.0.0)
+[xUnit.net 00:00:00.09]   Discovering: WebsocketClientLiteTest
+[xUnit.net 00:00:00.14]   Discovered:  WebsocketClientLiteTest
+[xUnit.net 00:00:00.15]   Starting:    WebsocketClientLiteTest
+[xUnit.net 00:00:00.71]       Parser completion did not start fallback Close
+[xUnit.net 00:00:00.71]       Stack Trace:
+[xUnit.net 00:00:00.71]         <scratch>/widened/src/main/WebsocketClientLiteTest/CloseBoundaryTests.cs(112,0): at WebsocketClientLiteTest.CloseBoundaryTests.ParserCompletionAwaitsFallbackCloseBeforeObserverCompletion()
+[xUnit.net 00:00:00.71]         <scratch>/widened/src/main/WebsocketClientLiteTest/CloseBoundaryTests.cs(119,0): at WebsocketClientLiteTest.CloseBoundaryTests.ParserCompletionAwaitsFallbackCloseBeforeObserverCompletion()
+[xUnit.net 00:00:00.71]         --- End of stack trace from previous location ---
+[xUnit.net 00:00:00.71]       Output:
+[xUnit.net 00:00:00.71]         SendingHandshakeToWebsocketServer -&gt; HandshakeCompletedSuccessfully -&gt; WebsocketConnected -&gt; SingleFrameSending -&gt; Close -&gt; write-entered -&gt; write-completed -&gt; peer-wait -&gt; Disconnected
+[xUnit.net 00:00:00.72]   Finished:    WebsocketClientLiteTest
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="a920b7ae3df2" outcome="Error" timestamp="2026-11-17T16:36:02.9132627+00:00">
+        <Text>[xUnit.net 00:00:00.71]     WebsocketClientLiteTest.CloseBoundaryTests.ParserCompletionAwaitsFallbackCloseBeforeObserverCompletion [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>
