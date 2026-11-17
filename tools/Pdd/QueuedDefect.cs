@@ -14,6 +14,8 @@ public sealed partial class Evidence
         ["TerminalNotificationRejectsDataWaitingAtEitherGate"] = 4,
         ["AbortAllowsQueuedCancellationWhileOwnerRemainsInFlight"] = 1
     };
+    // The probe also runs ControlledCloseTests.CancellationBetweenFragmentsAllowsOnlyClose and the runtime probe.
+    public const int QueuedProbeExtraCases = 2;
     public const string QueuedTest = "WebsocketClientLiteTest.QueuedWriteTests.FrameSerializationAdmitsTwoDataSendsAndOneControlWithoutOverlap";
     public const string QueuedSource = "src/main/WebsocketClientLite/Service/TcpConnectionService.cs";
     public const string QueuedBefore = "private readonly SemaphoreSlim _writeGate = new(1, 1);";
@@ -82,7 +84,7 @@ public sealed partial class Evidence
                 Require(Passed(Node(run)), "Queued probe failed at repetition " + i);
                 XNamespace ns = "http://microsoft.com/schemas/VisualStudio/TeamTest/2010";
                 var rows = XDocument.Load(Path.Combine(path, "results.trx")).Descendants(ns + "UnitTestResult").ToArray();
-                Require(rows.Length == 15 && rows.All(r => (string?)r.Attribute("outcome") == "Passed"), "Incomplete queued probe cases");
+                Require(rows.Length == QueuedCaseCounts.Values.Sum() + QueuedProbeExtraCases && rows.All(r => (string?)r.Attribute("outcome") == "Passed"), "Incomplete queued probe cases");
                 foreach (var (name, count) in QueuedCaseCounts)
                     Require(rows.Count(r => ((string?)r.Attribute("testName"))?.Contains("QueuedWriteTests." + name, StringComparison.Ordinal) == true) == count, "Missing queued probe schedule");
                 Console.WriteLine($"Queued probe {i + 1}/50 passed");
