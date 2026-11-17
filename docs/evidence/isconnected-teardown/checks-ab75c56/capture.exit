@@ -1,0 +1,5 @@
+protocol exit=0 seconds=186
+tests exit=0 seconds=192
+controlled exit=0 seconds=81
+stryker exit=0 seconds=285
+aggregate exit=0 seconds=1

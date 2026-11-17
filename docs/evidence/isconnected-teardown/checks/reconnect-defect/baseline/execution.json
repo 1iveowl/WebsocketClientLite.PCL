@@ -1,0 +1,26 @@
+{
+  "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--filter",
+    "FullyQualifiedName~WebsocketClientLiteTest.ReconnectTests|FullyQualifiedName=WebsocketClientLiteTest.RuntimeEvidenceTests.RecordHostRuntime",
+    "--logger",
+    "trx;LogFileName=results.trx",
+    "--results-directory",
+    "<scratch>/p4/reconnect-defect/baseline"
+  ],
+  "budget_seconds": 180,
+  "started_at": "2026-11-17T10:35:27.1403055+00:00",
+  "exit_code": 0,
+  "timed_out": false,
+  "interrupted": false,
+  "cleanup_incomplete": false,
+  "cleanup_seconds": 0,
+  "elapsed_seconds": 14.091,
+  "stdout": "  Determining projects to restore...\n  Restored /tmp/pdd-21e86f2dad7e450094e38f391871bbca/src/main/WebsocketClientLite/WebsocketClientLite.csproj (in 113 ms).\n  Restored /tmp/pdd-21e86f2dad7e450094e38f391871bbca/src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj (in 107 ms).\n  Restored /tmp/pdd-21e86f2dad7e450094e38f391871bbca/src/interface/IWebsocketClientLite/IWebsocketClientLite.csproj (in 107 ms).\n  IWebsocketClientLite -> /tmp/pdd-21e86f2dad7e450094e38f391871bbca/src/interface/IWebsocketClientLite/bin/Release/netstandard2.0/IWebsocketClientLite.dll\n  WebsocketClientLite -> /tmp/pdd-21e86f2dad7e450094e38f391871bbca/src/main/WebsocketClientLite/bin/Release/net11.0/WebsocketClientLite.dll\n  WebsocketClientLiteTest -> /tmp/pdd-21e86f2dad7e450094e38f391871bbca/src/main/WebsocketClientLiteTest/bin/Release/net11.0/WebsocketClientLiteTest.dll\nTest run for /tmp/pdd-21e86f2dad7e450094e38f391871bbca/src/main/WebsocketClientLiteTest/bin/Release/net11.0/WebsocketClientLiteTest.dll (.NETCoreApp,Version=v11.0)\nA total of 1 test files matched the specified pattern.\nResults File: <scratch>/p4/reconnect-defect/baseline/results.trx\n\nPassed!  - Failed:     0, Passed:    12, Skipped:     0, Total:    12, Duration: 12 s - WebsocketClientLiteTest.dll (net11.0)\nVSTEST_ARTIFACTS_DIRECTORY environment variable was not found, falling back to a user-private temporary directory. This is most likely caused by an outdated Microsoft.NET.Test.Sdk package reference in the test project.\n",
+  "stderr": ""
+}

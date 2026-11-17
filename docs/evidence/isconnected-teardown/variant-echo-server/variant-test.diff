@@ -1,0 +1,14 @@
+diff --git a/src/main/WebsocketClientLiteTest/ReconnectTests.cs b/src/main/WebsocketClientLiteTest/ReconnectTests.cs
+index 0235d08..79b8fe9 100644
+--- a/src/main/WebsocketClientLiteTest/ReconnectTests.cs
++++ b/src/main/WebsocketClientLiteTest/ReconnectTests.cs
+@@ -186,7 +186,8 @@ public async Task EndedConnectionReportsNotConnected(string end)
+     {
+         using var server = new LoopbackWebSocketServer();
+         var closeFromServer = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+-        server.Start(async (stream, ct) =>
++        // On unsubscribe the server mirrors the client's Close, so teardown is the Close handshake.
++        server.Start(end == "unsubscribe" ? LoopbackWebSocketServer.EchoLoopAsync : async (stream, ct) =>
+         {
+             await closeFromServer.Task.WaitAsync(ct);
+             await LoopbackWebSocketServer.WriteFrameAsync(stream, 8, new byte[] { 3, 232 }, true, ct);

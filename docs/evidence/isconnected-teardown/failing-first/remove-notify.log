@@ -1,0 +1,43 @@
+  Determining projects to restore...
+  Restored <scratch>/p4/remove-notify/src/interface/IWebsocketClientLite/IWebsocketClientLite.csproj (in 107 ms).
+  Restored <scratch>/p4/remove-notify/src/main/WebsocketClientLite/WebsocketClientLite.csproj (in 110 ms).
+  Restored <scratch>/p4/remove-notify/src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj (in 107 ms).
+  IWebsocketClientLite -> <scratch>/p4/remove-notify/src/interface/IWebsocketClientLite/bin/Release/netstandard2.0/IWebsocketClientLite.dll
+  WebsocketClientLite -> <scratch>/p4/remove-notify/src/main/WebsocketClientLite/bin/Release/net11.0/WebsocketClientLite.dll
+  WebsocketClientLiteTest -> <scratch>/p4/remove-notify/src/main/WebsocketClientLiteTest/bin/Release/net11.0/WebsocketClientLiteTest.dll
+Test run for <scratch>/p4/remove-notify/src/main/WebsocketClientLiteTest/bin/Release/net11.0/WebsocketClientLiteTest.dll (.NETCoreApp,Version=v11.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v4.0.1+0f7d528729 (64-bit .NET 11.0.0)
+[xUnit.net 00:00:00.08]   Discovering: WebsocketClientLiteTest
+[xUnit.net 00:00:00.13]   Discovered:  WebsocketClientLiteTest
+[xUnit.net 00:00:00.14]   Starting:    WebsocketClientLiteTest
+[xUnit.net 00:00:00.22]     WebsocketClientLiteTest.ReconnectTests.EndedConnectionReportsNotConnected(end: "server-close") [FAIL]
+[xUnit.net 00:00:00.22]       IsConnected did not become false when the connection ended (server-close): False, True
+[xUnit.net 00:00:00.22]       Stack Trace:
+[xUnit.net 00:00:00.22]         <scratch>/p4/remove-notify/src/main/WebsocketClientLiteTest/ReconnectTests.cs(213,0): at WebsocketClientLiteTest.ReconnectTests.EndedConnectionReportsNotConnected(String end)
+[xUnit.net 00:00:00.22]         --- End of stack trace from previous location ---
+  Failed WebsocketClientLiteTest.ReconnectTests.EndedConnectionReportsNotConnected(end: "server-close") [52 ms]
+  Error Message:
+   IsConnected did not become false when the connection ended (server-close): False, True
+  Stack Trace:
+     at WebsocketClientLiteTest.ReconnectTests.EndedConnectionReportsNotConnected(String end) in <scratch>/p4/remove-notify/src/main/WebsocketClientLiteTest/ReconnectTests.cs:line 213
+--- End of stack trace from previous location ---
+[xUnit.net 00:00:03.22]     WebsocketClientLiteTest.ReconnectTests.EndedConnectionReportsNotConnected(end: "unsubscribe") [FAIL]
+[xUnit.net 00:00:03.22]       IsConnected did not become false when the connection ended (unsubscribe): False, True
+[xUnit.net 00:00:03.22]       Stack Trace:
+[xUnit.net 00:00:03.22]         <scratch>/p4/remove-notify/src/main/WebsocketClientLiteTest/ReconnectTests.cs(213,0): at WebsocketClientLiteTest.ReconnectTests.EndedConnectionReportsNotConnected(String end)
+[xUnit.net 00:00:03.22]         --- End of stack trace from previous location ---
+[xUnit.net 00:00:03.22]   Finished:    WebsocketClientLiteTest
+  Failed WebsocketClientLiteTest.ReconnectTests.EndedConnectionReportsNotConnected(end: "unsubscribe") [3 s]
+  Error Message:
+   IsConnected did not become false when the connection ended (unsubscribe): False, True
+  Stack Trace:
+     at WebsocketClientLiteTest.ReconnectTests.EndedConnectionReportsNotConnected(String end) in <scratch>/p4/remove-notify/src/main/WebsocketClientLiteTest/ReconnectTests.cs:line 213
+--- End of stack trace from previous location ---
+Results File: <scratch>/p4/out/remove-notify.trx
+
+Test Run Failed.
+Total tests: 2
+     Failed: 2
+ Total time: 3.4007 Seconds
+VSTEST_ARTIFACTS_DIRECTORY environment variable was not found, falling back to a user-private temporary directory. This is most likely caused by an outdated Microsoft.NET.Test.Sdk package reference in the test project.
