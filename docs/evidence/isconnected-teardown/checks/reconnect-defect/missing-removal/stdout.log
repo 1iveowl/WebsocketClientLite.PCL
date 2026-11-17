@@ -1,0 +1,17 @@
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  IWebsocketClientLite -> /tmp/pdd-21e86f2dad7e450094e38f391871bbca/src/interface/IWebsocketClientLite/bin/Release/netstandard2.0/IWebsocketClientLite.dll
+  WebsocketClientLite -> /tmp/pdd-21e86f2dad7e450094e38f391871bbca/src/main/WebsocketClientLite/bin/Release/net11.0/WebsocketClientLite.dll
+  WebsocketClientLiteTest -> /tmp/pdd-21e86f2dad7e450094e38f391871bbca/src/main/WebsocketClientLiteTest/bin/Release/net11.0/WebsocketClientLiteTest.dll
+Test run for /tmp/pdd-21e86f2dad7e450094e38f391871bbca/src/main/WebsocketClientLiteTest/bin/Release/net11.0/WebsocketClientLiteTest.dll (.NETCoreApp,Version=v11.0)
+A total of 1 test files matched the specified pattern.
+  Failed WebsocketClientLiteTest.ReconnectTests.TerminalCallbackSuccessorSurvivesOldCleanup [3 s]
+  Error Message:
+   Old service retained registration
+  Stack Trace:
+     at WebsocketClientLiteTest.ReconnectTests.TerminalCallbackSuccessorSurvivesOldCleanup() in /tmp/pdd-21e86f2dad7e450094e38f391871bbca/src/main/WebsocketClientLiteTest/ReconnectTests.cs:line 88
+--- End of stack trace from previous location ---
+Results File: <scratch>/p4/reconnect-defect/missing-removal/results.trx
+
+Failed!  - Failed:     1, Passed:     1, Skipped:     0, Total:     2, Duration: 3 s - WebsocketClientLiteTest.dll (net11.0)
+VSTEST_ARTIFACTS_DIRECTORY environment variable was not found, falling back to a user-private temporary directory. This is most likely caused by an outdated Microsoft.NET.Test.Sdk package reference in the test project.

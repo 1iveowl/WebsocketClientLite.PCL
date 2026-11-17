@@ -1,0 +1,3 @@
+run=current commit=9fc5e6c828b9df459164ece7d03a97f55bce4cea change=none date=2026-11-17T10:31:05Z
+sha256 ccc2a82e729957a394d628c0f1367b0259076270346a5d99c84bc7d9e50d7f10 src/main/WebsocketClientLite/ClientWebSocketRx.cs
+sha256 7fd8e9651694a05b14598bcccdbfe6d2fbadc2b232eb45949dbc3f4da4f8592e src/main/WebsocketClientLiteTest/ReconnectTests.cs

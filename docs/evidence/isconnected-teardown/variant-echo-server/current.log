@@ -1,0 +1,23 @@
+  Determining projects to restore...
+  Restored <scratch>/p4b/current/src/interface/IWebsocketClientLite/IWebsocketClientLite.csproj (in 101 ms).
+  Restored <scratch>/p4b/current/src/main/WebsocketClientLite/WebsocketClientLite.csproj (in 104 ms).
+  Restored <scratch>/p4b/current/src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj (in 101 ms).
+  IWebsocketClientLite -> <scratch>/p4b/current/src/interface/IWebsocketClientLite/bin/Release/netstandard2.0/IWebsocketClientLite.dll
+  WebsocketClientLite -> <scratch>/p4b/current/src/main/WebsocketClientLite/bin/Release/net11.0/WebsocketClientLite.dll
+  WebsocketClientLiteTest -> <scratch>/p4b/current/src/main/WebsocketClientLiteTest/bin/Release/net11.0/WebsocketClientLiteTest.dll
+Test run for <scratch>/p4b/current/src/main/WebsocketClientLiteTest/bin/Release/net11.0/WebsocketClientLiteTest.dll (.NETCoreApp,Version=v11.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v4.0.1+0f7d528729 (64-bit .NET 11.0.0)
+[xUnit.net 00:00:00.06]   Discovering: WebsocketClientLiteTest
+[xUnit.net 00:00:00.12]   Discovered:  WebsocketClientLiteTest
+[xUnit.net 00:00:00.13]   Starting:    WebsocketClientLiteTest
+  Passed WebsocketClientLiteTest.ReconnectTests.EndedConnectionReportsNotConnected(end: "server-close") [53 ms]
+[xUnit.net 00:00:03.21]   Finished:    WebsocketClientLiteTest
+  Passed WebsocketClientLiteTest.ReconnectTests.EndedConnectionReportsNotConnected(end: "unsubscribe") [3 s]
+Results File: <scratch>/p4b/out/current.trx
+
+Test Run Successful.
+Total tests: 2
+     Passed: 2
+ Total time: 3.3845 Seconds
+VSTEST_ARTIFACTS_DIRECTORY environment variable was not found, falling back to a user-private temporary directory. This is most likely caused by an outdated Microsoft.NET.Test.Sdk package reference in the test project.

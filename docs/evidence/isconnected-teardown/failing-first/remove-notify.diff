@@ -1,0 +1,11 @@
+diff -ruN -x bin -x obj untouched/src/main/WebsocketClientLite/ClientWebSocketRx.cs remove-notify/src/main/WebsocketClientLite/ClientWebSocketRx.cs
+--- untouched/src/main/WebsocketClientLite/ClientWebSocketRx.cs	2026-11-17 10:30:16.000000000 +0000
++++ remove-notify/src/main/WebsocketClientLite/ClientWebSocketRx.cs	2026-11-17 10:30:37.006660121 +0000
+@@ -300,7 +300,6 @@
+             {
+                 lock (_lifecycleGate)
+                 {
+-                    if (ReferenceEquals(_generation, generation)) SetIsConnected(false);
+                 }
+             })
+             .Subscribe(state => obsTuple.OnNext((null, state)), obsTuple.OnError, obsTuple.OnCompleted);
