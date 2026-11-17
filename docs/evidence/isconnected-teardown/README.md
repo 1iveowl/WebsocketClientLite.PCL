@@ -1,7 +1,7 @@
 # IsConnected after a connection ends: evidence made on 2026-11-17
 
-Everything here was made on 2026-11-17 on one host: a Linux x86-64 Debian dev container, kernel
-7.2.12+deb13-amd64, .NET SDK 11.0.100, test host net11.0, Release. The test is
+Everything here was made on 2026-11-17 on one host: a Linux x86-64 Ubuntu 24.04.5 dev container on
+a Debian host kernel 7.2.12+deb13-amd64, .NET SDK 11.0.100, test host net11.0, Release. The test is
 `ReconnectTests.EndedConnectionReportsNotConnected`, with two rows: `server-close` (the server
 sends Close 1000) and `unsubscribe` (the subscriber disposes its subscription).
 
