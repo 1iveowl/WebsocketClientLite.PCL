@@ -66,7 +66,7 @@ variant commit `a52cfff` was not kept on the branch. Its runs are kept here.
 | Check | Result |
 | --- | --- |
 | `./test-all-tfms.sh Release` at `9fc5e6c`, [checks/test-all-tfms.log](checks/test-all-tfms.log) | run and passed: 330 of 330 on each of netstandard2.0, netstandard2.1, net8.0, net9.0, net10.0 and net11.0, 160 s |
-| `./scripts/pdd.sh reconnect-defect` at `9fc5e6c`, [checks/reconnect-defect/](checks/reconnect-defect/results.json) | **run and failed**: `Incomplete reconnect baseline cases`. All 12 baseline cases passed, and `missing-removal` was detected. `tools/Pdd/ReconnectDefects.cs`, line 76, requires exactly 10 baseline results; the new theory adds 2. The worktree held this folder's untracked files (`dirty_worktree: true`); the sources were those of `9fc5e6c` |
+| `./scripts/pdd.sh reconnect-defect` at `9fc5e6c`, [checks/reconnect-defect/](checks/reconnect-defect/results.json) | **run and failed**: `Incomplete reconnect baseline cases`. All 12 baseline cases passed, and `missing-removal` was detected. `tools/Pdd/ReconnectDefects.cs`, line 77, requires exactly 10 baseline results; the new theory adds 2. The worktree held this folder's untracked files (`dirty_worktree: true`); the sources were those of `9fc5e6c` |
 | `./scripts/pdd.sh validate` | run and passed: 16 requirements |
 | Pdd tests, `dotnet test tools/Pdd.Tests/Pdd.Tests.csproj -c Release` | run and passed: 318 of 318 |
 | `capture` jobs and `aggregate` | not run. `capture --job controlled` runs `reconnect-defect`, so it would fail on the same count |
