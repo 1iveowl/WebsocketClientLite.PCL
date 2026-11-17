@@ -13,7 +13,8 @@ public sealed partial class Evidence
         ["TerminalCallbackSuccessorSurvivesOldCleanup"] = 1,
         ["SetupAdmissionIsOwnedUntilTeardown"] = 3,
         ["SequentialRepeatOrRetryUsesFreshServices"] = 2,
-        ["FailedConnectTerminatesAndRemovesRegistration"] = 1
+        ["FailedConnectTerminatesAndRemovesRegistration"] = 1,
+        ["EndedConnectionReportsNotConnected"] = 2
     };
     public static readonly (string Id, string Source, string Before, string After, string Test, string Assertion)[] ReconnectCases =
     [
@@ -74,7 +75,7 @@ public sealed partial class Evidence
         Require(S(report, "status") == "passed" && S(report, "library_target") == PrimaryTfm && Passed(report["baseline"]), "Incomplete reconnect baseline/report");
         XNamespace ns = "http://microsoft.com/schemas/VisualStudio/TeamTest/2010";
         var baseline = XDocument.Load(Path.Combine(directory, "baseline/results.trx")).Descendants(ns + "UnitTestResult").ToArray();
-        Require(baseline.Length == 10 && baseline.All(r => (string?)r.Attribute("outcome") == "Passed"), "Incomplete reconnect baseline cases");
+        Require(baseline.Length == ReconnectCaseCounts.Values.Sum() + 1 && baseline.All(r => (string?)r.Attribute("outcome") == "Passed"), "Incomplete reconnect baseline cases");
         foreach (var (test, count) in ReconnectCaseCounts)
             Require(baseline.Count(r => ((string?)r.Attribute("testName"))?.Contains("ReconnectTests." + test, StringComparison.Ordinal) == true) == count, "Missing named reconnect baseline case");
         ValidateReconnectExecution(Path.Combine(directory, "baseline"), 0);
