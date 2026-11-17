@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Concurrent;
+using System.Linq;
 using System.Reflection;
 using System.Threading;
 using WebsocketClientLite.Service;
@@ -173,6 +174,50 @@ public class ReconnectTests
         Assert.True(!Active(client).ContainsKey(oldService), "Old service retained registration");
         await client.Sender!.SendText("successor");
         Assert.Equal("successor", await echo.Task.WaitAsync(Limit));
+    }
+
+    // Row 20 of verification/reconnect-decision.md: Terminate(g) for the current generation
+    // reports not-connected (I6). The test's own Finally is the signal: Rx's Finally disposes its
+    // source, and so runs the client's teardown Finally, before it runs its own action.
+    [Theory]
+    [InlineData("server-close")]
+    [InlineData("unsubscribe")]
+    public async Task EndedConnectionReportsNotConnected(string end)
+    {
+        using var server = new LoopbackWebSocketServer();
+        var closeFromServer = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        server.Start(async (stream, ct) =>
+        {
+            await closeFromServer.Task.WaitAsync(ct);
+            await LoopbackWebSocketServer.WriteFrameAsync(stream, 8, new byte[] { 3, 232 }, true, ct);
+            await LoopbackWebSocketServer.ReadFrameAsync(stream, ct);
+        });
+        using var client = new ClientWebSocketRx();
+        var values = new ConcurrentQueue<bool>();
+        var connected = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        using var status = client.IsConnectedObservable.Subscribe(value =>
+        {
+            values.Enqueue(value);
+            if (value) connected.TrySetResult();
+        });
+        var ended = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        var subscription = client.WebsocketConnectWithStatusObservable(server.Uri)
+            .Finally(() => ended.TrySetResult())
+            .Subscribe(_ => { }, _ => { });
+        try
+        {
+            await connected.Task.WaitAsync(Limit);
+            if (end == "unsubscribe") subscription.Dispose();
+            else closeFromServer.TrySetResult();
+            await ended.Task.WaitAsync(Limit);
+            Assert.True(values.SequenceEqual(new[] { false, true, false }),
+                $"IsConnected did not become false when the connection ended ({end}): {string.Join(", ", values)}");
+        }
+        finally
+        {
+            subscription.Dispose();
+            closeFromServer.TrySetResult();
+        }
     }
 
     [Fact]
