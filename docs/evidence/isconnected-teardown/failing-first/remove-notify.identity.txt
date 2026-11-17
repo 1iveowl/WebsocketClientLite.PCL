@@ -1,0 +1,3 @@
+run=remove-notify commit=9fc5e6c828b9df459164ece7d03a97f55bce4cea change=ClientWebSocketRx.cs line 303 removed date=2026-11-17T10:30:48Z
+sha256 f9a20251527ba141e49650424712f34206b3cf5f26a63fa3a5815c2a4c856a5a src/main/WebsocketClientLite/ClientWebSocketRx.cs
+sha256 7fd8e9651694a05b14598bcccdbfe6d2fbadc2b232eb45949dbc3f4da4f8592e src/main/WebsocketClientLiteTest/ReconnectTests.cs

@@ -1,0 +1,26 @@
+{
+  "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.TerminalCallbackSuccessorSurvivesOldCleanup|FullyQualifiedName=WebsocketClientLiteTest.RuntimeEvidenceTests.RecordHostRuntime",
+    "--logger",
+    "trx;LogFileName=results.trx",
+    "--results-directory",
+    "<scratch>/p4/reconnect-defect/missing-removal"
+  ],
+  "budget_seconds": 180,
+  "started_at": "2026-11-17T10:35:41.2379354+00:00",
+  "exit_code": 1,
+  "timed_out": false,
+  "interrupted": false,
+  "cleanup_incomplete": false,
+  "cleanup_seconds": 0,
+  "elapsed_seconds": 5.273,
+  "stdout": "  Determining projects to restore...\n  All projects are up-to-date for restore.\n  IWebsocketClientLite -> /tmp/pdd-21e86f2dad7e450094e38f391871bbca/src/interface/IWebsocketClientLite/bin/Release/netstandard2.0/IWebsocketClientLite.dll\n  WebsocketClientLite -> /tmp/pdd-21e86f2dad7e450094e38f391871bbca/src/main/WebsocketClientLite/bin/Release/net11.0/WebsocketClientLite.dll\n  WebsocketClientLiteTest -> /tmp/pdd-21e86f2dad7e450094e38f391871bbca/src/main/WebsocketClientLiteTest/bin/Release/net11.0/WebsocketClientLiteTest.dll\nTest run for /tmp/pdd-21e86f2dad7e450094e38f391871bbca/src/main/WebsocketClientLiteTest/bin/Release/net11.0/WebsocketClientLiteTest.dll (.NETCoreApp,Version=v11.0)\nA total of 1 test files matched the specified pattern.\n  Failed WebsocketClientLiteTest.ReconnectTests.TerminalCallbackSuccessorSurvivesOldCleanup [3 s]\n  Error Message:\n   Old service retained registration\n  Stack Trace:\n     at WebsocketClientLiteTest.ReconnectTests.TerminalCallbackSuccessorSurvivesOldCleanup() in /tmp/pdd-21e86f2dad7e450094e38f391871bbca/src/main/WebsocketClientLiteTest/ReconnectTests.cs:line 88\n--- End of stack trace from previous location ---\nResults File: <scratch>/p4/reconnect-defect/missing-removal/results.trx\n\nFailed!  - Failed:     1, Passed:     1, Skipped:     0, Total:     2, Duration: 3 s - WebsocketClientLiteTest.dll (net11.0)\nVSTEST_ARTIFACTS_DIRECTORY environment variable was not found, falling back to a user-private temporary directory. This is most likely caused by an outdated Microsoft.NET.Test.Sdk package reference in the test project.\n",
+  "stderr": "[xUnit.net 00:00:03.21]     WebsocketClientLiteTest.ReconnectTests.TerminalCallbackSuccessorSurvivesOldCleanup [FAIL]\n"
+}
