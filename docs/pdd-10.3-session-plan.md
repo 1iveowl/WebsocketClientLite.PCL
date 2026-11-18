@@ -635,7 +635,8 @@ step.
 
 Verified on 2026-11-11:
 
-- The DafnyRuntime paragraph is in `verification/README.md` at line 211.
+- The DafnyRuntime paragraph is in `verification/README.md` at line 211 (line 218 once the
+  rules moved to `verification/RULES.md`).
 - The benchmark command is in `verification/README.md`, section "Checks":
   `DOTNET_TieredCompilation=0 dotnet run --project verification/benchmark/MaskingBenchmark.csproj -c Release`.
 - Its method is in "Performance methodology".
@@ -1260,7 +1261,8 @@ that check removed, as the P3-A assertion challenges do.
 The claims are in:
 
 - `docs/protocol-verification.md`, line 120;
-- `verification/README.md`, line 183;
+- `verification/README.md`, line 176 at `29697a4` (line 183 once the rules moved to
+  `verification/RULES.md`);
 - `docs/dafny-pdd-plan.md`, line 57.
 
 | # | Claim | Existing test | Gap | Step and proposed test |
