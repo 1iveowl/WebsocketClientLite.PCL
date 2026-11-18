@@ -1260,7 +1260,7 @@ that check removed, as the P3-A assertion challenges do.
 The claims are in:
 
 - `docs/protocol-verification.md`, line 120;
-- `verification/README.md`, line 176;
+- `verification/README.md`, line 183;
 - `docs/dafny-pdd-plan.md`, line 57.
 
 | # | Claim | Existing test | Gap | Step and proposed test |

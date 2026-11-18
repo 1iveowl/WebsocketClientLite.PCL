@@ -3,7 +3,7 @@ using static Pdd.Data;
 
 namespace Pdd;
 
-// Rule 1 of "Rules for verification work" (verification/README.md) as a check: the Dafny core
+// Rule 1 of "Rules for verification work" (verification/RULES.md) as a check: the Dafny core
 // and the requirement map name where each rule comes from, an RFC 6455 section or the
 // library's own policy. The check sees that a citation is there, not that it is the right one.
 public static class Citations
