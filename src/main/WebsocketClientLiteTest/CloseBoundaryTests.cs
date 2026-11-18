@@ -109,7 +109,9 @@ public class CloseBoundaryTests(ITestOutputHelper output)
         h.Source.OnCompleted();
         // A missing finally await either completes the observer or reaches the write.
         await h.Wait(Task.WhenAny(h.WriteEntered.Task, h.Completed.Task));
-        Assert.True(h.Close.IsValueCreated, "Parser completion did not start fallback Close");
+        // The entered Close write shows the fallback started. Lazy.IsValueCreated does not: the
+        // factory's Task.Run can reach the write before Lazy publishes the value.
+        Assert.True(h.WriteEntered.Task.IsCompleted && h.Frames.Contains(8), "Parser completion did not start fallback Close");
         Assert.False(h.Completed.Task.IsCompleted, "Observer completion overtook Close write");
         h.Sender.NotifyPeerClose(); h.ResumeWrite.TrySetResult();
         await h.Wait(h.Close.Value);

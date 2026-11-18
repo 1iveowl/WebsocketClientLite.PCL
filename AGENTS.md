@@ -75,7 +75,7 @@ The full process is in [CONTRIBUTING.md](CONTRIBUTING.md). What an agent must fo
 - Keep changes compatible with every target framework; conditional code uses `#if`.
 - The README documents the public API and has one row per release in its "Release history" table. The release notes are in `CHANGELOG.md`, one `## New in Version <x.y.z>` section per release.
 - Layout, the dev container, remote hosts and Herdr: [docs/development.md](docs/development.md).
-- Verification work follows the [rules in verification/README.md](verification/README.md#rules-for-verification-work):
+- Verification work follows the [rules in verification/RULES.md](verification/RULES.md):
   the RFC wins, expected bytes never come from production code, and a new test is seen to fail on
   the old code before its fix is trusted.
   For tests: a new test of existing behaviour fails on an isolated copy without the check it names,

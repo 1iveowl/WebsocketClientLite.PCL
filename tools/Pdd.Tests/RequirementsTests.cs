@@ -153,7 +153,7 @@ public class RequirementsTests
         if (comment is not null) lines.Insert(start, comment);
         File.WriteAllText(path, string.Join('\n', lines));
     }
-    // Rule 1 of "Rules for verification work" (verification/README.md): every declaration in
+    // Rule 1 of "Rules for verification work" (verification/RULES.md): every declaration in
     // the Dafny core names an RFC 6455 section or "Library policy:" in the comment block
     // directly above it. Each row removes or replaces one such block in a copy of the sources.
     public static IEnumerable<object?[]> UncitedDeclarations()

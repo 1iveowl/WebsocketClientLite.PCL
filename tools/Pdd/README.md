@@ -10,7 +10,7 @@ dotnet test tools/Pdd.Tests/Pdd.Tests.csproj -c Release
 ```
 
 `validate` also checks RFC citations, rule 1 of the [rules for verification
-work](../../verification/README.md#rules-for-verification-work):
+work](../../verification/RULES.md):
 
 - Every method, function, predicate, lemma, constructor and iterator in each
   `verification/*.dfy` file, the `{:extern}` declaration included, needs a

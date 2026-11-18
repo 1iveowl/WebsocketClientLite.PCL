@@ -14,9 +14,10 @@ The documents make these claims about incoming frame headers:
   allocation; masked server frames, unsupported reserved bits and opcodes, non-minimal
   lengths, invalid control frames and oversized lengths are rejected, and protocol
   constraints and resource limits are checked before the payload is read.
-- `verification/README.md`, line 176: the implementation rejects malformed headers,
-  non-minimal lengths and unsupported opcodes and RSV bits, and size checks run before
-  that frame's payload is allocated or read.
+- `verification/README.md`, line 176 at `29697a4` (line 183 once the rules moved to
+  `verification/RULES.md`): the implementation rejects malformed headers, non-minimal
+  lengths and unsupported opcodes and RSV bits, and size checks run before that frame's
+  payload is allocated or read.
 - `docs/dafny-pdd-plan.md`, line 57: test every header truncation, the boundaries 0,
   125, 126, 65535 and 65536, the configured limit and its successor, non-minimal
   encodings, reserved opcodes, RSV bits, masked server frames, fragmented controls and

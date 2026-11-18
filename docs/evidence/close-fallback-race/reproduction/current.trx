@@ -1,0 +1,38 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="f5ed1ddb-5770-4ed6-89b7-5caa16d3a7bb" name="@a920b7ae3df2 2026-11-17 16:38:01" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-11-17T16:38:01.2792641+00:00" queuing="2026-11-17T16:38:01.2792642+00:00" start="2026-11-17T16:38:00.8965674+00:00" finish="2026-11-17T16:38:01.2811656+00:00" />
+  <TestSettings name="default" id="0e5ac02c-ce83-4a5e-a0b6-06259f3fad03">
+    <Deployment runDeploymentRoot="_a920b7ae3df2_2026-11-17_16_38_01" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="cecc4c50-26e2-466e-8be6-bb12994108db" testId="08fe393a-355e-8c41-b4ab-28dd6cde385c" testName="WebsocketClientLiteTest.CloseBoundaryTests.ParserCompletionAwaitsFallbackCloseBeforeObserverCompletion" computerName="a920b7ae3df2" duration="00:00:00.0458236" startTime="2026-11-17T16:38:01.1900156+00:00" endTime="2026-11-17T16:38:01.2411153+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="cecc4c50-26e2-466e-8be6-bb12994108db">
+      <Output>
+        <StdOut>SendingHandshakeToWebsocketServer -&gt; HandshakeCompletedSuccessfully -&gt; WebsocketConnected -&gt; SingleFrameSending -&gt; Close -&gt; write-entered -&gt; write-completed -&gt; peer-wait -&gt; Disconnected -&gt; observer-completed</StdOut>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="WebsocketClientLiteTest.CloseBoundaryTests.ParserCompletionAwaitsFallbackCloseBeforeObserverCompletion" storage="<scratch>/untouched/src/main/websocketclientlitetest/bin/release/net11.0/websocketclientlitetest.dll" id="08fe393a-355e-8c41-b4ab-28dd6cde385c">
+      <Execution id="cecc4c50-26e2-466e-8be6-bb12994108db" />
+      <TestMethod codeBase="<scratch>/untouched/src/main/WebsocketClientLiteTest/bin/Release/net11.0/WebsocketClientLiteTest.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="WebsocketClientLiteTest.CloseBoundaryTests" name="ParserCompletionAwaitsFallbackCloseBeforeObserverCompletion" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="08fe393a-355e-8c41-b4ab-28dd6cde385c" executionId="cecc4c50-26e2-466e-8be6-bb12994108db" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Completed">
+    <Counters total="1" executed="1" passed="1" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v4.0.1+0f7d528729 (64-bit .NET 11.0.0)
+[xUnit.net 00:00:00.06]   Discovering: WebsocketClientLiteTest
+[xUnit.net 00:00:00.12]   Discovered:  WebsocketClientLiteTest
+[xUnit.net 00:00:00.13]   Starting:    WebsocketClientLiteTest
+[xUnit.net 00:00:00.20]   Finished:    WebsocketClientLiteTest
+</StdOut>
+    </Output>
+  </ResultSummary>
+</TestRun>

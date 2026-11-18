@@ -1,0 +1,3 @@
+run=fixed-completion-fallback commit=fc91f55 change=completion-fallback mutant: the finally's await closeOnceAsync() removed target=netstandard2.0 date=2026-11-17T16:37:44Z
+sha256 548dac77a96f6ed7409b15f2d2b3dfe2e6f03f86fb8894930c28b86797491012 src/main/WebsocketClientLite/Service/WebsocketConnectionHandler.cs
+sha256 8a34a4e981c0e07ed13e4aca4fad71b2daa4492bdf330cbd953225f167d3c5af src/main/WebsocketClientLiteTest/CloseBoundaryTests.cs

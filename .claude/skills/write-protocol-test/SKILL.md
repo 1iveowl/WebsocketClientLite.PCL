@@ -5,10 +5,9 @@ description: Use when writing or changing one test of the WebsocketClientLite pr
 
 # Write one protocol test
 
-The rules are in [verification/README.md](../../../verification/README.md#rules-for-verification-work),
-"Rules for verification work", rules 1 to 9. Read them first. This file holds only the order in
-which they apply; where it and the rules differ, the rules win. One pass of this procedure is one
-test, and a theory with its rows is one test.
+The rules are in [verification/RULES.md](../../../verification/RULES.md), rules 1 to 9. Read them
+first. This file holds only the order in which they apply; where it and the rules differ, the rules
+win. One pass of this procedure is one test, and a theory with its rows is one test.
 
 ## When to use it
 
