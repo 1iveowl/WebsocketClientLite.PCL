@@ -174,6 +174,36 @@ The direct lifecycle tests distinguish cancellation, explicit terminal routing
 and fallback closure; the virtual scheduler tests cover timer cleanup and a paused
 periodic Ping. DisposeAsync is tested under a non-pumping caller context. Other
 ConfigureAwait sites still have explicit accepted-gap dispositions. All raw
-outcomes, including timeout and compile-error, remain distinct. Human review of
-these dispositions is pending; this file records source-based rationale, not
-revision-specific acceptance.
+outcomes, including timeout and compile-error, remain distinct.
+
+## Owner review of the dispositions, November 22, 2026
+
+The owner reviewed all 54 dispositions and accepted them: 27 out of scope, 20
+accepted gaps and 7 equivalent. The review was made on `releases/10.6.0` at
+`4695b74`, where `WebsocketConnectionHandler.cs` has the source hash
+`fab51b416150ff9b5658ce37c94c70cefbce6c40dc779f3dc36445d3a30dda9e` that the
+dispositions name. Each entry was read against that source and against seven local
+Stryker reports with the same source hash, made between November 7 and November 14,
+2026. Stryker was not run again for the review.
+
+The acceptance covers this source hash only. A change to the file makes the
+dispositions stale, and new or changed entries need their own review. As elsewhere
+in this directory, the pull request that adds this section is the record of
+acceptance; the JSON carries no approval field.
+
+The review changed no classification. It corrected two reasons:
+
+- Line 95, removal of `throw handshakeException;`. The reason said that existing
+  tests do not distinguish the statement.
+  `HandshakeRejectionTests.RejectedHandshakeThrowsAndNeverInstallsSender`, added in
+  10.3, detects it. It stays out of scope for CLOSE-004 and CLOSE-005 and is not in
+  `required_killed`.
+- Line 373, removal of `_tcpConnectionService?.Dispose()` in synchronous `Dispose`.
+  The reason called the call redundant. It is the only transport release on that
+  path, and no test asserts it. It stays out of scope as the abort path, and it is a
+  test gap.
+
+The review also noted, without changing them, that some reasons describe an earlier
+outcome. The three mutants at line 71, the `SendPong` removal at line 198, the status
+callback at line 214 and the four mutants at line 274 are Killed in all seven
+reports. The gate does not read a disposition for a Killed mutant.
