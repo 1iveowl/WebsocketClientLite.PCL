@@ -71,7 +71,7 @@
       "pilot_outcome": "Survived",
       "classification": "out-of-scope",
       "requirements": [],
-      "reason": "Connection setup or handshake diagnostics, outside CLOSE-004/CLOSE-005. Existing handshake success/error tests do not distinguish this statement or scheduler context."
+      "reason": "Handshake rejection, outside CLOSE-004/CLOSE-005. Removing this throw lets a rejected handshake continue into connection setup. HandshakeRejectionTests.RejectedHandshakeThrowsAndNeverInstallsSender, added in 10.3, detects it; the Survived outcomes were recorded before that test existed. It is not in required_killed, so this disposition still applies if a run reports it as Survived."
     },
     {
       "key": "05e1533b2a73b6a49a192020a28786e43624e6bd8ca910ae944ab939d747e52c",
@@ -547,7 +547,7 @@
       "pilot_outcome": "Survived",
       "classification": "out-of-scope",
       "requirements": [],
-      "reason": "Synchronous Dispose is explicitly an abort exception to CLOSE-004/CLOSE-005. Reentrant wait/fault-observation and redundant synchronous transport cleanup need separate tests; async transport disposal is independently required to be killed."
+      "reason": "Synchronous Dispose is explicitly an abort exception to CLOSE-004/CLOSE-005. This call is the only transport release on the synchronous path and it is not redundant: no test asserts that synchronous Dispose releases the transport. That is a test gap outside these two obligations; async transport disposal is independently required to be killed."
     },
     {
       "key": "84ab49e022039eeed37fbf2b7793d1f691db19fbf251cb9f5334bd0cc56c866f",
