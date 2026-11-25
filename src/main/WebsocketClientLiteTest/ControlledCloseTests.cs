@@ -176,24 +176,34 @@ public class ControlledCloseTests(ITestOutputHelper output)
     [InlineData("close-finished")]
     public async Task SynchronousDisposeReleasesTransport(string state)
     {
-        await using var h = new Harness(output); h.Initialize();
-        var field = typeof(WebsocketConnectionHandler).GetField("_closeHandshakeOnce", BindingFlags.Instance | BindingFlags.NonPublic)!;
-        if (state == "no-close") field.SetValue(h.Connection, null);
-        else
+        var h = new Harness(output); h.Initialize();
+        try
         {
-            var close = ((Lazy<Task>)field.GetValue(h.Connection)!).Value;
-            h.Resume.TrySetResult(); h.Expire.TrySetResult();
-            await h.Wait(close);
-            Assert.True(h.Stream.CanWrite, "The finished close released the transport before Dispose");
+            var field = typeof(WebsocketConnectionHandler).GetField("_closeHandshakeOnce", BindingFlags.Instance | BindingFlags.NonPublic)!;
+            if (state == "no-close") field.SetValue(h.Connection, null);
+            else
+            {
+                var close = ((Lazy<Task>)field.GetValue(h.Connection)!).Value;
+                h.Resume.TrySetResult(); h.Expire.TrySetResult();
+                await h.Wait(close);
+                Assert.True(h.Stream.CanWrite, "The finished close released the transport before Dispose");
+            }
+            Exception? thrown = null;
+            await h.Wait(Task.Run(() =>
+            {
+                try { h.Connection.Dispose(); }
+                catch (Exception e) { thrown = e; }
+            }));
+            Assert.True(thrown is null, $"Synchronous Dispose threw: {thrown}");
+            Assert.False(h.Stream.CanWrite, "Synchronous Dispose did not release the transport");
         }
-        Exception? thrown = null;
-        await h.Wait(Task.Run(() =>
+        finally
         {
-            try { h.Connection.Dispose(); }
-            catch (Exception e) { thrown = e; }
-        }));
-        Assert.True(thrown is null, $"Synchronous Dispose threw: {thrown}");
-        Assert.False(h.Stream.CanWrite, "Synchronous Dispose did not release the transport");
+            // The harness cleanup disposes the connection again. If that throws too, the first
+            // failure above stays the reported one; the cleanup failure goes to the output.
+            try { await h.DisposeAsync(); }
+            catch (Exception e) { output.WriteLine("cleanup: " + e); }
+        }
     }
 
     [Fact]
