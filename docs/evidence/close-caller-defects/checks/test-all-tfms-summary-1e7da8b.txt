@@ -1,0 +1,6 @@
+Passed!  - Failed:     0, Passed:   332, Skipped:     0, Total:   332, Duration: 24 s - WebsocketClientLiteTest.dll (net11.0)
+Passed!  - Failed:     0, Passed:   332, Skipped:     0, Total:   332, Duration: 24 s - WebsocketClientLiteTest.dll (net11.0)
+Passed!  - Failed:     0, Passed:   332, Skipped:     0, Total:   332, Duration: 24 s - WebsocketClientLiteTest.dll (net11.0)
+Passed!  - Failed:     0, Passed:   332, Skipped:     0, Total:   332, Duration: 24 s - WebsocketClientLiteTest.dll (net11.0)
+Passed!  - Failed:     0, Passed:   332, Skipped:     0, Total:   332, Duration: 24 s - WebsocketClientLiteTest.dll (net11.0)
+Passed!  - Failed:     0, Passed:   332, Skipped:     0, Total:   332, Duration: 24 s - WebsocketClientLiteTest.dll (net11.0)

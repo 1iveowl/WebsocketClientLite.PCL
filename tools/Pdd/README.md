@@ -190,6 +190,14 @@ The aggregate rejects missing repetitions, wrong edits, mismatched source hashes
 compile/process failures and unrelated assertions. The original ordering gate
 remains independently required. See `verification/close-evidence-g.md`.
 
+`close-caller-defects --output <fresh-directory>` (2026-11-25) seeds the caller-side Close
+defects of [docs/evidence/close-caller-defects](../../docs/evidence/close-caller-defects/README.md)
+in `WebsocketSenderHandler.cs`, one at a time in an isolated copy: the verified close step is
+right and the shell around it is wrong. Each must fail its named test on its named assertion,
+in the stated number of rows, after a passing baseline; a timeout is not a detection. It is a
+standalone command: it is not part of `capture --job controlled` or `aggregate`, which is the
+owner's decision.
+
 P3-A adds `queued-defect --output <fresh-directory>` to controlled capture and
 `queued-probe --output <fresh-directory>` for the manual 50-repeat smoke probe.
 The isolated capacity-two frame gate must trigger the named overlap assertion;
@@ -209,8 +217,11 @@ runtime. The existing REASSEMBLY-001-TEST adapter obligation includes the new
 six-target tests without expanding its proof. See [parser retention](../../verification/parser-retention.md).
 
 P3-D adds `reconnect-defect --output <fresh-directory>` to controlled capture.
-The missing-removal edit must fail the old service identity assertion after all
-nine reconnect cases pass. EPOCH-001-TEST requires six-target tests and this
+The missing-removal edit must fail the old service identity assertion after every
+reconnect case (`ReconnectCaseCounts`) passes. Since 2026-11-25 three decision-line
+edits of [reconnect-decision.md](../../verification/reconnect-decision.md) follow it:
+`subscribe-keeps-generation`, `register-ignores-disposal` and `connect-ignores-disposal`,
+each of which must fail every row of its named test on its named assertion. EPOCH-001-TEST requires six-target tests and this
 source-bound experiment. Concurrent active subscription policy remains deferred.
 
 P3-G bounds post-kill process/output draining at two seconds. If an escaped orphan

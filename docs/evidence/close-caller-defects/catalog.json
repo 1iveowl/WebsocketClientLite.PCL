@@ -1,0 +1,232 @@
+{
+ "made": "2026-11-25",
+ "note": "Caller-side Close defects in WebsocketSenderHandler.cs: the close step (Protocol.CloseStep) is unchanged and right; the shell around it is wrong. Seeded one at a time in a git archive copy. The 'breaks' fields of read-failure-as-received, write-failure-not-notified and data-after-close-allowed were corrected after the recorded runs, following the fresh review of #190 (M2, L7); no edit changed.",
+ "sides": {
+  "base": {
+   "commit": "b7a6bccef977d91fb4b142dcdee8729872f7e2f6"
+  }
+ },
+ "defects": [
+  {
+   "id": "send-ignored",
+   "kind": "ignores send",
+   "breaks": "CLOSE-001",
+   "description": "WriteFrameSerializedAsync writes the Close frame whatever the step answered.",
+   "file": "src/main/WebsocketClientLite/Service/WebsocketSenderHandler.cs",
+   "edits": [
+    {
+     "before": "if (!AdvanceClose(CloseEvent.Send)) return;",
+     "after": "AdvanceClose(CloseEvent.Send);"
+    }
+   ]
+  },
+  {
+   "id": "send-inverted",
+   "kind": "ignores send",
+   "breaks": "CLOSE-001, CLOSE-004",
+   "description": "WriteFrameSerializedAsync writes Close when the step said no and drops it when the step said yes.",
+   "file": "src/main/WebsocketClientLite/Service/WebsocketSenderHandler.cs",
+   "edits": [
+    {
+     "before": "if (!AdvanceClose(CloseEvent.Send)) return;",
+     "after": "if (AdvanceClose(CloseEvent.Send)) return;"
+    }
+   ]
+  },
+  {
+   "id": "release-early",
+   "kind": "ignores release",
+   "breaks": "CLOSE-003, CLOSE-004",
+   "description": "AdvanceClose wakes the peer-close waiter on every event, so the transport can be released before the peer replies.",
+   "file": "src/main/WebsocketClientLite/Service/WebsocketSenderHandler.cs",
+   "edits": [
+    {
+     "before": "if (release) _closeReady.TrySetResult(true);",
+     "after": "_closeReady.TrySetResult(true);"
+    }
+   ]
+  },
+  {
+   "id": "release-never",
+   "kind": "ignores release",
+   "breaks": "CLOSE-003, CLOSE-005",
+   "description": "AdvanceClose never wakes the peer-close waiter; only the peer-wait timer ends the wait.",
+   "file": "src/main/WebsocketClientLite/Service/WebsocketSenderHandler.cs",
+   "edits": [
+    {
+     "before": "if (release) _closeReady.TrySetResult(true);",
+     "after": "if (false) _closeReady.TrySetResult(true);"
+    }
+   ]
+  },
+  {
+   "id": "state-not-stored",
+   "kind": "state not stored",
+   "breaks": "CLOSE-001, CLOSE-002",
+   "description": "AdvanceClose discards the new state; every event is decided from the open state.",
+   "file": "src/main/WebsocketClientLite/Service/WebsocketSenderHandler.cs",
+   "edits": [
+    {
+     "before": "CloseState.Step(_closeState, action, out _closeState, out bool send, out bool release);",
+     "after": "CloseState.Step(_closeState, action, out CloseState discarded, out bool send, out bool release);"
+    }
+   ]
+  },
+  {
+   "id": "state-stored-outside-lock",
+   "kind": "state stored outside the lock",
+   "breaks": "CLOSE-LOCK (boundary assumption)",
+   "description": "AdvanceClose releases _stateLock around the store of the new state, so another event can read the old state in between.",
+   "file": "src/main/WebsocketClientLite/Service/WebsocketSenderHandler.cs",
+   "edits": [
+    {
+     "before": "CloseState.Step(_closeState, action, out _closeState, out bool send, out bool release);",
+     "after": "CloseState.Step(_closeState, action, out CloseState next, out bool send, out bool release);\n        Monitor.Exit(_stateLock);\n        _closeState = next;\n        Monitor.Enter(_stateLock);"
+    }
+   ]
+  },
+  {
+   "id": "peer-close-outside-lock",
+   "kind": "call outside the lock",
+   "breaks": "CLOSE-LOCK (boundary assumption)",
+   "description": "NotifyPeerClose calls AdvanceClose without holding _stateLock.",
+   "file": "src/main/WebsocketClientLite/Service/WebsocketSenderHandler.cs",
+   "edits": [
+    {
+     "before": "lock (_stateLock) AdvanceClose(CloseEvent.Received);",
+     "after": "AdvanceClose(CloseEvent.Received);"
+    }
+   ]
+  },
+  {
+   "id": "send-decided-outside-lock",
+   "kind": "call outside the lock",
+   "breaks": "CLOSE-LOCK (boundary assumption)",
+   "description": "WriteFrameSerializedAsync decides the Close send before it takes _stateLock.",
+   "file": "src/main/WebsocketClientLite/Service/WebsocketSenderHandler.cs",
+   "edits": [
+    {
+     "before": "            byte op = (byte)(buffer[0] & 15);\n            lock (_stateLock)\n            {\n                if (op == 8)\n                {\n                    if (!AdvanceClose(CloseEvent.Send)) return;\n                }",
+     "after": "            byte op = (byte)(buffer[0] & 15);\n            bool closeSend = op == 8 && AdvanceClose(CloseEvent.Send);\n            lock (_stateLock)\n            {\n                if (op == 8)\n                {\n                    if (!closeSend) return;\n                }"
+    }
+   ]
+  },
+  {
+   "id": "read-failure-as-received",
+   "kind": "wrong event",
+   "breaks": "CLOSE-003, CLOSE-FAILURE",
+   "description": "NotifyReadFailure reports a received Close instead of a timeout or failure.",
+   "file": "src/main/WebsocketClientLite/Service/WebsocketSenderHandler.cs",
+   "edits": [
+    {
+     "before": "            _sendState = TransmitState.SendFailed(_sendState);\n            AdvanceClose(CloseEvent.TimeoutOrFailure);",
+     "after": "            _sendState = TransmitState.SendFailed(_sendState);\n            AdvanceClose(CloseEvent.Received);"
+    }
+   ]
+  },
+  {
+   "id": "peer-close-as-failure",
+   "kind": "wrong event",
+   "breaks": "CLOSE-001 (RFC 6455 5.5.1: reply to a received Close)",
+   "description": "NotifyPeerClose reports a timeout or failure instead of a received Close.",
+   "file": "src/main/WebsocketClientLite/Service/WebsocketSenderHandler.cs",
+   "edits": [
+    {
+     "before": "lock (_stateLock) AdvanceClose(CloseEvent.Received);",
+     "after": "lock (_stateLock) AdvanceClose(CloseEvent.TimeoutOrFailure);"
+    }
+   ]
+  },
+  {
+   "id": "timeout-as-received",
+   "kind": "wrong event",
+   "breaks": "CLOSE-003 (by the model)",
+   "description": "The peer-wait timeout reports a received Close instead of a timeout.",
+   "file": "src/main/WebsocketClientLite/Service/WebsocketSenderHandler.cs",
+   "edits": [
+    {
+     "before": "lock (_stateLock) AdvanceClose(CloseEvent.TimeoutOrFailure);\n        }\n        else",
+     "after": "lock (_stateLock) AdvanceClose(CloseEvent.Received);\n        }\n        else"
+    }
+   ]
+  },
+  {
+   "id": "peer-close-skipped",
+   "kind": "call missing",
+   "breaks": "CLOSE-003, CLOSE-005",
+   "description": "NotifyPeerClose does not call AdvanceClose.",
+   "file": "src/main/WebsocketClientLite/Service/WebsocketSenderHandler.cs",
+   "edits": [
+    {
+     "before": "lock (_stateLock) AdvanceClose(CloseEvent.Received);",
+     "after": ";"
+    }
+   ]
+  },
+  {
+   "id": "read-failure-skipped",
+   "kind": "call missing",
+   "breaks": "CLOSE-003, CLOSE-005",
+   "description": "NotifyReadFailure marks the send state failed but does not call AdvanceClose.",
+   "file": "src/main/WebsocketClientLite/Service/WebsocketSenderHandler.cs",
+   "edits": [
+    {
+     "before": "            _sendState = TransmitState.SendFailed(_sendState);\n            AdvanceClose(CloseEvent.TimeoutOrFailure);",
+     "after": "            _sendState = TransmitState.SendFailed(_sendState);"
+    }
+   ]
+  },
+  {
+   "id": "timeout-skipped",
+   "kind": "call missing",
+   "breaks": "CLOSE-003 (by the model)",
+   "description": "The peer-wait timeout does not call AdvanceClose.",
+   "file": "src/main/WebsocketClientLite/Service/WebsocketSenderHandler.cs",
+   "edits": [
+    {
+     "before": "lock (_stateLock) AdvanceClose(CloseEvent.TimeoutOrFailure);\n        }\n        else",
+     "after": ";\n        }\n        else"
+    }
+   ]
+  },
+  {
+   "id": "write-failure-not-notified",
+   "kind": "extra: failure not reported",
+   "breaks": "CLOSE-FAILURE (CLOSE-001, CLOSE-004)",
+   "description": "A failed frame write is not reported to the close state, so a later Close may be appended to a partial frame.",
+   "file": "src/main/WebsocketClientLite/Service/WebsocketSenderHandler.cs",
+   "edits": [
+    {
+     "before": "                NotifyReadFailure();\n                throw;",
+     "after": "                throw;"
+    }
+   ]
+  },
+  {
+   "id": "pong-suppressed-after-own-close",
+   "kind": "extra: misreads the state",
+   "breaks": "none written down: the comment says Pong is still allowed after our Close",
+   "description": "A queued Pong is dropped once our own Close is reserved, not only after a received Close or a terminal event.",
+   "file": "src/main/WebsocketClientLite/Service/WebsocketSenderHandler.cs",
+   "edits": [
+    {
+     "before": "else if (op == 10 && _closeState.ReceivedOrTerminal) return;",
+     "after": "else if (op == 10 && _closeState.Started) return;"
+    }
+   ]
+  },
+  {
+   "id": "data-after-close-allowed",
+   "kind": "extra: misreads the state",
+   "breaks": "WRITE-001 (library policy: reject queued data after terminal notification); not RFC 6455 5.5.1, which SendStep already enforces after our own Close",
+   "description": "Data frames are not rejected after the closing handshake has started.",
+   "file": "src/main/WebsocketClientLite/Service/WebsocketSenderHandler.cs",
+   "edits": [
+    {
+     "before": "                else if (op != 10 && _closeState.Started)\n                    throw new WebsocketClientLiteException(\"The closing handshake has started.\");\n",
+     "after": ""
+    }
+   ]
+  }
+ ]
+}

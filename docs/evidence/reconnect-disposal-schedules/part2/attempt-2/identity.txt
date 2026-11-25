@@ -1,0 +1,3 @@
+f82360c5cc61be09cc629faeb8ef7f008ee51a051cb2d87cd318b27cc1e9aa80  connect-ignores-disposal/src/main/WebsocketClientLite/ClientWebSocketRx.cs
+9d809e8847aab9b35c48dbd63f9c7cc2333afdc83c78822c4fe728d57a657ed2  register-ignores-disposal/src/main/WebsocketClientLite/ClientWebSocketRx.cs
+ccc2a82e729957a394d628c0f1367b0259076270346a5d99c84bc7d9e50d7f10  untouched/src/main/WebsocketClientLite/ClientWebSocketRx.cs

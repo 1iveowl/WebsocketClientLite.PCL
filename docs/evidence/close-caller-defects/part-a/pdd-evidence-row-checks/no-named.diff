@@ -1,0 +1,12 @@
+diff -ruN untouched/tools/Pdd/CloseCallerDefects.cs no-named/tools/Pdd/CloseCallerDefects.cs
+--- untouched/tools/Pdd/CloseCallerDefects.cs	2026-11-25 14:44:59.000000000 +0000
++++ no-named/tools/Pdd/CloseCallerDefects.cs	2026-11-25 14:44:59.837472161 +0000
+@@ -133,7 +133,7 @@
+         Require(results.Length == c.Rows + 1, "Missing close caller result rows");
+         var named = results.Where(r => ((string?)r.Attribute("testName"))?.Contains(c.Class + "." + c.Test, StringComparison.Ordinal) == true).ToArray();
+         var failed = named.Where(r => (string?)r.Attribute("outcome") == "Failed").ToArray();
+-        Require(named.Length == c.Rows && failed.Length == c.Failing && failed.All(r => r.Value.Contains(c.Assertion, StringComparison.Ordinal)
++        Require(failed.Length == c.Failing && failed.All(r => r.Value.Contains(c.Assertion, StringComparison.Ordinal)
+             && !r.Value.Contains("TimeoutException", StringComparison.Ordinal)), "Missing intended close caller assertion");
+         Require(named.Except(failed).All(r => (string?)r.Attribute("outcome") == "Passed"), "Incomplete close caller cases");
+         var runtime = results.Single(r => ((string?)r.Attribute("testName"))?.EndsWith("RecordHostRuntime", StringComparison.Ordinal) == true);

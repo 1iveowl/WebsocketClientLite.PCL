@@ -1,0 +1,11 @@
+diff -ruN -x bin -x obj untouched/src/main/WebsocketClientLite/Service/WebsocketConnectionHandler.cs sync-transport-release/src/main/WebsocketClientLite/Service/WebsocketConnectionHandler.cs
+--- untouched/src/main/WebsocketClientLite/Service/WebsocketConnectionHandler.cs	2026-11-25 13:21:05.000000000 +0000
++++ sync-transport-release/src/main/WebsocketClientLite/Service/WebsocketConnectionHandler.cs	2026-11-25 13:21:14.622821665 +0000
+@@ -370,6 +370,6 @@
+         }
+ 
+         _websocketParserHandler?.Dispose();
+-        _tcpConnectionService?.Dispose();
++        ;
+     }
+ }

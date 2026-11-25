@@ -1,0 +1,16 @@
+--- a/src/main/WebsocketClientLite/Service/WebsocketSenderHandler.cs
++++ b/src/main/WebsocketClientLite/Service/WebsocketSenderHandler.cs
+@@ -415,11 +415,12 @@
+         _tcpConnectionService.WriteSerializedAsync(async (stream, token) =>
+         {
+             byte op = (byte)(buffer[0] & 15);
++            bool closeSend = op == 8 && AdvanceClose(CloseEvent.Send);
+             lock (_stateLock)
+             {
+                 if (op == 8)
+                 {
+-                    if (!AdvanceClose(CloseEvent.Send)) return;
++                    if (!closeSend) return;
+                 }
+                 // A queued Pong is no longer required after receiving Close.
+                 // Before the peer replies, Pong is still allowed after our Close.

@@ -1,0 +1,11 @@
+--- a/src/main/WebsocketClientLite/Service/WebsocketSenderHandler.cs
++++ b/src/main/WebsocketClientLite/Service/WebsocketSenderHandler.cs
+@@ -66,7 +66,7 @@
+         var delay = _peerDelay(timeout, timer.Token);
+         if (await Task.WhenAny(_closeReady.Task, delay).ConfigureAwait(false) == delay)
+         {
+-            lock (_stateLock) AdvanceClose(CloseEvent.TimeoutOrFailure);
++            lock (_stateLock) AdvanceClose(CloseEvent.Received);
+         }
+         else
+         {

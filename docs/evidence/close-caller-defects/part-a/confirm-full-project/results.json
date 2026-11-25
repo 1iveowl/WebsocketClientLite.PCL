@@ -1,0 +1,1775 @@
+{
+ "made": "2026-11-25",
+ "side": "base",
+ "commit": "b7a6bccef977d91fb4b142dcdee8729872f7e2f6",
+ "copy_name": "copy2",
+ "library_target": "net11.0",
+ "configuration": "Release",
+ "plan": [
+  [
+   "close",
+   3
+  ],
+  [
+   "all",
+   3
+  ]
+ ],
+ "suites": {
+  "close": "FullyQualifiedName~WebsocketClientLiteTest.ControlledCloseTests|FullyQualifiedName~WebsocketClientLiteTest.CloseBoundaryTests",
+  "all": "FullyQualifiedName~WebsocketClientLiteTest"
+ },
+ "unchanged": {
+  "build": {
+   "command": [
+    "dotnet",
+    "build",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--nologo"
+   ],
+   "exit": 0,
+   "timed_out": false,
+   "seconds": 1.57,
+   "log": "unchanged/build.log"
+  },
+  "suites": {
+   "close": {
+    "verdict": "survived",
+    "runs": [
+     {
+      "command": [
+       "dotnet",
+       "test",
+       "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+       "-c",
+       "Release",
+       "-p:LibTfm=net11.0",
+       "--no-build",
+       "--nologo",
+       "--filter",
+       "FullyQualifiedName~WebsocketClientLiteTest.ControlledCloseTests|FullyQualifiedName~WebsocketClientLiteTest.CloseBoundaryTests",
+       "--logger",
+       "trx;LogFileName=close-1.trx",
+       "--results-directory",
+       "<scratch>/ca/confirm/unchanged"
+      ],
+      "exit": 0,
+      "timed_out": false,
+      "seconds": 0.97,
+      "log": "unchanged/close-1.log",
+      "trx": {
+       "total": 19,
+       "passed": 19,
+       "skipped": [],
+       "not_passed": []
+      },
+      "outcome": "passed"
+     },
+     {
+      "command": [
+       "dotnet",
+       "test",
+       "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+       "-c",
+       "Release",
+       "-p:LibTfm=net11.0",
+       "--no-build",
+       "--nologo",
+       "--filter",
+       "FullyQualifiedName~WebsocketClientLiteTest.ControlledCloseTests|FullyQualifiedName~WebsocketClientLiteTest.CloseBoundaryTests",
+       "--logger",
+       "trx;LogFileName=close-2.trx",
+       "--results-directory",
+       "<scratch>/ca/confirm/unchanged"
+      ],
+      "exit": 0,
+      "timed_out": false,
+      "seconds": 0.97,
+      "log": "unchanged/close-2.log",
+      "trx": {
+       "total": 19,
+       "passed": 19,
+       "skipped": [],
+       "not_passed": []
+      },
+      "outcome": "passed"
+     },
+     {
+      "command": [
+       "dotnet",
+       "test",
+       "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+       "-c",
+       "Release",
+       "-p:LibTfm=net11.0",
+       "--no-build",
+       "--nologo",
+       "--filter",
+       "FullyQualifiedName~WebsocketClientLiteTest.ControlledCloseTests|FullyQualifiedName~WebsocketClientLiteTest.CloseBoundaryTests",
+       "--logger",
+       "trx;LogFileName=close-3.trx",
+       "--results-directory",
+       "<scratch>/ca/confirm/unchanged"
+      ],
+      "exit": 0,
+      "timed_out": false,
+      "seconds": 0.97,
+      "log": "unchanged/close-3.log",
+      "trx": {
+       "total": 19,
+       "passed": 19,
+       "skipped": [],
+       "not_passed": []
+      },
+      "outcome": "passed"
+     }
+    ]
+   },
+   "all": {
+    "verdict": "survived",
+    "runs": [
+     {
+      "command": [
+       "dotnet",
+       "test",
+       "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+       "-c",
+       "Release",
+       "-p:LibTfm=net11.0",
+       "--no-build",
+       "--nologo",
+       "--filter",
+       "FullyQualifiedName~WebsocketClientLiteTest",
+       "--logger",
+       "trx;LogFileName=all-1.trx",
+       "--results-directory",
+       "<scratch>/ca/confirm/unchanged"
+      ],
+      "exit": 0,
+      "timed_out": false,
+      "seconds": 25.73,
+      "log": "unchanged/all-1.log",
+      "trx": {
+       "total": 330,
+       "passed": 330,
+       "skipped": [],
+       "not_passed": []
+      },
+      "outcome": "passed"
+     },
+     {
+      "command": [
+       "dotnet",
+       "test",
+       "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+       "-c",
+       "Release",
+       "-p:LibTfm=net11.0",
+       "--no-build",
+       "--nologo",
+       "--filter",
+       "FullyQualifiedName~WebsocketClientLiteTest",
+       "--logger",
+       "trx;LogFileName=all-2.trx",
+       "--results-directory",
+       "<scratch>/ca/confirm/unchanged"
+      ],
+      "exit": 0,
+      "timed_out": false,
+      "seconds": 25.78,
+      "log": "unchanged/all-2.log",
+      "trx": {
+       "total": 330,
+       "passed": 330,
+       "skipped": [],
+       "not_passed": []
+      },
+      "outcome": "passed"
+     },
+     {
+      "command": [
+       "dotnet",
+       "test",
+       "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+       "-c",
+       "Release",
+       "-p:LibTfm=net11.0",
+       "--no-build",
+       "--nologo",
+       "--filter",
+       "FullyQualifiedName~WebsocketClientLiteTest",
+       "--logger",
+       "trx;LogFileName=all-3.trx",
+       "--results-directory",
+       "<scratch>/ca/confirm/unchanged"
+      ],
+      "exit": 0,
+      "timed_out": false,
+      "seconds": 25.82,
+      "log": "unchanged/all-3.log",
+      "trx": {
+       "total": 330,
+       "passed": 330,
+       "skipped": [],
+       "not_passed": []
+      },
+      "outcome": "passed"
+     }
+    ]
+   }
+  }
+ },
+ "defects": [
+  {
+   "id": "state-stored-outside-lock",
+   "breaks": "CLOSE-LOCK (boundary assumption)",
+   "kind": "state stored outside the lock",
+   "description": "AdvanceClose releases _stateLock around the store of the new state, so another event can read the old state in between.",
+   "source_sha256": "517d48fd4819b3f9b390f4223412dcff7550abe4dacc22d838201841b7898a24",
+   "mutant_sha256": "0dda8afb3081565e190e9b027544162aedae7ef52ea2c64a5ac37474f8d2a1e0",
+   "build": {
+    "command": [
+     "dotnet",
+     "build",
+     "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+     "-c",
+     "Release",
+     "-p:LibTfm=net11.0",
+     "--nologo"
+    ],
+    "exit": 0,
+    "timed_out": false,
+    "seconds": 1.37,
+    "log": "state-stored-outside-lock/build.log"
+   },
+   "suites": {
+    "close": {
+     "verdict": "survived",
+     "runs": [
+      {
+       "command": [
+        "dotnet",
+        "test",
+        "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+        "-c",
+        "Release",
+        "-p:LibTfm=net11.0",
+        "--no-build",
+        "--nologo",
+        "--filter",
+        "FullyQualifiedName~WebsocketClientLiteTest.ControlledCloseTests|FullyQualifiedName~WebsocketClientLiteTest.CloseBoundaryTests",
+        "--logger",
+        "trx;LogFileName=close-1.trx",
+        "--results-directory",
+        "<scratch>/ca/confirm/state-stored-outside-lock"
+       ],
+       "exit": 0,
+       "timed_out": false,
+       "seconds": 1.02,
+       "log": "state-stored-outside-lock/close-1.log",
+       "trx": {
+        "total": 19,
+        "passed": 19,
+        "skipped": [],
+        "not_passed": []
+       },
+       "outcome": "passed"
+      },
+      {
+       "command": [
+        "dotnet",
+        "test",
+        "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+        "-c",
+        "Release",
+        "-p:LibTfm=net11.0",
+        "--no-build",
+        "--nologo",
+        "--filter",
+        "FullyQualifiedName~WebsocketClientLiteTest.ControlledCloseTests|FullyQualifiedName~WebsocketClientLiteTest.CloseBoundaryTests",
+        "--logger",
+        "trx;LogFileName=close-2.trx",
+        "--results-directory",
+        "<scratch>/ca/confirm/state-stored-outside-lock"
+       ],
+       "exit": 0,
+       "timed_out": false,
+       "seconds": 1.02,
+       "log": "state-stored-outside-lock/close-2.log",
+       "trx": {
+        "total": 19,
+        "passed": 19,
+        "skipped": [],
+        "not_passed": []
+       },
+       "outcome": "passed"
+      },
+      {
+       "command": [
+        "dotnet",
+        "test",
+        "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+        "-c",
+        "Release",
+        "-p:LibTfm=net11.0",
+        "--no-build",
+        "--nologo",
+        "--filter",
+        "FullyQualifiedName~WebsocketClientLiteTest.ControlledCloseTests|FullyQualifiedName~WebsocketClientLiteTest.CloseBoundaryTests",
+        "--logger",
+        "trx;LogFileName=close-3.trx",
+        "--results-directory",
+        "<scratch>/ca/confirm/state-stored-outside-lock"
+       ],
+       "exit": 0,
+       "timed_out": false,
+       "seconds": 0.97,
+       "log": "state-stored-outside-lock/close-3.log",
+       "trx": {
+        "total": 19,
+        "passed": 19,
+        "skipped": [],
+        "not_passed": []
+       },
+       "outcome": "passed"
+      }
+     ]
+    },
+    "all": {
+     "verdict": "survived",
+     "runs": [
+      {
+       "command": [
+        "dotnet",
+        "test",
+        "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+        "-c",
+        "Release",
+        "-p:LibTfm=net11.0",
+        "--no-build",
+        "--nologo",
+        "--filter",
+        "FullyQualifiedName~WebsocketClientLiteTest",
+        "--logger",
+        "trx;LogFileName=all-1.trx",
+        "--results-directory",
+        "<scratch>/ca/confirm/state-stored-outside-lock"
+       ],
+       "exit": 0,
+       "timed_out": false,
+       "seconds": 25.72,
+       "log": "state-stored-outside-lock/all-1.log",
+       "trx": {
+        "total": 330,
+        "passed": 330,
+        "skipped": [],
+        "not_passed": []
+       },
+       "outcome": "passed"
+      },
+      {
+       "command": [
+        "dotnet",
+        "test",
+        "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+        "-c",
+        "Release",
+        "-p:LibTfm=net11.0",
+        "--no-build",
+        "--nologo",
+        "--filter",
+        "FullyQualifiedName~WebsocketClientLiteTest",
+        "--logger",
+        "trx;LogFileName=all-2.trx",
+        "--results-directory",
+        "<scratch>/ca/confirm/state-stored-outside-lock"
+       ],
+       "exit": 0,
+       "timed_out": false,
+       "seconds": 25.73,
+       "log": "state-stored-outside-lock/all-2.log",
+       "trx": {
+        "total": 330,
+        "passed": 330,
+        "skipped": [],
+        "not_passed": []
+       },
+       "outcome": "passed"
+      },
+      {
+       "command": [
+        "dotnet",
+        "test",
+        "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+        "-c",
+        "Release",
+        "-p:LibTfm=net11.0",
+        "--no-build",
+        "--nologo",
+        "--filter",
+        "FullyQualifiedName~WebsocketClientLiteTest",
+        "--logger",
+        "trx;LogFileName=all-3.trx",
+        "--results-directory",
+        "<scratch>/ca/confirm/state-stored-outside-lock"
+       ],
+       "exit": 0,
+       "timed_out": false,
+       "seconds": 25.78,
+       "log": "state-stored-outside-lock/all-3.log",
+       "trx": {
+        "total": 330,
+        "passed": 330,
+        "skipped": [],
+        "not_passed": []
+       },
+       "outcome": "passed"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "peer-close-outside-lock",
+   "breaks": "CLOSE-LOCK (boundary assumption)",
+   "kind": "call outside the lock",
+   "description": "NotifyPeerClose calls AdvanceClose without holding _stateLock.",
+   "source_sha256": "517d48fd4819b3f9b390f4223412dcff7550abe4dacc22d838201841b7898a24",
+   "mutant_sha256": "4849e1788e680b6f89a80d030a7875a43b4b4bfa2056f02524113a3a52d33da9",
+   "build": {
+    "command": [
+     "dotnet",
+     "build",
+     "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+     "-c",
+     "Release",
+     "-p:LibTfm=net11.0",
+     "--nologo"
+    ],
+    "exit": 0,
+    "timed_out": false,
+    "seconds": 1.32,
+    "log": "peer-close-outside-lock/build.log"
+   },
+   "suites": {
+    "close": {
+     "verdict": "survived",
+     "runs": [
+      {
+       "command": [
+        "dotnet",
+        "test",
+        "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+        "-c",
+        "Release",
+        "-p:LibTfm=net11.0",
+        "--no-build",
+        "--nologo",
+        "--filter",
+        "FullyQualifiedName~WebsocketClientLiteTest.ControlledCloseTests|FullyQualifiedName~WebsocketClientLiteTest.CloseBoundaryTests",
+        "--logger",
+        "trx;LogFileName=close-1.trx",
+        "--results-directory",
+        "<scratch>/ca/confirm/peer-close-outside-lock"
+       ],
+       "exit": 0,
+       "timed_out": false,
+       "seconds": 0.97,
+       "log": "peer-close-outside-lock/close-1.log",
+       "trx": {
+        "total": 19,
+        "passed": 19,
+        "skipped": [],
+        "not_passed": []
+       },
+       "outcome": "passed"
+      },
+      {
+       "command": [
+        "dotnet",
+        "test",
+        "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+        "-c",
+        "Release",
+        "-p:LibTfm=net11.0",
+        "--no-build",
+        "--nologo",
+        "--filter",
+        "FullyQualifiedName~WebsocketClientLiteTest.ControlledCloseTests|FullyQualifiedName~WebsocketClientLiteTest.CloseBoundaryTests",
+        "--logger",
+        "trx;LogFileName=close-2.trx",
+        "--results-directory",
+        "<scratch>/ca/confirm/peer-close-outside-lock"
+       ],
+       "exit": 0,
+       "timed_out": false,
+       "seconds": 0.97,
+       "log": "peer-close-outside-lock/close-2.log",
+       "trx": {
+        "total": 19,
+        "passed": 19,
+        "skipped": [],
+        "not_passed": []
+       },
+       "outcome": "passed"
+      },
+      {
+       "command": [
+        "dotnet",
+        "test",
+        "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+        "-c",
+        "Release",
+        "-p:LibTfm=net11.0",
+        "--no-build",
+        "--nologo",
+        "--filter",
+        "FullyQualifiedName~WebsocketClientLiteTest.ControlledCloseTests|FullyQualifiedName~WebsocketClientLiteTest.CloseBoundaryTests",
+        "--logger",
+        "trx;LogFileName=close-3.trx",
+        "--results-directory",
+        "<scratch>/ca/confirm/peer-close-outside-lock"
+       ],
+       "exit": 0,
+       "timed_out": false,
+       "seconds": 0.97,
+       "log": "peer-close-outside-lock/close-3.log",
+       "trx": {
+        "total": 19,
+        "passed": 19,
+        "skipped": [],
+        "not_passed": []
+       },
+       "outcome": "passed"
+      }
+     ]
+    },
+    "all": {
+     "verdict": "survived",
+     "runs": [
+      {
+       "command": [
+        "dotnet",
+        "test",
+        "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+        "-c",
+        "Release",
+        "-p:LibTfm=net11.0",
+        "--no-build",
+        "--nologo",
+        "--filter",
+        "FullyQualifiedName~WebsocketClientLiteTest",
+        "--logger",
+        "trx;LogFileName=all-1.trx",
+        "--results-directory",
+        "<scratch>/ca/confirm/peer-close-outside-lock"
+       ],
+       "exit": 0,
+       "timed_out": false,
+       "seconds": 25.72,
+       "log": "peer-close-outside-lock/all-1.log",
+       "trx": {
+        "total": 330,
+        "passed": 330,
+        "skipped": [],
+        "not_passed": []
+       },
+       "outcome": "passed"
+      },
+      {
+       "command": [
+        "dotnet",
+        "test",
+        "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+        "-c",
+        "Release",
+        "-p:LibTfm=net11.0",
+        "--no-build",
+        "--nologo",
+        "--filter",
+        "FullyQualifiedName~WebsocketClientLiteTest",
+        "--logger",
+        "trx;LogFileName=all-2.trx",
+        "--results-directory",
+        "<scratch>/ca/confirm/peer-close-outside-lock"
+       ],
+       "exit": 0,
+       "timed_out": false,
+       "seconds": 25.77,
+       "log": "peer-close-outside-lock/all-2.log",
+       "trx": {
+        "total": 330,
+        "passed": 330,
+        "skipped": [],
+        "not_passed": []
+       },
+       "outcome": "passed"
+      },
+      {
+       "command": [
+        "dotnet",
+        "test",
+        "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+        "-c",
+        "Release",
+        "-p:LibTfm=net11.0",
+        "--no-build",
+        "--nologo",
+        "--filter",
+        "FullyQualifiedName~WebsocketClientLiteTest",
+        "--logger",
+        "trx;LogFileName=all-3.trx",
+        "--results-directory",
+        "<scratch>/ca/confirm/peer-close-outside-lock"
+       ],
+       "exit": 0,
+       "timed_out": false,
+       "seconds": 25.77,
+       "log": "peer-close-outside-lock/all-3.log",
+       "trx": {
+        "total": 330,
+        "passed": 330,
+        "skipped": [],
+        "not_passed": []
+       },
+       "outcome": "passed"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "send-decided-outside-lock",
+   "breaks": "CLOSE-LOCK (boundary assumption)",
+   "kind": "call outside the lock",
+   "description": "WriteFrameSerializedAsync decides the Close send before it takes _stateLock.",
+   "source_sha256": "517d48fd4819b3f9b390f4223412dcff7550abe4dacc22d838201841b7898a24",
+   "mutant_sha256": "1035912e6291fe2b0a208d482515606099646c11b7605f3ed00d167d8b33adb7",
+   "build": {
+    "command": [
+     "dotnet",
+     "build",
+     "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+     "-c",
+     "Release",
+     "-p:LibTfm=net11.0",
+     "--nologo"
+    ],
+    "exit": 0,
+    "timed_out": false,
+    "seconds": 1.27,
+    "log": "send-decided-outside-lock/build.log"
+   },
+   "suites": {
+    "close": {
+     "verdict": "survived",
+     "runs": [
+      {
+       "command": [
+        "dotnet",
+        "test",
+        "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+        "-c",
+        "Release",
+        "-p:LibTfm=net11.0",
+        "--no-build",
+        "--nologo",
+        "--filter",
+        "FullyQualifiedName~WebsocketClientLiteTest.ControlledCloseTests|FullyQualifiedName~WebsocketClientLiteTest.CloseBoundaryTests",
+        "--logger",
+        "trx;LogFileName=close-1.trx",
+        "--results-directory",
+        "<scratch>/ca/confirm/send-decided-outside-lock"
+       ],
+       "exit": 0,
+       "timed_out": false,
+       "seconds": 0.97,
+       "log": "send-decided-outside-lock/close-1.log",
+       "trx": {
+        "total": 19,
+        "passed": 19,
+        "skipped": [],
+        "not_passed": []
+       },
+       "outcome": "passed"
+      },
+      {
+       "command": [
+        "dotnet",
+        "test",
+        "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+        "-c",
+        "Release",
+        "-p:LibTfm=net11.0",
+        "--no-build",
+        "--nologo",
+        "--filter",
+        "FullyQualifiedName~WebsocketClientLiteTest.ControlledCloseTests|FullyQualifiedName~WebsocketClientLiteTest.CloseBoundaryTests",
+        "--logger",
+        "trx;LogFileName=close-2.trx",
+        "--results-directory",
+        "<scratch>/ca/confirm/send-decided-outside-lock"
+       ],
+       "exit": 0,
+       "timed_out": false,
+       "seconds": 0.97,
+       "log": "send-decided-outside-lock/close-2.log",
+       "trx": {
+        "total": 19,
+        "passed": 19,
+        "skipped": [],
+        "not_passed": []
+       },
+       "outcome": "passed"
+      },
+      {
+       "command": [
+        "dotnet",
+        "test",
+        "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+        "-c",
+        "Release",
+        "-p:LibTfm=net11.0",
+        "--no-build",
+        "--nologo",
+        "--filter",
+        "FullyQualifiedName~WebsocketClientLiteTest.ControlledCloseTests|FullyQualifiedName~WebsocketClientLiteTest.CloseBoundaryTests",
+        "--logger",
+        "trx;LogFileName=close-3.trx",
+        "--results-directory",
+        "<scratch>/ca/confirm/send-decided-outside-lock"
+       ],
+       "exit": 0,
+       "timed_out": false,
+       "seconds": 0.97,
+       "log": "send-decided-outside-lock/close-3.log",
+       "trx": {
+        "total": 19,
+        "passed": 19,
+        "skipped": [],
+        "not_passed": []
+       },
+       "outcome": "passed"
+      }
+     ]
+    },
+    "all": {
+     "verdict": "survived",
+     "runs": [
+      {
+       "command": [
+        "dotnet",
+        "test",
+        "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+        "-c",
+        "Release",
+        "-p:LibTfm=net11.0",
+        "--no-build",
+        "--nologo",
+        "--filter",
+        "FullyQualifiedName~WebsocketClientLiteTest",
+        "--logger",
+        "trx;LogFileName=all-1.trx",
+        "--results-directory",
+        "<scratch>/ca/confirm/send-decided-outside-lock"
+       ],
+       "exit": 0,
+       "timed_out": false,
+       "seconds": 25.77,
+       "log": "send-decided-outside-lock/all-1.log",
+       "trx": {
+        "total": 330,
+        "passed": 330,
+        "skipped": [],
+        "not_passed": []
+       },
+       "outcome": "passed"
+      },
+      {
+       "command": [
+        "dotnet",
+        "test",
+        "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+        "-c",
+        "Release",
+        "-p:LibTfm=net11.0",
+        "--no-build",
+        "--nologo",
+        "--filter",
+        "FullyQualifiedName~WebsocketClientLiteTest",
+        "--logger",
+        "trx;LogFileName=all-2.trx",
+        "--results-directory",
+        "<scratch>/ca/confirm/send-decided-outside-lock"
+       ],
+       "exit": 0,
+       "timed_out": false,
+       "seconds": 25.77,
+       "log": "send-decided-outside-lock/all-2.log",
+       "trx": {
+        "total": 330,
+        "passed": 330,
+        "skipped": [],
+        "not_passed": []
+       },
+       "outcome": "passed"
+      },
+      {
+       "command": [
+        "dotnet",
+        "test",
+        "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+        "-c",
+        "Release",
+        "-p:LibTfm=net11.0",
+        "--no-build",
+        "--nologo",
+        "--filter",
+        "FullyQualifiedName~WebsocketClientLiteTest",
+        "--logger",
+        "trx;LogFileName=all-3.trx",
+        "--results-directory",
+        "<scratch>/ca/confirm/send-decided-outside-lock"
+       ],
+       "exit": 0,
+       "timed_out": false,
+       "seconds": 25.71,
+       "log": "send-decided-outside-lock/all-3.log",
+       "trx": {
+        "total": 330,
+        "passed": 330,
+        "skipped": [],
+        "not_passed": []
+       },
+       "outcome": "passed"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "timeout-as-received",
+   "breaks": "CLOSE-003 (by the model)",
+   "kind": "wrong event",
+   "description": "The peer-wait timeout reports a received Close instead of a timeout.",
+   "source_sha256": "517d48fd4819b3f9b390f4223412dcff7550abe4dacc22d838201841b7898a24",
+   "mutant_sha256": "c4d31b0e719adbcb9227b9dcdf300dd7dc613565f77a84286aacb76b69e220ec",
+   "build": {
+    "command": [
+     "dotnet",
+     "build",
+     "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+     "-c",
+     "Release",
+     "-p:LibTfm=net11.0",
+     "--nologo"
+    ],
+    "exit": 0,
+    "timed_out": false,
+    "seconds": 1.27,
+    "log": "timeout-as-received/build.log"
+   },
+   "suites": {
+    "close": {
+     "verdict": "survived",
+     "runs": [
+      {
+       "command": [
+        "dotnet",
+        "test",
+        "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+        "-c",
+        "Release",
+        "-p:LibTfm=net11.0",
+        "--no-build",
+        "--nologo",
+        "--filter",
+        "FullyQualifiedName~WebsocketClientLiteTest.ControlledCloseTests|FullyQualifiedName~WebsocketClientLiteTest.CloseBoundaryTests",
+        "--logger",
+        "trx;LogFileName=close-1.trx",
+        "--results-directory",
+        "<scratch>/ca/confirm/timeout-as-received"
+       ],
+       "exit": 0,
+       "timed_out": false,
+       "seconds": 0.97,
+       "log": "timeout-as-received/close-1.log",
+       "trx": {
+        "total": 19,
+        "passed": 19,
+        "skipped": [],
+        "not_passed": []
+       },
+       "outcome": "passed"
+      },
+      {
+       "command": [
+        "dotnet",
+        "test",
+        "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+        "-c",
+        "Release",
+        "-p:LibTfm=net11.0",
+        "--no-build",
+        "--nologo",
+        "--filter",
+        "FullyQualifiedName~WebsocketClientLiteTest.ControlledCloseTests|FullyQualifiedName~WebsocketClientLiteTest.CloseBoundaryTests",
+        "--logger",
+        "trx;LogFileName=close-2.trx",
+        "--results-directory",
+        "<scratch>/ca/confirm/timeout-as-received"
+       ],
+       "exit": 0,
+       "timed_out": false,
+       "seconds": 0.97,
+       "log": "timeout-as-received/close-2.log",
+       "trx": {
+        "total": 19,
+        "passed": 19,
+        "skipped": [],
+        "not_passed": []
+       },
+       "outcome": "passed"
+      },
+      {
+       "command": [
+        "dotnet",
+        "test",
+        "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+        "-c",
+        "Release",
+        "-p:LibTfm=net11.0",
+        "--no-build",
+        "--nologo",
+        "--filter",
+        "FullyQualifiedName~WebsocketClientLiteTest.ControlledCloseTests|FullyQualifiedName~WebsocketClientLiteTest.CloseBoundaryTests",
+        "--logger",
+        "trx;LogFileName=close-3.trx",
+        "--results-directory",
+        "<scratch>/ca/confirm/timeout-as-received"
+       ],
+       "exit": 0,
+       "timed_out": false,
+       "seconds": 0.97,
+       "log": "timeout-as-received/close-3.log",
+       "trx": {
+        "total": 19,
+        "passed": 19,
+        "skipped": [],
+        "not_passed": []
+       },
+       "outcome": "passed"
+      }
+     ]
+    },
+    "all": {
+     "verdict": "survived",
+     "runs": [
+      {
+       "command": [
+        "dotnet",
+        "test",
+        "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+        "-c",
+        "Release",
+        "-p:LibTfm=net11.0",
+        "--no-build",
+        "--nologo",
+        "--filter",
+        "FullyQualifiedName~WebsocketClientLiteTest",
+        "--logger",
+        "trx;LogFileName=all-1.trx",
+        "--results-directory",
+        "<scratch>/ca/confirm/timeout-as-received"
+       ],
+       "exit": 0,
+       "timed_out": false,
+       "seconds": 25.72,
+       "log": "timeout-as-received/all-1.log",
+       "trx": {
+        "total": 330,
+        "passed": 330,
+        "skipped": [],
+        "not_passed": []
+       },
+       "outcome": "passed"
+      },
+      {
+       "command": [
+        "dotnet",
+        "test",
+        "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+        "-c",
+        "Release",
+        "-p:LibTfm=net11.0",
+        "--no-build",
+        "--nologo",
+        "--filter",
+        "FullyQualifiedName~WebsocketClientLiteTest",
+        "--logger",
+        "trx;LogFileName=all-2.trx",
+        "--results-directory",
+        "<scratch>/ca/confirm/timeout-as-received"
+       ],
+       "exit": 0,
+       "timed_out": false,
+       "seconds": 25.78,
+       "log": "timeout-as-received/all-2.log",
+       "trx": {
+        "total": 330,
+        "passed": 330,
+        "skipped": [],
+        "not_passed": []
+       },
+       "outcome": "passed"
+      },
+      {
+       "command": [
+        "dotnet",
+        "test",
+        "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+        "-c",
+        "Release",
+        "-p:LibTfm=net11.0",
+        "--no-build",
+        "--nologo",
+        "--filter",
+        "FullyQualifiedName~WebsocketClientLiteTest",
+        "--logger",
+        "trx;LogFileName=all-3.trx",
+        "--results-directory",
+        "<scratch>/ca/confirm/timeout-as-received"
+       ],
+       "exit": 0,
+       "timed_out": false,
+       "seconds": 25.77,
+       "log": "timeout-as-received/all-3.log",
+       "trx": {
+        "total": 330,
+        "passed": 330,
+        "skipped": [],
+        "not_passed": []
+       },
+       "outcome": "passed"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "timeout-skipped",
+   "breaks": "CLOSE-003 (by the model)",
+   "kind": "call missing",
+   "description": "The peer-wait timeout does not call AdvanceClose.",
+   "source_sha256": "517d48fd4819b3f9b390f4223412dcff7550abe4dacc22d838201841b7898a24",
+   "mutant_sha256": "d8268c1242c6b53e69a257dfbf2f85a2db100b87845eb5ed34c633c78e134e02",
+   "build": {
+    "command": [
+     "dotnet",
+     "build",
+     "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+     "-c",
+     "Release",
+     "-p:LibTfm=net11.0",
+     "--nologo"
+    ],
+    "exit": 0,
+    "timed_out": false,
+    "seconds": 1.27,
+    "log": "timeout-skipped/build.log"
+   },
+   "suites": {
+    "close": {
+     "verdict": "survived",
+     "runs": [
+      {
+       "command": [
+        "dotnet",
+        "test",
+        "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+        "-c",
+        "Release",
+        "-p:LibTfm=net11.0",
+        "--no-build",
+        "--nologo",
+        "--filter",
+        "FullyQualifiedName~WebsocketClientLiteTest.ControlledCloseTests|FullyQualifiedName~WebsocketClientLiteTest.CloseBoundaryTests",
+        "--logger",
+        "trx;LogFileName=close-1.trx",
+        "--results-directory",
+        "<scratch>/ca/confirm/timeout-skipped"
+       ],
+       "exit": 0,
+       "timed_out": false,
+       "seconds": 0.97,
+       "log": "timeout-skipped/close-1.log",
+       "trx": {
+        "total": 19,
+        "passed": 19,
+        "skipped": [],
+        "not_passed": []
+       },
+       "outcome": "passed"
+      },
+      {
+       "command": [
+        "dotnet",
+        "test",
+        "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+        "-c",
+        "Release",
+        "-p:LibTfm=net11.0",
+        "--no-build",
+        "--nologo",
+        "--filter",
+        "FullyQualifiedName~WebsocketClientLiteTest.ControlledCloseTests|FullyQualifiedName~WebsocketClientLiteTest.CloseBoundaryTests",
+        "--logger",
+        "trx;LogFileName=close-2.trx",
+        "--results-directory",
+        "<scratch>/ca/confirm/timeout-skipped"
+       ],
+       "exit": 0,
+       "timed_out": false,
+       "seconds": 0.97,
+       "log": "timeout-skipped/close-2.log",
+       "trx": {
+        "total": 19,
+        "passed": 19,
+        "skipped": [],
+        "not_passed": []
+       },
+       "outcome": "passed"
+      },
+      {
+       "command": [
+        "dotnet",
+        "test",
+        "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+        "-c",
+        "Release",
+        "-p:LibTfm=net11.0",
+        "--no-build",
+        "--nologo",
+        "--filter",
+        "FullyQualifiedName~WebsocketClientLiteTest.ControlledCloseTests|FullyQualifiedName~WebsocketClientLiteTest.CloseBoundaryTests",
+        "--logger",
+        "trx;LogFileName=close-3.trx",
+        "--results-directory",
+        "<scratch>/ca/confirm/timeout-skipped"
+       ],
+       "exit": 0,
+       "timed_out": false,
+       "seconds": 0.97,
+       "log": "timeout-skipped/close-3.log",
+       "trx": {
+        "total": 19,
+        "passed": 19,
+        "skipped": [],
+        "not_passed": []
+       },
+       "outcome": "passed"
+      }
+     ]
+    },
+    "all": {
+     "verdict": "detected",
+     "runs": [
+      {
+       "command": [
+        "dotnet",
+        "test",
+        "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+        "-c",
+        "Release",
+        "-p:LibTfm=net11.0",
+        "--no-build",
+        "--nologo",
+        "--filter",
+        "FullyQualifiedName~WebsocketClientLiteTest",
+        "--logger",
+        "trx;LogFileName=all-1.trx",
+        "--results-directory",
+        "<scratch>/ca/confirm/timeout-skipped"
+       ],
+       "exit": 1,
+       "timed_out": false,
+       "seconds": 26.12,
+       "log": "timeout-skipped/all-1.log",
+       "trx": {
+        "total": 330,
+        "passed": 329,
+        "skipped": [],
+        "not_passed": [
+         {
+          "test": "WebsocketClientLiteTest.ProtocolStateTests.CloseResponseTimeoutMakesTheTransportTerminal",
+          "outcome": "Failed",
+          "message": "Assert.Equal() Failure: Collections differ"
+         }
+        ]
+       },
+       "outcome": "failed"
+      },
+      {
+       "command": [
+        "dotnet",
+        "test",
+        "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+        "-c",
+        "Release",
+        "-p:LibTfm=net11.0",
+        "--no-build",
+        "--nologo",
+        "--filter",
+        "FullyQualifiedName~WebsocketClientLiteTest",
+        "--logger",
+        "trx;LogFileName=all-2.trx",
+        "--results-directory",
+        "<scratch>/ca/confirm/timeout-skipped"
+       ],
+       "exit": 1,
+       "timed_out": false,
+       "seconds": 26.17,
+       "log": "timeout-skipped/all-2.log",
+       "trx": {
+        "total": 330,
+        "passed": 329,
+        "skipped": [],
+        "not_passed": [
+         {
+          "test": "WebsocketClientLiteTest.ProtocolStateTests.CloseResponseTimeoutMakesTheTransportTerminal",
+          "outcome": "Failed",
+          "message": "Assert.Equal() Failure: Collections differ"
+         }
+        ]
+       },
+       "outcome": "failed"
+      },
+      {
+       "command": [
+        "dotnet",
+        "test",
+        "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+        "-c",
+        "Release",
+        "-p:LibTfm=net11.0",
+        "--no-build",
+        "--nologo",
+        "--filter",
+        "FullyQualifiedName~WebsocketClientLiteTest",
+        "--logger",
+        "trx;LogFileName=all-3.trx",
+        "--results-directory",
+        "<scratch>/ca/confirm/timeout-skipped"
+       ],
+       "exit": 1,
+       "timed_out": false,
+       "seconds": 26.18,
+       "log": "timeout-skipped/all-3.log",
+       "trx": {
+        "total": 330,
+        "passed": 329,
+        "skipped": [],
+        "not_passed": [
+         {
+          "test": "WebsocketClientLiteTest.ProtocolStateTests.CloseResponseTimeoutMakesTheTransportTerminal",
+          "outcome": "Failed",
+          "message": "Assert.Equal() Failure: Collections differ"
+         }
+        ]
+       },
+       "outcome": "failed"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "pong-suppressed-after-own-close",
+   "breaks": "none written down: the comment says Pong is still allowed after our Close",
+   "kind": "extra: misreads the state",
+   "description": "A queued Pong is dropped once our own Close is reserved, not only after a received Close or a terminal event.",
+   "source_sha256": "517d48fd4819b3f9b390f4223412dcff7550abe4dacc22d838201841b7898a24",
+   "mutant_sha256": "44c2be80363d2506b1723130569eca9e0434ba6d09f5bb1f9ed20ae6e21afae0",
+   "build": {
+    "command": [
+     "dotnet",
+     "build",
+     "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+     "-c",
+     "Release",
+     "-p:LibTfm=net11.0",
+     "--nologo"
+    ],
+    "exit": 0,
+    "timed_out": false,
+    "seconds": 1.32,
+    "log": "pong-suppressed-after-own-close/build.log"
+   },
+   "suites": {
+    "close": {
+     "verdict": "survived",
+     "runs": [
+      {
+       "command": [
+        "dotnet",
+        "test",
+        "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+        "-c",
+        "Release",
+        "-p:LibTfm=net11.0",
+        "--no-build",
+        "--nologo",
+        "--filter",
+        "FullyQualifiedName~WebsocketClientLiteTest.ControlledCloseTests|FullyQualifiedName~WebsocketClientLiteTest.CloseBoundaryTests",
+        "--logger",
+        "trx;LogFileName=close-1.trx",
+        "--results-directory",
+        "<scratch>/ca/confirm/pong-suppressed-after-own-close"
+       ],
+       "exit": 0,
+       "timed_out": false,
+       "seconds": 1.02,
+       "log": "pong-suppressed-after-own-close/close-1.log",
+       "trx": {
+        "total": 19,
+        "passed": 19,
+        "skipped": [],
+        "not_passed": []
+       },
+       "outcome": "passed"
+      },
+      {
+       "command": [
+        "dotnet",
+        "test",
+        "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+        "-c",
+        "Release",
+        "-p:LibTfm=net11.0",
+        "--no-build",
+        "--nologo",
+        "--filter",
+        "FullyQualifiedName~WebsocketClientLiteTest.ControlledCloseTests|FullyQualifiedName~WebsocketClientLiteTest.CloseBoundaryTests",
+        "--logger",
+        "trx;LogFileName=close-2.trx",
+        "--results-directory",
+        "<scratch>/ca/confirm/pong-suppressed-after-own-close"
+       ],
+       "exit": 0,
+       "timed_out": false,
+       "seconds": 0.97,
+       "log": "pong-suppressed-after-own-close/close-2.log",
+       "trx": {
+        "total": 19,
+        "passed": 19,
+        "skipped": [],
+        "not_passed": []
+       },
+       "outcome": "passed"
+      },
+      {
+       "command": [
+        "dotnet",
+        "test",
+        "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+        "-c",
+        "Release",
+        "-p:LibTfm=net11.0",
+        "--no-build",
+        "--nologo",
+        "--filter",
+        "FullyQualifiedName~WebsocketClientLiteTest.ControlledCloseTests|FullyQualifiedName~WebsocketClientLiteTest.CloseBoundaryTests",
+        "--logger",
+        "trx;LogFileName=close-3.trx",
+        "--results-directory",
+        "<scratch>/ca/confirm/pong-suppressed-after-own-close"
+       ],
+       "exit": 0,
+       "timed_out": false,
+       "seconds": 0.97,
+       "log": "pong-suppressed-after-own-close/close-3.log",
+       "trx": {
+        "total": 19,
+        "passed": 19,
+        "skipped": [],
+        "not_passed": []
+       },
+       "outcome": "passed"
+      }
+     ]
+    },
+    "all": {
+     "verdict": "detected",
+     "runs": [
+      {
+       "command": [
+        "dotnet",
+        "test",
+        "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+        "-c",
+        "Release",
+        "-p:LibTfm=net11.0",
+        "--no-build",
+        "--nologo",
+        "--filter",
+        "FullyQualifiedName~WebsocketClientLiteTest",
+        "--logger",
+        "trx;LogFileName=all-1.trx",
+        "--results-directory",
+        "<scratch>/ca/confirm/pong-suppressed-after-own-close"
+       ],
+       "exit": 1,
+       "timed_out": false,
+       "seconds": 26.13,
+       "log": "pong-suppressed-after-own-close/all-1.log",
+       "trx": {
+        "total": 330,
+        "passed": 329,
+        "skipped": [],
+        "not_passed": [
+         {
+          "test": "WebsocketClientLiteTest.ProtocolStateTests.PongIsAllowedUntilPeerCloseThenSuppressed",
+          "outcome": "Failed",
+          "message": "Assert.Equal() Failure: Collections differ"
+         }
+        ]
+       },
+       "outcome": "failed"
+      },
+      {
+       "command": [
+        "dotnet",
+        "test",
+        "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+        "-c",
+        "Release",
+        "-p:LibTfm=net11.0",
+        "--no-build",
+        "--nologo",
+        "--filter",
+        "FullyQualifiedName~WebsocketClientLiteTest",
+        "--logger",
+        "trx;LogFileName=all-2.trx",
+        "--results-directory",
+        "<scratch>/ca/confirm/pong-suppressed-after-own-close"
+       ],
+       "exit": 1,
+       "timed_out": false,
+       "seconds": 26.12,
+       "log": "pong-suppressed-after-own-close/all-2.log",
+       "trx": {
+        "total": 330,
+        "passed": 329,
+        "skipped": [],
+        "not_passed": [
+         {
+          "test": "WebsocketClientLiteTest.ProtocolStateTests.PongIsAllowedUntilPeerCloseThenSuppressed",
+          "outcome": "Failed",
+          "message": "Assert.Equal() Failure: Collections differ"
+         }
+        ]
+       },
+       "outcome": "failed"
+      },
+      {
+       "command": [
+        "dotnet",
+        "test",
+        "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+        "-c",
+        "Release",
+        "-p:LibTfm=net11.0",
+        "--no-build",
+        "--nologo",
+        "--filter",
+        "FullyQualifiedName~WebsocketClientLiteTest",
+        "--logger",
+        "trx;LogFileName=all-3.trx",
+        "--results-directory",
+        "<scratch>/ca/confirm/pong-suppressed-after-own-close"
+       ],
+       "exit": 1,
+       "timed_out": false,
+       "seconds": 26.12,
+       "log": "pong-suppressed-after-own-close/all-3.log",
+       "trx": {
+        "total": 330,
+        "passed": 329,
+        "skipped": [],
+        "not_passed": [
+         {
+          "test": "WebsocketClientLiteTest.ProtocolStateTests.PongIsAllowedUntilPeerCloseThenSuppressed",
+          "outcome": "Failed",
+          "message": "Assert.Equal() Failure: Collections differ"
+         }
+        ]
+       },
+       "outcome": "failed"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "data-after-close-allowed",
+   "breaks": "RFC 6455 5.5.1: no data frames after sending Close",
+   "kind": "extra: misreads the state",
+   "description": "Data frames are not rejected after the closing handshake has started.",
+   "source_sha256": "517d48fd4819b3f9b390f4223412dcff7550abe4dacc22d838201841b7898a24",
+   "mutant_sha256": "1b8655649c68d63f7ff97bc0e15636fd373781e64547c15bed7d5fcd41bcec75",
+   "build": {
+    "command": [
+     "dotnet",
+     "build",
+     "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+     "-c",
+     "Release",
+     "-p:LibTfm=net11.0",
+     "--nologo"
+    ],
+    "exit": 0,
+    "timed_out": false,
+    "seconds": 1.32,
+    "log": "data-after-close-allowed/build.log"
+   },
+   "suites": {
+    "close": {
+     "verdict": "survived",
+     "runs": [
+      {
+       "command": [
+        "dotnet",
+        "test",
+        "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+        "-c",
+        "Release",
+        "-p:LibTfm=net11.0",
+        "--no-build",
+        "--nologo",
+        "--filter",
+        "FullyQualifiedName~WebsocketClientLiteTest.ControlledCloseTests|FullyQualifiedName~WebsocketClientLiteTest.CloseBoundaryTests",
+        "--logger",
+        "trx;LogFileName=close-1.trx",
+        "--results-directory",
+        "<scratch>/ca/confirm/data-after-close-allowed"
+       ],
+       "exit": 0,
+       "timed_out": false,
+       "seconds": 1.02,
+       "log": "data-after-close-allowed/close-1.log",
+       "trx": {
+        "total": 19,
+        "passed": 19,
+        "skipped": [],
+        "not_passed": []
+       },
+       "outcome": "passed"
+      },
+      {
+       "command": [
+        "dotnet",
+        "test",
+        "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+        "-c",
+        "Release",
+        "-p:LibTfm=net11.0",
+        "--no-build",
+        "--nologo",
+        "--filter",
+        "FullyQualifiedName~WebsocketClientLiteTest.ControlledCloseTests|FullyQualifiedName~WebsocketClientLiteTest.CloseBoundaryTests",
+        "--logger",
+        "trx;LogFileName=close-2.trx",
+        "--results-directory",
+        "<scratch>/ca/confirm/data-after-close-allowed"
+       ],
+       "exit": 0,
+       "timed_out": false,
+       "seconds": 0.97,
+       "log": "data-after-close-allowed/close-2.log",
+       "trx": {
+        "total": 19,
+        "passed": 19,
+        "skipped": [],
+        "not_passed": []
+       },
+       "outcome": "passed"
+      },
+      {
+       "command": [
+        "dotnet",
+        "test",
+        "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+        "-c",
+        "Release",
+        "-p:LibTfm=net11.0",
+        "--no-build",
+        "--nologo",
+        "--filter",
+        "FullyQualifiedName~WebsocketClientLiteTest.ControlledCloseTests|FullyQualifiedName~WebsocketClientLiteTest.CloseBoundaryTests",
+        "--logger",
+        "trx;LogFileName=close-3.trx",
+        "--results-directory",
+        "<scratch>/ca/confirm/data-after-close-allowed"
+       ],
+       "exit": 0,
+       "timed_out": false,
+       "seconds": 0.97,
+       "log": "data-after-close-allowed/close-3.log",
+       "trx": {
+        "total": 19,
+        "passed": 19,
+        "skipped": [],
+        "not_passed": []
+       },
+       "outcome": "passed"
+      }
+     ]
+    },
+    "all": {
+     "verdict": "detected",
+     "runs": [
+      {
+       "command": [
+        "dotnet",
+        "test",
+        "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+        "-c",
+        "Release",
+        "-p:LibTfm=net11.0",
+        "--no-build",
+        "--nologo",
+        "--filter",
+        "FullyQualifiedName~WebsocketClientLiteTest",
+        "--logger",
+        "trx;LogFileName=all-1.trx",
+        "--results-directory",
+        "<scratch>/ca/confirm/data-after-close-allowed"
+       ],
+       "exit": 1,
+       "timed_out": false,
+       "seconds": 26.12,
+       "log": "data-after-close-allowed/all-1.log",
+       "trx": {
+        "total": 330,
+        "passed": 327,
+        "skipped": [],
+        "not_passed": [
+         {
+          "test": "WebsocketClientLiteTest.QueuedWriteTests.TerminalNotificationRejectsDataWaitingAtEitherGate(frameGate: False, readFailure: False)",
+          "outcome": "Failed",
+          "message": "Assert.Throws() Failure: No exception was thrown"
+         },
+         {
+          "test": "WebsocketClientLiteTest.QueuedWriteTests.TerminalNotificationRejectsDataWaitingAtEitherGate(frameGate: True, readFailure: False)",
+          "outcome": "Failed",
+          "message": "Assert.Throws() Failure: No exception was thrown"
+         },
+         {
+          "test": "WebsocketClientLiteTest.ProtocolStateTests.ReceivedCloseBlocksDataAndSendsOnlyOneResponse",
+          "outcome": "Failed",
+          "message": "Assert.Throws() Failure: No exception was thrown"
+         }
+        ]
+       },
+       "outcome": "failed"
+      },
+      {
+       "command": [
+        "dotnet",
+        "test",
+        "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+        "-c",
+        "Release",
+        "-p:LibTfm=net11.0",
+        "--no-build",
+        "--nologo",
+        "--filter",
+        "FullyQualifiedName~WebsocketClientLiteTest",
+        "--logger",
+        "trx;LogFileName=all-2.trx",
+        "--results-directory",
+        "<scratch>/ca/confirm/data-after-close-allowed"
+       ],
+       "exit": 1,
+       "timed_out": false,
+       "seconds": 26.22,
+       "log": "data-after-close-allowed/all-2.log",
+       "trx": {
+        "total": 330,
+        "passed": 327,
+        "skipped": [],
+        "not_passed": [
+         {
+          "test": "WebsocketClientLiteTest.QueuedWriteTests.TerminalNotificationRejectsDataWaitingAtEitherGate(frameGate: False, readFailure: False)",
+          "outcome": "Failed",
+          "message": "Assert.Throws() Failure: No exception was thrown"
+         },
+         {
+          "test": "WebsocketClientLiteTest.ProtocolStateTests.ReceivedCloseBlocksDataAndSendsOnlyOneResponse",
+          "outcome": "Failed",
+          "message": "Assert.Throws() Failure: No exception was thrown"
+         },
+         {
+          "test": "WebsocketClientLiteTest.QueuedWriteTests.TerminalNotificationRejectsDataWaitingAtEitherGate(frameGate: True, readFailure: False)",
+          "outcome": "Failed",
+          "message": "Assert.Throws() Failure: No exception was thrown"
+         }
+        ]
+       },
+       "outcome": "failed"
+      },
+      {
+       "command": [
+        "dotnet",
+        "test",
+        "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+        "-c",
+        "Release",
+        "-p:LibTfm=net11.0",
+        "--no-build",
+        "--nologo",
+        "--filter",
+        "FullyQualifiedName~WebsocketClientLiteTest",
+        "--logger",
+        "trx;LogFileName=all-3.trx",
+        "--results-directory",
+        "<scratch>/ca/confirm/data-after-close-allowed"
+       ],
+       "exit": 1,
+       "timed_out": false,
+       "seconds": 26.44,
+       "log": "data-after-close-allowed/all-3.log",
+       "trx": {
+        "total": 330,
+        "passed": 327,
+        "skipped": [],
+        "not_passed": [
+         {
+          "test": "WebsocketClientLiteTest.QueuedWriteTests.TerminalNotificationRejectsDataWaitingAtEitherGate(frameGate: True, readFailure: False)",
+          "outcome": "Failed",
+          "message": "Assert.Throws() Failure: No exception was thrown"
+         },
+         {
+          "test": "WebsocketClientLiteTest.ProtocolStateTests.ReceivedCloseBlocksDataAndSendsOnlyOneResponse",
+          "outcome": "Failed",
+          "message": "Assert.Throws() Failure: No exception was thrown"
+         },
+         {
+          "test": "WebsocketClientLiteTest.QueuedWriteTests.TerminalNotificationRejectsDataWaitingAtEitherGate(frameGate: False, readFailure: False)",
+          "outcome": "Failed",
+          "message": "Assert.Throws() Failure: No exception was thrown"
+         }
+        ]
+       },
+       "outcome": "failed"
+      }
+     ]
+    }
+   }
+  }
+ ],
+ "status": "complete"
+}

@@ -1,0 +1,1828 @@
+{
+ "made": "2026-11-25",
+ "copy": "<scratch>/connect-ignores-disposal",
+ "library_target": "net11.0",
+ "configuration": "Release",
+ "filter": "FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender",
+ "assertion": "Disposed client installed a sender",
+ "runs": [
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender",
+    "--logger",
+    "trx;LogFileName=run-01.trx",
+    "--results-directory",
+    "<scratch>/p2b/out-connect-ignores-disposal"
+   ],
+   "exit": 1,
+   "timed_out": false,
+   "seconds": 1.52,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender(mode: \"async\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0029008",
+     "message": "Disposed client installed a sender (first settlement: WebsocketConnected)"
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender(mode: \"dispose\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0446762",
+     "message": "Disposed client installed a sender (first settlement: WebsocketConnected)"
+    }
+   ],
+   "outcome": "failed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender",
+    "--logger",
+    "trx;LogFileName=run-02.trx",
+    "--results-directory",
+    "<scratch>/p2b/out-connect-ignores-disposal"
+   ],
+   "exit": 1,
+   "timed_out": false,
+   "seconds": 1.52,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender(mode: \"dispose\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0455432",
+     "message": "Disposed client installed a sender (first settlement: WebsocketConnected)"
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender(mode: \"async\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0041647",
+     "message": "Disposed client installed a sender (first settlement: WebsocketConnected)"
+    }
+   ],
+   "outcome": "failed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender",
+    "--logger",
+    "trx;LogFileName=run-03.trx",
+    "--results-directory",
+    "<scratch>/p2b/out-connect-ignores-disposal"
+   ],
+   "exit": 1,
+   "timed_out": false,
+   "seconds": 1.57,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender(mode: \"dispose\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0496155",
+     "message": "Disposed client installed a sender (first settlement: WebsocketConnected)"
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender(mode: \"async\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0040346",
+     "message": "Disposed client installed a sender (first settlement: WebsocketConnected)"
+    }
+   ],
+   "outcome": "failed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender",
+    "--logger",
+    "trx;LogFileName=run-04.trx",
+    "--results-directory",
+    "<scratch>/p2b/out-connect-ignores-disposal"
+   ],
+   "exit": 1,
+   "timed_out": false,
+   "seconds": 1.62,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender(mode: \"dispose\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0469088",
+     "message": "Disposed client installed a sender (first settlement: WebsocketConnected)"
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender(mode: \"async\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0026535",
+     "message": "Disposed client installed a sender (first settlement: WebsocketConnected)"
+    }
+   ],
+   "outcome": "failed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender",
+    "--logger",
+    "trx;LogFileName=run-05.trx",
+    "--results-directory",
+    "<scratch>/p2b/out-connect-ignores-disposal"
+   ],
+   "exit": 1,
+   "timed_out": false,
+   "seconds": 1.57,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender(mode: \"async\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0035282",
+     "message": "Disposed client installed a sender (first settlement: WebsocketConnected)"
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender(mode: \"dispose\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0490796",
+     "message": "Disposed client installed a sender (first settlement: WebsocketConnected)"
+    }
+   ],
+   "outcome": "failed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender",
+    "--logger",
+    "trx;LogFileName=run-06.trx",
+    "--results-directory",
+    "<scratch>/p2b/out-connect-ignores-disposal"
+   ],
+   "exit": 1,
+   "timed_out": false,
+   "seconds": 1.57,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender(mode: \"async\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0033864",
+     "message": "Disposed client installed a sender (first settlement: WebsocketConnected)"
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender(mode: \"dispose\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0432539",
+     "message": "Disposed client installed a sender (first settlement: WebsocketConnected)"
+    }
+   ],
+   "outcome": "failed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender",
+    "--logger",
+    "trx;LogFileName=run-07.trx",
+    "--results-directory",
+    "<scratch>/p2b/out-connect-ignores-disposal"
+   ],
+   "exit": 1,
+   "timed_out": false,
+   "seconds": 1.52,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender(mode: \"dispose\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0405155",
+     "message": "Disposed client installed a sender (first settlement: WebsocketConnected)"
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender(mode: \"async\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0030862",
+     "message": "Disposed client installed a sender (first settlement: WebsocketConnected)"
+    }
+   ],
+   "outcome": "failed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender",
+    "--logger",
+    "trx;LogFileName=run-08.trx",
+    "--results-directory",
+    "<scratch>/p2b/out-connect-ignores-disposal"
+   ],
+   "exit": 1,
+   "timed_out": false,
+   "seconds": 1.52,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender(mode: \"dispose\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0446654",
+     "message": "Disposed client installed a sender (first settlement: WebsocketConnected)"
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender(mode: \"async\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0032572",
+     "message": "Disposed client installed a sender (first settlement: WebsocketConnected)"
+    }
+   ],
+   "outcome": "failed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender",
+    "--logger",
+    "trx;LogFileName=run-09.trx",
+    "--results-directory",
+    "<scratch>/p2b/out-connect-ignores-disposal"
+   ],
+   "exit": 1,
+   "timed_out": false,
+   "seconds": 1.57,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender(mode: \"async\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0025254",
+     "message": "Disposed client installed a sender (first settlement: WebsocketConnected)"
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender(mode: \"dispose\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0430859",
+     "message": "Disposed client installed a sender (first settlement: WebsocketConnected)"
+    }
+   ],
+   "outcome": "failed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender",
+    "--logger",
+    "trx;LogFileName=run-10.trx",
+    "--results-directory",
+    "<scratch>/p2b/out-connect-ignores-disposal"
+   ],
+   "exit": 1,
+   "timed_out": false,
+   "seconds": 1.57,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender(mode: \"dispose\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0472562",
+     "message": "Disposed client installed a sender (first settlement: WebsocketConnected)"
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender(mode: \"async\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0043882",
+     "message": "Disposed client installed a sender (first settlement: WebsocketConnected)"
+    }
+   ],
+   "outcome": "failed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender",
+    "--logger",
+    "trx;LogFileName=run-11.trx",
+    "--results-directory",
+    "<scratch>/p2b/out-connect-ignores-disposal"
+   ],
+   "exit": 1,
+   "timed_out": false,
+   "seconds": 1.52,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender(mode: \"dispose\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0439065",
+     "message": "Disposed client installed a sender (first settlement: WebsocketConnected)"
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender(mode: \"async\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0026942",
+     "message": "Disposed client installed a sender (first settlement: WebsocketConnected)"
+    }
+   ],
+   "outcome": "failed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender",
+    "--logger",
+    "trx;LogFileName=run-12.trx",
+    "--results-directory",
+    "<scratch>/p2b/out-connect-ignores-disposal"
+   ],
+   "exit": 1,
+   "timed_out": false,
+   "seconds": 1.57,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender(mode: \"dispose\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0510793",
+     "message": "Disposed client installed a sender (first settlement: WebsocketConnected)"
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender(mode: \"async\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0049373",
+     "message": "Disposed client installed a sender (first settlement: WebsocketConnected)"
+    }
+   ],
+   "outcome": "failed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender",
+    "--logger",
+    "trx;LogFileName=run-13.trx",
+    "--results-directory",
+    "<scratch>/p2b/out-connect-ignores-disposal"
+   ],
+   "exit": 1,
+   "timed_out": false,
+   "seconds": 1.62,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender(mode: \"async\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0034632",
+     "message": "Disposed client installed a sender (first settlement: WebsocketConnected)"
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender(mode: \"dispose\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0483284",
+     "message": "Disposed client installed a sender (first settlement: WebsocketConnected)"
+    }
+   ],
+   "outcome": "failed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender",
+    "--logger",
+    "trx;LogFileName=run-14.trx",
+    "--results-directory",
+    "<scratch>/p2b/out-connect-ignores-disposal"
+   ],
+   "exit": 1,
+   "timed_out": false,
+   "seconds": 1.52,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender(mode: \"async\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0037978",
+     "message": "Disposed client installed a sender (first settlement: WebsocketConnected)"
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender(mode: \"dispose\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0443331",
+     "message": "Disposed client installed a sender (first settlement: WebsocketConnected)"
+    }
+   ],
+   "outcome": "failed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender",
+    "--logger",
+    "trx;LogFileName=run-15.trx",
+    "--results-directory",
+    "<scratch>/p2b/out-connect-ignores-disposal"
+   ],
+   "exit": 1,
+   "timed_out": false,
+   "seconds": 1.52,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender(mode: \"dispose\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0449663",
+     "message": "Disposed client installed a sender (first settlement: WebsocketConnected)"
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender(mode: \"async\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0035220",
+     "message": "Disposed client installed a sender (first settlement: WebsocketConnected)"
+    }
+   ],
+   "outcome": "failed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender",
+    "--logger",
+    "trx;LogFileName=run-16.trx",
+    "--results-directory",
+    "<scratch>/p2b/out-connect-ignores-disposal"
+   ],
+   "exit": 1,
+   "timed_out": false,
+   "seconds": 1.52,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender(mode: \"async\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0038841",
+     "message": "Disposed client installed a sender (first settlement: WebsocketConnected)"
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender(mode: \"dispose\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0467637",
+     "message": "Disposed client installed a sender (first settlement: WebsocketConnected)"
+    }
+   ],
+   "outcome": "failed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender",
+    "--logger",
+    "trx;LogFileName=run-17.trx",
+    "--results-directory",
+    "<scratch>/p2b/out-connect-ignores-disposal"
+   ],
+   "exit": 1,
+   "timed_out": false,
+   "seconds": 1.62,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender(mode: \"dispose\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0455606",
+     "message": "Disposed client installed a sender (first settlement: WebsocketConnected)"
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender(mode: \"async\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0043442",
+     "message": "Disposed client installed a sender (first settlement: WebsocketConnected)"
+    }
+   ],
+   "outcome": "failed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender",
+    "--logger",
+    "trx;LogFileName=run-18.trx",
+    "--results-directory",
+    "<scratch>/p2b/out-connect-ignores-disposal"
+   ],
+   "exit": 1,
+   "timed_out": false,
+   "seconds": 1.52,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender(mode: \"async\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0030055",
+     "message": "Disposed client installed a sender (first settlement: WebsocketConnected)"
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender(mode: \"dispose\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0422915",
+     "message": "Disposed client installed a sender (first settlement: WebsocketConnected)"
+    }
+   ],
+   "outcome": "failed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender",
+    "--logger",
+    "trx;LogFileName=run-19.trx",
+    "--results-directory",
+    "<scratch>/p2b/out-connect-ignores-disposal"
+   ],
+   "exit": 1,
+   "timed_out": false,
+   "seconds": 1.52,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender(mode: \"dispose\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0440057",
+     "message": "Disposed client installed a sender (first settlement: WebsocketConnected)"
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender(mode: \"async\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0038780",
+     "message": "Disposed client installed a sender (first settlement: WebsocketConnected)"
+    }
+   ],
+   "outcome": "failed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender",
+    "--logger",
+    "trx;LogFileName=run-20.trx",
+    "--results-directory",
+    "<scratch>/p2b/out-connect-ignores-disposal"
+   ],
+   "exit": 1,
+   "timed_out": false,
+   "seconds": 1.52,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender(mode: \"async\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0037650",
+     "message": "Disposed client installed a sender (first settlement: WebsocketConnected)"
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender(mode: \"dispose\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0473589",
+     "message": "Disposed client installed a sender (first settlement: WebsocketConnected)"
+    }
+   ],
+   "outcome": "failed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender",
+    "--logger",
+    "trx;LogFileName=run-21.trx",
+    "--results-directory",
+    "<scratch>/p2b/out-connect-ignores-disposal"
+   ],
+   "exit": 1,
+   "timed_out": false,
+   "seconds": 1.52,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender(mode: \"dispose\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0468486",
+     "message": "Disposed client installed a sender (first settlement: WebsocketConnected)"
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender(mode: \"async\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0039560",
+     "message": "Disposed client installed a sender (first settlement: WebsocketConnected)"
+    }
+   ],
+   "outcome": "failed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender",
+    "--logger",
+    "trx;LogFileName=run-22.trx",
+    "--results-directory",
+    "<scratch>/p2b/out-connect-ignores-disposal"
+   ],
+   "exit": 1,
+   "timed_out": false,
+   "seconds": 1.47,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender(mode: \"async\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0026324",
+     "message": "Disposed client installed a sender (first settlement: WebsocketConnected)"
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender(mode: \"dispose\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0442556",
+     "message": "Disposed client installed a sender (first settlement: WebsocketConnected)"
+    }
+   ],
+   "outcome": "failed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender",
+    "--logger",
+    "trx;LogFileName=run-23.trx",
+    "--results-directory",
+    "<scratch>/p2b/out-connect-ignores-disposal"
+   ],
+   "exit": 1,
+   "timed_out": false,
+   "seconds": 1.52,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender(mode: \"async\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0025393",
+     "message": "Disposed client installed a sender (first settlement: WebsocketConnected)"
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender(mode: \"dispose\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0474500",
+     "message": "Disposed client installed a sender (first settlement: WebsocketConnected)"
+    }
+   ],
+   "outcome": "failed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender",
+    "--logger",
+    "trx;LogFileName=run-24.trx",
+    "--results-directory",
+    "<scratch>/p2b/out-connect-ignores-disposal"
+   ],
+   "exit": 1,
+   "timed_out": false,
+   "seconds": 1.52,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender(mode: \"async\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0027302",
+     "message": "Disposed client installed a sender (first settlement: WebsocketConnected)"
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender(mode: \"dispose\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0410031",
+     "message": "Disposed client installed a sender (first settlement: WebsocketConnected)"
+    }
+   ],
+   "outcome": "failed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender",
+    "--logger",
+    "trx;LogFileName=run-25.trx",
+    "--results-directory",
+    "<scratch>/p2b/out-connect-ignores-disposal"
+   ],
+   "exit": 1,
+   "timed_out": false,
+   "seconds": 1.52,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender(mode: \"async\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0034742",
+     "message": "Disposed client installed a sender (first settlement: WebsocketConnected)"
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender(mode: \"dispose\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0506721",
+     "message": "Disposed client installed a sender (first settlement: WebsocketConnected)"
+    }
+   ],
+   "outcome": "failed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender",
+    "--logger",
+    "trx;LogFileName=run-26.trx",
+    "--results-directory",
+    "<scratch>/p2b/out-connect-ignores-disposal"
+   ],
+   "exit": 1,
+   "timed_out": false,
+   "seconds": 1.52,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender(mode: \"async\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0030373",
+     "message": "Disposed client installed a sender (first settlement: WebsocketConnected)"
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender(mode: \"dispose\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0463512",
+     "message": "Disposed client installed a sender (first settlement: WebsocketConnected)"
+    }
+   ],
+   "outcome": "failed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender",
+    "--logger",
+    "trx;LogFileName=run-27.trx",
+    "--results-directory",
+    "<scratch>/p2b/out-connect-ignores-disposal"
+   ],
+   "exit": 1,
+   "timed_out": false,
+   "seconds": 1.52,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender(mode: \"dispose\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0449133",
+     "message": "Disposed client installed a sender (first settlement: WebsocketConnected)"
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender(mode: \"async\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0024177",
+     "message": "Disposed client installed a sender (first settlement: WebsocketConnected)"
+    }
+   ],
+   "outcome": "failed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender",
+    "--logger",
+    "trx;LogFileName=run-28.trx",
+    "--results-directory",
+    "<scratch>/p2b/out-connect-ignores-disposal"
+   ],
+   "exit": 1,
+   "timed_out": false,
+   "seconds": 1.52,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender(mode: \"async\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0024503",
+     "message": "Disposed client installed a sender (first settlement: WebsocketConnected)"
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender(mode: \"dispose\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0458251",
+     "message": "Disposed client installed a sender (first settlement: WebsocketConnected)"
+    }
+   ],
+   "outcome": "failed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender",
+    "--logger",
+    "trx;LogFileName=run-29.trx",
+    "--results-directory",
+    "<scratch>/p2b/out-connect-ignores-disposal"
+   ],
+   "exit": 1,
+   "timed_out": false,
+   "seconds": 1.47,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender(mode: \"async\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0022014",
+     "message": "Disposed client installed a sender (first settlement: WebsocketConnected)"
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender(mode: \"dispose\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0429661",
+     "message": "Disposed client installed a sender (first settlement: WebsocketConnected)"
+    }
+   ],
+   "outcome": "failed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender",
+    "--logger",
+    "trx;LogFileName=run-30.trx",
+    "--results-directory",
+    "<scratch>/p2b/out-connect-ignores-disposal"
+   ],
+   "exit": 1,
+   "timed_out": false,
+   "seconds": 1.52,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender(mode: \"async\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0035210",
+     "message": "Disposed client installed a sender (first settlement: WebsocketConnected)"
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender(mode: \"dispose\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0448376",
+     "message": "Disposed client installed a sender (first settlement: WebsocketConnected)"
+    }
+   ],
+   "outcome": "failed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender",
+    "--logger",
+    "trx;LogFileName=run-31.trx",
+    "--results-directory",
+    "<scratch>/p2b/out-connect-ignores-disposal"
+   ],
+   "exit": 1,
+   "timed_out": false,
+   "seconds": 1.57,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender(mode: \"dispose\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0460043",
+     "message": "Disposed client installed a sender (first settlement: WebsocketConnected)"
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender(mode: \"async\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0033715",
+     "message": "Disposed client installed a sender (first settlement: WebsocketConnected)"
+    }
+   ],
+   "outcome": "failed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender",
+    "--logger",
+    "trx;LogFileName=run-32.trx",
+    "--results-directory",
+    "<scratch>/p2b/out-connect-ignores-disposal"
+   ],
+   "exit": 1,
+   "timed_out": false,
+   "seconds": 1.52,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender(mode: \"dispose\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0432501",
+     "message": "Disposed client installed a sender (first settlement: WebsocketConnected)"
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender(mode: \"async\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0027843",
+     "message": "Disposed client installed a sender (first settlement: WebsocketConnected)"
+    }
+   ],
+   "outcome": "failed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender",
+    "--logger",
+    "trx;LogFileName=run-33.trx",
+    "--results-directory",
+    "<scratch>/p2b/out-connect-ignores-disposal"
+   ],
+   "exit": 1,
+   "timed_out": false,
+   "seconds": 1.52,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender(mode: \"async\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0030841",
+     "message": "Disposed client installed a sender (first settlement: WebsocketConnected)"
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender(mode: \"dispose\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0433495",
+     "message": "Disposed client installed a sender (first settlement: WebsocketConnected)"
+    }
+   ],
+   "outcome": "failed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender",
+    "--logger",
+    "trx;LogFileName=run-34.trx",
+    "--results-directory",
+    "<scratch>/p2b/out-connect-ignores-disposal"
+   ],
+   "exit": 1,
+   "timed_out": false,
+   "seconds": 1.52,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender(mode: \"dispose\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0424381",
+     "message": "Disposed client installed a sender (first settlement: WebsocketConnected)"
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender(mode: \"async\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0031690",
+     "message": "Disposed client installed a sender (first settlement: WebsocketConnected)"
+    }
+   ],
+   "outcome": "failed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender",
+    "--logger",
+    "trx;LogFileName=run-35.trx",
+    "--results-directory",
+    "<scratch>/p2b/out-connect-ignores-disposal"
+   ],
+   "exit": 1,
+   "timed_out": false,
+   "seconds": 1.52,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender(mode: \"async\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0024917",
+     "message": "Disposed client installed a sender (first settlement: WebsocketConnected)"
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender(mode: \"dispose\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0433866",
+     "message": "Disposed client installed a sender (first settlement: WebsocketConnected)"
+    }
+   ],
+   "outcome": "failed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender",
+    "--logger",
+    "trx;LogFileName=run-36.trx",
+    "--results-directory",
+    "<scratch>/p2b/out-connect-ignores-disposal"
+   ],
+   "exit": 1,
+   "timed_out": false,
+   "seconds": 1.47,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender(mode: \"async\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0035487",
+     "message": "Disposed client installed a sender (first settlement: WebsocketConnected)"
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender(mode: \"dispose\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0448640",
+     "message": "Disposed client installed a sender (first settlement: WebsocketConnected)"
+    }
+   ],
+   "outcome": "failed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender",
+    "--logger",
+    "trx;LogFileName=run-37.trx",
+    "--results-directory",
+    "<scratch>/p2b/out-connect-ignores-disposal"
+   ],
+   "exit": 1,
+   "timed_out": false,
+   "seconds": 1.52,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender(mode: \"async\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0030744",
+     "message": "Disposed client installed a sender (first settlement: WebsocketConnected)"
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender(mode: \"dispose\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0432413",
+     "message": "Disposed client installed a sender (first settlement: WebsocketConnected)"
+    }
+   ],
+   "outcome": "failed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender",
+    "--logger",
+    "trx;LogFileName=run-38.trx",
+    "--results-directory",
+    "<scratch>/p2b/out-connect-ignores-disposal"
+   ],
+   "exit": 1,
+   "timed_out": false,
+   "seconds": 1.52,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender(mode: \"async\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0033660",
+     "message": "Disposed client installed a sender (first settlement: WebsocketConnected)"
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender(mode: \"dispose\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0434106",
+     "message": "Disposed client installed a sender (first settlement: WebsocketConnected)"
+    }
+   ],
+   "outcome": "failed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender",
+    "--logger",
+    "trx;LogFileName=run-39.trx",
+    "--results-directory",
+    "<scratch>/p2b/out-connect-ignores-disposal"
+   ],
+   "exit": 1,
+   "timed_out": false,
+   "seconds": 1.52,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender(mode: \"dispose\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0429937",
+     "message": "Disposed client installed a sender (first settlement: WebsocketConnected)"
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender(mode: \"async\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0037186",
+     "message": "Disposed client installed a sender (first settlement: WebsocketConnected)"
+    }
+   ],
+   "outcome": "failed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender",
+    "--logger",
+    "trx;LogFileName=run-40.trx",
+    "--results-directory",
+    "<scratch>/p2b/out-connect-ignores-disposal"
+   ],
+   "exit": 1,
+   "timed_out": false,
+   "seconds": 1.52,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender(mode: \"async\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0029221",
+     "message": "Disposed client installed a sender (first settlement: WebsocketConnected)"
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender(mode: \"dispose\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0438980",
+     "message": "Disposed client installed a sender (first settlement: WebsocketConnected)"
+    }
+   ],
+   "outcome": "failed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender",
+    "--logger",
+    "trx;LogFileName=run-41.trx",
+    "--results-directory",
+    "<scratch>/p2b/out-connect-ignores-disposal"
+   ],
+   "exit": 1,
+   "timed_out": false,
+   "seconds": 1.52,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender(mode: \"dispose\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0419268",
+     "message": "Disposed client installed a sender (first settlement: WebsocketConnected)"
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender(mode: \"async\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0034471",
+     "message": "Disposed client installed a sender (first settlement: WebsocketConnected)"
+    }
+   ],
+   "outcome": "failed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender",
+    "--logger",
+    "trx;LogFileName=run-42.trx",
+    "--results-directory",
+    "<scratch>/p2b/out-connect-ignores-disposal"
+   ],
+   "exit": 1,
+   "timed_out": false,
+   "seconds": 1.52,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender(mode: \"dispose\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0451278",
+     "message": "Disposed client installed a sender (first settlement: WebsocketConnected)"
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender(mode: \"async\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0033497",
+     "message": "Disposed client installed a sender (first settlement: WebsocketConnected)"
+    }
+   ],
+   "outcome": "failed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender",
+    "--logger",
+    "trx;LogFileName=run-43.trx",
+    "--results-directory",
+    "<scratch>/p2b/out-connect-ignores-disposal"
+   ],
+   "exit": 1,
+   "timed_out": false,
+   "seconds": 1.52,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender(mode: \"dispose\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0470441",
+     "message": "Disposed client installed a sender (first settlement: WebsocketConnected)"
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender(mode: \"async\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0036668",
+     "message": "Disposed client installed a sender (first settlement: WebsocketConnected)"
+    }
+   ],
+   "outcome": "failed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender",
+    "--logger",
+    "trx;LogFileName=run-44.trx",
+    "--results-directory",
+    "<scratch>/p2b/out-connect-ignores-disposal"
+   ],
+   "exit": 1,
+   "timed_out": false,
+   "seconds": 1.52,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender(mode: \"async\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0035319",
+     "message": "Disposed client installed a sender (first settlement: WebsocketConnected)"
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender(mode: \"dispose\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0460817",
+     "message": "Disposed client installed a sender (first settlement: WebsocketConnected)"
+    }
+   ],
+   "outcome": "failed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender",
+    "--logger",
+    "trx;LogFileName=run-45.trx",
+    "--results-directory",
+    "<scratch>/p2b/out-connect-ignores-disposal"
+   ],
+   "exit": 1,
+   "timed_out": false,
+   "seconds": 1.52,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender(mode: \"async\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0040127",
+     "message": "Disposed client installed a sender (first settlement: WebsocketConnected)"
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender(mode: \"dispose\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0443030",
+     "message": "Disposed client installed a sender (first settlement: WebsocketConnected)"
+    }
+   ],
+   "outcome": "failed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender",
+    "--logger",
+    "trx;LogFileName=run-46.trx",
+    "--results-directory",
+    "<scratch>/p2b/out-connect-ignores-disposal"
+   ],
+   "exit": 1,
+   "timed_out": false,
+   "seconds": 1.52,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender(mode: \"async\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0031369",
+     "message": "Disposed client installed a sender (first settlement: WebsocketConnected)"
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender(mode: \"dispose\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0425566",
+     "message": "Disposed client installed a sender (first settlement: WebsocketConnected)"
+    }
+   ],
+   "outcome": "failed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender",
+    "--logger",
+    "trx;LogFileName=run-47.trx",
+    "--results-directory",
+    "<scratch>/p2b/out-connect-ignores-disposal"
+   ],
+   "exit": 1,
+   "timed_out": false,
+   "seconds": 1.52,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender(mode: \"async\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0033235",
+     "message": "Disposed client installed a sender (first settlement: WebsocketConnected)"
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender(mode: \"dispose\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0428997",
+     "message": "Disposed client installed a sender (first settlement: WebsocketConnected)"
+    }
+   ],
+   "outcome": "failed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender",
+    "--logger",
+    "trx;LogFileName=run-48.trx",
+    "--results-directory",
+    "<scratch>/p2b/out-connect-ignores-disposal"
+   ],
+   "exit": 1,
+   "timed_out": false,
+   "seconds": 1.52,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender(mode: \"dispose\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0440663",
+     "message": "Disposed client installed a sender (first settlement: WebsocketConnected)"
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender(mode: \"async\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0028180",
+     "message": "Disposed client installed a sender (first settlement: WebsocketConnected)"
+    }
+   ],
+   "outcome": "failed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender",
+    "--logger",
+    "trx;LogFileName=run-49.trx",
+    "--results-directory",
+    "<scratch>/p2b/out-connect-ignores-disposal"
+   ],
+   "exit": 1,
+   "timed_out": false,
+   "seconds": 1.52,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender(mode: \"async\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0031882",
+     "message": "Disposed client installed a sender (first settlement: WebsocketConnected)"
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender(mode: \"dispose\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0440262",
+     "message": "Disposed client installed a sender (first settlement: WebsocketConnected)"
+    }
+   ],
+   "outcome": "failed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender",
+    "--logger",
+    "trx;LogFileName=run-50.trx",
+    "--results-directory",
+    "<scratch>/p2b/out-connect-ignores-disposal"
+   ],
+   "exit": 1,
+   "timed_out": false,
+   "seconds": 1.52,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender(mode: \"dispose\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0463453",
+     "message": "Disposed client installed a sender (first settlement: WebsocketConnected)"
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender(mode: \"async\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0021681",
+     "message": "Disposed client installed a sender (first settlement: WebsocketConnected)"
+    }
+   ],
+   "outcome": "failed"
+  }
+ ],
+ "build": {
+  "command": [
+   "dotnet",
+   "build",
+   "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+   "-c",
+   "Release",
+   "-p:LibTfm=net11.0",
+   "--nologo"
+  ],
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 1.52
+ },
+ "verdict": "failed on every run",
+ "rows_per_run": [
+  2
+ ]
+}

@@ -14,13 +14,28 @@ public sealed partial class Evidence
         ["SetupAdmissionIsOwnedUntilTeardown"] = 3,
         ["SequentialRepeatOrRetryUsesFreshServices"] = 2,
         ["FailedConnectTerminatesAndRemovesRegistration"] = 1,
-        ["EndedConnectionReportsNotConnected"] = 2
+        ["EndedConnectionReportsNotConnected"] = 2,
+        ["RegisterAfterDisposalAdmitsNoService"] = 2,
+        ["ConnectAfterDisposalInstallsNoSender"] = 2
     };
     public static readonly (string Id, string Source, string Before, string After, string Test, string Assertion)[] ReconnectCases =
     [
         ("missing-removal", ReconnectSource, "_activeConnections.TryRemove(owned, out _);",
             "// isolated defect: retain the old registration",
-            "TerminalCallbackSuccessorSurvivesOldCleanup", "Old service retained registration")
+            "TerminalCallbackSuccessorSurvivesOldCleanup", "Old service retained registration"),
+        // Decision-line defects of verification/reconnect-decision.md ("Seeded defects, both ways"),
+        // which survived every test on 2026-11-11 (docs/evidence/reconnect-disposal-schedules).
+        ("subscribe-keeps-generation", ReconnectSource, "_generation = generation;",
+            "// isolated defect: the generation is not stored",
+            "EndedConnectionReportsNotConnected", "IsConnected did not become false when the connection ended"),
+        ("register-ignores-disposal", ReconnectSource,
+            "if (_disposed) throw new ObjectDisposedException(nameof(ClientWebSocketRx));\n                            service =",
+            "service =",
+            "RegisterAfterDisposalAdmitsNoService", "Disposed client registered a service"),
+        ("connect-ignores-disposal", ReconnectSource,
+            "if (_disposed) throw new ObjectDisposedException(nameof(ClientWebSocketRx));\n                    Sender = sender;",
+            "Sender = sender;",
+            "ConnectAfterDisposalInstallsNoSender", "Disposed client installed a sender")
     ];
     public async Task<int> ReconnectDefects(string output, CancellationToken cancellation)
     {
@@ -82,7 +97,7 @@ public sealed partial class Evidence
         RequireReconnectCommand(report["baseline"]!);
         var baselineRuntime = baseline.Single(r => ((string?)r.Attribute("testName"))?.EndsWith("RecordHostRuntime", StringComparison.Ordinal) == true).Value;
         var entries = report["experiments"]!.AsArray();
-        Require(entries.Count == 1, "Missing reconnect experiments or repetitions");
+        Require(entries.Count == ReconnectCases.Length, "Missing reconnect experiments or repetitions");
         foreach (var c in ReconnectCases)
         {
             var name = c.Id;
@@ -105,10 +120,24 @@ public sealed partial class Evidence
         var e = Read(Path.Combine(directory, "execution.json"));
         Require(e["timed_out"]?.GetValue<bool>() == false && e["interrupted"]?.GetValue<bool>() == false && e["launch_error"] is null && e["exit_code"]?.ToString() == code.ToString(), "Invalid reconnect execution");
     }
+    // Every row of the named test must fail on the named assertion: a theory's rows are counted
+    // by ReconnectCaseCounts, and the only other row is RecordHostRuntime, which must pass.
     private static string ValidateReconnectResult(string directory, JsonNode run, string test, string assertion)
     {
         RequireReconnectCommand(run);
         ValidateReconnectExecution(directory, 1);
-        return ValidateBoundaryResult(Path.Combine(directory, "results.trx"), run, test, assertion, 1);
+        ValidateAssertionExecution(directory, 1);
+        Require(S(run, "status") == "failed" && run["exit_code"]?.ToString() == "1", "Reconnect mutant must fail assertions, not timeout or compilation");
+        XNamespace ns = "http://microsoft.com/schemas/VisualStudio/TeamTest/2010";
+        var results = XDocument.Load(Path.Combine(directory, "results.trx")).Descendants(ns + "UnitTestResult").ToArray();
+        int rows = ReconnectCaseCounts[test];
+        Require(results.Length == rows + 1, "Missing reconnect result rows");
+        var failed = results.Where(r => (string?)r.Attribute("outcome") == "Failed").ToArray();
+        Require(failed.Length == rows && failed.All(r => ((string?)r.Attribute("testName"))?.Contains("ReconnectTests." + test, StringComparison.Ordinal) == true
+            && r.Value.Contains(assertion, StringComparison.Ordinal)), "Missing intended reconnect assertion");
+        var runtime = results.Single(r => ((string?)r.Attribute("testName"))?.EndsWith("RecordHostRuntime", StringComparison.Ordinal) == true);
+        var match = System.Text.RegularExpressions.Regex.Match(runtime.Value, @"PDD_HOST_RUNTIME=(.+)");
+        Require((string?)runtime.Attribute("outcome") == "Passed" && match.Success, "Missing reconnect host runtime");
+        return match.Groups[1].Value.Trim();
     }
 }
