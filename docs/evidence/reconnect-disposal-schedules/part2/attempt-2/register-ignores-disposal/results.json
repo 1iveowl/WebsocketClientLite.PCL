@@ -1,0 +1,1828 @@
+{
+ "made": "2026-11-25",
+ "copy": "<scratch>/register-ignores-disposal",
+ "library_target": "net11.0",
+ "configuration": "Release",
+ "filter": "FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService",
+ "assertion": "Disposed client registered a service",
+ "runs": [
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService",
+    "--logger",
+    "trx;LogFileName=run-01.trx",
+    "--results-directory",
+    "<scratch>/p2b/out-register-ignores-disposal"
+   ],
+   "exit": 1,
+   "timed_out": false,
+   "seconds": 1.52,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService(mode: \"dispose\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0290804",
+     "message": "Disposed client registered a service"
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService(mode: \"async\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0021981",
+     "message": "Disposed client registered a service"
+    }
+   ],
+   "outcome": "failed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService",
+    "--logger",
+    "trx;LogFileName=run-02.trx",
+    "--results-directory",
+    "<scratch>/p2b/out-register-ignores-disposal"
+   ],
+   "exit": 1,
+   "timed_out": false,
+   "seconds": 1.57,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService(mode: \"dispose\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0289871",
+     "message": "Disposed client registered a service"
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService(mode: \"async\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0017248",
+     "message": "Disposed client registered a service"
+    }
+   ],
+   "outcome": "failed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService",
+    "--logger",
+    "trx;LogFileName=run-03.trx",
+    "--results-directory",
+    "<scratch>/p2b/out-register-ignores-disposal"
+   ],
+   "exit": 1,
+   "timed_out": false,
+   "seconds": 1.57,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService(mode: \"dispose\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0293454",
+     "message": "Disposed client registered a service"
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService(mode: \"async\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0016914",
+     "message": "Disposed client registered a service"
+    }
+   ],
+   "outcome": "failed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService",
+    "--logger",
+    "trx;LogFileName=run-04.trx",
+    "--results-directory",
+    "<scratch>/p2b/out-register-ignores-disposal"
+   ],
+   "exit": 1,
+   "timed_out": false,
+   "seconds": 1.57,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService(mode: \"dispose\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0386761",
+     "message": "Disposed client registered a service"
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService(mode: \"async\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0030467",
+     "message": "Disposed client registered a service"
+    }
+   ],
+   "outcome": "failed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService",
+    "--logger",
+    "trx;LogFileName=run-05.trx",
+    "--results-directory",
+    "<scratch>/p2b/out-register-ignores-disposal"
+   ],
+   "exit": 1,
+   "timed_out": false,
+   "seconds": 1.57,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService(mode: \"async\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0017109",
+     "message": "Disposed client registered a service"
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService(mode: \"dispose\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0280870",
+     "message": "Disposed client registered a service"
+    }
+   ],
+   "outcome": "failed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService",
+    "--logger",
+    "trx;LogFileName=run-06.trx",
+    "--results-directory",
+    "<scratch>/p2b/out-register-ignores-disposal"
+   ],
+   "exit": 1,
+   "timed_out": false,
+   "seconds": 1.52,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService(mode: \"async\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0017740",
+     "message": "Disposed client registered a service"
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService(mode: \"dispose\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0281028",
+     "message": "Disposed client registered a service"
+    }
+   ],
+   "outcome": "failed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService",
+    "--logger",
+    "trx;LogFileName=run-07.trx",
+    "--results-directory",
+    "<scratch>/p2b/out-register-ignores-disposal"
+   ],
+   "exit": 1,
+   "timed_out": false,
+   "seconds": 1.52,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService(mode: \"dispose\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0357119",
+     "message": "Disposed client registered a service"
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService(mode: \"async\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0026285",
+     "message": "Disposed client registered a service"
+    }
+   ],
+   "outcome": "failed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService",
+    "--logger",
+    "trx;LogFileName=run-08.trx",
+    "--results-directory",
+    "<scratch>/p2b/out-register-ignores-disposal"
+   ],
+   "exit": 1,
+   "timed_out": false,
+   "seconds": 1.52,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService(mode: \"dispose\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0286331",
+     "message": "Disposed client registered a service"
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService(mode: \"async\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0015210",
+     "message": "Disposed client registered a service"
+    }
+   ],
+   "outcome": "failed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService",
+    "--logger",
+    "trx;LogFileName=run-09.trx",
+    "--results-directory",
+    "<scratch>/p2b/out-register-ignores-disposal"
+   ],
+   "exit": 1,
+   "timed_out": false,
+   "seconds": 1.47,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService(mode: \"dispose\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0390772",
+     "message": "Disposed client registered a service"
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService(mode: \"async\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0031218",
+     "message": "Disposed client registered a service"
+    }
+   ],
+   "outcome": "failed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService",
+    "--logger",
+    "trx;LogFileName=run-10.trx",
+    "--results-directory",
+    "<scratch>/p2b/out-register-ignores-disposal"
+   ],
+   "exit": 1,
+   "timed_out": false,
+   "seconds": 1.52,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService(mode: \"dispose\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0373653",
+     "message": "Disposed client registered a service"
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService(mode: \"async\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0023993",
+     "message": "Disposed client registered a service"
+    }
+   ],
+   "outcome": "failed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService",
+    "--logger",
+    "trx;LogFileName=run-11.trx",
+    "--results-directory",
+    "<scratch>/p2b/out-register-ignores-disposal"
+   ],
+   "exit": 1,
+   "timed_out": false,
+   "seconds": 1.52,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService(mode: \"async\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0034536",
+     "message": "Disposed client registered a service"
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService(mode: \"dispose\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0387480",
+     "message": "Disposed client registered a service"
+    }
+   ],
+   "outcome": "failed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService",
+    "--logger",
+    "trx;LogFileName=run-12.trx",
+    "--results-directory",
+    "<scratch>/p2b/out-register-ignores-disposal"
+   ],
+   "exit": 1,
+   "timed_out": false,
+   "seconds": 1.52,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService(mode: \"dispose\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0304322",
+     "message": "Disposed client registered a service"
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService(mode: \"async\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0019847",
+     "message": "Disposed client registered a service"
+    }
+   ],
+   "outcome": "failed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService",
+    "--logger",
+    "trx;LogFileName=run-13.trx",
+    "--results-directory",
+    "<scratch>/p2b/out-register-ignores-disposal"
+   ],
+   "exit": 1,
+   "timed_out": false,
+   "seconds": 1.52,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService(mode: \"dispose\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0361563",
+     "message": "Disposed client registered a service"
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService(mode: \"async\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0040388",
+     "message": "Disposed client registered a service"
+    }
+   ],
+   "outcome": "failed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService",
+    "--logger",
+    "trx;LogFileName=run-14.trx",
+    "--results-directory",
+    "<scratch>/p2b/out-register-ignores-disposal"
+   ],
+   "exit": 1,
+   "timed_out": false,
+   "seconds": 1.52,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService(mode: \"dispose\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0274803",
+     "message": "Disposed client registered a service"
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService(mode: \"async\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0015542",
+     "message": "Disposed client registered a service"
+    }
+   ],
+   "outcome": "failed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService",
+    "--logger",
+    "trx;LogFileName=run-15.trx",
+    "--results-directory",
+    "<scratch>/p2b/out-register-ignores-disposal"
+   ],
+   "exit": 1,
+   "timed_out": false,
+   "seconds": 1.52,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService(mode: \"dispose\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0290421",
+     "message": "Disposed client registered a service"
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService(mode: \"async\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0026173",
+     "message": "Disposed client registered a service"
+    }
+   ],
+   "outcome": "failed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService",
+    "--logger",
+    "trx;LogFileName=run-16.trx",
+    "--results-directory",
+    "<scratch>/p2b/out-register-ignores-disposal"
+   ],
+   "exit": 1,
+   "timed_out": false,
+   "seconds": 1.52,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService(mode: \"async\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0024870",
+     "message": "Disposed client registered a service"
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService(mode: \"dispose\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0365056",
+     "message": "Disposed client registered a service"
+    }
+   ],
+   "outcome": "failed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService",
+    "--logger",
+    "trx;LogFileName=run-17.trx",
+    "--results-directory",
+    "<scratch>/p2b/out-register-ignores-disposal"
+   ],
+   "exit": 1,
+   "timed_out": false,
+   "seconds": 1.52,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService(mode: \"async\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0057329",
+     "message": "Disposed client registered a service"
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService(mode: \"dispose\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0285531",
+     "message": "Disposed client registered a service"
+    }
+   ],
+   "outcome": "failed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService",
+    "--logger",
+    "trx;LogFileName=run-18.trx",
+    "--results-directory",
+    "<scratch>/p2b/out-register-ignores-disposal"
+   ],
+   "exit": 1,
+   "timed_out": false,
+   "seconds": 1.52,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService(mode: \"dispose\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0267216",
+     "message": "Disposed client registered a service"
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService(mode: \"async\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0016783",
+     "message": "Disposed client registered a service"
+    }
+   ],
+   "outcome": "failed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService",
+    "--logger",
+    "trx;LogFileName=run-19.trx",
+    "--results-directory",
+    "<scratch>/p2b/out-register-ignores-disposal"
+   ],
+   "exit": 1,
+   "timed_out": false,
+   "seconds": 1.52,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService(mode: \"dispose\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0371489",
+     "message": "Disposed client registered a service"
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService(mode: \"async\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0036388",
+     "message": "Disposed client registered a service"
+    }
+   ],
+   "outcome": "failed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService",
+    "--logger",
+    "trx;LogFileName=run-20.trx",
+    "--results-directory",
+    "<scratch>/p2b/out-register-ignores-disposal"
+   ],
+   "exit": 1,
+   "timed_out": false,
+   "seconds": 1.52,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService(mode: \"dispose\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0365322",
+     "message": "Disposed client registered a service"
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService(mode: \"async\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0035873",
+     "message": "Disposed client registered a service"
+    }
+   ],
+   "outcome": "failed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService",
+    "--logger",
+    "trx;LogFileName=run-21.trx",
+    "--results-directory",
+    "<scratch>/p2b/out-register-ignores-disposal"
+   ],
+   "exit": 1,
+   "timed_out": false,
+   "seconds": 1.52,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService(mode: \"dispose\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0293537",
+     "message": "Disposed client registered a service"
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService(mode: \"async\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0019381",
+     "message": "Disposed client registered a service"
+    }
+   ],
+   "outcome": "failed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService",
+    "--logger",
+    "trx;LogFileName=run-22.trx",
+    "--results-directory",
+    "<scratch>/p2b/out-register-ignores-disposal"
+   ],
+   "exit": 1,
+   "timed_out": false,
+   "seconds": 1.47,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService(mode: \"async\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0028381",
+     "message": "Disposed client registered a service"
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService(mode: \"dispose\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0264073",
+     "message": "Disposed client registered a service"
+    }
+   ],
+   "outcome": "failed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService",
+    "--logger",
+    "trx;LogFileName=run-23.trx",
+    "--results-directory",
+    "<scratch>/p2b/out-register-ignores-disposal"
+   ],
+   "exit": 1,
+   "timed_out": false,
+   "seconds": 1.57,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService(mode: \"async\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0033036",
+     "message": "Disposed client registered a service"
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService(mode: \"dispose\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0356857",
+     "message": "Disposed client registered a service"
+    }
+   ],
+   "outcome": "failed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService",
+    "--logger",
+    "trx;LogFileName=run-24.trx",
+    "--results-directory",
+    "<scratch>/p2b/out-register-ignores-disposal"
+   ],
+   "exit": 1,
+   "timed_out": false,
+   "seconds": 1.52,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService(mode: \"dispose\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0369752",
+     "message": "Disposed client registered a service"
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService(mode: \"async\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0033571",
+     "message": "Disposed client registered a service"
+    }
+   ],
+   "outcome": "failed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService",
+    "--logger",
+    "trx;LogFileName=run-25.trx",
+    "--results-directory",
+    "<scratch>/p2b/out-register-ignores-disposal"
+   ],
+   "exit": 1,
+   "timed_out": false,
+   "seconds": 1.52,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService(mode: \"dispose\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0306217",
+     "message": "Disposed client registered a service"
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService(mode: \"async\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0035421",
+     "message": "Disposed client registered a service"
+    }
+   ],
+   "outcome": "failed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService",
+    "--logger",
+    "trx;LogFileName=run-26.trx",
+    "--results-directory",
+    "<scratch>/p2b/out-register-ignores-disposal"
+   ],
+   "exit": 1,
+   "timed_out": false,
+   "seconds": 1.57,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService(mode: \"dispose\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0318078",
+     "message": "Disposed client registered a service"
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService(mode: \"async\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0026721",
+     "message": "Disposed client registered a service"
+    }
+   ],
+   "outcome": "failed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService",
+    "--logger",
+    "trx;LogFileName=run-27.trx",
+    "--results-directory",
+    "<scratch>/p2b/out-register-ignores-disposal"
+   ],
+   "exit": 1,
+   "timed_out": false,
+   "seconds": 1.52,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService(mode: \"dispose\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0278895",
+     "message": "Disposed client registered a service"
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService(mode: \"async\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0017703",
+     "message": "Disposed client registered a service"
+    }
+   ],
+   "outcome": "failed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService",
+    "--logger",
+    "trx;LogFileName=run-28.trx",
+    "--results-directory",
+    "<scratch>/p2b/out-register-ignores-disposal"
+   ],
+   "exit": 1,
+   "timed_out": false,
+   "seconds": 1.57,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService(mode: \"dispose\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0383572",
+     "message": "Disposed client registered a service"
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService(mode: \"async\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0026897",
+     "message": "Disposed client registered a service"
+    }
+   ],
+   "outcome": "failed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService",
+    "--logger",
+    "trx;LogFileName=run-29.trx",
+    "--results-directory",
+    "<scratch>/p2b/out-register-ignores-disposal"
+   ],
+   "exit": 1,
+   "timed_out": false,
+   "seconds": 1.57,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService(mode: \"async\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0031852",
+     "message": "Disposed client registered a service"
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService(mode: \"dispose\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0388538",
+     "message": "Disposed client registered a service"
+    }
+   ],
+   "outcome": "failed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService",
+    "--logger",
+    "trx;LogFileName=run-30.trx",
+    "--results-directory",
+    "<scratch>/p2b/out-register-ignores-disposal"
+   ],
+   "exit": 1,
+   "timed_out": false,
+   "seconds": 1.52,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService(mode: \"async\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0018840",
+     "message": "Disposed client registered a service"
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService(mode: \"dispose\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0269664",
+     "message": "Disposed client registered a service"
+    }
+   ],
+   "outcome": "failed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService",
+    "--logger",
+    "trx;LogFileName=run-31.trx",
+    "--results-directory",
+    "<scratch>/p2b/out-register-ignores-disposal"
+   ],
+   "exit": 1,
+   "timed_out": false,
+   "seconds": 1.52,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService(mode: \"dispose\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0386380",
+     "message": "Disposed client registered a service"
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService(mode: \"async\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0026548",
+     "message": "Disposed client registered a service"
+    }
+   ],
+   "outcome": "failed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService",
+    "--logger",
+    "trx;LogFileName=run-32.trx",
+    "--results-directory",
+    "<scratch>/p2b/out-register-ignores-disposal"
+   ],
+   "exit": 1,
+   "timed_out": false,
+   "seconds": 1.57,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService(mode: \"async\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0019434",
+     "message": "Disposed client registered a service"
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService(mode: \"dispose\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0302837",
+     "message": "Disposed client registered a service"
+    }
+   ],
+   "outcome": "failed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService",
+    "--logger",
+    "trx;LogFileName=run-33.trx",
+    "--results-directory",
+    "<scratch>/p2b/out-register-ignores-disposal"
+   ],
+   "exit": 1,
+   "timed_out": false,
+   "seconds": 1.52,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService(mode: \"async\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0016980",
+     "message": "Disposed client registered a service"
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService(mode: \"dispose\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0273308",
+     "message": "Disposed client registered a service"
+    }
+   ],
+   "outcome": "failed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService",
+    "--logger",
+    "trx;LogFileName=run-34.trx",
+    "--results-directory",
+    "<scratch>/p2b/out-register-ignores-disposal"
+   ],
+   "exit": 1,
+   "timed_out": false,
+   "seconds": 1.57,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService(mode: \"async\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0026197",
+     "message": "Disposed client registered a service"
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService(mode: \"dispose\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0310424",
+     "message": "Disposed client registered a service"
+    }
+   ],
+   "outcome": "failed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService",
+    "--logger",
+    "trx;LogFileName=run-35.trx",
+    "--results-directory",
+    "<scratch>/p2b/out-register-ignores-disposal"
+   ],
+   "exit": 1,
+   "timed_out": false,
+   "seconds": 1.57,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService(mode: \"dispose\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0329491",
+     "message": "Disposed client registered a service"
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService(mode: \"async\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0025890",
+     "message": "Disposed client registered a service"
+    }
+   ],
+   "outcome": "failed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService",
+    "--logger",
+    "trx;LogFileName=run-36.trx",
+    "--results-directory",
+    "<scratch>/p2b/out-register-ignores-disposal"
+   ],
+   "exit": 1,
+   "timed_out": false,
+   "seconds": 1.52,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService(mode: \"dispose\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0299788",
+     "message": "Disposed client registered a service"
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService(mode: \"async\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0032192",
+     "message": "Disposed client registered a service"
+    }
+   ],
+   "outcome": "failed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService",
+    "--logger",
+    "trx;LogFileName=run-37.trx",
+    "--results-directory",
+    "<scratch>/p2b/out-register-ignores-disposal"
+   ],
+   "exit": 1,
+   "timed_out": false,
+   "seconds": 1.57,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService(mode: \"async\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0039543",
+     "message": "Disposed client registered a service"
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService(mode: \"dispose\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0371060",
+     "message": "Disposed client registered a service"
+    }
+   ],
+   "outcome": "failed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService",
+    "--logger",
+    "trx;LogFileName=run-38.trx",
+    "--results-directory",
+    "<scratch>/p2b/out-register-ignores-disposal"
+   ],
+   "exit": 1,
+   "timed_out": false,
+   "seconds": 1.52,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService(mode: \"dispose\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0371507",
+     "message": "Disposed client registered a service"
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService(mode: \"async\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0047177",
+     "message": "Disposed client registered a service"
+    }
+   ],
+   "outcome": "failed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService",
+    "--logger",
+    "trx;LogFileName=run-39.trx",
+    "--results-directory",
+    "<scratch>/p2b/out-register-ignores-disposal"
+   ],
+   "exit": 1,
+   "timed_out": false,
+   "seconds": 1.57,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService(mode: \"dispose\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0284694",
+     "message": "Disposed client registered a service"
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService(mode: \"async\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0029710",
+     "message": "Disposed client registered a service"
+    }
+   ],
+   "outcome": "failed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService",
+    "--logger",
+    "trx;LogFileName=run-40.trx",
+    "--results-directory",
+    "<scratch>/p2b/out-register-ignores-disposal"
+   ],
+   "exit": 1,
+   "timed_out": false,
+   "seconds": 1.57,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService(mode: \"async\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0016541",
+     "message": "Disposed client registered a service"
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService(mode: \"dispose\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0295373",
+     "message": "Disposed client registered a service"
+    }
+   ],
+   "outcome": "failed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService",
+    "--logger",
+    "trx;LogFileName=run-41.trx",
+    "--results-directory",
+    "<scratch>/p2b/out-register-ignores-disposal"
+   ],
+   "exit": 1,
+   "timed_out": false,
+   "seconds": 1.57,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService(mode: \"async\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0028976",
+     "message": "Disposed client registered a service"
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService(mode: \"dispose\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0376762",
+     "message": "Disposed client registered a service"
+    }
+   ],
+   "outcome": "failed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService",
+    "--logger",
+    "trx;LogFileName=run-42.trx",
+    "--results-directory",
+    "<scratch>/p2b/out-register-ignores-disposal"
+   ],
+   "exit": 1,
+   "timed_out": false,
+   "seconds": 1.57,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService(mode: \"async\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0021422",
+     "message": "Disposed client registered a service"
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService(mode: \"dispose\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0379701",
+     "message": "Disposed client registered a service"
+    }
+   ],
+   "outcome": "failed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService",
+    "--logger",
+    "trx;LogFileName=run-43.trx",
+    "--results-directory",
+    "<scratch>/p2b/out-register-ignores-disposal"
+   ],
+   "exit": 1,
+   "timed_out": false,
+   "seconds": 1.57,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService(mode: \"dispose\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0387588",
+     "message": "Disposed client registered a service"
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService(mode: \"async\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0043981",
+     "message": "Disposed client registered a service"
+    }
+   ],
+   "outcome": "failed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService",
+    "--logger",
+    "trx;LogFileName=run-44.trx",
+    "--results-directory",
+    "<scratch>/p2b/out-register-ignores-disposal"
+   ],
+   "exit": 1,
+   "timed_out": false,
+   "seconds": 1.52,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService(mode: \"async\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0026344",
+     "message": "Disposed client registered a service"
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService(mode: \"dispose\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0369647",
+     "message": "Disposed client registered a service"
+    }
+   ],
+   "outcome": "failed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService",
+    "--logger",
+    "trx;LogFileName=run-45.trx",
+    "--results-directory",
+    "<scratch>/p2b/out-register-ignores-disposal"
+   ],
+   "exit": 1,
+   "timed_out": false,
+   "seconds": 1.52,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService(mode: \"dispose\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0374131",
+     "message": "Disposed client registered a service"
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService(mode: \"async\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0028091",
+     "message": "Disposed client registered a service"
+    }
+   ],
+   "outcome": "failed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService",
+    "--logger",
+    "trx;LogFileName=run-46.trx",
+    "--results-directory",
+    "<scratch>/p2b/out-register-ignores-disposal"
+   ],
+   "exit": 1,
+   "timed_out": false,
+   "seconds": 1.57,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService(mode: \"dispose\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0287181",
+     "message": "Disposed client registered a service"
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService(mode: \"async\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0020684",
+     "message": "Disposed client registered a service"
+    }
+   ],
+   "outcome": "failed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService",
+    "--logger",
+    "trx;LogFileName=run-47.trx",
+    "--results-directory",
+    "<scratch>/p2b/out-register-ignores-disposal"
+   ],
+   "exit": 1,
+   "timed_out": false,
+   "seconds": 1.52,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService(mode: \"async\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0027297",
+     "message": "Disposed client registered a service"
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService(mode: \"dispose\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0397556",
+     "message": "Disposed client registered a service"
+    }
+   ],
+   "outcome": "failed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService",
+    "--logger",
+    "trx;LogFileName=run-48.trx",
+    "--results-directory",
+    "<scratch>/p2b/out-register-ignores-disposal"
+   ],
+   "exit": 1,
+   "timed_out": false,
+   "seconds": 1.57,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService(mode: \"dispose\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0285545",
+     "message": "Disposed client registered a service"
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService(mode: \"async\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0023222",
+     "message": "Disposed client registered a service"
+    }
+   ],
+   "outcome": "failed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService",
+    "--logger",
+    "trx;LogFileName=run-49.trx",
+    "--results-directory",
+    "<scratch>/p2b/out-register-ignores-disposal"
+   ],
+   "exit": 1,
+   "timed_out": false,
+   "seconds": 1.57,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService(mode: \"dispose\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0286119",
+     "message": "Disposed client registered a service"
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService(mode: \"async\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0019780",
+     "message": "Disposed client registered a service"
+    }
+   ],
+   "outcome": "failed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService",
+    "--logger",
+    "trx;LogFileName=run-50.trx",
+    "--results-directory",
+    "<scratch>/p2b/out-register-ignores-disposal"
+   ],
+   "exit": 1,
+   "timed_out": false,
+   "seconds": 1.52,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService(mode: \"async\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0020197",
+     "message": "Disposed client registered a service"
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService(mode: \"dispose\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0292845",
+     "message": "Disposed client registered a service"
+    }
+   ],
+   "outcome": "failed"
+  }
+ ],
+ "build": {
+  "command": [
+   "dotnet",
+   "build",
+   "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+   "-c",
+   "Release",
+   "-p:LibTfm=net11.0",
+   "--nologo"
+  ],
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 1.52
+ },
+ "verdict": "failed on every run",
+ "rows_per_run": [
+  2
+ ]
+}

@@ -1,0 +1,11 @@
+diff -ruN -x bin -x obj untouched/src/main/WebsocketClientLite/ClientWebSocketRx.cs connect-ignores-disposal/src/main/WebsocketClientLite/ClientWebSocketRx.cs
+--- untouched/src/main/WebsocketClientLite/ClientWebSocketRx.cs	2026-11-25 12:15:46.000000000 +0000
++++ connect-ignores-disposal/src/main/WebsocketClientLite/ClientWebSocketRx.cs	2026-11-25 12:15:58.456415883 +0000
+@@ -262,7 +262,6 @@
+             {
+                 lock (_lifecycleGate)
+                 {
+-                    if (_disposed) throw new ObjectDisposedException(nameof(ClientWebSocketRx));
+                     Sender = sender;
+                     NegotiatedSubprotocols = negotiatedSubprotocols;
+                     SetIsConnected(true);
