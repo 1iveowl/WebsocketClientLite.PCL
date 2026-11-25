@@ -19,8 +19,10 @@ public sealed partial class Evidence
             "ControlledCloseTests", "PostWriteFailureRejectsQueuedAndLaterDataAndSuppressesClose", "The collection contained 2 items", 1, 1),
         ("send-inverted", "if (!AdvanceClose(CloseEvent.Send)) return;", "if (AdvanceClose(CloseEvent.Send)) return;",
             "ControlledCloseTests", "CancellationBetweenFragmentsAllowsOnlyClose", "Collections differ", 1, 1),
+        // PeerWaitEndsByControlledTimeoutOrReadFailure also fails on this edit, but only in 28 of 30
+        // runs (its AssertPending races the released disposal), so it is not the named test.
         ("release-early", "if (release) _closeReady.TrySetResult(true);", "_closeReady.TrySetResult(true);",
-            "ControlledCloseTests", "PeerWaitEndsByControlledTimeoutOrReadFailure", "Disposal overtook paused work", 2, 2),
+            "ProtocolStateTests", "CloseResponseTimeoutMakesTheTransportTerminal", "Collections differ", 1, 1),
         ("release-never", "if (release) _closeReady.TrySetResult(true);", "if (false) _closeReady.TrySetResult(true);",
             "CloseBoundaryTests", "ReadFailureReleasesReadinessBeforeObserverError", "Read failure did not release Close readiness", 1, 1),
         ("state-not-stored", "CloseState.Step(_closeState, action, out _closeState, out bool send, out bool release);",
