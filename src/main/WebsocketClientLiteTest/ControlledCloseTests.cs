@@ -177,6 +177,7 @@ public class ControlledCloseTests(ITestOutputHelper output)
     public async Task SynchronousDisposeReleasesTransport(string state)
     {
         var h = new Harness(output); h.Initialize();
+        bool bodyFailed = true;
         try
         {
             var field = typeof(WebsocketConnectionHandler).GetField("_closeHandshakeOnce", BindingFlags.Instance | BindingFlags.NonPublic)!;
@@ -196,13 +197,15 @@ public class ControlledCloseTests(ITestOutputHelper output)
             }));
             Assert.True(thrown is null, $"Synchronous Dispose threw: {thrown}");
             Assert.False(h.Stream.CanWrite, "Synchronous Dispose did not release the transport");
+            bodyFailed = false;
         }
         finally
         {
-            // The harness cleanup disposes the connection again. If that throws too, the first
-            // failure above stays the reported one; the cleanup failure goes to the output.
+            // The harness cleanup disposes the connection again. If the body already failed and
+            // the cleanup throws too, the body's failure stays the reported one and the cleanup
+            // failure goes to the output; if the body passed, a cleanup failure fails the test.
             try { await h.DisposeAsync(); }
-            catch (Exception e) { output.WriteLine("cleanup: " + e); }
+            catch (Exception e) when (bodyFailed) { output.WriteLine("cleanup: " + e); }
         }
     }
 
