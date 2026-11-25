@@ -1,0 +1,18 @@
+send-ignored {'close': 'detected', 'all': 'detected'} 
+send-inverted {'close': 'detected', 'all': 'detected'} 
+release-early {'close': 'detected', 'all': 'detected'} 
+release-never {'close': 'detected', 'all': 'detected'} 
+state-not-stored {'close': 'detected', 'all': 'detected'} 
+state-stored-outside-lock {'close': 'survived', 'all': 'survived'} 
+peer-close-outside-lock {'close': 'survived', 'all': 'survived'} 
+send-decided-outside-lock {'close': 'survived', 'all': 'survived'} 
+read-failure-as-received {'close': 'detected', 'all': 'detected'} 
+peer-close-as-failure {'close': 'detected', 'all': 'detected'} 
+timeout-as-received {'close': 'survived', 'all': 'survived'} 
+peer-close-skipped {'close': 'detected', 'all': 'detected'} 
+read-failure-skipped {'close': 'detected', 'all': 'detected'} 
+timeout-skipped {'close': 'survived', 'all': 'detected'} 
+write-failure-not-notified {'close': 'detected', 'all': 'detected'} 
+pong-suppressed-after-own-close {'close': 'survived', 'all': 'detected'} 
+data-after-close-allowed {'close': 'survived', 'all': 'detected'} 
+exit 0

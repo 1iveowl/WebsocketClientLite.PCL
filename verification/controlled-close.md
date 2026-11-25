@@ -72,3 +72,10 @@ other or for the independent critical Stryker gate.
 frame-wait and in-flight phases, selected cancellation/abort/terminal schedules,
 the reproduced transport semaphore-disposal defect and isolated overlap detector.
 It reuses CancellationBetweenFragmentsAllowsOnlyClose and preserves all E/G gates.
+
+## Caller-side defects (2026-11-25)
+
+[close-caller-defects.md](close-caller-defects.md) seeds 17 defects in
+`WebsocketSenderHandler.cs` where the verified close step is right and its caller is wrong,
+and adds `./scripts/pdd.sh close-caller-defects` for the 13 that tests catch. It also adds
+`SynchronousDisposeReleasesTransport` for the synchronous `Dispose` transport release.

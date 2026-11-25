@@ -1,0 +1,10 @@
+--- a/src/main/WebsocketClientLite/Service/WebsocketSenderHandler.cs
++++ b/src/main/WebsocketClientLite/Service/WebsocketSenderHandler.cs
+@@ -435,7 +435,6 @@
+             {
+                 // A write may have transferred only part of a frame: no further
+                 // frame (even Close) may be appended to an unknown wire prefix.
+-                NotifyReadFailure();
+                 throw;
+             }
+         }, ct);

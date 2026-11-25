@@ -1,0 +1,15 @@
+== untouched
+Passed!  - Failed:     0, Passed:    16, Skipped:     0, Total:    16, Duration: 47 ms - Pdd.Tests.dll (net11.0)
+exit 0
+== no-total
+  Failed Pdd.Tests.CloseCallerEvidenceTests.RowChecksRejectWrongRowCounts(failure: "extra-result-row", message: "Missing close caller result rows") [19 ms]
+Failed!  - Failed:     1, Passed:    15, Skipped:     0, Total:    16, Duration: 52 ms - Pdd.Tests.dll (net11.0)
+exit 1
+== no-named
+  Failed Pdd.Tests.CloseCallerEvidenceTests.RowChecksRejectWrongRowCounts(failure: "named-row-replaced", message: "Missing intended close caller assertion") [2 ms]
+Failed!  - Failed:     1, Passed:    15, Skipped:     0, Total:    16, Duration: 55 ms - Pdd.Tests.dll (net11.0)
+exit 1
+== no-failing
+  Failed Pdd.Tests.CloseCallerEvidenceTests.RowChecksRejectWrongRowCounts(failure: "extra-failure-same-message", message: "Missing intended close caller assertion") [2 ms]
+Failed!  - Failed:     1, Passed:    15, Skipped:     0, Total:    16, Duration: 51 ms - Pdd.Tests.dll (net11.0)
+exit 1

@@ -1,0 +1,11 @@
+--- a/src/main/WebsocketClientLite/Service/WebsocketSenderHandler.cs
++++ b/src/main/WebsocketClientLite/Service/WebsocketSenderHandler.cs
+@@ -424,8 +424,6 @@
+                 // A queued Pong is no longer required after receiving Close.
+                 // Before the peer replies, Pong is still allowed after our Close.
+                 else if (op == 10 && _closeState.ReceivedOrTerminal) return;
+-                else if (op != 10 && _closeState.Started)
+-                    throw new WebsocketClientLiteException("The closing handshake has started.");
+                 TransmitState.SendStep(_sendState, op, (buffer[0] & 128) != 0, out bool ok, out TransmitState next);
+                 if (!ok) throw new WebsocketClientLiteException("Invalid outgoing message sequence or sender is closed/failed.");
+                 _sendState = next;

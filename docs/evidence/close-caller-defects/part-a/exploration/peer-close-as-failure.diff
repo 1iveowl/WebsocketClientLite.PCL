@@ -1,0 +1,11 @@
+--- a/src/main/WebsocketClientLite/Service/WebsocketSenderHandler.cs
++++ b/src/main/WebsocketClientLite/Service/WebsocketSenderHandler.cs
+@@ -48,7 +48,7 @@
+ 
+     internal void NotifyPeerClose()
+     {
+-        lock (_stateLock) AdvanceClose(CloseEvent.Received);
++        lock (_stateLock) AdvanceClose(CloseEvent.TimeoutOrFailure);
+     }
+ 
+     internal void NotifyReadFailure()

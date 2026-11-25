@@ -1,0 +1,7 @@
+state-stored-outside-lock {'close': 'survived', 'all': 'survived'} 
+peer-close-outside-lock {'close': 'survived', 'all': 'survived'} 
+send-decided-outside-lock {'close': 'survived', 'all': 'survived'} 
+timeout-as-received {'close': 'survived', 'all': 'survived'} 
+timeout-skipped {'close': 'survived', 'all': 'detected'} 
+pong-suppressed-after-own-close {'close': 'survived', 'all': 'detected'} 
+data-after-close-allowed {'close': 'survived', 'all': 'detected'} 

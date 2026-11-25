@@ -190,6 +190,14 @@ The aggregate rejects missing repetitions, wrong edits, mismatched source hashes
 compile/process failures and unrelated assertions. The original ordering gate
 remains independently required. See `verification/close-evidence-g.md`.
 
+`close-caller-defects --output <fresh-directory>` (2026-11-25) seeds the caller-side Close
+defects of [docs/evidence/close-caller-defects](../../docs/evidence/close-caller-defects/README.md)
+in `WebsocketSenderHandler.cs`, one at a time in an isolated copy: the verified close step is
+right and the shell around it is wrong. Each must fail its named test on its named assertion,
+in the stated number of rows, after a passing baseline; a timeout is not a detection. It is a
+standalone command: it is not part of `capture --job controlled` or `aggregate`, which is the
+owner's decision.
+
 P3-A adds `queued-defect --output <fresh-directory>` to controlled capture and
 `queued-probe --output <fresh-directory>` for the manual 50-repeat smoke probe.
 The isolated capacity-two frame gate must trigger the named overlap assertion;

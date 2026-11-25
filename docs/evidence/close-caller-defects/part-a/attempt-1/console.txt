@@ -1,0 +1,6 @@
+Traceback (most recent call last):
+  File "<scratch>/ca/close_caller_defects.py", line 135, in <module>
+    entry = {"id": defect["id"], "rows": defect["rows"], "description": defect["description"],
+                                         ~~~~~~^^^^^^^^
+KeyError: 'rows'
+exit 1

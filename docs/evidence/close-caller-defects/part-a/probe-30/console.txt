@@ -1,0 +1,14 @@
+send-ignored {'PostWriteFailureRejectsQueuedAndLaterDataAndSuppressesClose': {'named': 30, 'other': 0, 'passed': 0}}
+send-inverted {'CancellationBetweenFragmentsAllowsOnlyClose': {'named': 30, 'other': 0, 'passed': 0}}
+release-early {'PeerWaitEndsByControlledTimeoutOrReadFailure(failure: False)': {'named': 5, 'other': 5, 'passed': 20}, 'PeerWaitEndsByControlledTimeoutOrReadFailure(failure: True)': {'named': 24, 'other': 4, 'passed': 2}}
+release-never {'ReadFailureReleasesReadinessBeforeObserverError': {'named': 30, 'other': 0, 'passed': 0}}
+state-not-stored {'QueuedPongIsSuppressedAfterPeerClose': {'named': 30, 'other': 0, 'passed': 0}}
+read-failure-as-received {'ReadFailureReleasesReadinessBeforeObserverError': {'named': 30, 'other': 0, 'passed': 0}}
+peer-close-as-failure {'CancellationBetweenFragmentsAllowsOnlyClose': {'named': 30, 'other': 0, 'passed': 0}}
+peer-close-skipped {'ParserSignalsPeerCloseOrReadFailureBeforeTimerExpiry(readFailure: True)': {'named': 0, 'other': 0, 'passed': 30}, 'ParserSignalsPeerCloseOrReadFailureBeforeTimerExpiry(readFailure: False)': {'named': 30, 'other': 0, 'passed': 0}}
+read-failure-skipped {'ReadFailureReleasesReadinessBeforeObserverError': {'named': 30, 'other': 0, 'passed': 0}}
+timeout-skipped {'CloseResponseTimeoutMakesTheTransportTerminal': {'named': 30, 'other': 0, 'passed': 0}}
+write-failure-not-notified {'PostWriteFailureRejectsQueuedAndLaterDataAndSuppressesClose': {'named': 30, 'other': 0, 'passed': 0}}
+pong-suppressed-after-own-close {'PongIsAllowedUntilPeerCloseThenSuppressed': {'named': 30, 'other': 0, 'passed': 0}}
+data-after-close-allowed {'ReceivedCloseBlocksDataAndSendsOnlyOneResponse': {'named': 30, 'other': 0, 'passed': 0}}
+exit 0
