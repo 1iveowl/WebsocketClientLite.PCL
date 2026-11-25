@@ -131,7 +131,15 @@ validator, which expected exactly one failing row. `Pdd.Tests` gains the case
 at `b528666`, 12:27:45 to 12:28:12 UTC: run and passed. Its `results.json` records
 `dirty_worktree: true`: the only differing input was the uncommitted
 `tools/Pdd.Tests/ReconnectEvidenceTests.cs`, which `reconnect-defect` does not build or run,
-so the verdict stands; `pdd-reconnect-defect-2/` repeats it from a clean tree. The baseline ran the 15 reconnect
+so the verdict stands. Two repeats after the fresh review of #189:
+
+- `pdd-reconnect-defect-2/`: at `ff8d943`, 13:19:50 to 13:20:20 UTC: run and passed, but
+  again `dirty_worktree: true`, this time because the corrections to this README and to
+  `verification/reconnect-decision.md` were not yet committed.
+- `pdd-reconnect-defect-3/`: at `c7d2093`, 13:23:40 to 13:24:09 UTC, clean tree
+  (`dirty_worktree: false`): run and passed, the 15 reconnect cases and
+  `RecordHostRuntime` in the baseline, each of the four edits failing its named test on its
+  named assertion. The baseline ran the 15 reconnect
 cases and `RecordHostRuntime`; each of the four edits failed its named test on its named
 assertion.
 
