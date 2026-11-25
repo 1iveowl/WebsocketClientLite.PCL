@@ -1,0 +1,1108 @@
+{
+ "made": "2026-11-25",
+ "copy": "<scratch>/sync-transport-release",
+ "library_target": "net11.0",
+ "configuration": "Release",
+ "filter": "FullyQualifiedName=WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport",
+ "assertion": "Synchronous Dispose did not release the transport",
+ "runs": [
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport",
+    "--logger",
+    "trx;LogFileName=run-01.trx",
+    "--results-directory",
+    "<scratch>/pb2/out-sync-transport-release"
+   ],
+   "exit": 1,
+   "timed_out": false,
+   "seconds": 1.52,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport(state: \"no-close\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0100182",
+     "message": "Synchronous Dispose did not release the transport"
+    },
+    {
+     "test": "WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport(state: \"close-finished\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0183108",
+     "message": "Synchronous Dispose did not release the transport"
+    }
+   ],
+   "outcome": "failed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport",
+    "--logger",
+    "trx;LogFileName=run-02.trx",
+    "--results-directory",
+    "<scratch>/pb2/out-sync-transport-release"
+   ],
+   "exit": 1,
+   "timed_out": false,
+   "seconds": 1.52,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport(state: \"no-close\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0086429",
+     "message": "Synchronous Dispose did not release the transport"
+    },
+    {
+     "test": "WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport(state: \"close-finished\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0167398",
+     "message": "Synchronous Dispose did not release the transport"
+    }
+   ],
+   "outcome": "failed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport",
+    "--logger",
+    "trx;LogFileName=run-03.trx",
+    "--results-directory",
+    "<scratch>/pb2/out-sync-transport-release"
+   ],
+   "exit": 1,
+   "timed_out": false,
+   "seconds": 1.52,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport(state: \"close-finished\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0175256",
+     "message": "Synchronous Dispose did not release the transport"
+    },
+    {
+     "test": "WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport(state: \"no-close\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0089818",
+     "message": "Synchronous Dispose did not release the transport"
+    }
+   ],
+   "outcome": "failed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport",
+    "--logger",
+    "trx;LogFileName=run-04.trx",
+    "--results-directory",
+    "<scratch>/pb2/out-sync-transport-release"
+   ],
+   "exit": 1,
+   "timed_out": false,
+   "seconds": 1.52,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport(state: \"no-close\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0087337",
+     "message": "Synchronous Dispose did not release the transport"
+    },
+    {
+     "test": "WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport(state: \"close-finished\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0186950",
+     "message": "Synchronous Dispose did not release the transport"
+    }
+   ],
+   "outcome": "failed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport",
+    "--logger",
+    "trx;LogFileName=run-05.trx",
+    "--results-directory",
+    "<scratch>/pb2/out-sync-transport-release"
+   ],
+   "exit": 1,
+   "timed_out": false,
+   "seconds": 1.52,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport(state: \"close-finished\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0171346",
+     "message": "Synchronous Dispose did not release the transport"
+    },
+    {
+     "test": "WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport(state: \"no-close\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0079875",
+     "message": "Synchronous Dispose did not release the transport"
+    }
+   ],
+   "outcome": "failed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport",
+    "--logger",
+    "trx;LogFileName=run-06.trx",
+    "--results-directory",
+    "<scratch>/pb2/out-sync-transport-release"
+   ],
+   "exit": 1,
+   "timed_out": false,
+   "seconds": 1.52,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport(state: \"close-finished\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0173816",
+     "message": "Synchronous Dispose did not release the transport"
+    },
+    {
+     "test": "WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport(state: \"no-close\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0084987",
+     "message": "Synchronous Dispose did not release the transport"
+    }
+   ],
+   "outcome": "failed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport",
+    "--logger",
+    "trx;LogFileName=run-07.trx",
+    "--results-directory",
+    "<scratch>/pb2/out-sync-transport-release"
+   ],
+   "exit": 1,
+   "timed_out": false,
+   "seconds": 1.47,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport(state: \"no-close\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0084756",
+     "message": "Synchronous Dispose did not release the transport"
+    },
+    {
+     "test": "WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport(state: \"close-finished\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0167886",
+     "message": "Synchronous Dispose did not release the transport"
+    }
+   ],
+   "outcome": "failed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport",
+    "--logger",
+    "trx;LogFileName=run-08.trx",
+    "--results-directory",
+    "<scratch>/pb2/out-sync-transport-release"
+   ],
+   "exit": 1,
+   "timed_out": false,
+   "seconds": 1.52,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport(state: \"no-close\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0080812",
+     "message": "Synchronous Dispose did not release the transport"
+    },
+    {
+     "test": "WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport(state: \"close-finished\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0176681",
+     "message": "Synchronous Dispose did not release the transport"
+    }
+   ],
+   "outcome": "failed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport",
+    "--logger",
+    "trx;LogFileName=run-09.trx",
+    "--results-directory",
+    "<scratch>/pb2/out-sync-transport-release"
+   ],
+   "exit": 1,
+   "timed_out": false,
+   "seconds": 1.52,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport(state: \"no-close\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0078378",
+     "message": "Synchronous Dispose did not release the transport"
+    },
+    {
+     "test": "WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport(state: \"close-finished\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0171182",
+     "message": "Synchronous Dispose did not release the transport"
+    }
+   ],
+   "outcome": "failed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport",
+    "--logger",
+    "trx;LogFileName=run-10.trx",
+    "--results-directory",
+    "<scratch>/pb2/out-sync-transport-release"
+   ],
+   "exit": 1,
+   "timed_out": false,
+   "seconds": 1.47,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport(state: \"close-finished\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0176580",
+     "message": "Synchronous Dispose did not release the transport"
+    },
+    {
+     "test": "WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport(state: \"no-close\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0072113",
+     "message": "Synchronous Dispose did not release the transport"
+    }
+   ],
+   "outcome": "failed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport",
+    "--logger",
+    "trx;LogFileName=run-11.trx",
+    "--results-directory",
+    "<scratch>/pb2/out-sync-transport-release"
+   ],
+   "exit": 1,
+   "timed_out": false,
+   "seconds": 1.52,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport(state: \"no-close\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0085466",
+     "message": "Synchronous Dispose did not release the transport"
+    },
+    {
+     "test": "WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport(state: \"close-finished\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0174578",
+     "message": "Synchronous Dispose did not release the transport"
+    }
+   ],
+   "outcome": "failed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport",
+    "--logger",
+    "trx;LogFileName=run-12.trx",
+    "--results-directory",
+    "<scratch>/pb2/out-sync-transport-release"
+   ],
+   "exit": 1,
+   "timed_out": false,
+   "seconds": 1.52,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport(state: \"close-finished\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0167657",
+     "message": "Synchronous Dispose did not release the transport"
+    },
+    {
+     "test": "WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport(state: \"no-close\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0076874",
+     "message": "Synchronous Dispose did not release the transport"
+    }
+   ],
+   "outcome": "failed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport",
+    "--logger",
+    "trx;LogFileName=run-13.trx",
+    "--results-directory",
+    "<scratch>/pb2/out-sync-transport-release"
+   ],
+   "exit": 1,
+   "timed_out": false,
+   "seconds": 1.67,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport(state: \"no-close\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0103886",
+     "message": "Synchronous Dispose did not release the transport"
+    },
+    {
+     "test": "WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport(state: \"close-finished\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0195358",
+     "message": "Synchronous Dispose did not release the transport"
+    }
+   ],
+   "outcome": "failed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport",
+    "--logger",
+    "trx;LogFileName=run-14.trx",
+    "--results-directory",
+    "<scratch>/pb2/out-sync-transport-release"
+   ],
+   "exit": 1,
+   "timed_out": false,
+   "seconds": 1.77,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport(state: \"close-finished\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0178601",
+     "message": "Synchronous Dispose did not release the transport"
+    },
+    {
+     "test": "WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport(state: \"no-close\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0074223",
+     "message": "Synchronous Dispose did not release the transport"
+    }
+   ],
+   "outcome": "failed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport",
+    "--logger",
+    "trx;LogFileName=run-15.trx",
+    "--results-directory",
+    "<scratch>/pb2/out-sync-transport-release"
+   ],
+   "exit": 1,
+   "timed_out": false,
+   "seconds": 1.57,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport(state: \"no-close\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0059821",
+     "message": "Synchronous Dispose did not release the transport"
+    },
+    {
+     "test": "WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport(state: \"close-finished\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0232503",
+     "message": "Synchronous Dispose did not release the transport"
+    }
+   ],
+   "outcome": "failed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport",
+    "--logger",
+    "trx;LogFileName=run-16.trx",
+    "--results-directory",
+    "<scratch>/pb2/out-sync-transport-release"
+   ],
+   "exit": 1,
+   "timed_out": false,
+   "seconds": 1.62,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport(state: \"close-finished\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0238823",
+     "message": "Synchronous Dispose did not release the transport"
+    },
+    {
+     "test": "WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport(state: \"no-close\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0095942",
+     "message": "Synchronous Dispose did not release the transport"
+    }
+   ],
+   "outcome": "failed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport",
+    "--logger",
+    "trx;LogFileName=run-17.trx",
+    "--results-directory",
+    "<scratch>/pb2/out-sync-transport-release"
+   ],
+   "exit": 1,
+   "timed_out": false,
+   "seconds": 1.57,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport(state: \"close-finished\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0529454",
+     "message": "Synchronous Dispose did not release the transport"
+    },
+    {
+     "test": "WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport(state: \"no-close\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0050017",
+     "message": "Synchronous Dispose did not release the transport"
+    }
+   ],
+   "outcome": "failed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport",
+    "--logger",
+    "trx;LogFileName=run-18.trx",
+    "--results-directory",
+    "<scratch>/pb2/out-sync-transport-release"
+   ],
+   "exit": 1,
+   "timed_out": false,
+   "seconds": 1.52,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport(state: \"close-finished\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0179637",
+     "message": "Synchronous Dispose did not release the transport"
+    },
+    {
+     "test": "WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport(state: \"no-close\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0092610",
+     "message": "Synchronous Dispose did not release the transport"
+    }
+   ],
+   "outcome": "failed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport",
+    "--logger",
+    "trx;LogFileName=run-19.trx",
+    "--results-directory",
+    "<scratch>/pb2/out-sync-transport-release"
+   ],
+   "exit": 1,
+   "timed_out": false,
+   "seconds": 1.52,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport(state: \"close-finished\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0198959",
+     "message": "Synchronous Dispose did not release the transport"
+    },
+    {
+     "test": "WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport(state: \"no-close\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0097008",
+     "message": "Synchronous Dispose did not release the transport"
+    }
+   ],
+   "outcome": "failed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport",
+    "--logger",
+    "trx;LogFileName=run-20.trx",
+    "--results-directory",
+    "<scratch>/pb2/out-sync-transport-release"
+   ],
+   "exit": 1,
+   "timed_out": false,
+   "seconds": 1.52,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport(state: \"close-finished\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0183221",
+     "message": "Synchronous Dispose did not release the transport"
+    },
+    {
+     "test": "WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport(state: \"no-close\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0048103",
+     "message": "Synchronous Dispose did not release the transport"
+    }
+   ],
+   "outcome": "failed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport",
+    "--logger",
+    "trx;LogFileName=run-21.trx",
+    "--results-directory",
+    "<scratch>/pb2/out-sync-transport-release"
+   ],
+   "exit": 1,
+   "timed_out": false,
+   "seconds": 1.57,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport(state: \"close-finished\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0167700",
+     "message": "Synchronous Dispose did not release the transport"
+    },
+    {
+     "test": "WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport(state: \"no-close\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0082330",
+     "message": "Synchronous Dispose did not release the transport"
+    }
+   ],
+   "outcome": "failed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport",
+    "--logger",
+    "trx;LogFileName=run-22.trx",
+    "--results-directory",
+    "<scratch>/pb2/out-sync-transport-release"
+   ],
+   "exit": 1,
+   "timed_out": false,
+   "seconds": 1.92,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport(state: \"close-finished\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0209204",
+     "message": "Synchronous Dispose did not release the transport"
+    },
+    {
+     "test": "WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport(state: \"no-close\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0057998",
+     "message": "Synchronous Dispose did not release the transport"
+    }
+   ],
+   "outcome": "failed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport",
+    "--logger",
+    "trx;LogFileName=run-23.trx",
+    "--results-directory",
+    "<scratch>/pb2/out-sync-transport-release"
+   ],
+   "exit": 1,
+   "timed_out": false,
+   "seconds": 1.57,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport(state: \"no-close\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0049130",
+     "message": "Synchronous Dispose did not release the transport"
+    },
+    {
+     "test": "WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport(state: \"close-finished\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0222389",
+     "message": "Synchronous Dispose did not release the transport"
+    }
+   ],
+   "outcome": "failed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport",
+    "--logger",
+    "trx;LogFileName=run-24.trx",
+    "--results-directory",
+    "<scratch>/pb2/out-sync-transport-release"
+   ],
+   "exit": 1,
+   "timed_out": false,
+   "seconds": 1.67,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport(state: \"close-finished\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0308248",
+     "message": "Synchronous Dispose did not release the transport"
+    },
+    {
+     "test": "WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport(state: \"no-close\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0072833",
+     "message": "Synchronous Dispose did not release the transport"
+    }
+   ],
+   "outcome": "failed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport",
+    "--logger",
+    "trx;LogFileName=run-25.trx",
+    "--results-directory",
+    "<scratch>/pb2/out-sync-transport-release"
+   ],
+   "exit": 1,
+   "timed_out": false,
+   "seconds": 1.62,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport(state: \"no-close\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0071650",
+     "message": "Synchronous Dispose did not release the transport"
+    },
+    {
+     "test": "WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport(state: \"close-finished\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0191196",
+     "message": "Synchronous Dispose did not release the transport"
+    }
+   ],
+   "outcome": "failed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport",
+    "--logger",
+    "trx;LogFileName=run-26.trx",
+    "--results-directory",
+    "<scratch>/pb2/out-sync-transport-release"
+   ],
+   "exit": 1,
+   "timed_out": false,
+   "seconds": 1.52,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport(state: \"close-finished\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0203292",
+     "message": "Synchronous Dispose did not release the transport"
+    },
+    {
+     "test": "WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport(state: \"no-close\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0094127",
+     "message": "Synchronous Dispose did not release the transport"
+    }
+   ],
+   "outcome": "failed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport",
+    "--logger",
+    "trx;LogFileName=run-27.trx",
+    "--results-directory",
+    "<scratch>/pb2/out-sync-transport-release"
+   ],
+   "exit": 1,
+   "timed_out": false,
+   "seconds": 1.52,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport(state: \"no-close\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0095973",
+     "message": "Synchronous Dispose did not release the transport"
+    },
+    {
+     "test": "WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport(state: \"close-finished\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0199853",
+     "message": "Synchronous Dispose did not release the transport"
+    }
+   ],
+   "outcome": "failed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport",
+    "--logger",
+    "trx;LogFileName=run-28.trx",
+    "--results-directory",
+    "<scratch>/pb2/out-sync-transport-release"
+   ],
+   "exit": 1,
+   "timed_out": false,
+   "seconds": 1.52,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport(state: \"close-finished\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0197793",
+     "message": "Synchronous Dispose did not release the transport"
+    },
+    {
+     "test": "WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport(state: \"no-close\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0083380",
+     "message": "Synchronous Dispose did not release the transport"
+    }
+   ],
+   "outcome": "failed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport",
+    "--logger",
+    "trx;LogFileName=run-29.trx",
+    "--results-directory",
+    "<scratch>/pb2/out-sync-transport-release"
+   ],
+   "exit": 1,
+   "timed_out": false,
+   "seconds": 1.52,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport(state: \"close-finished\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0187153",
+     "message": "Synchronous Dispose did not release the transport"
+    },
+    {
+     "test": "WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport(state: \"no-close\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0104707",
+     "message": "Synchronous Dispose did not release the transport"
+    }
+   ],
+   "outcome": "failed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport",
+    "--logger",
+    "trx;LogFileName=run-30.trx",
+    "--results-directory",
+    "<scratch>/pb2/out-sync-transport-release"
+   ],
+   "exit": 1,
+   "timed_out": false,
+   "seconds": 1.47,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport(state: \"no-close\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0097567",
+     "message": "Synchronous Dispose did not release the transport"
+    },
+    {
+     "test": "WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport(state: \"close-finished\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0196291",
+     "message": "Synchronous Dispose did not release the transport"
+    }
+   ],
+   "outcome": "failed"
+  }
+ ],
+ "build": {
+  "command": [
+   "dotnet",
+   "build",
+   "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+   "-c",
+   "Release",
+   "-p:LibTfm=net11.0",
+   "--nologo"
+  ],
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 1.47
+ },
+ "verdict": "failed on every run",
+ "rows_per_run": [
+  2
+ ]
+}

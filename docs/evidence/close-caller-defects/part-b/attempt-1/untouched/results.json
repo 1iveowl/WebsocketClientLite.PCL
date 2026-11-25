@@ -1,0 +1,1108 @@
+{
+ "made": "2026-11-25",
+ "copy": "<scratch>/untouched",
+ "library_target": "net11.0",
+ "configuration": "Release",
+ "filter": "FullyQualifiedName=WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport",
+ "assertion": null,
+ "runs": [
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport",
+    "--logger",
+    "trx;LogFileName=run-01.trx",
+    "--results-directory",
+    "<scratch>/pb/out-untouched"
+   ],
+   "exit": 0,
+   "timed_out": false,
+   "seconds": 0.92,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport(state: \"no-close\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0079729",
+     "message": ""
+    },
+    {
+     "test": "WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport(state: \"close-finished\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0207356",
+     "message": ""
+    }
+   ],
+   "outcome": "passed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport",
+    "--logger",
+    "trx;LogFileName=run-02.trx",
+    "--results-directory",
+    "<scratch>/pb/out-untouched"
+   ],
+   "exit": 0,
+   "timed_out": false,
+   "seconds": 0.92,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport(state: \"close-finished\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0188888",
+     "message": ""
+    },
+    {
+     "test": "WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport(state: \"no-close\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0095765",
+     "message": ""
+    }
+   ],
+   "outcome": "passed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport",
+    "--logger",
+    "trx;LogFileName=run-03.trx",
+    "--results-directory",
+    "<scratch>/pb/out-untouched"
+   ],
+   "exit": 0,
+   "timed_out": false,
+   "seconds": 0.92,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport(state: \"no-close\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0097699",
+     "message": ""
+    },
+    {
+     "test": "WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport(state: \"close-finished\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0188719",
+     "message": ""
+    }
+   ],
+   "outcome": "passed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport",
+    "--logger",
+    "trx;LogFileName=run-04.trx",
+    "--results-directory",
+    "<scratch>/pb/out-untouched"
+   ],
+   "exit": 0,
+   "timed_out": false,
+   "seconds": 0.92,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport(state: \"no-close\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0073296",
+     "message": ""
+    },
+    {
+     "test": "WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport(state: \"close-finished\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0184980",
+     "message": ""
+    }
+   ],
+   "outcome": "passed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport",
+    "--logger",
+    "trx;LogFileName=run-05.trx",
+    "--results-directory",
+    "<scratch>/pb/out-untouched"
+   ],
+   "exit": 0,
+   "timed_out": false,
+   "seconds": 0.97,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport(state: \"no-close\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0071542",
+     "message": ""
+    },
+    {
+     "test": "WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport(state: \"close-finished\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0178770",
+     "message": ""
+    }
+   ],
+   "outcome": "passed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport",
+    "--logger",
+    "trx;LogFileName=run-06.trx",
+    "--results-directory",
+    "<scratch>/pb/out-untouched"
+   ],
+   "exit": 0,
+   "timed_out": false,
+   "seconds": 0.92,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport(state: \"no-close\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0095108",
+     "message": ""
+    },
+    {
+     "test": "WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport(state: \"close-finished\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0176276",
+     "message": ""
+    }
+   ],
+   "outcome": "passed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport",
+    "--logger",
+    "trx;LogFileName=run-07.trx",
+    "--results-directory",
+    "<scratch>/pb/out-untouched"
+   ],
+   "exit": 0,
+   "timed_out": false,
+   "seconds": 0.92,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport(state: \"close-finished\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0190652",
+     "message": ""
+    },
+    {
+     "test": "WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport(state: \"no-close\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0090864",
+     "message": ""
+    }
+   ],
+   "outcome": "passed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport",
+    "--logger",
+    "trx;LogFileName=run-08.trx",
+    "--results-directory",
+    "<scratch>/pb/out-untouched"
+   ],
+   "exit": 0,
+   "timed_out": false,
+   "seconds": 0.92,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport(state: \"no-close\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0084609",
+     "message": ""
+    },
+    {
+     "test": "WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport(state: \"close-finished\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0190542",
+     "message": ""
+    }
+   ],
+   "outcome": "passed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport",
+    "--logger",
+    "trx;LogFileName=run-09.trx",
+    "--results-directory",
+    "<scratch>/pb/out-untouched"
+   ],
+   "exit": 0,
+   "timed_out": false,
+   "seconds": 0.92,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport(state: \"close-finished\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0180483",
+     "message": ""
+    },
+    {
+     "test": "WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport(state: \"no-close\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0084755",
+     "message": ""
+    }
+   ],
+   "outcome": "passed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport",
+    "--logger",
+    "trx;LogFileName=run-10.trx",
+    "--results-directory",
+    "<scratch>/pb/out-untouched"
+   ],
+   "exit": 0,
+   "timed_out": false,
+   "seconds": 0.92,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport(state: \"close-finished\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0187196",
+     "message": ""
+    },
+    {
+     "test": "WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport(state: \"no-close\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0079058",
+     "message": ""
+    }
+   ],
+   "outcome": "passed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport",
+    "--logger",
+    "trx;LogFileName=run-11.trx",
+    "--results-directory",
+    "<scratch>/pb/out-untouched"
+   ],
+   "exit": 0,
+   "timed_out": false,
+   "seconds": 0.92,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport(state: \"close-finished\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0202618",
+     "message": ""
+    },
+    {
+     "test": "WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport(state: \"no-close\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0096176",
+     "message": ""
+    }
+   ],
+   "outcome": "passed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport",
+    "--logger",
+    "trx;LogFileName=run-12.trx",
+    "--results-directory",
+    "<scratch>/pb/out-untouched"
+   ],
+   "exit": 0,
+   "timed_out": false,
+   "seconds": 0.92,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport(state: \"no-close\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0086712",
+     "message": ""
+    },
+    {
+     "test": "WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport(state: \"close-finished\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0181378",
+     "message": ""
+    }
+   ],
+   "outcome": "passed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport",
+    "--logger",
+    "trx;LogFileName=run-13.trx",
+    "--results-directory",
+    "<scratch>/pb/out-untouched"
+   ],
+   "exit": 0,
+   "timed_out": false,
+   "seconds": 0.92,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport(state: \"close-finished\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0188167",
+     "message": ""
+    },
+    {
+     "test": "WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport(state: \"no-close\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0081526",
+     "message": ""
+    }
+   ],
+   "outcome": "passed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport",
+    "--logger",
+    "trx;LogFileName=run-14.trx",
+    "--results-directory",
+    "<scratch>/pb/out-untouched"
+   ],
+   "exit": 0,
+   "timed_out": false,
+   "seconds": 0.92,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport(state: \"no-close\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0102574",
+     "message": ""
+    },
+    {
+     "test": "WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport(state: \"close-finished\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0210261",
+     "message": ""
+    }
+   ],
+   "outcome": "passed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport",
+    "--logger",
+    "trx;LogFileName=run-15.trx",
+    "--results-directory",
+    "<scratch>/pb/out-untouched"
+   ],
+   "exit": 0,
+   "timed_out": false,
+   "seconds": 0.92,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport(state: \"close-finished\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0179410",
+     "message": ""
+    },
+    {
+     "test": "WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport(state: \"no-close\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0090319",
+     "message": ""
+    }
+   ],
+   "outcome": "passed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport",
+    "--logger",
+    "trx;LogFileName=run-16.trx",
+    "--results-directory",
+    "<scratch>/pb/out-untouched"
+   ],
+   "exit": 0,
+   "timed_out": false,
+   "seconds": 0.92,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport(state: \"close-finished\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0190166",
+     "message": ""
+    },
+    {
+     "test": "WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport(state: \"no-close\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0084232",
+     "message": ""
+    }
+   ],
+   "outcome": "passed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport",
+    "--logger",
+    "trx;LogFileName=run-17.trx",
+    "--results-directory",
+    "<scratch>/pb/out-untouched"
+   ],
+   "exit": 0,
+   "timed_out": false,
+   "seconds": 0.92,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport(state: \"no-close\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0082611",
+     "message": ""
+    },
+    {
+     "test": "WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport(state: \"close-finished\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0190393",
+     "message": ""
+    }
+   ],
+   "outcome": "passed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport",
+    "--logger",
+    "trx;LogFileName=run-18.trx",
+    "--results-directory",
+    "<scratch>/pb/out-untouched"
+   ],
+   "exit": 0,
+   "timed_out": false,
+   "seconds": 0.92,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport(state: \"close-finished\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0175814",
+     "message": ""
+    },
+    {
+     "test": "WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport(state: \"no-close\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0091229",
+     "message": ""
+    }
+   ],
+   "outcome": "passed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport",
+    "--logger",
+    "trx;LogFileName=run-19.trx",
+    "--results-directory",
+    "<scratch>/pb/out-untouched"
+   ],
+   "exit": 0,
+   "timed_out": false,
+   "seconds": 0.92,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport(state: \"no-close\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0088665",
+     "message": ""
+    },
+    {
+     "test": "WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport(state: \"close-finished\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0213904",
+     "message": ""
+    }
+   ],
+   "outcome": "passed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport",
+    "--logger",
+    "trx;LogFileName=run-20.trx",
+    "--results-directory",
+    "<scratch>/pb/out-untouched"
+   ],
+   "exit": 0,
+   "timed_out": false,
+   "seconds": 0.92,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport(state: \"close-finished\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0191708",
+     "message": ""
+    },
+    {
+     "test": "WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport(state: \"no-close\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0072046",
+     "message": ""
+    }
+   ],
+   "outcome": "passed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport",
+    "--logger",
+    "trx;LogFileName=run-21.trx",
+    "--results-directory",
+    "<scratch>/pb/out-untouched"
+   ],
+   "exit": 0,
+   "timed_out": false,
+   "seconds": 0.92,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport(state: \"no-close\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0091203",
+     "message": ""
+    },
+    {
+     "test": "WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport(state: \"close-finished\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0185655",
+     "message": ""
+    }
+   ],
+   "outcome": "passed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport",
+    "--logger",
+    "trx;LogFileName=run-22.trx",
+    "--results-directory",
+    "<scratch>/pb/out-untouched"
+   ],
+   "exit": 0,
+   "timed_out": false,
+   "seconds": 0.92,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport(state: \"close-finished\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0182414",
+     "message": ""
+    },
+    {
+     "test": "WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport(state: \"no-close\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0091700",
+     "message": ""
+    }
+   ],
+   "outcome": "passed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport",
+    "--logger",
+    "trx;LogFileName=run-23.trx",
+    "--results-directory",
+    "<scratch>/pb/out-untouched"
+   ],
+   "exit": 0,
+   "timed_out": false,
+   "seconds": 0.92,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport(state: \"no-close\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0103426",
+     "message": ""
+    },
+    {
+     "test": "WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport(state: \"close-finished\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0167858",
+     "message": ""
+    }
+   ],
+   "outcome": "passed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport",
+    "--logger",
+    "trx;LogFileName=run-24.trx",
+    "--results-directory",
+    "<scratch>/pb/out-untouched"
+   ],
+   "exit": 0,
+   "timed_out": false,
+   "seconds": 0.92,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport(state: \"no-close\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0098622",
+     "message": ""
+    },
+    {
+     "test": "WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport(state: \"close-finished\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0185904",
+     "message": ""
+    }
+   ],
+   "outcome": "passed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport",
+    "--logger",
+    "trx;LogFileName=run-25.trx",
+    "--results-directory",
+    "<scratch>/pb/out-untouched"
+   ],
+   "exit": 0,
+   "timed_out": false,
+   "seconds": 0.92,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport(state: \"close-finished\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0189681",
+     "message": ""
+    },
+    {
+     "test": "WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport(state: \"no-close\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0081841",
+     "message": ""
+    }
+   ],
+   "outcome": "passed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport",
+    "--logger",
+    "trx;LogFileName=run-26.trx",
+    "--results-directory",
+    "<scratch>/pb/out-untouched"
+   ],
+   "exit": 0,
+   "timed_out": false,
+   "seconds": 0.92,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport(state: \"close-finished\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0204585",
+     "message": ""
+    },
+    {
+     "test": "WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport(state: \"no-close\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0099988",
+     "message": ""
+    }
+   ],
+   "outcome": "passed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport",
+    "--logger",
+    "trx;LogFileName=run-27.trx",
+    "--results-directory",
+    "<scratch>/pb/out-untouched"
+   ],
+   "exit": 0,
+   "timed_out": false,
+   "seconds": 0.92,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport(state: \"no-close\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0083646",
+     "message": ""
+    },
+    {
+     "test": "WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport(state: \"close-finished\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0181365",
+     "message": ""
+    }
+   ],
+   "outcome": "passed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport",
+    "--logger",
+    "trx;LogFileName=run-28.trx",
+    "--results-directory",
+    "<scratch>/pb/out-untouched"
+   ],
+   "exit": 0,
+   "timed_out": false,
+   "seconds": 0.92,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport(state: \"close-finished\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0191763",
+     "message": ""
+    },
+    {
+     "test": "WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport(state: \"no-close\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0081969",
+     "message": ""
+    }
+   ],
+   "outcome": "passed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport",
+    "--logger",
+    "trx;LogFileName=run-29.trx",
+    "--results-directory",
+    "<scratch>/pb/out-untouched"
+   ],
+   "exit": 0,
+   "timed_out": false,
+   "seconds": 0.87,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport(state: \"close-finished\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0180359",
+     "message": ""
+    },
+    {
+     "test": "WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport(state: \"no-close\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0095645",
+     "message": ""
+    }
+   ],
+   "outcome": "passed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport",
+    "--logger",
+    "trx;LogFileName=run-30.trx",
+    "--results-directory",
+    "<scratch>/pb/out-untouched"
+   ],
+   "exit": 0,
+   "timed_out": false,
+   "seconds": 0.92,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport(state: \"close-finished\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0185618",
+     "message": ""
+    },
+    {
+     "test": "WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport(state: \"no-close\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0090601",
+     "message": ""
+    }
+   ],
+   "outcome": "passed"
+  }
+ ],
+ "build": {
+  "command": [
+   "dotnet",
+   "build",
+   "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+   "-c",
+   "Release",
+   "-p:LibTfm=net11.0",
+   "--nologo"
+  ],
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 1.67
+ },
+ "verdict": "passed on every run",
+ "rows_per_run": [
+  2
+ ]
+}

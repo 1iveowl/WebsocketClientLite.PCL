@@ -1,0 +1,48 @@
+Tool 'dotnet-stryker' (version '5.0.0') was restored. Available commands: dotnet-stryker
+
+Restore was successful.
+Stryker log: <scratch>/stryker-sender/out-c2/run-k70hZB.log
+
+   _____ _              _               _   _ ______ _______  
+  / ____| |            | |             | \ | |  ____|__   __| 
+ | (___ | |_ _ __ _   _| | _____ _ __  |  \| | |__     | |    
+  \___ \| __| '__| | | | |/ / _ \ '__| | . ` |  __|    | |    
+  ____) | |_| |  | |_| |   <  __/ |    | |\  | |____   | |    
+ |_____/ \__|_|   \__, |_|\_\___|_| (_)|_| \_|______|  |_|    
+                   __/ |                                      
+                  |___/                                       
+
+
+Version: 5.0.0
+
+[13:56:57 INF] Stryker will use a max of 2 parallel testsessions.
+[13:56:57 INF] Analysis starting.
+[13:56:57 INF] Using project configuration/platform 'Release|`default`'.
+[13:56:57 INF] Analyzing 1 test project(s).
+[13:56:58 INF] Found project <scratch>/stryker-sender/copy/src/main/WebsocketClientLite/WebsocketClientLite.csproj to mutate.
+[13:56:58 INF] Analysis complete.
+[13:56:58 INF] Building test project <scratch>/stryker-sender/copy/src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj (1/1)
+[13:56:58 INF] Building project WebsocketClientLiteTest.csproj using dotnet build WebsocketClientLiteTest.csproj -c Release --property:Platform=AnyCPU (directory <scratch>/stryker-sender/copy/src/main/WebsocketClientLiteTest.)
+[13:56:59 INF] Number of tests found: 332 for project <scratch>/stryker-sender/copy/src/main/WebsocketClientLite/WebsocketClientLite.csproj. Initial test run started.
+[13:57:58 INF] 960 mutants created
+[13:57:58 INF] Capture mutant coverage using 'CoverageBasedTest, DisableMixMutants' mode.
+Hint: by passing "--open-report or -o" the report will open automatically and 
+update the report in real-time.
+[13:58:58 INF] 48    mutants got status CompileError. Reason: Mutant caused compile errors
+[13:58:58 INF] 11    mutants got status NoCoverage.   Reason: Not covered by any test.
+[13:58:58 INF] 43    mutants got status Ignored.      Reason: Removed by block already covered filter
+[13:58:58 INF] 692   mutants got status Ignored.      Reason: Removed by mutate filter
+[13:58:58 INF] 794   total mutants are skipped for the above mentioned reasons
+[13:58:58 INF] 166   total mutants will be tested
+.S....SSS......SSSSSSSSS.S.T.SS..SSS....S...S..S....SS...................SSS..T...S.S.S.T.S.SS.S.S......S.S..S.S..S..S...S.........S............S.....S...SSSS..SSS..S
+
+Your json report has been generated at:
+file://<scratch>
+11c-ec22dd9949c5/scratchpad/stryker-sender/out-c2/reports/mutation-report.json
+
+Your html report has been generated at:
+file://<scratch>
+11c-ec22dd9949c5/scratchpad/stryker-sender/out-c2/reports/mutation-report.html
+You can open it in your browser of choice.
+[14:27:01 INF] Time Elapsed 00:30:04.3135973
+[14:27:01 INF] The final mutation score is 63.84 %

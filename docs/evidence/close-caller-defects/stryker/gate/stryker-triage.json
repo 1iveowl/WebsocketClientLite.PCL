@@ -1,0 +1,473 @@
+{
+  "status": "passed",
+  "counts": {
+    "Killed": 43,
+    "Survived": 26,
+    "NoCoverage": 7,
+    "Timeout": 0,
+    "CompileError": 3,
+    "Ignored": 26
+  },
+  "all_reported_counts": {
+    "Ignored": 163,
+    "CompileError": 10,
+    "Killed": 43,
+    "NoCoverage": 7,
+    "Survived": 26
+  },
+  "dispositions": [
+    {
+      "id": "589",
+      "outcome": "NoCoverage",
+      "disposition": {
+        "key": "4f3dfd3654a9352b53e47913b269ee29b1c2d1358d7a341b40f42c0f855b093d",
+        "pilot_id": "561",
+        "line": 72,
+        "pilot_outcome": "NoCoverage",
+        "classification": "out-of-scope",
+        "requirements": [],
+        "reason": "Client-ping default interval selection is outside Close disposal obligations; no test currently distinguishes its default/explicit branch."
+      }
+    },
+    {
+      "id": "591",
+      "outcome": "Survived",
+      "disposition": {
+        "key": "06b963ee3f40e128973df92c43df473fb765c0ec5689e3743c233c172336534a",
+        "pilot_id": "563",
+        "line": 80,
+        "pilot_outcome": "Survived",
+        "classification": "out-of-scope",
+        "requirements": [],
+        "reason": "Connection setup or handshake diagnostics, outside CLOSE-004/CLOSE-005. Existing handshake success/error tests do not distinguish this statement or scheduler context."
+      }
+    },
+    {
+      "id": "597",
+      "outcome": "Survived",
+      "disposition": {
+        "key": "05e1533b2a73b6a49a192020a28786e43624e6bd8ca910ae944ab939d747e52c",
+        "pilot_id": "569",
+        "line": 99,
+        "pilot_outcome": "Survived",
+        "classification": "out-of-scope",
+        "requirements": [],
+        "reason": "Connection setup or handshake diagnostics, outside CLOSE-004/CLOSE-005. Existing handshake success/error tests do not distinguish this statement or scheduler context."
+      }
+    },
+    {
+      "id": "599",
+      "outcome": "NoCoverage",
+      "disposition": {
+        "key": "e06cf343e93039a39aa0449da1af7997aa3101558a1eef853ba1a1e552bd1cc5",
+        "pilot_id": "571",
+        "line": 103,
+        "pilot_outcome": "NoCoverage",
+        "classification": "out-of-scope",
+        "requirements": [],
+        "reason": "Connection setup or handshake diagnostics, outside CLOSE-004/CLOSE-005. Existing handshake success/error tests do not distinguish this statement or scheduler context."
+      }
+    },
+    {
+      "id": "600",
+      "outcome": "NoCoverage",
+      "disposition": {
+        "key": "33383a20f04c48f32b1919be96a297306d3277c5604ec3a9f270bf2a70e6a68b",
+        "pilot_id": "572",
+        "line": 103,
+        "pilot_outcome": "NoCoverage",
+        "classification": "out-of-scope",
+        "requirements": [],
+        "reason": "Connection setup or handshake diagnostics, outside CLOSE-004/CLOSE-005. Existing handshake success/error tests do not distinguish this statement or scheduler context."
+      }
+    },
+    {
+      "id": "604",
+      "outcome": "NoCoverage",
+      "disposition": {
+        "key": "6ec91d3b582fb88c639e14fb0ccbd21915f29683dd2088b0f4564c544c042b7c",
+        "pilot_id": "576",
+        "line": 118,
+        "pilot_outcome": "NoCoverage",
+        "classification": "out-of-scope",
+        "requirements": [],
+        "reason": "Client-ping error message text is outside Close disposal obligations; this error-string branch is uncovered."
+      }
+    },
+    {
+      "id": "606",
+      "outcome": "Survived",
+      "disposition": {
+        "key": "605553259f8e0d4f15d39b987415cfc133baf7496eb7d832290d6823acdeb054",
+        "pilot_id": "578",
+        "line": 154,
+        "pilot_outcome": "Survived",
+        "classification": "accepted-gap",
+        "requirements": [],
+        "reason": "G tests DisposeAsync under a non-pumping calling SynchronizationContext. This separate continuation capture site remains untested with a custom context; arbitrary handshake/control-frame/parser callback scheduling remains an explicit boundary."
+      }
+    },
+    {
+      "id": "612",
+      "outcome": "Survived",
+      "disposition": {
+        "key": "34a22b6cb84113ea88eda5fb461990da011a608ad884b32ca672395d5a2674f2",
+        "pilot_id": "584",
+        "line": 174,
+        "pilot_outcome": "Survived",
+        "classification": "accepted-gap",
+        "requirements": [
+          "CLOSE-004",
+          "CLOSE-005"
+        ],
+        "reason": "G tests DisposeAsync under a non-pumping calling SynchronizationContext. This separate continuation capture site remains untested with a custom context; arbitrary handshake/control-frame/parser callback scheduling remains an explicit boundary."
+      }
+    },
+    {
+      "id": "614",
+      "outcome": "Survived",
+      "disposition": {
+        "key": "6cb7a6ac69f16041c5a407ddddd7fe6d9c903dbce304b5208616487fef343327",
+        "pilot_id": "586",
+        "line": 179,
+        "pilot_outcome": "Survived",
+        "classification": "out-of-scope",
+        "requirements": [],
+        "reason": "Reserved/null opcode dispatch diagnostics are outside Close. Parser admission rejects reserved wire opcodes before these defensive branches, and the exact diagnostic string is not asserted."
+      }
+    },
+    {
+      "id": "615",
+      "outcome": "Survived",
+      "disposition": {
+        "key": "fe42ed87f8699e999fefbc22031fff34017b6aa972938911c3ae4710bd3bbab1",
+        "pilot_id": "587",
+        "line": 179,
+        "pilot_outcome": "Survived",
+        "classification": "out-of-scope",
+        "requirements": [],
+        "reason": "Reserved/null opcode dispatch diagnostics are outside Close. Parser admission rejects reserved wire opcodes before these defensive branches, and the exact diagnostic string is not asserted."
+      }
+    },
+    {
+      "id": "616",
+      "outcome": "Survived",
+      "disposition": {
+        "key": "5bca28a9dc058c47f56c6a58d48adec0a91c7e0d37101bc4d2519dadb3f2d181",
+        "pilot_id": "588",
+        "line": 179,
+        "pilot_outcome": "Survived",
+        "classification": "out-of-scope",
+        "requirements": [],
+        "reason": "Reserved/null opcode dispatch diagnostics are outside Close. Parser admission rejects reserved wire opcodes before these defensive branches, and the exact diagnostic string is not asserted."
+      }
+    },
+    {
+      "id": "617",
+      "outcome": "Survived",
+      "disposition": {
+        "key": "14d43d563788304580525f45418c698c8989e1fa5b592e002ff103929eb46e37",
+        "pilot_id": "589",
+        "line": 179,
+        "pilot_outcome": "Survived",
+        "classification": "out-of-scope",
+        "requirements": [],
+        "reason": "Reserved/null opcode dispatch diagnostics are outside Close. Parser admission rejects reserved wire opcodes before these defensive branches, and the exact diagnostic string is not asserted."
+      }
+    },
+    {
+      "id": "618",
+      "outcome": "Survived",
+      "disposition": {
+        "key": "5a060641a9eb1cee380be2193916b413809f4e683daf16cb730ff4a303b2f212",
+        "pilot_id": "590",
+        "line": 179,
+        "pilot_outcome": "Survived",
+        "classification": "out-of-scope",
+        "requirements": [],
+        "reason": "Reserved/null opcode dispatch diagnostics are outside Close. Parser admission rejects reserved wire opcodes before these defensive branches, and the exact diagnostic string is not asserted."
+      }
+    },
+    {
+      "id": "619",
+      "outcome": "Survived",
+      "disposition": {
+        "key": "9f51ca60dfbe41c99672bd9f8ae91376b6380902581fe6d1cadc01a6a25cb402",
+        "pilot_id": "591",
+        "line": 179,
+        "pilot_outcome": "Survived",
+        "classification": "out-of-scope",
+        "requirements": [],
+        "reason": "Reserved/null opcode dispatch diagnostics are outside Close. Parser admission rejects reserved wire opcodes before these defensive branches, and the exact diagnostic string is not asserted."
+      }
+    },
+    {
+      "id": "620",
+      "outcome": "Survived",
+      "disposition": {
+        "key": "5973c178e7c45d4bbd7ed51d94c327bc60bd4961f1cb233f22fa5e86e1b6ed5e",
+        "pilot_id": "592",
+        "line": 179,
+        "pilot_outcome": "Survived",
+        "classification": "out-of-scope",
+        "requirements": [],
+        "reason": "Reserved/null opcode dispatch diagnostics are outside Close. Parser admission rejects reserved wire opcodes before these defensive branches, and the exact diagnostic string is not asserted."
+      }
+    },
+    {
+      "id": "621",
+      "outcome": "Survived",
+      "disposition": {
+        "key": "c092f0d0d8ef11255ac5192d49216c0539dc135e36e5c18a360508ce2f251ade",
+        "pilot_id": "593",
+        "line": 179,
+        "pilot_outcome": "Survived",
+        "classification": "out-of-scope",
+        "requirements": [],
+        "reason": "Reserved/null opcode dispatch diagnostics are outside Close. Parser admission rejects reserved wire opcodes before these defensive branches, and the exact diagnostic string is not asserted."
+      }
+    },
+    {
+      "id": "622",
+      "outcome": "NoCoverage",
+      "disposition": {
+        "key": "8bfdb4be366199e57c03439a26a801ba9ab18423629293366cd2d8361a487492",
+        "pilot_id": "594",
+        "line": 188,
+        "pilot_outcome": "NoCoverage",
+        "classification": "out-of-scope",
+        "requirements": [],
+        "reason": "Reserved/null opcode dispatch diagnostics are outside Close. Parser admission rejects reserved wire opcodes before these defensive branches, and the exact diagnostic string is not asserted."
+      }
+    },
+    {
+      "id": "623",
+      "outcome": "NoCoverage",
+      "disposition": {
+        "key": "70c231780a1e2366185b0957543c78e7e611faac9ed3976d96c5c5427243c083",
+        "pilot_id": "595",
+        "line": 191,
+        "pilot_outcome": "NoCoverage",
+        "classification": "out-of-scope",
+        "requirements": [],
+        "reason": "Reserved/null opcode dispatch diagnostics are outside Close. Parser admission rejects reserved wire opcodes before these defensive branches, and the exact diagnostic string is not asserted."
+      }
+    },
+    {
+      "id": "625",
+      "outcome": "Survived",
+      "disposition": {
+        "key": "ca6779d80e0b86f0f2850d6bfdc2ff996a10f231502952cdbe11d4d6059c0958",
+        "pilot_id": "597",
+        "line": 197,
+        "pilot_outcome": "Survived",
+        "classification": "out-of-scope",
+        "requirements": [],
+        "reason": "Ping/Pong status notification observability is outside Close disposal and is not independently asserted by this pilot."
+      }
+    },
+    {
+      "id": "627",
+      "outcome": "Survived",
+      "disposition": {
+        "key": "10db9eeb5018644ebfc925b225271f7d05c660be5ad0275ee2d25108a6d12897",
+        "pilot_id": "599",
+        "line": 198,
+        "pilot_outcome": "Survived",
+        "classification": "accepted-gap",
+        "requirements": [
+          "CLOSE-004",
+          "CLOSE-005"
+        ],
+        "reason": "G tests DisposeAsync under a non-pumping calling SynchronizationContext. This separate continuation capture site remains untested with a custom context; arbitrary handshake/control-frame/parser callback scheduling remains an explicit boundary."
+      }
+    },
+    {
+      "id": "629",
+      "outcome": "Survived",
+      "disposition": {
+        "key": "8959623f74c76bbc3a3dffe6a6c29d2dcfb99696b21fc377c1e8c79915c4ff29",
+        "pilot_id": "601",
+        "line": 204,
+        "pilot_outcome": "Survived",
+        "classification": "out-of-scope",
+        "requirements": [],
+        "reason": "Ping/Pong status notification observability is outside Close disposal and is not independently asserted by this pilot."
+      }
+    },
+    {
+      "id": "635",
+      "outcome": "Survived",
+      "disposition": {
+        "key": "d0106c53807bfd7d595c1f0e84b3f291b23a4540eac4de05cbef99f72970b250",
+        "pilot_id": "607",
+        "line": 230,
+        "pilot_outcome": "Survived",
+        "classification": "equivalent",
+        "requirements": [],
+        "reason": "The bool result of the terminated TaskCompletionSource is never read; only task completion is used. Changing true to false preserves this signal."
+      }
+    },
+    {
+      "id": "638",
+      "outcome": "Survived",
+      "disposition": {
+        "key": "7d0131feedfe0f8c549b22003489ab7913fbdb6e286ac9197f6babd6aab91478",
+        "pilot_id": "610",
+        "line": 238,
+        "pilot_outcome": "Survived",
+        "classification": "equivalent",
+        "requirements": [],
+        "reason": "The bool result of the terminated TaskCompletionSource is never read; only task completion is used. Changing true to false preserves this signal."
+      }
+    },
+    {
+      "id": "639",
+      "outcome": "Survived",
+      "disposition": {
+        "key": "a9ecc9916db3ba01f7346aa900171c6731343939ccaf68d9b1d13b2f785b0f18",
+        "pilot_id": "611",
+        "line": 239,
+        "pilot_outcome": "Survived",
+        "classification": "equivalent",
+        "requirements": [],
+        "reason": "The bool result of the terminated TaskCompletionSource is never read; only task completion is used. Changing true to false preserves this signal."
+      }
+    },
+    {
+      "id": "641",
+      "outcome": "Survived",
+      "disposition": {
+        "key": "8a8fbc6d0395c740e00cd379d01c90f72c82b83a9fb3c2427072681c51f73685",
+        "pilot_id": "613",
+        "line": 241,
+        "pilot_outcome": "Survived",
+        "classification": "accepted-gap",
+        "requirements": [],
+        "reason": "G tests DisposeAsync under a non-pumping calling SynchronizationContext. This separate continuation capture site remains untested with a custom context; arbitrary handshake/control-frame/parser callback scheduling remains an explicit boundary."
+      }
+    },
+    {
+      "id": "651",
+      "outcome": "Survived",
+      "disposition": {
+        "key": "d77e985d71f3ceacfc297df468a599346f3a774cfdd448ed3c108e29e92f8733",
+        "pilot_id": "623",
+        "line": 270,
+        "pilot_outcome": "Survived",
+        "classification": "accepted-gap",
+        "requirements": [],
+        "reason": "G tests DisposeAsync under a non-pumping calling SynchronizationContext. This separate continuation capture site remains untested with a custom context; arbitrary handshake/control-frame/parser callback scheduling remains an explicit boundary."
+      }
+    },
+    {
+      "id": "662",
+      "outcome": "Survived",
+      "disposition": {
+        "key": "02555b172b7afef634540acc48ba9408d64cde98e5d5078b23124c0bbd4670d9",
+        "pilot_id": "634",
+        "line": 292,
+        "pilot_outcome": "Survived",
+        "classification": "accepted-gap",
+        "requirements": [
+          "CLOSE-004",
+          "CLOSE-005"
+        ],
+        "reason": "G tests DisposeAsync under a non-pumping calling SynchronizationContext. This separate continuation capture site remains untested with a custom context; arbitrary handshake/control-frame/parser callback scheduling remains an explicit boundary."
+      }
+    },
+    {
+      "id": "664",
+      "outcome": "Survived",
+      "disposition": {
+        "key": "51f829ad7c6ae8eb95b5b8d9210b22de36b71b4cbf1810a4e6338c702f5c4264",
+        "pilot_id": "636",
+        "line": 299,
+        "pilot_outcome": "Survived",
+        "classification": "equivalent",
+        "requirements": [
+          "CLOSE-004",
+          "CLOSE-005"
+        ],
+        "reason": "Debug.WriteLine is conditional on DEBUG and omitted from the Release assembly. Removing its call or changing its interpolated message has no Release behavior."
+      }
+    },
+    {
+      "id": "665",
+      "outcome": "NoCoverage",
+      "disposition": {
+        "key": "63900f2243b5eda9d52a9c8e4db9406e9c12ab623994a6054bbc999772c9f04c",
+        "pilot_id": "637",
+        "line": 299,
+        "pilot_outcome": "NoCoverage",
+        "classification": "equivalent",
+        "requirements": [
+          "CLOSE-004",
+          "CLOSE-005"
+        ],
+        "reason": "Debug.WriteLine is conditional on DEBUG and omitted from the Release assembly. Removing its call or changing its interpolated message has no Release behavior."
+      }
+    },
+    {
+      "id": "674",
+      "outcome": "Survived",
+      "disposition": {
+        "key": "887f41b0fa32b28c05c90d7aa0476d9f27f0f0f510a4aa7378ba15f96055a6b8",
+        "pilot_id": "646",
+        "line": 325,
+        "pilot_outcome": "Survived",
+        "classification": "equivalent",
+        "requirements": [
+          "CLOSE-004"
+        ],
+        "reason": "WebsocketParserHandler.Dispose currently has an empty body. Removing this call has no observable resource effect with the current implementation."
+      }
+    },
+    {
+      "id": "684",
+      "outcome": "Survived",
+      "disposition": {
+        "key": "16e3f5f00507a1f0460d00bb6c3eed0bf08328b41df07d1261b6e07a9d82a736",
+        "pilot_id": "656",
+        "line": 361,
+        "pilot_outcome": "Survived",
+        "classification": "out-of-scope",
+        "requirements": [],
+        "reason": "Synchronous Dispose is explicitly an abort exception to CLOSE-004/CLOSE-005. Reentrant wait/fault-observation and redundant synchronous transport cleanup need separate tests; async transport disposal is independently required to be killed."
+      }
+    },
+    {
+      "id": "685",
+      "outcome": "Survived",
+      "disposition": {
+        "key": "4906b1596babd05e56090581d85d9bf85d3aa14e1206efbca6190ab2bf3b314b",
+        "pilot_id": "657",
+        "line": 362,
+        "pilot_outcome": "Survived",
+        "classification": "out-of-scope",
+        "requirements": [],
+        "reason": "Synchronous Dispose is explicitly an abort exception to CLOSE-004/CLOSE-005. Reentrant wait/fault-observation and redundant synchronous transport cleanup need separate tests; async transport disposal is independently required to be killed."
+      }
+    },
+    {
+      "id": "686",
+      "outcome": "Survived",
+      "disposition": {
+        "key": "f550f821cd8c9fff8a71e6a4e486749820aea0f1f00b47741c3a7d7355f05e96",
+        "pilot_id": "658",
+        "line": 372,
+        "pilot_outcome": "Survived",
+        "classification": "equivalent",
+        "requirements": [
+          "CLOSE-004"
+        ],
+        "reason": "WebsocketParserHandler.Dispose currently has an empty body. Removing this call has no observable resource effect with the current implementation."
+      }
+    }
+  ],
+  "requirements": [
+    "CLOSE-004",
+    "CLOSE-005"
+  ],
+  "scope": "Connection handler only; accepted gaps are not detected defects. Critical ordering experiment gates separately."
+}

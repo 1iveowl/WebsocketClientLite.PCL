@@ -1,0 +1,11 @@
+--- a/src/main/WebsocketClientLite/Service/WebsocketSenderHandler.cs
++++ b/src/main/WebsocketClientLite/Service/WebsocketSenderHandler.cs
+@@ -419,7 +419,7 @@
+             {
+                 if (op == 8)
+                 {
+-                    if (!AdvanceClose(CloseEvent.Send)) return;
++                    if (AdvanceClose(CloseEvent.Send)) return;
+                 }
+                 // A queued Pong is no longer required after receiving Close.
+                 // Before the peer replies, Pong is still allowed after our Close.

@@ -1,0 +1,233 @@
+[
+ {
+  "id": "send-ignored",
+  "cls": "ControlledCloseTests",
+  "test": "PostWriteFailureRejectsQueuedAndLaterDataAndSuppressesClose",
+  "assertion": "The collection contained 2 items",
+  "rows": 1,
+  "failing": 1,
+  "runs": 30,
+  "build_exit": 0,
+  "rows_result": {
+   "PostWriteFailureRejectsQueuedAndLaterDataAndSuppressesClose": {
+    "named": 30,
+    "other": 0,
+    "passed": 0
+   }
+  }
+ },
+ {
+  "id": "send-inverted",
+  "cls": "ControlledCloseTests",
+  "test": "CancellationBetweenFragmentsAllowsOnlyClose",
+  "assertion": "Collections differ",
+  "rows": 1,
+  "failing": 1,
+  "runs": 30,
+  "build_exit": 0,
+  "rows_result": {
+   "CancellationBetweenFragmentsAllowsOnlyClose": {
+    "named": 30,
+    "other": 0,
+    "passed": 0
+   }
+  }
+ },
+ {
+  "id": "release-early",
+  "cls": "ControlledCloseTests",
+  "test": "PeerWaitEndsByControlledTimeoutOrReadFailure",
+  "assertion": "Disposal overtook paused work",
+  "rows": 2,
+  "failing": 2,
+  "runs": 30,
+  "build_exit": 0,
+  "rows_result": {
+   "PeerWaitEndsByControlledTimeoutOrReadFailure(failure: False)": {
+    "named": 5,
+    "other": 5,
+    "passed": 20
+   },
+   "PeerWaitEndsByControlledTimeoutOrReadFailure(failure: True)": {
+    "named": 24,
+    "other": 4,
+    "passed": 2
+   }
+  }
+ },
+ {
+  "id": "release-never",
+  "cls": "CloseBoundaryTests",
+  "test": "ReadFailureReleasesReadinessBeforeObserverError",
+  "assertion": "Read failure did not release Close readiness",
+  "rows": 1,
+  "failing": 1,
+  "runs": 30,
+  "build_exit": 0,
+  "rows_result": {
+   "ReadFailureReleasesReadinessBeforeObserverError": {
+    "named": 30,
+    "other": 0,
+    "passed": 0
+   }
+  }
+ },
+ {
+  "id": "state-not-stored",
+  "cls": "ControlledCloseTests",
+  "test": "QueuedPongIsSuppressedAfterPeerClose",
+  "assertion": "The collection contained 2 items",
+  "rows": 1,
+  "failing": 1,
+  "runs": 30,
+  "build_exit": 0,
+  "rows_result": {
+   "QueuedPongIsSuppressedAfterPeerClose": {
+    "named": 30,
+    "other": 0,
+    "passed": 0
+   }
+  }
+ },
+ {
+  "id": "read-failure-as-received",
+  "cls": "CloseBoundaryTests",
+  "test": "ReadFailureReleasesReadinessBeforeObserverError",
+  "assertion": "Read failure did not release Close readiness",
+  "rows": 1,
+  "failing": 1,
+  "runs": 30,
+  "build_exit": 0,
+  "rows_result": {
+   "ReadFailureReleasesReadinessBeforeObserverError": {
+    "named": 30,
+    "other": 0,
+    "passed": 0
+   }
+  }
+ },
+ {
+  "id": "peer-close-as-failure",
+  "cls": "ControlledCloseTests",
+  "test": "CancellationBetweenFragmentsAllowsOnlyClose",
+  "assertion": "Collections differ",
+  "rows": 1,
+  "failing": 1,
+  "runs": 30,
+  "build_exit": 0,
+  "rows_result": {
+   "CancellationBetweenFragmentsAllowsOnlyClose": {
+    "named": 30,
+    "other": 0,
+    "passed": 0
+   }
+  }
+ },
+ {
+  "id": "peer-close-skipped",
+  "cls": "ControlledCloseTests",
+  "test": "ParserSignalsPeerCloseOrReadFailureBeforeTimerExpiry",
+  "assertion": "Parser notification did not release Close readiness",
+  "rows": 2,
+  "failing": 1,
+  "runs": 30,
+  "build_exit": 0,
+  "rows_result": {
+   "ParserSignalsPeerCloseOrReadFailureBeforeTimerExpiry(readFailure: True)": {
+    "named": 0,
+    "other": 0,
+    "passed": 30
+   },
+   "ParserSignalsPeerCloseOrReadFailureBeforeTimerExpiry(readFailure: False)": {
+    "named": 30,
+    "other": 0,
+    "passed": 0
+   }
+  }
+ },
+ {
+  "id": "read-failure-skipped",
+  "cls": "CloseBoundaryTests",
+  "test": "ReadFailureReleasesReadinessBeforeObserverError",
+  "assertion": "Read failure did not release Close readiness",
+  "rows": 1,
+  "failing": 1,
+  "runs": 30,
+  "build_exit": 0,
+  "rows_result": {
+   "ReadFailureReleasesReadinessBeforeObserverError": {
+    "named": 30,
+    "other": 0,
+    "passed": 0
+   }
+  }
+ },
+ {
+  "id": "timeout-skipped",
+  "cls": "ProtocolStateTests",
+  "test": "CloseResponseTimeoutMakesTheTransportTerminal",
+  "assertion": "Collections differ",
+  "rows": 1,
+  "failing": 1,
+  "runs": 30,
+  "build_exit": 0,
+  "rows_result": {
+   "CloseResponseTimeoutMakesTheTransportTerminal": {
+    "named": 30,
+    "other": 0,
+    "passed": 0
+   }
+  }
+ },
+ {
+  "id": "write-failure-not-notified",
+  "cls": "ControlledCloseTests",
+  "test": "PostWriteFailureRejectsQueuedAndLaterDataAndSuppressesClose",
+  "assertion": "The collection contained 4 items",
+  "rows": 1,
+  "failing": 1,
+  "runs": 30,
+  "build_exit": 0,
+  "rows_result": {
+   "PostWriteFailureRejectsQueuedAndLaterDataAndSuppressesClose": {
+    "named": 30,
+    "other": 0,
+    "passed": 0
+   }
+  }
+ },
+ {
+  "id": "pong-suppressed-after-own-close",
+  "cls": "ProtocolStateTests",
+  "test": "PongIsAllowedUntilPeerCloseThenSuppressed",
+  "assertion": "Collections differ",
+  "rows": 1,
+  "failing": 1,
+  "runs": 30,
+  "build_exit": 0,
+  "rows_result": {
+   "PongIsAllowedUntilPeerCloseThenSuppressed": {
+    "named": 30,
+    "other": 0,
+    "passed": 0
+   }
+  }
+ },
+ {
+  "id": "data-after-close-allowed",
+  "cls": "ProtocolStateTests",
+  "test": "ReceivedCloseBlocksDataAndSendsOnlyOneResponse",
+  "assertion": "No exception was thrown",
+  "rows": 1,
+  "failing": 1,
+  "runs": 30,
+  "build_exit": 0,
+  "rows_result": {
+   "ReceivedCloseBlocksDataAndSendsOnlyOneResponse": {
+    "named": 30,
+    "other": 0,
+    "passed": 0
+   }
+  }
+ }
+]

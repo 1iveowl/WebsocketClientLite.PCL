@@ -1,0 +1,11 @@
+--- a/src/main/WebsocketClientLite/Service/WebsocketSenderHandler.cs
++++ b/src/main/WebsocketClientLite/Service/WebsocketSenderHandler.cs
+@@ -41,7 +41,7 @@
+     // graceful-close waiter; DisconnectWebsocket also awaits the actual write.
+     private bool AdvanceClose(CloseEvent action)
+     {
+-        CloseState.Step(_closeState, action, out _closeState, out bool send, out bool release);
++        CloseState.Step(_closeState, action, out CloseState discarded, out bool send, out bool release);
+         if (release) _closeReady.TrySetResult(true);
+         return send;
+     }

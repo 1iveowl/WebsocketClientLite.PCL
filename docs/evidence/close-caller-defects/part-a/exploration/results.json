@@ -1,0 +1,4325 @@
+{
+ "made": "2026-11-25",
+ "side": "base",
+ "commit": "b7a6bccef977d91fb4b142dcdee8729872f7e2f6",
+ "copy_name": "copy",
+ "library_target": "net11.0",
+ "configuration": "Release",
+ "plan": [
+  [
+   "close",
+   3
+  ],
+  [
+   "all",
+   1
+  ]
+ ],
+ "suites": {
+  "close": "FullyQualifiedName~WebsocketClientLiteTest.ControlledCloseTests|FullyQualifiedName~WebsocketClientLiteTest.CloseBoundaryTests",
+  "all": "FullyQualifiedName~WebsocketClientLiteTest"
+ },
+ "unchanged": {
+  "build": {
+   "command": [
+    "dotnet",
+    "build",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--nologo"
+   ],
+   "exit": 0,
+   "timed_out": false,
+   "seconds": 1.62,
+   "log": "unchanged/build.log"
+  },
+  "suites": {
+   "close": {
+    "verdict": "survived",
+    "runs": [
+     {
+      "command": [
+       "dotnet",
+       "test",
+       "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+       "-c",
+       "Release",
+       "-p:LibTfm=net11.0",
+       "--no-build",
+       "--nologo",
+       "--filter",
+       "FullyQualifiedName~WebsocketClientLiteTest.ControlledCloseTests|FullyQualifiedName~WebsocketClientLiteTest.CloseBoundaryTests",
+       "--logger",
+       "trx;LogFileName=close-1.trx",
+       "--results-directory",
+       "<scratch>/ca/out/unchanged"
+      ],
+      "exit": 0,
+      "timed_out": false,
+      "seconds": 0.97,
+      "log": "unchanged/close-1.log",
+      "trx": {
+       "total": 19,
+       "passed": 19,
+       "skipped": [],
+       "not_passed": []
+      },
+      "outcome": "passed"
+     },
+     {
+      "command": [
+       "dotnet",
+       "test",
+       "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+       "-c",
+       "Release",
+       "-p:LibTfm=net11.0",
+       "--no-build",
+       "--nologo",
+       "--filter",
+       "FullyQualifiedName~WebsocketClientLiteTest.ControlledCloseTests|FullyQualifiedName~WebsocketClientLiteTest.CloseBoundaryTests",
+       "--logger",
+       "trx;LogFileName=close-2.trx",
+       "--results-directory",
+       "<scratch>/ca/out/unchanged"
+      ],
+      "exit": 0,
+      "timed_out": false,
+      "seconds": 0.97,
+      "log": "unchanged/close-2.log",
+      "trx": {
+       "total": 19,
+       "passed": 19,
+       "skipped": [],
+       "not_passed": []
+      },
+      "outcome": "passed"
+     },
+     {
+      "command": [
+       "dotnet",
+       "test",
+       "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+       "-c",
+       "Release",
+       "-p:LibTfm=net11.0",
+       "--no-build",
+       "--nologo",
+       "--filter",
+       "FullyQualifiedName~WebsocketClientLiteTest.ControlledCloseTests|FullyQualifiedName~WebsocketClientLiteTest.CloseBoundaryTests",
+       "--logger",
+       "trx;LogFileName=close-3.trx",
+       "--results-directory",
+       "<scratch>/ca/out/unchanged"
+      ],
+      "exit": 0,
+      "timed_out": false,
+      "seconds": 0.97,
+      "log": "unchanged/close-3.log",
+      "trx": {
+       "total": 19,
+       "passed": 19,
+       "skipped": [],
+       "not_passed": []
+      },
+      "outcome": "passed"
+     }
+    ]
+   },
+   "all": {
+    "verdict": "survived",
+    "runs": [
+     {
+      "command": [
+       "dotnet",
+       "test",
+       "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+       "-c",
+       "Release",
+       "-p:LibTfm=net11.0",
+       "--no-build",
+       "--nologo",
+       "--filter",
+       "FullyQualifiedName~WebsocketClientLiteTest",
+       "--logger",
+       "trx;LogFileName=all-1.trx",
+       "--results-directory",
+       "<scratch>/ca/out/unchanged"
+      ],
+      "exit": 0,
+      "timed_out": false,
+      "seconds": 25.72,
+      "log": "unchanged/all-1.log",
+      "trx": {
+       "total": 330,
+       "passed": 330,
+       "skipped": [],
+       "not_passed": []
+      },
+      "outcome": "passed"
+     }
+    ]
+   }
+  }
+ },
+ "defects": [
+  {
+   "id": "send-ignored",
+   "breaks": "CLOSE-001",
+   "kind": "ignores send",
+   "description": "WriteFrameSerializedAsync writes the Close frame whatever the step answered.",
+   "source_sha256": "517d48fd4819b3f9b390f4223412dcff7550abe4dacc22d838201841b7898a24",
+   "mutant_sha256": "ad025e59fa79d234a20a63e6b43f8a8b1dc8d5e16a8da6a5ce0893aee312ec34",
+   "build": {
+    "command": [
+     "dotnet",
+     "build",
+     "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+     "-c",
+     "Release",
+     "-p:LibTfm=net11.0",
+     "--nologo"
+    ],
+    "exit": 0,
+    "timed_out": false,
+    "seconds": 1.32,
+    "log": "send-ignored/build.log"
+   },
+   "suites": {
+    "close": {
+     "verdict": "detected",
+     "runs": [
+      {
+       "command": [
+        "dotnet",
+        "test",
+        "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+        "-c",
+        "Release",
+        "-p:LibTfm=net11.0",
+        "--no-build",
+        "--nologo",
+        "--filter",
+        "FullyQualifiedName~WebsocketClientLiteTest.ControlledCloseTests|FullyQualifiedName~WebsocketClientLiteTest.CloseBoundaryTests",
+        "--logger",
+        "trx;LogFileName=close-1.trx",
+        "--results-directory",
+        "<scratch>/ca/out/send-ignored"
+       ],
+       "exit": 1,
+       "timed_out": false,
+       "seconds": 4.53,
+       "log": "send-ignored/close-1.log",
+       "trx": {
+        "total": 19,
+        "passed": 17,
+        "skipped": [],
+        "not_passed": [
+         {
+          "test": "WebsocketClientLiteTest.CloseBoundaryTests.DisposalCancelsPausedPeriodicPingAndReleasesTransport",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : Boundary schedule: SendingHandshakeToWebsocketServer -> HandshakeCompletedSuccessfully -> WebsocketConnected -> SingleFrameSending -> PingSend -> write-entered -> SendError -> SingleFrameSending -> Close -> write-entered"
+         },
+         {
+          "test": "WebsocketClientLiteTest.ControlledCloseTests.PostWriteFailureRejectsQueuedAndLaterDataAndSuppressesClose",
+          "outcome": "Failed",
+          "message": "Assert.Single() Failure: The collection contained 2 items"
+         }
+        ]
+       },
+       "outcome": "failed"
+      },
+      {
+       "command": [
+        "dotnet",
+        "test",
+        "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+        "-c",
+        "Release",
+        "-p:LibTfm=net11.0",
+        "--no-build",
+        "--nologo",
+        "--filter",
+        "FullyQualifiedName~WebsocketClientLiteTest.ControlledCloseTests|FullyQualifiedName~WebsocketClientLiteTest.CloseBoundaryTests",
+        "--logger",
+        "trx;LogFileName=close-2.trx",
+        "--results-directory",
+        "<scratch>/ca/out/send-ignored"
+       ],
+       "exit": 1,
+       "timed_out": false,
+       "seconds": 4.58,
+       "log": "send-ignored/close-2.log",
+       "trx": {
+        "total": 19,
+        "passed": 17,
+        "skipped": [],
+        "not_passed": [
+         {
+          "test": "WebsocketClientLiteTest.CloseBoundaryTests.DisposalCancelsPausedPeriodicPingAndReleasesTransport",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : Boundary schedule: SendingHandshakeToWebsocketServer -> HandshakeCompletedSuccessfully -> WebsocketConnected -> SingleFrameSending -> PingSend -> write-entered -> SendError -> SingleFrameSending -> Close -> write-entered"
+         },
+         {
+          "test": "WebsocketClientLiteTest.ControlledCloseTests.PostWriteFailureRejectsQueuedAndLaterDataAndSuppressesClose",
+          "outcome": "Failed",
+          "message": "Assert.Single() Failure: The collection contained 2 items"
+         }
+        ]
+       },
+       "outcome": "failed"
+      },
+      {
+       "command": [
+        "dotnet",
+        "test",
+        "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+        "-c",
+        "Release",
+        "-p:LibTfm=net11.0",
+        "--no-build",
+        "--nologo",
+        "--filter",
+        "FullyQualifiedName~WebsocketClientLiteTest.ControlledCloseTests|FullyQualifiedName~WebsocketClientLiteTest.CloseBoundaryTests",
+        "--logger",
+        "trx;LogFileName=close-3.trx",
+        "--results-directory",
+        "<scratch>/ca/out/send-ignored"
+       ],
+       "exit": 1,
+       "timed_out": false,
+       "seconds": 4.63,
+       "log": "send-ignored/close-3.log",
+       "trx": {
+        "total": 19,
+        "passed": 17,
+        "skipped": [],
+        "not_passed": [
+         {
+          "test": "WebsocketClientLiteTest.ControlledCloseTests.PostWriteFailureRejectsQueuedAndLaterDataAndSuppressesClose",
+          "outcome": "Failed",
+          "message": "Assert.Single() Failure: The collection contained 2 items"
+         },
+         {
+          "test": "WebsocketClientLiteTest.CloseBoundaryTests.DisposalCancelsPausedPeriodicPingAndReleasesTransport",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : Boundary schedule: SendingHandshakeToWebsocketServer -> HandshakeCompletedSuccessfully -> WebsocketConnected -> SingleFrameSending -> PingSend -> write-entered -> SendError -> SingleFrameSending -> Close -> write-entered"
+         }
+        ]
+       },
+       "outcome": "failed"
+      }
+     ]
+    },
+    "all": {
+     "verdict": "detected",
+     "runs": [
+      {
+       "command": [
+        "dotnet",
+        "test",
+        "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+        "-c",
+        "Release",
+        "-p:LibTfm=net11.0",
+        "--no-build",
+        "--nologo",
+        "--filter",
+        "FullyQualifiedName~WebsocketClientLiteTest",
+        "--logger",
+        "trx;LogFileName=all-1.trx",
+        "--results-directory",
+        "<scratch>/ca/out/send-ignored"
+       ],
+       "exit": 1,
+       "timed_out": false,
+       "seconds": 26.08,
+       "log": "send-ignored/all-1.log",
+       "trx": {
+        "total": 330,
+        "passed": 326,
+        "skipped": [],
+        "not_passed": [
+         {
+          "test": "WebsocketClientLiteTest.ControlledCloseTests.PostWriteFailureRejectsQueuedAndLaterDataAndSuppressesClose",
+          "outcome": "Failed",
+          "message": "Assert.Single() Failure: The collection contained 2 items"
+         },
+         {
+          "test": "WebsocketClientLiteTest.CloseBoundaryTests.DisposalCancelsPausedPeriodicPingAndReleasesTransport",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : Boundary schedule: SendingHandshakeToWebsocketServer -> HandshakeCompletedSuccessfully -> WebsocketConnected -> SingleFrameSending -> PingSend -> write-entered -> SendError -> SingleFrameSending -> Close -> write-entered"
+         },
+         {
+          "test": "WebsocketClientLiteTest.ProtocolStateTests.ReceivedCloseBlocksDataAndSendsOnlyOneResponse",
+          "outcome": "Failed",
+          "message": "WebsocketClientLite.CustomException.WebsocketClientLiteException : Websocket send error occured."
+         },
+         {
+          "test": "WebsocketClientLiteTest.ProtocolStateTests.PartialWriteFailureForbidsFurtherFrames",
+          "outcome": "Failed",
+          "message": "WebsocketClientLite.CustomException.WebsocketClientLiteException : Websocket send error occured."
+         }
+        ]
+       },
+       "outcome": "failed"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "send-inverted",
+   "breaks": "CLOSE-001, CLOSE-004",
+   "kind": "ignores send",
+   "description": "WriteFrameSerializedAsync writes Close when the step said no and drops it when the step said yes.",
+   "source_sha256": "517d48fd4819b3f9b390f4223412dcff7550abe4dacc22d838201841b7898a24",
+   "mutant_sha256": "1233dafcc007c6c276e2f0a91b26f86785bceebfe246a90fb48df25295b3c2d3",
+   "build": {
+    "command": [
+     "dotnet",
+     "build",
+     "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+     "-c",
+     "Release",
+     "-p:LibTfm=net11.0",
+     "--nologo"
+    ],
+    "exit": 0,
+    "timed_out": false,
+    "seconds": 1.32,
+    "log": "send-inverted/build.log"
+   },
+   "suites": {
+    "close": {
+     "verdict": "detected",
+     "runs": [
+      {
+       "command": [
+        "dotnet",
+        "test",
+        "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+        "-c",
+        "Release",
+        "-p:LibTfm=net11.0",
+        "--no-build",
+        "--nologo",
+        "--filter",
+        "FullyQualifiedName~WebsocketClientLiteTest.ControlledCloseTests|FullyQualifiedName~WebsocketClientLiteTest.CloseBoundaryTests",
+        "--logger",
+        "trx;LogFileName=close-1.trx",
+        "--results-directory",
+        "<scratch>/ca/out/send-inverted"
+       ],
+       "exit": 1,
+       "timed_out": false,
+       "seconds": 121.37,
+       "log": "send-inverted/close-1.log",
+       "trx": {
+        "total": 19,
+        "passed": 3,
+        "skipped": [],
+        "not_passed": [
+         {
+          "test": "WebsocketClientLiteTest.ControlledCloseTests.ParserSignalsPeerCloseOrReadFailureBeforeTimerExpiry(readFailure: True)",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : ConnectingToTcpSocket -> TcpSocketConnected -> ConnectingToSocketStream -> SocketStreamConnected -> SendingHandshakeToWebsocketServer -> HandshakeCompletedSuccessfully -> WebsocketConnected -> SingleFrameSending -> Close"
+         },
+         {
+          "test": "WebsocketClientLiteTest.CloseBoundaryTests.CancelledParserLeavesCloseToDisposalAndDoesNotCompleteObserver",
+          "outcome": "Failed",
+          "message": "Assert.Equal() Failure: Collections differ"
+         },
+         {
+          "test": "WebsocketClientLiteTest.ControlledCloseTests.FailedCloseWriteDisposesWithoutRetryOrPeerWait",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : Controlled schedule: dispose-start -> peer-wait"
+         },
+         {
+          "test": "WebsocketClientLiteTest.ControlledCloseTests.CancellationBetweenFragmentsAllowsOnlyClose",
+          "outcome": "Failed",
+          "message": "Assert.Equal() Failure: Collections differ"
+         },
+         {
+          "test": "WebsocketClientLiteTest.ControlledCloseTests.PostWriteFailureRejectsQueuedAndLaterDataAndSuppressesClose",
+          "outcome": "Failed",
+          "message": "Assert.Single() Failure: The collection contained 2 items"
+         },
+         {
+          "test": "WebsocketClientLiteTest.ControlledCloseTests.QueuedPongIsSuppressedAfterPeerClose",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : Controlled schedule: "
+         },
+         {
+          "test": "WebsocketClientLiteTest.CloseBoundaryTests.DisposalStopsActivePeriodicPingsBeforeClose(synchronous: True)",
+          "outcome": "Failed",
+          "message": "Assert.Equal() Failure: Collections differ"
+         },
+         {
+          "test": "WebsocketClientLiteTest.ControlledCloseTests.PeerWaitEndsByControlledTimeoutOrReadFailure(failure: True)",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : Controlled schedule: dispose-start -> peer-wait"
+         },
+         {
+          "test": "WebsocketClientLiteTest.ControlledCloseTests.ParserSignalsPeerCloseOrReadFailureBeforeTimerExpiry(readFailure: False)",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : ConnectingToTcpSocket -> TcpSocketConnected -> ConnectingToSocketStream -> SocketStreamConnected -> SendingHandshakeToWebsocketServer -> HandshakeCompletedSuccessfully -> WebsocketConnected -> SingleFrameSending -> Close"
+         },
+         {
+          "test": "WebsocketClientLiteTest.CloseBoundaryTests.DisposalCancelsPausedPeriodicPingAndReleasesTransport",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : Boundary schedule: SendingHandshakeToWebsocketServer -> HandshakeCompletedSuccessfully -> WebsocketConnected -> SingleFrameSending -> PingSend -> write-entered -> SendError -> SingleFrameSending -> Close -> write-entered"
+         },
+         {
+          "test": "WebsocketClientLiteTest.CloseBoundaryTests.ParserCompletionAwaitsFallbackCloseBeforeObserverCompletion",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : Boundary schedule: SendingHandshakeToWebsocketServer -> HandshakeCompletedSuccessfully -> WebsocketConnected -> SingleFrameSending -> Close -> peer-wait"
+         },
+         {
+          "test": "WebsocketClientLiteTest.CloseBoundaryTests.AsyncDisposalDoesNotRequireCallingSynchronizationContext",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : Boundary schedule: SendingHandshakeToWebsocketServer -> HandshakeCompletedSuccessfully -> WebsocketConnected -> SingleFrameSending -> Close -> peer-wait"
+         },
+         {
+          "test": "WebsocketClientLiteTest.ControlledCloseTests.PausedCloseWriteBlocksDisposalAndPeerRaceSendsOnce(peerFirst: False)",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : Controlled schedule: "
+         },
+         {
+          "test": "WebsocketClientLiteTest.ControlledCloseTests.PeerWaitEndsByControlledTimeoutOrReadFailure(failure: False)",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : Controlled schedule: dispose-start -> peer-wait"
+         },
+         {
+          "test": "WebsocketClientLiteTest.CloseBoundaryTests.DisposalStopsActivePeriodicPingsBeforeClose(synchronous: False)",
+          "outcome": "Failed",
+          "message": "Assert.Equal() Failure: Collections differ"
+         },
+         {
+          "test": "WebsocketClientLiteTest.ControlledCloseTests.PausedCloseWriteBlocksDisposalAndPeerRaceSendsOnce(peerFirst: True)",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : Controlled schedule: peer-close-before-local"
+         }
+        ]
+       },
+       "outcome": "failed"
+      },
+      {
+       "command": [
+        "dotnet",
+        "test",
+        "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+        "-c",
+        "Release",
+        "-p:LibTfm=net11.0",
+        "--no-build",
+        "--nologo",
+        "--filter",
+        "FullyQualifiedName~WebsocketClientLiteTest.ControlledCloseTests|FullyQualifiedName~WebsocketClientLiteTest.CloseBoundaryTests",
+        "--logger",
+        "trx;LogFileName=close-2.trx",
+        "--results-directory",
+        "<scratch>/ca/out/send-inverted"
+       ],
+       "exit": 1,
+       "timed_out": false,
+       "seconds": 121.58,
+       "log": "send-inverted/close-2.log",
+       "trx": {
+        "total": 19,
+        "passed": 3,
+        "skipped": [],
+        "not_passed": [
+         {
+          "test": "WebsocketClientLiteTest.ControlledCloseTests.QueuedPongIsSuppressedAfterPeerClose",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : Controlled schedule: "
+         },
+         {
+          "test": "WebsocketClientLiteTest.CloseBoundaryTests.DisposalCancelsPausedPeriodicPingAndReleasesTransport",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : Boundary schedule: SendingHandshakeToWebsocketServer -> HandshakeCompletedSuccessfully -> WebsocketConnected -> SingleFrameSending -> PingSend -> write-entered -> SendError -> SingleFrameSending -> Close -> write-entered"
+         },
+         {
+          "test": "WebsocketClientLiteTest.ControlledCloseTests.PausedCloseWriteBlocksDisposalAndPeerRaceSendsOnce(peerFirst: True)",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : Controlled schedule: peer-close-before-local"
+         },
+         {
+          "test": "WebsocketClientLiteTest.ControlledCloseTests.ParserSignalsPeerCloseOrReadFailureBeforeTimerExpiry(readFailure: True)",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : ConnectingToTcpSocket -> TcpSocketConnected -> ConnectingToSocketStream -> SocketStreamConnected -> SendingHandshakeToWebsocketServer -> HandshakeCompletedSuccessfully -> WebsocketConnected -> SingleFrameSending -> Close"
+         },
+         {
+          "test": "WebsocketClientLiteTest.CloseBoundaryTests.AsyncDisposalDoesNotRequireCallingSynchronizationContext",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : Boundary schedule: SendingHandshakeToWebsocketServer -> HandshakeCompletedSuccessfully -> WebsocketConnected -> SingleFrameSending -> Close -> peer-wait"
+         },
+         {
+          "test": "WebsocketClientLiteTest.CloseBoundaryTests.CancelledParserLeavesCloseToDisposalAndDoesNotCompleteObserver",
+          "outcome": "Failed",
+          "message": "Assert.Equal() Failure: Collections differ"
+         },
+         {
+          "test": "WebsocketClientLiteTest.ControlledCloseTests.PostWriteFailureRejectsQueuedAndLaterDataAndSuppressesClose",
+          "outcome": "Failed",
+          "message": "Assert.Single() Failure: The collection contained 2 items"
+         },
+         {
+          "test": "WebsocketClientLiteTest.ControlledCloseTests.PausedCloseWriteBlocksDisposalAndPeerRaceSendsOnce(peerFirst: False)",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : Controlled schedule: "
+         },
+         {
+          "test": "WebsocketClientLiteTest.CloseBoundaryTests.DisposalStopsActivePeriodicPingsBeforeClose(synchronous: False)",
+          "outcome": "Failed",
+          "message": "Assert.Equal() Failure: Collections differ"
+         },
+         {
+          "test": "WebsocketClientLiteTest.ControlledCloseTests.CancellationBetweenFragmentsAllowsOnlyClose",
+          "outcome": "Failed",
+          "message": "Assert.Equal() Failure: Collections differ"
+         },
+         {
+          "test": "WebsocketClientLiteTest.CloseBoundaryTests.ParserCompletionAwaitsFallbackCloseBeforeObserverCompletion",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : Boundary schedule: SendingHandshakeToWebsocketServer -> HandshakeCompletedSuccessfully -> WebsocketConnected -> SingleFrameSending -> Close -> peer-wait"
+         },
+         {
+          "test": "WebsocketClientLiteTest.ControlledCloseTests.PeerWaitEndsByControlledTimeoutOrReadFailure(failure: False)",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : Controlled schedule: dispose-start -> peer-wait"
+         },
+         {
+          "test": "WebsocketClientLiteTest.ControlledCloseTests.PeerWaitEndsByControlledTimeoutOrReadFailure(failure: True)",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : Controlled schedule: dispose-start -> peer-wait"
+         },
+         {
+          "test": "WebsocketClientLiteTest.CloseBoundaryTests.DisposalStopsActivePeriodicPingsBeforeClose(synchronous: True)",
+          "outcome": "Failed",
+          "message": "Assert.Equal() Failure: Collections differ"
+         },
+         {
+          "test": "WebsocketClientLiteTest.ControlledCloseTests.ParserSignalsPeerCloseOrReadFailureBeforeTimerExpiry(readFailure: False)",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : ConnectingToTcpSocket -> TcpSocketConnected -> ConnectingToSocketStream -> SocketStreamConnected -> SendingHandshakeToWebsocketServer -> HandshakeCompletedSuccessfully -> WebsocketConnected -> SingleFrameSending -> Close"
+         },
+         {
+          "test": "WebsocketClientLiteTest.ControlledCloseTests.FailedCloseWriteDisposesWithoutRetryOrPeerWait",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : Controlled schedule: dispose-start -> peer-wait"
+         }
+        ]
+       },
+       "outcome": "failed"
+      },
+      {
+       "command": [
+        "dotnet",
+        "test",
+        "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+        "-c",
+        "Release",
+        "-p:LibTfm=net11.0",
+        "--no-build",
+        "--nologo",
+        "--filter",
+        "FullyQualifiedName~WebsocketClientLiteTest.ControlledCloseTests|FullyQualifiedName~WebsocketClientLiteTest.CloseBoundaryTests",
+        "--logger",
+        "trx;LogFileName=close-3.trx",
+        "--results-directory",
+        "<scratch>/ca/out/send-inverted"
+       ],
+       "exit": 1,
+       "timed_out": false,
+       "seconds": 121.45,
+       "log": "send-inverted/close-3.log",
+       "trx": {
+        "total": 19,
+        "passed": 3,
+        "skipped": [],
+        "not_passed": [
+         {
+          "test": "WebsocketClientLiteTest.ControlledCloseTests.PausedCloseWriteBlocksDisposalAndPeerRaceSendsOnce(peerFirst: False)",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : Controlled schedule: "
+         },
+         {
+          "test": "WebsocketClientLiteTest.ControlledCloseTests.CancellationBetweenFragmentsAllowsOnlyClose",
+          "outcome": "Failed",
+          "message": "Assert.Equal() Failure: Collections differ"
+         },
+         {
+          "test": "WebsocketClientLiteTest.CloseBoundaryTests.CancelledParserLeavesCloseToDisposalAndDoesNotCompleteObserver",
+          "outcome": "Failed",
+          "message": "Assert.Equal() Failure: Collections differ"
+         },
+         {
+          "test": "WebsocketClientLiteTest.CloseBoundaryTests.DisposalCancelsPausedPeriodicPingAndReleasesTransport",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : Boundary schedule: SendingHandshakeToWebsocketServer -> HandshakeCompletedSuccessfully -> WebsocketConnected -> SingleFrameSending -> PingSend -> write-entered -> SendError -> SingleFrameSending -> Close -> write-entered"
+         },
+         {
+          "test": "WebsocketClientLiteTest.ControlledCloseTests.PausedCloseWriteBlocksDisposalAndPeerRaceSendsOnce(peerFirst: True)",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : Controlled schedule: peer-close-before-local"
+         },
+         {
+          "test": "WebsocketClientLiteTest.ControlledCloseTests.FailedCloseWriteDisposesWithoutRetryOrPeerWait",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : Controlled schedule: dispose-start -> peer-wait"
+         },
+         {
+          "test": "WebsocketClientLiteTest.ControlledCloseTests.ParserSignalsPeerCloseOrReadFailureBeforeTimerExpiry(readFailure: False)",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : ConnectingToTcpSocket -> TcpSocketConnected -> ConnectingToSocketStream -> SocketStreamConnected -> SendingHandshakeToWebsocketServer -> HandshakeCompletedSuccessfully -> WebsocketConnected -> SingleFrameSending -> Close"
+         },
+         {
+          "test": "WebsocketClientLiteTest.ControlledCloseTests.PostWriteFailureRejectsQueuedAndLaterDataAndSuppressesClose",
+          "outcome": "Failed",
+          "message": "Assert.Single() Failure: The collection contained 2 items"
+         },
+         {
+          "test": "WebsocketClientLiteTest.CloseBoundaryTests.ParserCompletionAwaitsFallbackCloseBeforeObserverCompletion",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : Boundary schedule: SendingHandshakeToWebsocketServer -> HandshakeCompletedSuccessfully -> WebsocketConnected -> SingleFrameSending -> Close -> peer-wait"
+         },
+         {
+          "test": "WebsocketClientLiteTest.CloseBoundaryTests.DisposalStopsActivePeriodicPingsBeforeClose(synchronous: True)",
+          "outcome": "Failed",
+          "message": "Assert.Equal() Failure: Collections differ"
+         },
+         {
+          "test": "WebsocketClientLiteTest.ControlledCloseTests.ParserSignalsPeerCloseOrReadFailureBeforeTimerExpiry(readFailure: True)",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : ConnectingToTcpSocket -> TcpSocketConnected -> ConnectingToSocketStream -> SocketStreamConnected -> SendingHandshakeToWebsocketServer -> HandshakeCompletedSuccessfully -> WebsocketConnected -> SingleFrameSending -> Close"
+         },
+         {
+          "test": "WebsocketClientLiteTest.CloseBoundaryTests.DisposalStopsActivePeriodicPingsBeforeClose(synchronous: False)",
+          "outcome": "Failed",
+          "message": "Assert.Equal() Failure: Collections differ"
+         },
+         {
+          "test": "WebsocketClientLiteTest.ControlledCloseTests.QueuedPongIsSuppressedAfterPeerClose",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : Controlled schedule: "
+         },
+         {
+          "test": "WebsocketClientLiteTest.ControlledCloseTests.PeerWaitEndsByControlledTimeoutOrReadFailure(failure: False)",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : Controlled schedule: dispose-start -> peer-wait"
+         },
+         {
+          "test": "WebsocketClientLiteTest.ControlledCloseTests.PeerWaitEndsByControlledTimeoutOrReadFailure(failure: True)",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : Controlled schedule: dispose-start -> peer-wait"
+         },
+         {
+          "test": "WebsocketClientLiteTest.CloseBoundaryTests.AsyncDisposalDoesNotRequireCallingSynchronizationContext",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : Boundary schedule: SendingHandshakeToWebsocketServer -> HandshakeCompletedSuccessfully -> WebsocketConnected -> SingleFrameSending -> Close -> peer-wait"
+         }
+        ]
+       },
+       "outcome": "failed"
+      }
+     ]
+    },
+    "all": {
+     "verdict": "detected",
+     "runs": [
+      {
+       "command": [
+        "dotnet",
+        "test",
+        "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+        "-c",
+        "Release",
+        "-p:LibTfm=net11.0",
+        "--no-build",
+        "--nologo",
+        "--filter",
+        "FullyQualifiedName~WebsocketClientLiteTest",
+        "--logger",
+        "trx;LogFileName=all-1.trx",
+        "--results-directory",
+        "<scratch>/ca/out/send-inverted"
+       ],
+       "exit": 1,
+       "timed_out": false,
+       "seconds": 121.57,
+       "log": "send-inverted/all-1.log",
+       "trx": {
+        "total": 330,
+        "passed": 301,
+        "skipped": [],
+        "not_passed": [
+         {
+          "test": "WebsocketClientLiteTest.ProtocolStateTests.PongIsAllowedUntilPeerCloseThenSuppressed",
+          "outcome": "Failed",
+          "message": "Assert.Equal() Failure: Collections differ"
+         },
+         {
+          "test": "WebsocketClientLiteTest.TeardownTests.UnsubscribeMidStream_SendsExactlyOneCloseFrame_BeforeSocketTeardown",
+          "outcome": "Failed",
+          "message": "Assert.Equal() Failure: Values differ"
+         },
+         {
+          "test": "WebsocketClientLiteTest.TeardownTests.AwaitUsing_ClosesGracefully",
+          "outcome": "Failed",
+          "message": "Assert.Equal() Failure: Values differ"
+         },
+         {
+          "test": "WebsocketClientLiteTest.CloseBoundaryTests.AsyncDisposalDoesNotRequireCallingSynchronizationContext",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : Boundary schedule: SendingHandshakeToWebsocketServer -> HandshakeCompletedSuccessfully -> WebsocketConnected -> SingleFrameSending -> Close -> peer-wait"
+         },
+         {
+          "test": "WebsocketClientLiteTest.TeardownTests.DisposeAsyncKeepsTransportOpenUntilDelayedPeerClose",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : The operation has timed out."
+         },
+         {
+          "test": "WebsocketClientLiteTest.ControlledCloseTests.PostWriteFailureRejectsQueuedAndLaterDataAndSuppressesClose",
+          "outcome": "Failed",
+          "message": "Assert.Single() Failure: The collection contained 2 items"
+         },
+         {
+          "test": "WebsocketClientLiteTest.ControlledCloseTests.ParserSignalsPeerCloseOrReadFailureBeforeTimerExpiry(readFailure: True)",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : ConnectingToTcpSocket -> TcpSocketConnected -> ConnectingToSocketStream -> SocketStreamConnected -> SendingHandshakeToWebsocketServer -> HandshakeCompletedSuccessfully -> WebsocketConnected -> SingleFrameSending -> Close"
+         },
+         {
+          "test": "WebsocketClientLiteTest.ControlledCloseTests.PeerWaitEndsByControlledTimeoutOrReadFailure(failure: False)",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : Controlled schedule: dispose-start -> peer-wait"
+         },
+         {
+          "test": "WebsocketClientLiteTest.ProtocolStateTests.CancellationAfterFirstFragmentPreventsReuseButAllowsClose",
+          "outcome": "Failed",
+          "message": "Assert.Equal() Failure: Collections differ"
+         },
+         {
+          "test": "WebsocketClientLiteTest.CloseBoundaryTests.DisposalStopsActivePeriodicPingsBeforeClose(synchronous: False)",
+          "outcome": "Failed",
+          "message": "Assert.Equal() Failure: Collections differ"
+         },
+         {
+          "test": "WebsocketClientLiteTest.TeardownTests.DisposeAsync_AwaitsCloseHandshake_AndCompletesSubscriber",
+          "outcome": "Failed",
+          "message": "Assert.Equal() Failure: Values differ"
+         },
+         {
+          "test": "WebsocketClientLiteTest.CloseBoundaryTests.DisposalCancelsPausedPeriodicPingAndReleasesTransport",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : Boundary schedule: SendingHandshakeToWebsocketServer -> HandshakeCompletedSuccessfully -> WebsocketConnected -> SingleFrameSending -> PingSend -> write-entered -> SendError -> SingleFrameSending -> Close -> write-entered"
+         },
+         {
+          "test": "WebsocketClientLiteTest.ProtocolStateTests.CloseResponseTimeoutMakesTheTransportTerminal",
+          "outcome": "Failed",
+          "message": "Assert.Equal() Failure: Collections differ"
+         },
+         {
+          "test": "WebsocketClientLiteTest.SendFrameTests.SendCloseHandshake_UsesBigEndianStatusCode",
+          "outcome": "Failed",
+          "message": "Assert.Single() Failure: The collection was empty"
+         },
+         {
+          "test": "WebsocketClientLiteTest.ControlledCloseTests.CancellationBetweenFragmentsAllowsOnlyClose",
+          "outcome": "Failed",
+          "message": "Assert.Equal() Failure: Collections differ"
+         },
+         {
+          "test": "WebsocketClientLiteTest.ControlledCloseTests.PeerWaitEndsByControlledTimeoutOrReadFailure(failure: True)",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : Controlled schedule: dispose-start -> peer-wait"
+         },
+         {
+          "test": "WebsocketClientLiteTest.PayloadLeaseTests.SendObservationTimeoutRetainsPendingLease",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : The operation has timed out."
+         },
+         {
+          "test": "WebsocketClientLiteTest.ProtocolStateTests.PartialWriteFailureForbidsFurtherFrames",
+          "outcome": "Failed",
+          "message": "WebsocketClientLite.CustomException.WebsocketClientLiteException : Websocket send error occured."
+         },
+         {
+          "test": "WebsocketClientLiteTest.CloseBoundaryTests.CancelledParserLeavesCloseToDisposalAndDoesNotCompleteObserver",
+          "outcome": "Failed",
+          "message": "Assert.Equal() Failure: Collections differ"
+         },
+         {
+          "test": "WebsocketClientLiteTest.ControlledCloseTests.QueuedPongIsSuppressedAfterPeerClose",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : Controlled schedule: "
+         },
+         {
+          "test": "WebsocketClientLiteTest.IntegrationTests.DisposingSubscription_SendsCloseHandshakeToServer",
+          "outcome": "Failed",
+          "message": "Assert.True() Failure"
+         },
+         {
+          "test": "WebsocketClientLiteTest.TeardownTests.ServerInitiatedClose_RacingSubscriptionDisposal_SendsExactlyOneCloseFrame",
+          "outcome": "Failed",
+          "message": "Assert.Equal() Failure: Values differ"
+         },
+         {
+          "test": "WebsocketClientLiteTest.CloseBoundaryTests.DisposalStopsActivePeriodicPingsBeforeClose(synchronous: True)",
+          "outcome": "Failed",
+          "message": "Assert.Equal() Failure: Collections differ"
+         },
+         {
+          "test": "WebsocketClientLiteTest.ControlledCloseTests.FailedCloseWriteDisposesWithoutRetryOrPeerWait",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : Controlled schedule: dispose-start -> peer-wait"
+         },
+         {
+          "test": "WebsocketClientLiteTest.CloseBoundaryTests.ParserCompletionAwaitsFallbackCloseBeforeObserverCompletion",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : Boundary schedule: SendingHandshakeToWebsocketServer -> HandshakeCompletedSuccessfully -> WebsocketConnected -> SingleFrameSending -> Close -> peer-wait"
+         },
+         {
+          "test": "WebsocketClientLiteTest.ControlledCloseTests.PausedCloseWriteBlocksDisposalAndPeerRaceSendsOnce(peerFirst: False)",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : Controlled schedule: "
+         },
+         {
+          "test": "WebsocketClientLiteTest.TeardownTests.Dispose_IsBounded_AndStillAttemptsCloseHandshake",
+          "outcome": "Failed",
+          "message": "Assert.Equal() Failure: Values differ"
+         },
+         {
+          "test": "WebsocketClientLiteTest.ControlledCloseTests.ParserSignalsPeerCloseOrReadFailureBeforeTimerExpiry(readFailure: False)",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : ConnectingToTcpSocket -> TcpSocketConnected -> ConnectingToSocketStream -> SocketStreamConnected -> SendingHandshakeToWebsocketServer -> HandshakeCompletedSuccessfully -> WebsocketConnected -> SingleFrameSending -> Close"
+         },
+         {
+          "test": "WebsocketClientLiteTest.ControlledCloseTests.PausedCloseWriteBlocksDisposalAndPeerRaceSendsOnce(peerFirst: True)",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : Controlled schedule: peer-close-before-local"
+         }
+        ]
+       },
+       "outcome": "failed"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "release-early",
+   "breaks": "CLOSE-003, CLOSE-004",
+   "kind": "ignores release",
+   "description": "AdvanceClose wakes the peer-close waiter on every event, so the transport can be released before the peer replies.",
+   "source_sha256": "517d48fd4819b3f9b390f4223412dcff7550abe4dacc22d838201841b7898a24",
+   "mutant_sha256": "5427fe356d23eece7a9fdfdf2b1836d0c53ccb12c15d82a65e0e67ced9328270",
+   "build": {
+    "command": [
+     "dotnet",
+     "build",
+     "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+     "-c",
+     "Release",
+     "-p:LibTfm=net11.0",
+     "--nologo"
+    ],
+    "exit": 0,
+    "timed_out": false,
+    "seconds": 1.32,
+    "log": "release-early/build.log"
+   },
+   "suites": {
+    "close": {
+     "verdict": "detected",
+     "runs": [
+      {
+       "command": [
+        "dotnet",
+        "test",
+        "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+        "-c",
+        "Release",
+        "-p:LibTfm=net11.0",
+        "--no-build",
+        "--nologo",
+        "--filter",
+        "FullyQualifiedName~WebsocketClientLiteTest.ControlledCloseTests|FullyQualifiedName~WebsocketClientLiteTest.CloseBoundaryTests",
+        "--logger",
+        "trx;LogFileName=close-1.trx",
+        "--results-directory",
+        "<scratch>/ca/out/release-early"
+       ],
+       "exit": 1,
+       "timed_out": false,
+       "seconds": 1.57,
+       "log": "release-early/close-1.log",
+       "trx": {
+        "total": 19,
+        "passed": 17,
+        "skipped": [],
+        "not_passed": [
+         {
+          "test": "WebsocketClientLiteTest.ControlledCloseTests.PeerWaitEndsByControlledTimeoutOrReadFailure(failure: False)",
+          "outcome": "Failed",
+          "message": "Disposal overtook paused work: dispose-start -> write-entered -> write-completed -> peer-wait -> disconnected"
+         },
+         {
+          "test": "WebsocketClientLiteTest.ControlledCloseTests.PeerWaitEndsByControlledTimeoutOrReadFailure(failure: True)",
+          "outcome": "Failed",
+          "message": "Disposal overtook paused work: dispose-start -> write-entered -> write-completed -> peer-wait -> disconnected"
+         }
+        ]
+       },
+       "outcome": "failed"
+      },
+      {
+       "command": [
+        "dotnet",
+        "test",
+        "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+        "-c",
+        "Release",
+        "-p:LibTfm=net11.0",
+        "--no-build",
+        "--nologo",
+        "--filter",
+        "FullyQualifiedName~WebsocketClientLiteTest.ControlledCloseTests|FullyQualifiedName~WebsocketClientLiteTest.CloseBoundaryTests",
+        "--logger",
+        "trx;LogFileName=close-2.trx",
+        "--results-directory",
+        "<scratch>/ca/out/release-early"
+       ],
+       "exit": 1,
+       "timed_out": false,
+       "seconds": 1.57,
+       "log": "release-early/close-2.log",
+       "trx": {
+        "total": 19,
+        "passed": 17,
+        "skipped": [],
+        "not_passed": [
+         {
+          "test": "WebsocketClientLiteTest.ControlledCloseTests.PeerWaitEndsByControlledTimeoutOrReadFailure(failure: False)",
+          "outcome": "Failed",
+          "message": "Disposal overtook paused work: dispose-start -> write-entered -> write-completed -> peer-wait -> disconnected"
+         },
+         {
+          "test": "WebsocketClientLiteTest.ControlledCloseTests.PeerWaitEndsByControlledTimeoutOrReadFailure(failure: True)",
+          "outcome": "Failed",
+          "message": "Disposal overtook paused work: dispose-start -> write-entered -> write-completed -> peer-wait -> disconnected"
+         }
+        ]
+       },
+       "outcome": "failed"
+      },
+      {
+       "command": [
+        "dotnet",
+        "test",
+        "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+        "-c",
+        "Release",
+        "-p:LibTfm=net11.0",
+        "--no-build",
+        "--nologo",
+        "--filter",
+        "FullyQualifiedName~WebsocketClientLiteTest.ControlledCloseTests|FullyQualifiedName~WebsocketClientLiteTest.CloseBoundaryTests",
+        "--logger",
+        "trx;LogFileName=close-3.trx",
+        "--results-directory",
+        "<scratch>/ca/out/release-early"
+       ],
+       "exit": 1,
+       "timed_out": false,
+       "seconds": 1.57,
+       "log": "release-early/close-3.log",
+       "trx": {
+        "total": 19,
+        "passed": 17,
+        "skipped": [],
+        "not_passed": [
+         {
+          "test": "WebsocketClientLiteTest.ControlledCloseTests.PeerWaitEndsByControlledTimeoutOrReadFailure(failure: False)",
+          "outcome": "Failed",
+          "message": "Disposal overtook paused work: dispose-start -> write-entered -> write-completed -> peer-wait -> disconnected"
+         },
+         {
+          "test": "WebsocketClientLiteTest.ControlledCloseTests.PeerWaitEndsByControlledTimeoutOrReadFailure(failure: True)",
+          "outcome": "Failed",
+          "message": "Disposal overtook paused work: dispose-start -> write-entered -> write-completed -> peer-wait -> disconnected"
+         }
+        ]
+       },
+       "outcome": "failed"
+      }
+     ]
+    },
+    "all": {
+     "verdict": "detected",
+     "runs": [
+      {
+       "command": [
+        "dotnet",
+        "test",
+        "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+        "-c",
+        "Release",
+        "-p:LibTfm=net11.0",
+        "--no-build",
+        "--nologo",
+        "--filter",
+        "FullyQualifiedName~WebsocketClientLiteTest",
+        "--logger",
+        "trx;LogFileName=all-1.trx",
+        "--results-directory",
+        "<scratch>/ca/out/release-early"
+       ],
+       "exit": 1,
+       "timed_out": false,
+       "seconds": 6.48,
+       "log": "release-early/all-1.log",
+       "trx": {
+        "total": 330,
+        "passed": 324,
+        "skipped": [],
+        "not_passed": [
+         {
+          "test": "WebsocketClientLiteTest.ProtocolStateTests.CloseResponseTimeoutMakesTheTransportTerminal",
+          "outcome": "Failed",
+          "message": "Assert.Equal() Failure: Collections differ"
+         },
+         {
+          "test": "WebsocketClientLiteTest.TeardownTests.DisposeAsyncKeepsTransportOpenUntilDelayedPeerClose",
+          "outcome": "Failed",
+          "message": "Assert.False() Failure"
+         },
+         {
+          "test": "WebsocketClientLiteTest.ControlledCloseTests.ParserSignalsPeerCloseOrReadFailureBeforeTimerExpiry(readFailure: False)",
+          "outcome": "Failed",
+          "message": "Assert.False() Failure"
+         },
+         {
+          "test": "WebsocketClientLiteTest.ControlledCloseTests.PeerWaitEndsByControlledTimeoutOrReadFailure(failure: True)",
+          "outcome": "Failed",
+          "message": "Disposal overtook paused work: dispose-start -> write-entered -> write-completed -> peer-wait -> disconnected"
+         },
+         {
+          "test": "WebsocketClientLiteTest.ControlledCloseTests.PeerWaitEndsByControlledTimeoutOrReadFailure(failure: False)",
+          "outcome": "Failed",
+          "message": "Disposal overtook paused work: dispose-start -> write-entered -> write-completed -> peer-wait -> disconnected"
+         },
+         {
+          "test": "WebsocketClientLiteTest.ControlledCloseTests.ParserSignalsPeerCloseOrReadFailureBeforeTimerExpiry(readFailure: True)",
+          "outcome": "Failed",
+          "message": "Assert.False() Failure"
+         }
+        ]
+       },
+       "outcome": "failed"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "release-never",
+   "breaks": "CLOSE-003, CLOSE-005",
+   "kind": "ignores release",
+   "description": "AdvanceClose never wakes the peer-close waiter; only the peer-wait timer ends the wait.",
+   "source_sha256": "517d48fd4819b3f9b390f4223412dcff7550abe4dacc22d838201841b7898a24",
+   "mutant_sha256": "acb084a46975c2e5833a9f0b5ff948537871041872a391c35a3df6732e241362",
+   "build": {
+    "command": [
+     "dotnet",
+     "build",
+     "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+     "-c",
+     "Release",
+     "-p:LibTfm=net11.0",
+     "--nologo"
+    ],
+    "exit": 0,
+    "timed_out": false,
+    "seconds": 1.32,
+    "log": "release-never/build.log"
+   },
+   "suites": {
+    "close": {
+     "verdict": "detected",
+     "runs": [
+      {
+       "command": [
+        "dotnet",
+        "test",
+        "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+        "-c",
+        "Release",
+        "-p:LibTfm=net11.0",
+        "--no-build",
+        "--nologo",
+        "--filter",
+        "FullyQualifiedName~WebsocketClientLiteTest.ControlledCloseTests|FullyQualifiedName~WebsocketClientLiteTest.CloseBoundaryTests",
+        "--logger",
+        "trx;LogFileName=close-1.trx",
+        "--results-directory",
+        "<scratch>/ca/out/release-never"
+       ],
+       "exit": 1,
+       "timed_out": false,
+       "seconds": 91.58,
+       "log": "release-never/close-1.log",
+       "trx": {
+        "total": 19,
+        "passed": 5,
+        "skipped": [],
+        "not_passed": [
+         {
+          "test": "WebsocketClientLiteTest.CloseBoundaryTests.ParserCompletionAwaitsFallbackCloseBeforeObserverCompletion",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : Boundary schedule: SendingHandshakeToWebsocketServer -> HandshakeCompletedSuccessfully -> WebsocketConnected -> SingleFrameSending -> Close -> write-entered -> write-completed -> peer-wait"
+         },
+         {
+          "test": "WebsocketClientLiteTest.ControlledCloseTests.PostWriteFailureRejectsQueuedAndLaterDataAndSuppressesClose",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : Controlled schedule: write-entered -> write-failed -> dispose-start -> peer-wait"
+         },
+         {
+          "test": "WebsocketClientLiteTest.CloseBoundaryTests.AsyncDisposalDoesNotRequireCallingSynchronizationContext",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : Boundary schedule: SendingHandshakeToWebsocketServer -> HandshakeCompletedSuccessfully -> WebsocketConnected -> SingleFrameSending -> Close -> write-entered -> write-completed -> peer-wait"
+         },
+         {
+          "test": "WebsocketClientLiteTest.ControlledCloseTests.ParserSignalsPeerCloseOrReadFailureBeforeTimerExpiry(readFailure: True)",
+          "outcome": "Failed",
+          "message": "Parser notification did not release Close readiness"
+         },
+         {
+          "test": "WebsocketClientLiteTest.ControlledCloseTests.ParserSignalsPeerCloseOrReadFailureBeforeTimerExpiry(readFailure: False)",
+          "outcome": "Failed",
+          "message": "Parser notification did not release Close readiness"
+         },
+         {
+          "test": "WebsocketClientLiteTest.CloseBoundaryTests.DisposalStopsActivePeriodicPingsBeforeClose(synchronous: False)",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : Boundary schedule: SendingHandshakeToWebsocketServer -> HandshakeCompletedSuccessfully -> WebsocketConnected -> SingleFrameSending -> PingSend -> write-entered -> write-completed -> SendComplete -> SingleFrameSending -> Close -> write-entered -> write-completed -> peer-wait"
+         },
+         {
+          "test": "WebsocketClientLiteTest.CloseBoundaryTests.DisposalCancelsPausedPeriodicPingAndReleasesTransport",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : Boundary schedule: SendingHandshakeToWebsocketServer -> HandshakeCompletedSuccessfully -> WebsocketConnected -> SingleFrameSending -> PingSend -> write-entered -> SendError -> SingleFrameSending -> Close -> peer-wait"
+         },
+         {
+          "test": "WebsocketClientLiteTest.CloseBoundaryTests.ReadFailureReleasesReadinessBeforeObserverError",
+          "outcome": "Failed",
+          "message": "Read failure did not release Close readiness before observer error"
+         },
+         {
+          "test": "WebsocketClientLiteTest.ControlledCloseTests.PausedCloseWriteBlocksDisposalAndPeerRaceSendsOnce(peerFirst: False)",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : Controlled schedule: write-entered -> peer-close-during-write -> dispose-start -> dispose-start -> write-completed -> peer-wait"
+         },
+         {
+          "test": "WebsocketClientLiteTest.ControlledCloseTests.CancellationBetweenFragmentsAllowsOnlyClose",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : Controlled schedule: write-entered -> cancel-between-fragments -> write-completed -> dispose-start -> write-entered -> write-completed -> peer-wait"
+         },
+         {
+          "test": "WebsocketClientLiteTest.CloseBoundaryTests.CancelledParserLeavesCloseToDisposalAndDoesNotCompleteObserver",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : Boundary schedule: SendingHandshakeToWebsocketServer -> HandshakeCompletedSuccessfully -> WebsocketConnected -> SingleFrameSending -> Close -> write-entered -> write-completed -> peer-wait"
+         },
+         {
+          "test": "WebsocketClientLiteTest.ControlledCloseTests.PeerWaitEndsByControlledTimeoutOrReadFailure(failure: True)",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : Controlled schedule: dispose-start -> write-entered -> write-completed -> peer-wait -> read-failure"
+         },
+         {
+          "test": "WebsocketClientLiteTest.ControlledCloseTests.PausedCloseWriteBlocksDisposalAndPeerRaceSendsOnce(peerFirst: True)",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : Controlled schedule: peer-close-before-local -> write-entered -> dispose-start -> dispose-start -> write-completed -> peer-wait"
+         },
+         {
+          "test": "WebsocketClientLiteTest.ControlledCloseTests.QueuedPongIsSuppressedAfterPeerClose",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : Controlled schedule: write-entered -> pong-queued -> peer-close -> write-completed -> dispose-start -> peer-wait"
+         }
+        ]
+       },
+       "outcome": "failed"
+      },
+      {
+       "command": [
+        "dotnet",
+        "test",
+        "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+        "-c",
+        "Release",
+        "-p:LibTfm=net11.0",
+        "--no-build",
+        "--nologo",
+        "--filter",
+        "FullyQualifiedName~WebsocketClientLiteTest.ControlledCloseTests|FullyQualifiedName~WebsocketClientLiteTest.CloseBoundaryTests",
+        "--logger",
+        "trx;LogFileName=close-2.trx",
+        "--results-directory",
+        "<scratch>/ca/out/release-never"
+       ],
+       "exit": 1,
+       "timed_out": false,
+       "seconds": 91.63,
+       "log": "release-never/close-2.log",
+       "trx": {
+        "total": 19,
+        "passed": 5,
+        "skipped": [],
+        "not_passed": [
+         {
+          "test": "WebsocketClientLiteTest.ControlledCloseTests.ParserSignalsPeerCloseOrReadFailureBeforeTimerExpiry(readFailure: True)",
+          "outcome": "Failed",
+          "message": "Parser notification did not release Close readiness"
+         },
+         {
+          "test": "WebsocketClientLiteTest.ControlledCloseTests.PostWriteFailureRejectsQueuedAndLaterDataAndSuppressesClose",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : Controlled schedule: write-entered -> write-failed -> dispose-start -> peer-wait"
+         },
+         {
+          "test": "WebsocketClientLiteTest.CloseBoundaryTests.ReadFailureReleasesReadinessBeforeObserverError",
+          "outcome": "Failed",
+          "message": "Read failure did not release Close readiness before observer error"
+         },
+         {
+          "test": "WebsocketClientLiteTest.CloseBoundaryTests.DisposalCancelsPausedPeriodicPingAndReleasesTransport",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : Boundary schedule: SendingHandshakeToWebsocketServer -> HandshakeCompletedSuccessfully -> WebsocketConnected -> SingleFrameSending -> PingSend -> write-entered -> SendError -> SingleFrameSending -> Close -> peer-wait"
+         },
+         {
+          "test": "WebsocketClientLiteTest.CloseBoundaryTests.ParserCompletionAwaitsFallbackCloseBeforeObserverCompletion",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : Boundary schedule: SendingHandshakeToWebsocketServer -> HandshakeCompletedSuccessfully -> WebsocketConnected -> SingleFrameSending -> Close -> write-entered -> write-completed -> peer-wait"
+         },
+         {
+          "test": "WebsocketClientLiteTest.ControlledCloseTests.CancellationBetweenFragmentsAllowsOnlyClose",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : Controlled schedule: write-entered -> cancel-between-fragments -> write-completed -> dispose-start -> write-entered -> write-completed -> peer-wait"
+         },
+         {
+          "test": "WebsocketClientLiteTest.CloseBoundaryTests.DisposalStopsActivePeriodicPingsBeforeClose(synchronous: False)",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : Boundary schedule: SendingHandshakeToWebsocketServer -> HandshakeCompletedSuccessfully -> WebsocketConnected -> SingleFrameSending -> PingSend -> write-entered -> write-completed -> SendComplete -> SingleFrameSending -> Close -> write-entered -> write-completed -> peer-wait"
+         },
+         {
+          "test": "WebsocketClientLiteTest.CloseBoundaryTests.CancelledParserLeavesCloseToDisposalAndDoesNotCompleteObserver",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : Boundary schedule: SendingHandshakeToWebsocketServer -> HandshakeCompletedSuccessfully -> WebsocketConnected -> SingleFrameSending -> Close -> write-entered -> write-completed -> peer-wait"
+         },
+         {
+          "test": "WebsocketClientLiteTest.ControlledCloseTests.ParserSignalsPeerCloseOrReadFailureBeforeTimerExpiry(readFailure: False)",
+          "outcome": "Failed",
+          "message": "Parser notification did not release Close readiness"
+         },
+         {
+          "test": "WebsocketClientLiteTest.ControlledCloseTests.PausedCloseWriteBlocksDisposalAndPeerRaceSendsOnce(peerFirst: False)",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : Controlled schedule: write-entered -> peer-close-during-write -> dispose-start -> dispose-start -> write-completed -> peer-wait"
+         },
+         {
+          "test": "WebsocketClientLiteTest.ControlledCloseTests.QueuedPongIsSuppressedAfterPeerClose",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : Controlled schedule: write-entered -> pong-queued -> peer-close -> write-completed -> dispose-start -> peer-wait"
+         },
+         {
+          "test": "WebsocketClientLiteTest.ControlledCloseTests.PausedCloseWriteBlocksDisposalAndPeerRaceSendsOnce(peerFirst: True)",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : Controlled schedule: peer-close-before-local -> write-entered -> dispose-start -> dispose-start -> write-completed -> peer-wait"
+         },
+         {
+          "test": "WebsocketClientLiteTest.CloseBoundaryTests.AsyncDisposalDoesNotRequireCallingSynchronizationContext",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : Boundary schedule: SendingHandshakeToWebsocketServer -> HandshakeCompletedSuccessfully -> WebsocketConnected -> SingleFrameSending -> Close -> write-entered -> write-completed -> peer-wait"
+         },
+         {
+          "test": "WebsocketClientLiteTest.ControlledCloseTests.PeerWaitEndsByControlledTimeoutOrReadFailure(failure: True)",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : Controlled schedule: dispose-start -> write-entered -> write-completed -> peer-wait -> read-failure"
+         }
+        ]
+       },
+       "outcome": "failed"
+      },
+      {
+       "command": [
+        "dotnet",
+        "test",
+        "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+        "-c",
+        "Release",
+        "-p:LibTfm=net11.0",
+        "--no-build",
+        "--nologo",
+        "--filter",
+        "FullyQualifiedName~WebsocketClientLiteTest.ControlledCloseTests|FullyQualifiedName~WebsocketClientLiteTest.CloseBoundaryTests",
+        "--logger",
+        "trx;LogFileName=close-3.trx",
+        "--results-directory",
+        "<scratch>/ca/out/release-never"
+       ],
+       "exit": 1,
+       "timed_out": false,
+       "seconds": 91.69,
+       "log": "release-never/close-3.log",
+       "trx": {
+        "total": 19,
+        "passed": 5,
+        "skipped": [],
+        "not_passed": [
+         {
+          "test": "WebsocketClientLiteTest.CloseBoundaryTests.ReadFailureReleasesReadinessBeforeObserverError",
+          "outcome": "Failed",
+          "message": "Read failure did not release Close readiness before observer error"
+         },
+         {
+          "test": "WebsocketClientLiteTest.CloseBoundaryTests.AsyncDisposalDoesNotRequireCallingSynchronizationContext",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : Boundary schedule: SendingHandshakeToWebsocketServer -> HandshakeCompletedSuccessfully -> WebsocketConnected -> SingleFrameSending -> Close -> write-entered -> write-completed -> peer-wait"
+         },
+         {
+          "test": "WebsocketClientLiteTest.CloseBoundaryTests.DisposalCancelsPausedPeriodicPingAndReleasesTransport",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : Boundary schedule: SendingHandshakeToWebsocketServer -> HandshakeCompletedSuccessfully -> WebsocketConnected -> SingleFrameSending -> PingSend -> write-entered -> SendError -> SingleFrameSending -> Close -> peer-wait"
+         },
+         {
+          "test": "WebsocketClientLiteTest.ControlledCloseTests.PeerWaitEndsByControlledTimeoutOrReadFailure(failure: True)",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : Controlled schedule: dispose-start -> write-entered -> write-completed -> peer-wait -> read-failure"
+         },
+         {
+          "test": "WebsocketClientLiteTest.ControlledCloseTests.PausedCloseWriteBlocksDisposalAndPeerRaceSendsOnce(peerFirst: False)",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : Controlled schedule: write-entered -> peer-close-during-write -> dispose-start -> dispose-start -> write-completed -> peer-wait"
+         },
+         {
+          "test": "WebsocketClientLiteTest.ControlledCloseTests.ParserSignalsPeerCloseOrReadFailureBeforeTimerExpiry(readFailure: True)",
+          "outcome": "Failed",
+          "message": "Parser notification did not release Close readiness"
+         },
+         {
+          "test": "WebsocketClientLiteTest.CloseBoundaryTests.ParserCompletionAwaitsFallbackCloseBeforeObserverCompletion",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : Boundary schedule: SendingHandshakeToWebsocketServer -> HandshakeCompletedSuccessfully -> WebsocketConnected -> SingleFrameSending -> Close -> write-entered -> write-completed -> peer-wait"
+         },
+         {
+          "test": "WebsocketClientLiteTest.ControlledCloseTests.QueuedPongIsSuppressedAfterPeerClose",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : Controlled schedule: write-entered -> pong-queued -> peer-close -> write-completed -> dispose-start -> peer-wait"
+         },
+         {
+          "test": "WebsocketClientLiteTest.CloseBoundaryTests.DisposalStopsActivePeriodicPingsBeforeClose(synchronous: False)",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : Boundary schedule: SendingHandshakeToWebsocketServer -> HandshakeCompletedSuccessfully -> WebsocketConnected -> SingleFrameSending -> PingSend -> write-entered -> write-completed -> SendComplete -> SingleFrameSending -> Close -> write-entered -> write-completed -> peer-wait"
+         },
+         {
+          "test": "WebsocketClientLiteTest.ControlledCloseTests.ParserSignalsPeerCloseOrReadFailureBeforeTimerExpiry(readFailure: False)",
+          "outcome": "Failed",
+          "message": "Parser notification did not release Close readiness"
+         },
+         {
+          "test": "WebsocketClientLiteTest.ControlledCloseTests.PausedCloseWriteBlocksDisposalAndPeerRaceSendsOnce(peerFirst: True)",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : Controlled schedule: peer-close-before-local -> write-entered -> dispose-start -> dispose-start -> write-completed -> peer-wait"
+         },
+         {
+          "test": "WebsocketClientLiteTest.CloseBoundaryTests.CancelledParserLeavesCloseToDisposalAndDoesNotCompleteObserver",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : Boundary schedule: SendingHandshakeToWebsocketServer -> HandshakeCompletedSuccessfully -> WebsocketConnected -> SingleFrameSending -> Close -> write-entered -> write-completed -> peer-wait"
+         },
+         {
+          "test": "WebsocketClientLiteTest.ControlledCloseTests.CancellationBetweenFragmentsAllowsOnlyClose",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : Controlled schedule: write-entered -> cancel-between-fragments -> write-completed -> dispose-start -> write-entered -> write-completed -> peer-wait"
+         },
+         {
+          "test": "WebsocketClientLiteTest.ControlledCloseTests.PostWriteFailureRejectsQueuedAndLaterDataAndSuppressesClose",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : Controlled schedule: write-entered -> write-failed -> dispose-start -> peer-wait"
+         }
+        ]
+       },
+       "outcome": "failed"
+      }
+     ]
+    },
+    "all": {
+     "verdict": "detected",
+     "runs": [
+      {
+       "command": [
+        "dotnet",
+        "test",
+        "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+        "-c",
+        "Release",
+        "-p:LibTfm=net11.0",
+        "--no-build",
+        "--nologo",
+        "--filter",
+        "FullyQualifiedName~WebsocketClientLiteTest",
+        "--logger",
+        "trx;LogFileName=all-1.trx",
+        "--results-directory",
+        "<scratch>/ca/out/release-never"
+       ],
+       "exit": 1,
+       "timed_out": false,
+       "seconds": 91.83,
+       "log": "release-never/all-1.log",
+       "trx": {
+        "total": 330,
+        "passed": 316,
+        "skipped": [],
+        "not_passed": [
+         {
+          "test": "WebsocketClientLiteTest.CloseBoundaryTests.DisposalStopsActivePeriodicPingsBeforeClose(synchronous: False)",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : Boundary schedule: SendingHandshakeToWebsocketServer -> HandshakeCompletedSuccessfully -> WebsocketConnected -> SingleFrameSending -> PingSend -> write-entered -> write-completed -> SendComplete -> SingleFrameSending -> Close -> write-entered -> write-completed -> peer-wait"
+         },
+         {
+          "test": "WebsocketClientLiteTest.ControlledCloseTests.PostWriteFailureRejectsQueuedAndLaterDataAndSuppressesClose",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : Controlled schedule: write-entered -> write-failed -> dispose-start -> peer-wait"
+         },
+         {
+          "test": "WebsocketClientLiteTest.CloseBoundaryTests.CancelledParserLeavesCloseToDisposalAndDoesNotCompleteObserver",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : Boundary schedule: SendingHandshakeToWebsocketServer -> HandshakeCompletedSuccessfully -> WebsocketConnected -> SingleFrameSending -> Close -> write-entered -> write-completed -> peer-wait"
+         },
+         {
+          "test": "WebsocketClientLiteTest.ControlledCloseTests.ParserSignalsPeerCloseOrReadFailureBeforeTimerExpiry(readFailure: True)",
+          "outcome": "Failed",
+          "message": "Parser notification did not release Close readiness"
+         },
+         {
+          "test": "WebsocketClientLiteTest.CloseBoundaryTests.DisposalCancelsPausedPeriodicPingAndReleasesTransport",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : Boundary schedule: SendingHandshakeToWebsocketServer -> HandshakeCompletedSuccessfully -> WebsocketConnected -> SingleFrameSending -> PingSend -> write-entered -> SendError -> SingleFrameSending -> Close -> peer-wait"
+         },
+         {
+          "test": "WebsocketClientLiteTest.ControlledCloseTests.CancellationBetweenFragmentsAllowsOnlyClose",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : Controlled schedule: write-entered -> cancel-between-fragments -> write-completed -> dispose-start -> write-entered -> write-completed -> peer-wait"
+         },
+         {
+          "test": "WebsocketClientLiteTest.ControlledCloseTests.ParserSignalsPeerCloseOrReadFailureBeforeTimerExpiry(readFailure: False)",
+          "outcome": "Failed",
+          "message": "Parser notification did not release Close readiness"
+         },
+         {
+          "test": "WebsocketClientLiteTest.CloseBoundaryTests.ParserCompletionAwaitsFallbackCloseBeforeObserverCompletion",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : Boundary schedule: SendingHandshakeToWebsocketServer -> HandshakeCompletedSuccessfully -> WebsocketConnected -> SingleFrameSending -> Close -> write-entered -> write-completed -> peer-wait"
+         },
+         {
+          "test": "WebsocketClientLiteTest.ControlledCloseTests.PeerWaitEndsByControlledTimeoutOrReadFailure(failure: True)",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : Controlled schedule: dispose-start -> write-entered -> write-completed -> peer-wait -> read-failure"
+         },
+         {
+          "test": "WebsocketClientLiteTest.ControlledCloseTests.QueuedPongIsSuppressedAfterPeerClose",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : Controlled schedule: write-entered -> pong-queued -> peer-close -> write-completed -> dispose-start -> peer-wait"
+         },
+         {
+          "test": "WebsocketClientLiteTest.ControlledCloseTests.PausedCloseWriteBlocksDisposalAndPeerRaceSendsOnce(peerFirst: False)",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : Controlled schedule: write-entered -> peer-close-during-write -> dispose-start -> dispose-start -> write-completed -> peer-wait"
+         },
+         {
+          "test": "WebsocketClientLiteTest.CloseBoundaryTests.AsyncDisposalDoesNotRequireCallingSynchronizationContext",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : Boundary schedule: SendingHandshakeToWebsocketServer -> HandshakeCompletedSuccessfully -> WebsocketConnected -> SingleFrameSending -> Close -> write-entered -> write-completed -> peer-wait"
+         },
+         {
+          "test": "WebsocketClientLiteTest.ControlledCloseTests.PausedCloseWriteBlocksDisposalAndPeerRaceSendsOnce(peerFirst: True)",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : Controlled schedule: peer-close-before-local -> write-entered -> dispose-start -> dispose-start -> write-completed -> peer-wait"
+         },
+         {
+          "test": "WebsocketClientLiteTest.CloseBoundaryTests.ReadFailureReleasesReadinessBeforeObserverError",
+          "outcome": "Failed",
+          "message": "Read failure did not release Close readiness before observer error"
+         }
+        ]
+       },
+       "outcome": "failed"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "state-not-stored",
+   "breaks": "CLOSE-001, CLOSE-002",
+   "kind": "state not stored",
+   "description": "AdvanceClose discards the new state; every event is decided from the open state.",
+   "source_sha256": "517d48fd4819b3f9b390f4223412dcff7550abe4dacc22d838201841b7898a24",
+   "mutant_sha256": "f2bd1e99360c76c85136a6a64362ba51ab1b5ec438964c13f90aa6544155fcf5",
+   "build": {
+    "command": [
+     "dotnet",
+     "build",
+     "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+     "-c",
+     "Release",
+     "-p:LibTfm=net11.0",
+     "--nologo"
+    ],
+    "exit": 0,
+    "timed_out": false,
+    "seconds": 1.27,
+    "log": "state-not-stored/build.log"
+   },
+   "suites": {
+    "close": {
+     "verdict": "detected",
+     "runs": [
+      {
+       "command": [
+        "dotnet",
+        "test",
+        "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+        "-c",
+        "Release",
+        "-p:LibTfm=net11.0",
+        "--no-build",
+        "--nologo",
+        "--filter",
+        "FullyQualifiedName~WebsocketClientLiteTest.ControlledCloseTests|FullyQualifiedName~WebsocketClientLiteTest.CloseBoundaryTests",
+        "--logger",
+        "trx;LogFileName=close-1.trx",
+        "--results-directory",
+        "<scratch>/ca/out/state-not-stored"
+       ],
+       "exit": 1,
+       "timed_out": false,
+       "seconds": 22.32,
+       "log": "state-not-stored/close-1.log",
+       "trx": {
+        "total": 19,
+        "passed": 10,
+        "skipped": [],
+        "not_passed": [
+         {
+          "test": "WebsocketClientLiteTest.CloseBoundaryTests.DisposalCancelsPausedPeriodicPingAndReleasesTransport",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : Boundary schedule: SendingHandshakeToWebsocketServer -> HandshakeCompletedSuccessfully -> WebsocketConnected -> SingleFrameSending -> PingSend -> write-entered -> SendError -> SingleFrameSending -> Close -> write-entered"
+         },
+         {
+          "test": "WebsocketClientLiteTest.ControlledCloseTests.CancellationBetweenFragmentsAllowsOnlyClose",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : Controlled schedule: write-entered -> cancel-between-fragments -> write-completed -> dispose-start -> write-entered -> write-completed -> peer-wait"
+         },
+         {
+          "test": "WebsocketClientLiteTest.ControlledCloseTests.QueuedPongIsSuppressedAfterPeerClose",
+          "outcome": "Failed",
+          "message": "Assert.Single() Failure: The collection contained 2 items"
+         },
+         {
+          "test": "WebsocketClientLiteTest.CloseBoundaryTests.ParserCompletionAwaitsFallbackCloseBeforeObserverCompletion",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : Boundary schedule: SendingHandshakeToWebsocketServer -> HandshakeCompletedSuccessfully -> WebsocketConnected -> SingleFrameSending -> Close -> write-entered -> write-completed -> peer-wait"
+         },
+         {
+          "test": "WebsocketClientLiteTest.CloseBoundaryTests.AsyncDisposalDoesNotRequireCallingSynchronizationContext",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : Boundary schedule: SendingHandshakeToWebsocketServer -> HandshakeCompletedSuccessfully -> WebsocketConnected -> SingleFrameSending -> Close -> write-entered -> write-completed -> peer-wait"
+         },
+         {
+          "test": "WebsocketClientLiteTest.ControlledCloseTests.PostWriteFailureRejectsQueuedAndLaterDataAndSuppressesClose",
+          "outcome": "Failed",
+          "message": "Assert.Single() Failure: The collection contained 2 items"
+         },
+         {
+          "test": "WebsocketClientLiteTest.ControlledCloseTests.ParserSignalsPeerCloseOrReadFailureBeforeTimerExpiry(readFailure: False)",
+          "outcome": "Failed",
+          "message": "Parser notification did not release Close readiness"
+         },
+         {
+          "test": "WebsocketClientLiteTest.CloseBoundaryTests.DisposalStopsActivePeriodicPingsBeforeClose(synchronous: False)",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : Boundary schedule: SendingHandshakeToWebsocketServer -> HandshakeCompletedSuccessfully -> WebsocketConnected -> SingleFrameSending -> PingSend -> write-entered -> write-completed -> SendComplete -> SingleFrameSending -> Close -> write-entered -> write-completed -> peer-wait"
+         },
+         {
+          "test": "WebsocketClientLiteTest.CloseBoundaryTests.CancelledParserLeavesCloseToDisposalAndDoesNotCompleteObserver",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : Boundary schedule: SendingHandshakeToWebsocketServer -> HandshakeCompletedSuccessfully -> WebsocketConnected -> SingleFrameSending -> Close -> write-entered -> write-completed -> peer-wait"
+         }
+        ]
+       },
+       "outcome": "failed"
+      },
+      {
+       "command": [
+        "dotnet",
+        "test",
+        "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+        "-c",
+        "Release",
+        "-p:LibTfm=net11.0",
+        "--no-build",
+        "--nologo",
+        "--filter",
+        "FullyQualifiedName~WebsocketClientLiteTest.ControlledCloseTests|FullyQualifiedName~WebsocketClientLiteTest.CloseBoundaryTests",
+        "--logger",
+        "trx;LogFileName=close-2.trx",
+        "--results-directory",
+        "<scratch>/ca/out/state-not-stored"
+       ],
+       "exit": 1,
+       "timed_out": false,
+       "seconds": 22.36,
+       "log": "state-not-stored/close-2.log",
+       "trx": {
+        "total": 19,
+        "passed": 10,
+        "skipped": [],
+        "not_passed": [
+         {
+          "test": "WebsocketClientLiteTest.CloseBoundaryTests.CancelledParserLeavesCloseToDisposalAndDoesNotCompleteObserver",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : Boundary schedule: SendingHandshakeToWebsocketServer -> HandshakeCompletedSuccessfully -> WebsocketConnected -> SingleFrameSending -> Close -> write-entered -> write-completed -> peer-wait"
+         },
+         {
+          "test": "WebsocketClientLiteTest.CloseBoundaryTests.ParserCompletionAwaitsFallbackCloseBeforeObserverCompletion",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : Boundary schedule: SendingHandshakeToWebsocketServer -> HandshakeCompletedSuccessfully -> WebsocketConnected -> SingleFrameSending -> Close -> write-entered -> write-completed -> peer-wait"
+         },
+         {
+          "test": "WebsocketClientLiteTest.CloseBoundaryTests.DisposalStopsActivePeriodicPingsBeforeClose(synchronous: False)",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : Boundary schedule: SendingHandshakeToWebsocketServer -> HandshakeCompletedSuccessfully -> WebsocketConnected -> SingleFrameSending -> PingSend -> write-entered -> write-completed -> SendComplete -> SingleFrameSending -> Close -> write-entered -> write-completed -> peer-wait"
+         },
+         {
+          "test": "WebsocketClientLiteTest.CloseBoundaryTests.AsyncDisposalDoesNotRequireCallingSynchronizationContext",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : Boundary schedule: SendingHandshakeToWebsocketServer -> HandshakeCompletedSuccessfully -> WebsocketConnected -> SingleFrameSending -> Close -> write-entered -> write-completed -> peer-wait"
+         },
+         {
+          "test": "WebsocketClientLiteTest.ControlledCloseTests.PostWriteFailureRejectsQueuedAndLaterDataAndSuppressesClose",
+          "outcome": "Failed",
+          "message": "Assert.Single() Failure: The collection contained 2 items"
+         },
+         {
+          "test": "WebsocketClientLiteTest.ControlledCloseTests.QueuedPongIsSuppressedAfterPeerClose",
+          "outcome": "Failed",
+          "message": "Assert.Single() Failure: The collection contained 2 items"
+         },
+         {
+          "test": "WebsocketClientLiteTest.CloseBoundaryTests.DisposalCancelsPausedPeriodicPingAndReleasesTransport",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : Boundary schedule: SendingHandshakeToWebsocketServer -> HandshakeCompletedSuccessfully -> WebsocketConnected -> SingleFrameSending -> PingSend -> write-entered -> SendError -> SingleFrameSending -> Close -> write-entered"
+         },
+         {
+          "test": "WebsocketClientLiteTest.ControlledCloseTests.ParserSignalsPeerCloseOrReadFailureBeforeTimerExpiry(readFailure: False)",
+          "outcome": "Failed",
+          "message": "Parser notification did not release Close readiness"
+         },
+         {
+          "test": "WebsocketClientLiteTest.ControlledCloseTests.CancellationBetweenFragmentsAllowsOnlyClose",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : Controlled schedule: write-entered -> cancel-between-fragments -> write-completed -> dispose-start -> write-entered -> write-completed -> peer-wait"
+         }
+        ]
+       },
+       "outcome": "failed"
+      },
+      {
+       "command": [
+        "dotnet",
+        "test",
+        "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+        "-c",
+        "Release",
+        "-p:LibTfm=net11.0",
+        "--no-build",
+        "--nologo",
+        "--filter",
+        "FullyQualifiedName~WebsocketClientLiteTest.ControlledCloseTests|FullyQualifiedName~WebsocketClientLiteTest.CloseBoundaryTests",
+        "--logger",
+        "trx;LogFileName=close-3.trx",
+        "--results-directory",
+        "<scratch>/ca/out/state-not-stored"
+       ],
+       "exit": 1,
+       "timed_out": false,
+       "seconds": 22.36,
+       "log": "state-not-stored/close-3.log",
+       "trx": {
+        "total": 19,
+        "passed": 10,
+        "skipped": [],
+        "not_passed": [
+         {
+          "test": "WebsocketClientLiteTest.ControlledCloseTests.CancellationBetweenFragmentsAllowsOnlyClose",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : Controlled schedule: write-entered -> cancel-between-fragments -> write-completed -> dispose-start -> write-entered -> write-completed -> peer-wait"
+         },
+         {
+          "test": "WebsocketClientLiteTest.CloseBoundaryTests.CancelledParserLeavesCloseToDisposalAndDoesNotCompleteObserver",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : Boundary schedule: SendingHandshakeToWebsocketServer -> HandshakeCompletedSuccessfully -> WebsocketConnected -> SingleFrameSending -> Close -> write-entered -> write-completed -> peer-wait"
+         },
+         {
+          "test": "WebsocketClientLiteTest.CloseBoundaryTests.ParserCompletionAwaitsFallbackCloseBeforeObserverCompletion",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : Boundary schedule: SendingHandshakeToWebsocketServer -> HandshakeCompletedSuccessfully -> WebsocketConnected -> SingleFrameSending -> Close -> write-entered -> write-completed -> peer-wait"
+         },
+         {
+          "test": "WebsocketClientLiteTest.ControlledCloseTests.PostWriteFailureRejectsQueuedAndLaterDataAndSuppressesClose",
+          "outcome": "Failed",
+          "message": "Assert.Single() Failure: The collection contained 2 items"
+         },
+         {
+          "test": "WebsocketClientLiteTest.CloseBoundaryTests.DisposalCancelsPausedPeriodicPingAndReleasesTransport",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : Boundary schedule: SendingHandshakeToWebsocketServer -> HandshakeCompletedSuccessfully -> WebsocketConnected -> SingleFrameSending -> PingSend -> write-entered -> SendError -> SingleFrameSending -> Close -> write-entered"
+         },
+         {
+          "test": "WebsocketClientLiteTest.CloseBoundaryTests.AsyncDisposalDoesNotRequireCallingSynchronizationContext",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : Boundary schedule: SendingHandshakeToWebsocketServer -> HandshakeCompletedSuccessfully -> WebsocketConnected -> SingleFrameSending -> Close -> write-entered -> write-completed -> peer-wait"
+         },
+         {
+          "test": "WebsocketClientLiteTest.ControlledCloseTests.ParserSignalsPeerCloseOrReadFailureBeforeTimerExpiry(readFailure: False)",
+          "outcome": "Failed",
+          "message": "Parser notification did not release Close readiness"
+         },
+         {
+          "test": "WebsocketClientLiteTest.CloseBoundaryTests.DisposalStopsActivePeriodicPingsBeforeClose(synchronous: False)",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : Boundary schedule: SendingHandshakeToWebsocketServer -> HandshakeCompletedSuccessfully -> WebsocketConnected -> SingleFrameSending -> PingSend -> write-entered -> write-completed -> SendComplete -> SingleFrameSending -> Close -> write-entered -> write-completed -> peer-wait"
+         },
+         {
+          "test": "WebsocketClientLiteTest.ControlledCloseTests.QueuedPongIsSuppressedAfterPeerClose",
+          "outcome": "Failed",
+          "message": "Assert.Single() Failure: The collection contained 2 items"
+         }
+        ]
+       },
+       "outcome": "failed"
+      }
+     ]
+    },
+    "all": {
+     "verdict": "detected",
+     "runs": [
+      {
+       "command": [
+        "dotnet",
+        "test",
+        "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+        "-c",
+        "Release",
+        "-p:LibTfm=net11.0",
+        "--no-build",
+        "--nologo",
+        "--filter",
+        "FullyQualifiedName~WebsocketClientLiteTest",
+        "--logger",
+        "trx;LogFileName=all-1.trx",
+        "--results-directory",
+        "<scratch>/ca/out/state-not-stored"
+       ],
+       "exit": 1,
+       "timed_out": false,
+       "seconds": 29.13,
+       "log": "state-not-stored/all-1.log",
+       "trx": {
+        "total": 330,
+        "passed": 314,
+        "skipped": [],
+        "not_passed": [
+         {
+          "test": "WebsocketClientLiteTest.ControlledCloseTests.PostWriteFailureRejectsQueuedAndLaterDataAndSuppressesClose",
+          "outcome": "Failed",
+          "message": "Assert.Single() Failure: The collection contained 2 items"
+         },
+         {
+          "test": "WebsocketClientLiteTest.CloseBoundaryTests.CancelledParserLeavesCloseToDisposalAndDoesNotCompleteObserver",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : Boundary schedule: SendingHandshakeToWebsocketServer -> HandshakeCompletedSuccessfully -> WebsocketConnected -> SingleFrameSending -> Close -> write-entered -> write-completed -> peer-wait"
+         },
+         {
+          "test": "WebsocketClientLiteTest.PayloadLeaseTests.SuppressedQueuedPongReturnsWithoutDelegateUse",
+          "outcome": "Failed",
+          "message": "Assert.Equal() Failure: Values differ"
+         },
+         {
+          "test": "WebsocketClientLiteTest.CloseBoundaryTests.DisposalStopsActivePeriodicPingsBeforeClose(synchronous: False)",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : Boundary schedule: SendingHandshakeToWebsocketServer -> HandshakeCompletedSuccessfully -> WebsocketConnected -> SingleFrameSending -> PingSend -> write-entered -> write-completed -> SendComplete -> SingleFrameSending -> Close -> write-entered -> write-completed -> peer-wait"
+         },
+         {
+          "test": "WebsocketClientLiteTest.ProtocolStateTests.ReceivedCloseBlocksDataAndSendsOnlyOneResponse",
+          "outcome": "Failed",
+          "message": "Assert.Throws() Failure: No exception was thrown"
+         },
+         {
+          "test": "WebsocketClientLiteTest.QueuedWriteTests.TerminalNotificationRejectsDataWaitingAtEitherGate(frameGate: True, readFailure: False)",
+          "outcome": "Failed",
+          "message": "Assert.Throws() Failure: No exception was thrown"
+         },
+         {
+          "test": "WebsocketClientLiteTest.ControlledCloseTests.QueuedPongIsSuppressedAfterPeerClose",
+          "outcome": "Failed",
+          "message": "Assert.Single() Failure: The collection contained 2 items"
+         },
+         {
+          "test": "WebsocketClientLiteTest.ProtocolStateTests.PartialWriteFailureForbidsFurtherFrames",
+          "outcome": "Failed",
+          "message": "WebsocketClientLite.CustomException.WebsocketClientLiteException : Websocket send error occured."
+         },
+         {
+          "test": "WebsocketClientLiteTest.CloseBoundaryTests.ParserCompletionAwaitsFallbackCloseBeforeObserverCompletion",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : Boundary schedule: SendingHandshakeToWebsocketServer -> HandshakeCompletedSuccessfully -> WebsocketConnected -> SingleFrameSending -> Close -> write-entered -> write-completed -> peer-wait"
+         },
+         {
+          "test": "WebsocketClientLiteTest.ProtocolStateTests.PongIsAllowedUntilPeerCloseThenSuppressed",
+          "outcome": "Failed",
+          "message": "Assert.Equal() Failure: Collections differ"
+         },
+         {
+          "test": "WebsocketClientLiteTest.CloseBoundaryTests.AsyncDisposalDoesNotRequireCallingSynchronizationContext",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : Boundary schedule: SendingHandshakeToWebsocketServer -> HandshakeCompletedSuccessfully -> WebsocketConnected -> SingleFrameSending -> Close -> write-entered -> write-completed -> peer-wait"
+         },
+         {
+          "test": "WebsocketClientLiteTest.ProtocolStateTests.CloseResponseTimeoutMakesTheTransportTerminal",
+          "outcome": "Failed",
+          "message": "Assert.Equal() Failure: Collections differ"
+         },
+         {
+          "test": "WebsocketClientLiteTest.CloseBoundaryTests.DisposalCancelsPausedPeriodicPingAndReleasesTransport",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : Boundary schedule: SendingHandshakeToWebsocketServer -> HandshakeCompletedSuccessfully -> WebsocketConnected -> SingleFrameSending -> PingSend -> write-entered -> SendError -> SingleFrameSending -> Close -> write-entered"
+         },
+         {
+          "test": "WebsocketClientLiteTest.ControlledCloseTests.CancellationBetweenFragmentsAllowsOnlyClose",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : Controlled schedule: write-entered -> cancel-between-fragments -> write-completed -> dispose-start -> write-entered -> write-completed -> peer-wait"
+         },
+         {
+          "test": "WebsocketClientLiteTest.ControlledCloseTests.ParserSignalsPeerCloseOrReadFailureBeforeTimerExpiry(readFailure: False)",
+          "outcome": "Failed",
+          "message": "Parser notification did not release Close readiness"
+         },
+         {
+          "test": "WebsocketClientLiteTest.QueuedWriteTests.TerminalNotificationRejectsDataWaitingAtEitherGate(frameGate: False, readFailure: False)",
+          "outcome": "Failed",
+          "message": "Assert.Throws() Failure: No exception was thrown"
+         }
+        ]
+       },
+       "outcome": "failed"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "state-stored-outside-lock",
+   "breaks": "CLOSE-LOCK (boundary assumption)",
+   "kind": "state stored outside the lock",
+   "description": "AdvanceClose releases _stateLock around the store of the new state, so another event can read the old state in between.",
+   "source_sha256": "517d48fd4819b3f9b390f4223412dcff7550abe4dacc22d838201841b7898a24",
+   "mutant_sha256": "0dda8afb3081565e190e9b027544162aedae7ef52ea2c64a5ac37474f8d2a1e0",
+   "build": {
+    "command": [
+     "dotnet",
+     "build",
+     "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+     "-c",
+     "Release",
+     "-p:LibTfm=net11.0",
+     "--nologo"
+    ],
+    "exit": 0,
+    "timed_out": false,
+    "seconds": 1.27,
+    "log": "state-stored-outside-lock/build.log"
+   },
+   "suites": {
+    "close": {
+     "verdict": "survived",
+     "runs": [
+      {
+       "command": [
+        "dotnet",
+        "test",
+        "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+        "-c",
+        "Release",
+        "-p:LibTfm=net11.0",
+        "--no-build",
+        "--nologo",
+        "--filter",
+        "FullyQualifiedName~WebsocketClientLiteTest.ControlledCloseTests|FullyQualifiedName~WebsocketClientLiteTest.CloseBoundaryTests",
+        "--logger",
+        "trx;LogFileName=close-1.trx",
+        "--results-directory",
+        "<scratch>/ca/out/state-stored-outside-lock"
+       ],
+       "exit": 0,
+       "timed_out": false,
+       "seconds": 0.97,
+       "log": "state-stored-outside-lock/close-1.log",
+       "trx": {
+        "total": 19,
+        "passed": 19,
+        "skipped": [],
+        "not_passed": []
+       },
+       "outcome": "passed"
+      },
+      {
+       "command": [
+        "dotnet",
+        "test",
+        "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+        "-c",
+        "Release",
+        "-p:LibTfm=net11.0",
+        "--no-build",
+        "--nologo",
+        "--filter",
+        "FullyQualifiedName~WebsocketClientLiteTest.ControlledCloseTests|FullyQualifiedName~WebsocketClientLiteTest.CloseBoundaryTests",
+        "--logger",
+        "trx;LogFileName=close-2.trx",
+        "--results-directory",
+        "<scratch>/ca/out/state-stored-outside-lock"
+       ],
+       "exit": 0,
+       "timed_out": false,
+       "seconds": 0.92,
+       "log": "state-stored-outside-lock/close-2.log",
+       "trx": {
+        "total": 19,
+        "passed": 19,
+        "skipped": [],
+        "not_passed": []
+       },
+       "outcome": "passed"
+      },
+      {
+       "command": [
+        "dotnet",
+        "test",
+        "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+        "-c",
+        "Release",
+        "-p:LibTfm=net11.0",
+        "--no-build",
+        "--nologo",
+        "--filter",
+        "FullyQualifiedName~WebsocketClientLiteTest.ControlledCloseTests|FullyQualifiedName~WebsocketClientLiteTest.CloseBoundaryTests",
+        "--logger",
+        "trx;LogFileName=close-3.trx",
+        "--results-directory",
+        "<scratch>/ca/out/state-stored-outside-lock"
+       ],
+       "exit": 0,
+       "timed_out": false,
+       "seconds": 0.97,
+       "log": "state-stored-outside-lock/close-3.log",
+       "trx": {
+        "total": 19,
+        "passed": 19,
+        "skipped": [],
+        "not_passed": []
+       },
+       "outcome": "passed"
+      }
+     ]
+    },
+    "all": {
+     "verdict": "survived",
+     "runs": [
+      {
+       "command": [
+        "dotnet",
+        "test",
+        "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+        "-c",
+        "Release",
+        "-p:LibTfm=net11.0",
+        "--no-build",
+        "--nologo",
+        "--filter",
+        "FullyQualifiedName~WebsocketClientLiteTest",
+        "--logger",
+        "trx;LogFileName=all-1.trx",
+        "--results-directory",
+        "<scratch>/ca/out/state-stored-outside-lock"
+       ],
+       "exit": 0,
+       "timed_out": false,
+       "seconds": 25.73,
+       "log": "state-stored-outside-lock/all-1.log",
+       "trx": {
+        "total": 330,
+        "passed": 330,
+        "skipped": [],
+        "not_passed": []
+       },
+       "outcome": "passed"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "peer-close-outside-lock",
+   "breaks": "CLOSE-LOCK (boundary assumption)",
+   "kind": "call outside the lock",
+   "description": "NotifyPeerClose calls AdvanceClose without holding _stateLock.",
+   "source_sha256": "517d48fd4819b3f9b390f4223412dcff7550abe4dacc22d838201841b7898a24",
+   "mutant_sha256": "4849e1788e680b6f89a80d030a7875a43b4b4bfa2056f02524113a3a52d33da9",
+   "build": {
+    "command": [
+     "dotnet",
+     "build",
+     "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+     "-c",
+     "Release",
+     "-p:LibTfm=net11.0",
+     "--nologo"
+    ],
+    "exit": 0,
+    "timed_out": false,
+    "seconds": 1.27,
+    "log": "peer-close-outside-lock/build.log"
+   },
+   "suites": {
+    "close": {
+     "verdict": "survived",
+     "runs": [
+      {
+       "command": [
+        "dotnet",
+        "test",
+        "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+        "-c",
+        "Release",
+        "-p:LibTfm=net11.0",
+        "--no-build",
+        "--nologo",
+        "--filter",
+        "FullyQualifiedName~WebsocketClientLiteTest.ControlledCloseTests|FullyQualifiedName~WebsocketClientLiteTest.CloseBoundaryTests",
+        "--logger",
+        "trx;LogFileName=close-1.trx",
+        "--results-directory",
+        "<scratch>/ca/out/peer-close-outside-lock"
+       ],
+       "exit": 0,
+       "timed_out": false,
+       "seconds": 0.97,
+       "log": "peer-close-outside-lock/close-1.log",
+       "trx": {
+        "total": 19,
+        "passed": 19,
+        "skipped": [],
+        "not_passed": []
+       },
+       "outcome": "passed"
+      },
+      {
+       "command": [
+        "dotnet",
+        "test",
+        "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+        "-c",
+        "Release",
+        "-p:LibTfm=net11.0",
+        "--no-build",
+        "--nologo",
+        "--filter",
+        "FullyQualifiedName~WebsocketClientLiteTest.ControlledCloseTests|FullyQualifiedName~WebsocketClientLiteTest.CloseBoundaryTests",
+        "--logger",
+        "trx;LogFileName=close-2.trx",
+        "--results-directory",
+        "<scratch>/ca/out/peer-close-outside-lock"
+       ],
+       "exit": 0,
+       "timed_out": false,
+       "seconds": 0.97,
+       "log": "peer-close-outside-lock/close-2.log",
+       "trx": {
+        "total": 19,
+        "passed": 19,
+        "skipped": [],
+        "not_passed": []
+       },
+       "outcome": "passed"
+      },
+      {
+       "command": [
+        "dotnet",
+        "test",
+        "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+        "-c",
+        "Release",
+        "-p:LibTfm=net11.0",
+        "--no-build",
+        "--nologo",
+        "--filter",
+        "FullyQualifiedName~WebsocketClientLiteTest.ControlledCloseTests|FullyQualifiedName~WebsocketClientLiteTest.CloseBoundaryTests",
+        "--logger",
+        "trx;LogFileName=close-3.trx",
+        "--results-directory",
+        "<scratch>/ca/out/peer-close-outside-lock"
+       ],
+       "exit": 0,
+       "timed_out": false,
+       "seconds": 1.02,
+       "log": "peer-close-outside-lock/close-3.log",
+       "trx": {
+        "total": 19,
+        "passed": 19,
+        "skipped": [],
+        "not_passed": []
+       },
+       "outcome": "passed"
+      }
+     ]
+    },
+    "all": {
+     "verdict": "survived",
+     "runs": [
+      {
+       "command": [
+        "dotnet",
+        "test",
+        "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+        "-c",
+        "Release",
+        "-p:LibTfm=net11.0",
+        "--no-build",
+        "--nologo",
+        "--filter",
+        "FullyQualifiedName~WebsocketClientLiteTest",
+        "--logger",
+        "trx;LogFileName=all-1.trx",
+        "--results-directory",
+        "<scratch>/ca/out/peer-close-outside-lock"
+       ],
+       "exit": 0,
+       "timed_out": false,
+       "seconds": 25.73,
+       "log": "peer-close-outside-lock/all-1.log",
+       "trx": {
+        "total": 330,
+        "passed": 330,
+        "skipped": [],
+        "not_passed": []
+       },
+       "outcome": "passed"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "send-decided-outside-lock",
+   "breaks": "CLOSE-LOCK (boundary assumption)",
+   "kind": "call outside the lock",
+   "description": "WriteFrameSerializedAsync decides the Close send before it takes _stateLock.",
+   "source_sha256": "517d48fd4819b3f9b390f4223412dcff7550abe4dacc22d838201841b7898a24",
+   "mutant_sha256": "1035912e6291fe2b0a208d482515606099646c11b7605f3ed00d167d8b33adb7",
+   "build": {
+    "command": [
+     "dotnet",
+     "build",
+     "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+     "-c",
+     "Release",
+     "-p:LibTfm=net11.0",
+     "--nologo"
+    ],
+    "exit": 0,
+    "timed_out": false,
+    "seconds": 1.27,
+    "log": "send-decided-outside-lock/build.log"
+   },
+   "suites": {
+    "close": {
+     "verdict": "survived",
+     "runs": [
+      {
+       "command": [
+        "dotnet",
+        "test",
+        "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+        "-c",
+        "Release",
+        "-p:LibTfm=net11.0",
+        "--no-build",
+        "--nologo",
+        "--filter",
+        "FullyQualifiedName~WebsocketClientLiteTest.ControlledCloseTests|FullyQualifiedName~WebsocketClientLiteTest.CloseBoundaryTests",
+        "--logger",
+        "trx;LogFileName=close-1.trx",
+        "--results-directory",
+        "<scratch>/ca/out/send-decided-outside-lock"
+       ],
+       "exit": 0,
+       "timed_out": false,
+       "seconds": 0.97,
+       "log": "send-decided-outside-lock/close-1.log",
+       "trx": {
+        "total": 19,
+        "passed": 19,
+        "skipped": [],
+        "not_passed": []
+       },
+       "outcome": "passed"
+      },
+      {
+       "command": [
+        "dotnet",
+        "test",
+        "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+        "-c",
+        "Release",
+        "-p:LibTfm=net11.0",
+        "--no-build",
+        "--nologo",
+        "--filter",
+        "FullyQualifiedName~WebsocketClientLiteTest.ControlledCloseTests|FullyQualifiedName~WebsocketClientLiteTest.CloseBoundaryTests",
+        "--logger",
+        "trx;LogFileName=close-2.trx",
+        "--results-directory",
+        "<scratch>/ca/out/send-decided-outside-lock"
+       ],
+       "exit": 0,
+       "timed_out": false,
+       "seconds": 0.97,
+       "log": "send-decided-outside-lock/close-2.log",
+       "trx": {
+        "total": 19,
+        "passed": 19,
+        "skipped": [],
+        "not_passed": []
+       },
+       "outcome": "passed"
+      },
+      {
+       "command": [
+        "dotnet",
+        "test",
+        "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+        "-c",
+        "Release",
+        "-p:LibTfm=net11.0",
+        "--no-build",
+        "--nologo",
+        "--filter",
+        "FullyQualifiedName~WebsocketClientLiteTest.ControlledCloseTests|FullyQualifiedName~WebsocketClientLiteTest.CloseBoundaryTests",
+        "--logger",
+        "trx;LogFileName=close-3.trx",
+        "--results-directory",
+        "<scratch>/ca/out/send-decided-outside-lock"
+       ],
+       "exit": 0,
+       "timed_out": false,
+       "seconds": 1.02,
+       "log": "send-decided-outside-lock/close-3.log",
+       "trx": {
+        "total": 19,
+        "passed": 19,
+        "skipped": [],
+        "not_passed": []
+       },
+       "outcome": "passed"
+      }
+     ]
+    },
+    "all": {
+     "verdict": "survived",
+     "runs": [
+      {
+       "command": [
+        "dotnet",
+        "test",
+        "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+        "-c",
+        "Release",
+        "-p:LibTfm=net11.0",
+        "--no-build",
+        "--nologo",
+        "--filter",
+        "FullyQualifiedName~WebsocketClientLiteTest",
+        "--logger",
+        "trx;LogFileName=all-1.trx",
+        "--results-directory",
+        "<scratch>/ca/out/send-decided-outside-lock"
+       ],
+       "exit": 0,
+       "timed_out": false,
+       "seconds": 25.72,
+       "log": "send-decided-outside-lock/all-1.log",
+       "trx": {
+        "total": 330,
+        "passed": 330,
+        "skipped": [],
+        "not_passed": []
+       },
+       "outcome": "passed"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "read-failure-as-received",
+   "breaks": "CLOSE-001, CLOSE-003 (by the model); see the results for whether behaviour changes",
+   "kind": "wrong event",
+   "description": "NotifyReadFailure reports a received Close instead of a timeout or failure.",
+   "source_sha256": "517d48fd4819b3f9b390f4223412dcff7550abe4dacc22d838201841b7898a24",
+   "mutant_sha256": "ae7608c8f184e2e93ca33488b0239efc30066692355dbda12572d8d1caadea12",
+   "build": {
+    "command": [
+     "dotnet",
+     "build",
+     "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+     "-c",
+     "Release",
+     "-p:LibTfm=net11.0",
+     "--nologo"
+    ],
+    "exit": 0,
+    "timed_out": false,
+    "seconds": 1.22,
+    "log": "read-failure-as-received/build.log"
+   },
+   "suites": {
+    "close": {
+     "verdict": "detected",
+     "runs": [
+      {
+       "command": [
+        "dotnet",
+        "test",
+        "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+        "-c",
+        "Release",
+        "-p:LibTfm=net11.0",
+        "--no-build",
+        "--nologo",
+        "--filter",
+        "FullyQualifiedName~WebsocketClientLiteTest.ControlledCloseTests|FullyQualifiedName~WebsocketClientLiteTest.CloseBoundaryTests",
+        "--logger",
+        "trx;LogFileName=close-1.trx",
+        "--results-directory",
+        "<scratch>/ca/out/read-failure-as-received"
+       ],
+       "exit": 1,
+       "timed_out": false,
+       "seconds": 4.52,
+       "log": "read-failure-as-received/close-1.log",
+       "trx": {
+        "total": 19,
+        "passed": 16,
+        "skipped": [],
+        "not_passed": [
+         {
+          "test": "WebsocketClientLiteTest.CloseBoundaryTests.DisposalCancelsPausedPeriodicPingAndReleasesTransport",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : Boundary schedule: SendingHandshakeToWebsocketServer -> HandshakeCompletedSuccessfully -> WebsocketConnected -> SingleFrameSending -> PingSend -> write-entered -> SendError -> SingleFrameSending -> Close -> write-entered"
+         },
+         {
+          "test": "WebsocketClientLiteTest.ControlledCloseTests.PostWriteFailureRejectsQueuedAndLaterDataAndSuppressesClose",
+          "outcome": "Failed",
+          "message": "Assert.Single() Failure: The collection contained 2 items"
+         },
+         {
+          "test": "WebsocketClientLiteTest.CloseBoundaryTests.ReadFailureReleasesReadinessBeforeObserverError",
+          "outcome": "Failed",
+          "message": "Read failure did not release Close readiness before observer error"
+         }
+        ]
+       },
+       "outcome": "failed"
+      },
+      {
+       "command": [
+        "dotnet",
+        "test",
+        "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+        "-c",
+        "Release",
+        "-p:LibTfm=net11.0",
+        "--no-build",
+        "--nologo",
+        "--filter",
+        "FullyQualifiedName~WebsocketClientLiteTest.ControlledCloseTests|FullyQualifiedName~WebsocketClientLiteTest.CloseBoundaryTests",
+        "--logger",
+        "trx;LogFileName=close-2.trx",
+        "--results-directory",
+        "<scratch>/ca/out/read-failure-as-received"
+       ],
+       "exit": 1,
+       "timed_out": false,
+       "seconds": 4.52,
+       "log": "read-failure-as-received/close-2.log",
+       "trx": {
+        "total": 19,
+        "passed": 16,
+        "skipped": [],
+        "not_passed": [
+         {
+          "test": "WebsocketClientLiteTest.ControlledCloseTests.PostWriteFailureRejectsQueuedAndLaterDataAndSuppressesClose",
+          "outcome": "Failed",
+          "message": "Assert.Single() Failure: The collection contained 2 items"
+         },
+         {
+          "test": "WebsocketClientLiteTest.CloseBoundaryTests.DisposalCancelsPausedPeriodicPingAndReleasesTransport",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : Boundary schedule: SendingHandshakeToWebsocketServer -> HandshakeCompletedSuccessfully -> WebsocketConnected -> SingleFrameSending -> PingSend -> write-entered -> SendError -> SingleFrameSending -> Close -> write-entered"
+         },
+         {
+          "test": "WebsocketClientLiteTest.CloseBoundaryTests.ReadFailureReleasesReadinessBeforeObserverError",
+          "outcome": "Failed",
+          "message": "Read failure did not release Close readiness before observer error"
+         }
+        ]
+       },
+       "outcome": "failed"
+      },
+      {
+       "command": [
+        "dotnet",
+        "test",
+        "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+        "-c",
+        "Release",
+        "-p:LibTfm=net11.0",
+        "--no-build",
+        "--nologo",
+        "--filter",
+        "FullyQualifiedName~WebsocketClientLiteTest.ControlledCloseTests|FullyQualifiedName~WebsocketClientLiteTest.CloseBoundaryTests",
+        "--logger",
+        "trx;LogFileName=close-3.trx",
+        "--results-directory",
+        "<scratch>/ca/out/read-failure-as-received"
+       ],
+       "exit": 1,
+       "timed_out": false,
+       "seconds": 4.52,
+       "log": "read-failure-as-received/close-3.log",
+       "trx": {
+        "total": 19,
+        "passed": 16,
+        "skipped": [],
+        "not_passed": [
+         {
+          "test": "WebsocketClientLiteTest.ControlledCloseTests.PostWriteFailureRejectsQueuedAndLaterDataAndSuppressesClose",
+          "outcome": "Failed",
+          "message": "Assert.Single() Failure: The collection contained 2 items"
+         },
+         {
+          "test": "WebsocketClientLiteTest.CloseBoundaryTests.ReadFailureReleasesReadinessBeforeObserverError",
+          "outcome": "Failed",
+          "message": "Read failure did not release Close readiness before observer error"
+         },
+         {
+          "test": "WebsocketClientLiteTest.CloseBoundaryTests.DisposalCancelsPausedPeriodicPingAndReleasesTransport",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : Boundary schedule: SendingHandshakeToWebsocketServer -> HandshakeCompletedSuccessfully -> WebsocketConnected -> SingleFrameSending -> PingSend -> write-entered -> SendError -> SingleFrameSending -> Close -> write-entered"
+         }
+        ]
+       },
+       "outcome": "failed"
+      }
+     ]
+    },
+    "all": {
+     "verdict": "detected",
+     "runs": [
+      {
+       "command": [
+        "dotnet",
+        "test",
+        "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+        "-c",
+        "Release",
+        "-p:LibTfm=net11.0",
+        "--no-build",
+        "--nologo",
+        "--filter",
+        "FullyQualifiedName~WebsocketClientLiteTest",
+        "--logger",
+        "trx;LogFileName=all-1.trx",
+        "--results-directory",
+        "<scratch>/ca/out/read-failure-as-received"
+       ],
+       "exit": 1,
+       "timed_out": false,
+       "seconds": 26.13,
+       "log": "read-failure-as-received/all-1.log",
+       "trx": {
+        "total": 330,
+        "passed": 326,
+        "skipped": [],
+        "not_passed": [
+         {
+          "test": "WebsocketClientLiteTest.CloseBoundaryTests.DisposalCancelsPausedPeriodicPingAndReleasesTransport",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : Boundary schedule: SendingHandshakeToWebsocketServer -> HandshakeCompletedSuccessfully -> WebsocketConnected -> SingleFrameSending -> PingSend -> write-entered -> SendError -> SingleFrameSending -> Close -> write-entered"
+         },
+         {
+          "test": "WebsocketClientLiteTest.ProtocolStateTests.PartialWriteFailureForbidsFurtherFrames",
+          "outcome": "Failed",
+          "message": "WebsocketClientLite.CustomException.WebsocketClientLiteException : Websocket send error occured."
+         },
+         {
+          "test": "WebsocketClientLiteTest.CloseBoundaryTests.ReadFailureReleasesReadinessBeforeObserverError",
+          "outcome": "Failed",
+          "message": "Read failure did not release Close readiness before observer error"
+         },
+         {
+          "test": "WebsocketClientLiteTest.ControlledCloseTests.PostWriteFailureRejectsQueuedAndLaterDataAndSuppressesClose",
+          "outcome": "Failed",
+          "message": "Assert.Single() Failure: The collection contained 2 items"
+         }
+        ]
+       },
+       "outcome": "failed"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "peer-close-as-failure",
+   "breaks": "CLOSE-001 (RFC 6455 5.5.1: reply to a received Close)",
+   "kind": "wrong event",
+   "description": "NotifyPeerClose reports a timeout or failure instead of a received Close.",
+   "source_sha256": "517d48fd4819b3f9b390f4223412dcff7550abe4dacc22d838201841b7898a24",
+   "mutant_sha256": "7938e332300549ae552edda7431ee13e5603dab73440f4f7edf3d605b759a18c",
+   "build": {
+    "command": [
+     "dotnet",
+     "build",
+     "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+     "-c",
+     "Release",
+     "-p:LibTfm=net11.0",
+     "--nologo"
+    ],
+    "exit": 0,
+    "timed_out": false,
+    "seconds": 1.27,
+    "log": "peer-close-as-failure/build.log"
+   },
+   "suites": {
+    "close": {
+     "verdict": "detected",
+     "runs": [
+      {
+       "command": [
+        "dotnet",
+        "test",
+        "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+        "-c",
+        "Release",
+        "-p:LibTfm=net11.0",
+        "--no-build",
+        "--nologo",
+        "--filter",
+        "FullyQualifiedName~WebsocketClientLiteTest.ControlledCloseTests|FullyQualifiedName~WebsocketClientLiteTest.CloseBoundaryTests",
+        "--logger",
+        "trx;LogFileName=close-1.trx",
+        "--results-directory",
+        "<scratch>/ca/out/peer-close-as-failure"
+       ],
+       "exit": 1,
+       "timed_out": false,
+       "seconds": 16.35,
+       "log": "peer-close-as-failure/close-1.log",
+       "trx": {
+        "total": 19,
+        "passed": 14,
+        "skipped": [],
+        "not_passed": [
+         {
+          "test": "WebsocketClientLiteTest.ControlledCloseTests.CancellationBetweenFragmentsAllowsOnlyClose",
+          "outcome": "Failed",
+          "message": "Assert.Equal() Failure: Collections differ"
+         },
+         {
+          "test": "WebsocketClientLiteTest.CloseBoundaryTests.DisposalStopsActivePeriodicPingsBeforeClose(synchronous: False)",
+          "outcome": "Failed",
+          "message": "Assert.Equal() Failure: Collections differ"
+         },
+         {
+          "test": "WebsocketClientLiteTest.CloseBoundaryTests.CancelledParserLeavesCloseToDisposalAndDoesNotCompleteObserver",
+          "outcome": "Failed",
+          "message": "Assert.Equal() Failure: Collections differ"
+         },
+         {
+          "test": "WebsocketClientLiteTest.CloseBoundaryTests.DisposalStopsActivePeriodicPingsBeforeClose(synchronous: True)",
+          "outcome": "Failed",
+          "message": "Assert.Equal() Failure: Collections differ"
+         },
+         {
+          "test": "WebsocketClientLiteTest.ControlledCloseTests.PausedCloseWriteBlocksDisposalAndPeerRaceSendsOnce(peerFirst: True)",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : Controlled schedule: peer-close-before-local"
+         }
+        ]
+       },
+       "outcome": "failed"
+      },
+      {
+       "command": [
+        "dotnet",
+        "test",
+        "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+        "-c",
+        "Release",
+        "-p:LibTfm=net11.0",
+        "--no-build",
+        "--nologo",
+        "--filter",
+        "FullyQualifiedName~WebsocketClientLiteTest.ControlledCloseTests|FullyQualifiedName~WebsocketClientLiteTest.CloseBoundaryTests",
+        "--logger",
+        "trx;LogFileName=close-2.trx",
+        "--results-directory",
+        "<scratch>/ca/out/peer-close-as-failure"
+       ],
+       "exit": 1,
+       "timed_out": false,
+       "seconds": 16.4,
+       "log": "peer-close-as-failure/close-2.log",
+       "trx": {
+        "total": 19,
+        "passed": 14,
+        "skipped": [],
+        "not_passed": [
+         {
+          "test": "WebsocketClientLiteTest.CloseBoundaryTests.CancelledParserLeavesCloseToDisposalAndDoesNotCompleteObserver",
+          "outcome": "Failed",
+          "message": "Assert.Equal() Failure: Collections differ"
+         },
+         {
+          "test": "WebsocketClientLiteTest.CloseBoundaryTests.DisposalStopsActivePeriodicPingsBeforeClose(synchronous: True)",
+          "outcome": "Failed",
+          "message": "Assert.Equal() Failure: Collections differ"
+         },
+         {
+          "test": "WebsocketClientLiteTest.CloseBoundaryTests.DisposalStopsActivePeriodicPingsBeforeClose(synchronous: False)",
+          "outcome": "Failed",
+          "message": "Assert.Equal() Failure: Collections differ"
+         },
+         {
+          "test": "WebsocketClientLiteTest.ControlledCloseTests.PausedCloseWriteBlocksDisposalAndPeerRaceSendsOnce(peerFirst: True)",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : Controlled schedule: peer-close-before-local"
+         },
+         {
+          "test": "WebsocketClientLiteTest.ControlledCloseTests.CancellationBetweenFragmentsAllowsOnlyClose",
+          "outcome": "Failed",
+          "message": "Assert.Equal() Failure: Collections differ"
+         }
+        ]
+       },
+       "outcome": "failed"
+      },
+      {
+       "command": [
+        "dotnet",
+        "test",
+        "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+        "-c",
+        "Release",
+        "-p:LibTfm=net11.0",
+        "--no-build",
+        "--nologo",
+        "--filter",
+        "FullyQualifiedName~WebsocketClientLiteTest.ControlledCloseTests|FullyQualifiedName~WebsocketClientLiteTest.CloseBoundaryTests",
+        "--logger",
+        "trx;LogFileName=close-3.trx",
+        "--results-directory",
+        "<scratch>/ca/out/peer-close-as-failure"
+       ],
+       "exit": 1,
+       "timed_out": false,
+       "seconds": 16.4,
+       "log": "peer-close-as-failure/close-3.log",
+       "trx": {
+        "total": 19,
+        "passed": 14,
+        "skipped": [],
+        "not_passed": [
+         {
+          "test": "WebsocketClientLiteTest.ControlledCloseTests.PausedCloseWriteBlocksDisposalAndPeerRaceSendsOnce(peerFirst: True)",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : Controlled schedule: peer-close-before-local"
+         },
+         {
+          "test": "WebsocketClientLiteTest.CloseBoundaryTests.DisposalStopsActivePeriodicPingsBeforeClose(synchronous: False)",
+          "outcome": "Failed",
+          "message": "Assert.Equal() Failure: Collections differ"
+         },
+         {
+          "test": "WebsocketClientLiteTest.CloseBoundaryTests.DisposalStopsActivePeriodicPingsBeforeClose(synchronous: True)",
+          "outcome": "Failed",
+          "message": "Assert.Equal() Failure: Collections differ"
+         },
+         {
+          "test": "WebsocketClientLiteTest.CloseBoundaryTests.CancelledParserLeavesCloseToDisposalAndDoesNotCompleteObserver",
+          "outcome": "Failed",
+          "message": "Assert.Equal() Failure: Collections differ"
+         },
+         {
+          "test": "WebsocketClientLiteTest.ControlledCloseTests.CancellationBetweenFragmentsAllowsOnlyClose",
+          "outcome": "Failed",
+          "message": "Assert.Equal() Failure: Collections differ"
+         }
+        ]
+       },
+       "outcome": "failed"
+      }
+     ]
+    },
+    "all": {
+     "verdict": "detected",
+     "runs": [
+      {
+       "command": [
+        "dotnet",
+        "test",
+        "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+        "-c",
+        "Release",
+        "-p:LibTfm=net11.0",
+        "--no-build",
+        "--nologo",
+        "--filter",
+        "FullyQualifiedName~WebsocketClientLiteTest",
+        "--logger",
+        "trx;LogFileName=all-1.trx",
+        "--results-directory",
+        "<scratch>/ca/out/peer-close-as-failure"
+       ],
+       "exit": 1,
+       "timed_out": false,
+       "seconds": 26.12,
+       "log": "peer-close-as-failure/all-1.log",
+       "trx": {
+        "total": 330,
+        "passed": 323,
+        "skipped": [],
+        "not_passed": [
+         {
+          "test": "WebsocketClientLiteTest.ControlledCloseTests.PausedCloseWriteBlocksDisposalAndPeerRaceSendsOnce(peerFirst: True)",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : Controlled schedule: peer-close-before-local"
+         },
+         {
+          "test": "WebsocketClientLiteTest.CloseBoundaryTests.CancelledParserLeavesCloseToDisposalAndDoesNotCompleteObserver",
+          "outcome": "Failed",
+          "message": "Assert.Equal() Failure: Collections differ"
+         },
+         {
+          "test": "WebsocketClientLiteTest.ProtocolStateTests.ReceivedCloseBlocksDataAndSendsOnlyOneResponse",
+          "outcome": "Failed",
+          "message": "Assert.Equal() Failure: Collections differ"
+         },
+         {
+          "test": "WebsocketClientLiteTest.TeardownTests.ServerInitiatedClose_RacingSubscriptionDisposal_SendsExactlyOneCloseFrame",
+          "outcome": "Failed",
+          "message": "Assert.Equal() Failure: Values differ"
+         },
+         {
+          "test": "WebsocketClientLiteTest.CloseBoundaryTests.DisposalStopsActivePeriodicPingsBeforeClose(synchronous: True)",
+          "outcome": "Failed",
+          "message": "Assert.Equal() Failure: Collections differ"
+         },
+         {
+          "test": "WebsocketClientLiteTest.CloseBoundaryTests.DisposalStopsActivePeriodicPingsBeforeClose(synchronous: False)",
+          "outcome": "Failed",
+          "message": "Assert.Equal() Failure: Collections differ"
+         },
+         {
+          "test": "WebsocketClientLiteTest.ControlledCloseTests.CancellationBetweenFragmentsAllowsOnlyClose",
+          "outcome": "Failed",
+          "message": "Assert.Equal() Failure: Collections differ"
+         }
+        ]
+       },
+       "outcome": "failed"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "timeout-as-received",
+   "breaks": "CLOSE-003 (by the model)",
+   "kind": "wrong event",
+   "description": "The peer-wait timeout reports a received Close instead of a timeout.",
+   "source_sha256": "517d48fd4819b3f9b390f4223412dcff7550abe4dacc22d838201841b7898a24",
+   "mutant_sha256": "c4d31b0e719adbcb9227b9dcdf300dd7dc613565f77a84286aacb76b69e220ec",
+   "build": {
+    "command": [
+     "dotnet",
+     "build",
+     "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+     "-c",
+     "Release",
+     "-p:LibTfm=net11.0",
+     "--nologo"
+    ],
+    "exit": 0,
+    "timed_out": false,
+    "seconds": 1.32,
+    "log": "timeout-as-received/build.log"
+   },
+   "suites": {
+    "close": {
+     "verdict": "survived",
+     "runs": [
+      {
+       "command": [
+        "dotnet",
+        "test",
+        "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+        "-c",
+        "Release",
+        "-p:LibTfm=net11.0",
+        "--no-build",
+        "--nologo",
+        "--filter",
+        "FullyQualifiedName~WebsocketClientLiteTest.ControlledCloseTests|FullyQualifiedName~WebsocketClientLiteTest.CloseBoundaryTests",
+        "--logger",
+        "trx;LogFileName=close-1.trx",
+        "--results-directory",
+        "<scratch>/ca/out/timeout-as-received"
+       ],
+       "exit": 0,
+       "timed_out": false,
+       "seconds": 0.97,
+       "log": "timeout-as-received/close-1.log",
+       "trx": {
+        "total": 19,
+        "passed": 19,
+        "skipped": [],
+        "not_passed": []
+       },
+       "outcome": "passed"
+      },
+      {
+       "command": [
+        "dotnet",
+        "test",
+        "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+        "-c",
+        "Release",
+        "-p:LibTfm=net11.0",
+        "--no-build",
+        "--nologo",
+        "--filter",
+        "FullyQualifiedName~WebsocketClientLiteTest.ControlledCloseTests|FullyQualifiedName~WebsocketClientLiteTest.CloseBoundaryTests",
+        "--logger",
+        "trx;LogFileName=close-2.trx",
+        "--results-directory",
+        "<scratch>/ca/out/timeout-as-received"
+       ],
+       "exit": 0,
+       "timed_out": false,
+       "seconds": 0.97,
+       "log": "timeout-as-received/close-2.log",
+       "trx": {
+        "total": 19,
+        "passed": 19,
+        "skipped": [],
+        "not_passed": []
+       },
+       "outcome": "passed"
+      },
+      {
+       "command": [
+        "dotnet",
+        "test",
+        "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+        "-c",
+        "Release",
+        "-p:LibTfm=net11.0",
+        "--no-build",
+        "--nologo",
+        "--filter",
+        "FullyQualifiedName~WebsocketClientLiteTest.ControlledCloseTests|FullyQualifiedName~WebsocketClientLiteTest.CloseBoundaryTests",
+        "--logger",
+        "trx;LogFileName=close-3.trx",
+        "--results-directory",
+        "<scratch>/ca/out/timeout-as-received"
+       ],
+       "exit": 0,
+       "timed_out": false,
+       "seconds": 1.02,
+       "log": "timeout-as-received/close-3.log",
+       "trx": {
+        "total": 19,
+        "passed": 19,
+        "skipped": [],
+        "not_passed": []
+       },
+       "outcome": "passed"
+      }
+     ]
+    },
+    "all": {
+     "verdict": "survived",
+     "runs": [
+      {
+       "command": [
+        "dotnet",
+        "test",
+        "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+        "-c",
+        "Release",
+        "-p:LibTfm=net11.0",
+        "--no-build",
+        "--nologo",
+        "--filter",
+        "FullyQualifiedName~WebsocketClientLiteTest",
+        "--logger",
+        "trx;LogFileName=all-1.trx",
+        "--results-directory",
+        "<scratch>/ca/out/timeout-as-received"
+       ],
+       "exit": 0,
+       "timed_out": false,
+       "seconds": 25.77,
+       "log": "timeout-as-received/all-1.log",
+       "trx": {
+        "total": 330,
+        "passed": 330,
+        "skipped": [],
+        "not_passed": []
+       },
+       "outcome": "passed"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "peer-close-skipped",
+   "breaks": "CLOSE-003, CLOSE-005",
+   "kind": "call missing",
+   "description": "NotifyPeerClose does not call AdvanceClose.",
+   "source_sha256": "517d48fd4819b3f9b390f4223412dcff7550abe4dacc22d838201841b7898a24",
+   "mutant_sha256": "615f0334764d6fda686124fe30d623e25cd7621d64f741f886b19571ae922491",
+   "build": {
+    "command": [
+     "dotnet",
+     "build",
+     "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+     "-c",
+     "Release",
+     "-p:LibTfm=net11.0",
+     "--nologo"
+    ],
+    "exit": 0,
+    "timed_out": false,
+    "seconds": 1.27,
+    "log": "peer-close-skipped/build.log"
+   },
+   "suites": {
+    "close": {
+     "verdict": "detected",
+     "runs": [
+      {
+       "command": [
+        "dotnet",
+        "test",
+        "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+        "-c",
+        "Release",
+        "-p:LibTfm=net11.0",
+        "--no-build",
+        "--nologo",
+        "--filter",
+        "FullyQualifiedName~WebsocketClientLiteTest.ControlledCloseTests|FullyQualifiedName~WebsocketClientLiteTest.CloseBoundaryTests",
+        "--logger",
+        "trx;LogFileName=close-1.trx",
+        "--results-directory",
+        "<scratch>/ca/out/peer-close-skipped"
+       ],
+       "exit": 1,
+       "timed_out": false,
+       "seconds": 61.39,
+       "log": "peer-close-skipped/close-1.log",
+       "trx": {
+        "total": 19,
+        "passed": 10,
+        "skipped": [],
+        "not_passed": [
+         {
+          "test": "WebsocketClientLiteTest.CloseBoundaryTests.ParserCompletionAwaitsFallbackCloseBeforeObserverCompletion",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : Boundary schedule: SendingHandshakeToWebsocketServer -> HandshakeCompletedSuccessfully -> WebsocketConnected -> SingleFrameSending -> Close -> write-entered -> write-completed -> peer-wait"
+         },
+         {
+          "test": "WebsocketClientLiteTest.ControlledCloseTests.CancellationBetweenFragmentsAllowsOnlyClose",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : Controlled schedule: write-entered -> cancel-between-fragments -> write-completed -> dispose-start -> write-entered -> write-completed -> peer-wait"
+         },
+         {
+          "test": "WebsocketClientLiteTest.ControlledCloseTests.QueuedPongIsSuppressedAfterPeerClose",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : Controlled schedule: write-entered -> pong-queued -> peer-close -> write-completed -> write-entered -> write-completed -> dispose-start -> peer-wait"
+         },
+         {
+          "test": "WebsocketClientLiteTest.ControlledCloseTests.PausedCloseWriteBlocksDisposalAndPeerRaceSendsOnce(peerFirst: True)",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : Controlled schedule: peer-close-before-local -> write-entered -> dispose-start -> dispose-start -> write-completed -> peer-wait"
+         },
+         {
+          "test": "WebsocketClientLiteTest.ControlledCloseTests.ParserSignalsPeerCloseOrReadFailureBeforeTimerExpiry(readFailure: False)",
+          "outcome": "Failed",
+          "message": "Parser notification did not release Close readiness"
+         },
+         {
+          "test": "WebsocketClientLiteTest.CloseBoundaryTests.AsyncDisposalDoesNotRequireCallingSynchronizationContext",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : Boundary schedule: SendingHandshakeToWebsocketServer -> HandshakeCompletedSuccessfully -> WebsocketConnected -> SingleFrameSending -> Close -> write-entered -> write-completed -> peer-wait"
+         },
+         {
+          "test": "WebsocketClientLiteTest.CloseBoundaryTests.DisposalStopsActivePeriodicPingsBeforeClose(synchronous: False)",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : Boundary schedule: SendingHandshakeToWebsocketServer -> HandshakeCompletedSuccessfully -> WebsocketConnected -> SingleFrameSending -> PingSend -> write-entered -> write-completed -> SendComplete -> SingleFrameSending -> Close -> write-entered -> write-completed -> peer-wait"
+         },
+         {
+          "test": "WebsocketClientLiteTest.ControlledCloseTests.PausedCloseWriteBlocksDisposalAndPeerRaceSendsOnce(peerFirst: False)",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : Controlled schedule: write-entered -> peer-close-during-write -> dispose-start -> dispose-start -> write-completed -> peer-wait"
+         },
+         {
+          "test": "WebsocketClientLiteTest.CloseBoundaryTests.CancelledParserLeavesCloseToDisposalAndDoesNotCompleteObserver",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : Boundary schedule: SendingHandshakeToWebsocketServer -> HandshakeCompletedSuccessfully -> WebsocketConnected -> SingleFrameSending -> Close -> write-entered -> write-completed -> peer-wait"
+         }
+        ]
+       },
+       "outcome": "failed"
+      },
+      {
+       "command": [
+        "dotnet",
+        "test",
+        "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+        "-c",
+        "Release",
+        "-p:LibTfm=net11.0",
+        "--no-build",
+        "--nologo",
+        "--filter",
+        "FullyQualifiedName~WebsocketClientLiteTest.ControlledCloseTests|FullyQualifiedName~WebsocketClientLiteTest.CloseBoundaryTests",
+        "--logger",
+        "trx;LogFileName=close-2.trx",
+        "--results-directory",
+        "<scratch>/ca/out/peer-close-skipped"
+       ],
+       "exit": 1,
+       "timed_out": false,
+       "seconds": 61.39,
+       "log": "peer-close-skipped/close-2.log",
+       "trx": {
+        "total": 19,
+        "passed": 10,
+        "skipped": [],
+        "not_passed": [
+         {
+          "test": "WebsocketClientLiteTest.CloseBoundaryTests.ParserCompletionAwaitsFallbackCloseBeforeObserverCompletion",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : Boundary schedule: SendingHandshakeToWebsocketServer -> HandshakeCompletedSuccessfully -> WebsocketConnected -> SingleFrameSending -> Close -> write-entered -> write-completed -> peer-wait"
+         },
+         {
+          "test": "WebsocketClientLiteTest.ControlledCloseTests.PausedCloseWriteBlocksDisposalAndPeerRaceSendsOnce(peerFirst: True)",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : Controlled schedule: peer-close-before-local -> write-entered -> dispose-start -> dispose-start -> write-completed -> peer-wait"
+         },
+         {
+          "test": "WebsocketClientLiteTest.ControlledCloseTests.CancellationBetweenFragmentsAllowsOnlyClose",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : Controlled schedule: write-entered -> cancel-between-fragments -> write-completed -> dispose-start -> write-entered -> write-completed -> peer-wait"
+         },
+         {
+          "test": "WebsocketClientLiteTest.CloseBoundaryTests.AsyncDisposalDoesNotRequireCallingSynchronizationContext",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : Boundary schedule: SendingHandshakeToWebsocketServer -> HandshakeCompletedSuccessfully -> WebsocketConnected -> SingleFrameSending -> Close -> write-entered -> write-completed -> peer-wait"
+         },
+         {
+          "test": "WebsocketClientLiteTest.ControlledCloseTests.QueuedPongIsSuppressedAfterPeerClose",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : Controlled schedule: write-entered -> pong-queued -> peer-close -> write-completed -> write-entered -> write-completed -> dispose-start -> peer-wait"
+         },
+         {
+          "test": "WebsocketClientLiteTest.ControlledCloseTests.PausedCloseWriteBlocksDisposalAndPeerRaceSendsOnce(peerFirst: False)",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : Controlled schedule: write-entered -> peer-close-during-write -> dispose-start -> dispose-start -> write-completed -> peer-wait"
+         },
+         {
+          "test": "WebsocketClientLiteTest.CloseBoundaryTests.CancelledParserLeavesCloseToDisposalAndDoesNotCompleteObserver",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : Boundary schedule: SendingHandshakeToWebsocketServer -> HandshakeCompletedSuccessfully -> WebsocketConnected -> SingleFrameSending -> Close -> write-entered -> write-completed -> peer-wait"
+         },
+         {
+          "test": "WebsocketClientLiteTest.ControlledCloseTests.ParserSignalsPeerCloseOrReadFailureBeforeTimerExpiry(readFailure: False)",
+          "outcome": "Failed",
+          "message": "Parser notification did not release Close readiness"
+         },
+         {
+          "test": "WebsocketClientLiteTest.CloseBoundaryTests.DisposalStopsActivePeriodicPingsBeforeClose(synchronous: False)",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : Boundary schedule: SendingHandshakeToWebsocketServer -> HandshakeCompletedSuccessfully -> WebsocketConnected -> SingleFrameSending -> PingSend -> write-entered -> write-completed -> SendComplete -> SingleFrameSending -> Close -> write-entered -> write-completed -> peer-wait"
+         }
+        ]
+       },
+       "outcome": "failed"
+      },
+      {
+       "command": [
+        "dotnet",
+        "test",
+        "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+        "-c",
+        "Release",
+        "-p:LibTfm=net11.0",
+        "--no-build",
+        "--nologo",
+        "--filter",
+        "FullyQualifiedName~WebsocketClientLiteTest.ControlledCloseTests|FullyQualifiedName~WebsocketClientLiteTest.CloseBoundaryTests",
+        "--logger",
+        "trx;LogFileName=close-3.trx",
+        "--results-directory",
+        "<scratch>/ca/out/peer-close-skipped"
+       ],
+       "exit": 1,
+       "timed_out": false,
+       "seconds": 61.5,
+       "log": "peer-close-skipped/close-3.log",
+       "trx": {
+        "total": 19,
+        "passed": 10,
+        "skipped": [],
+        "not_passed": [
+         {
+          "test": "WebsocketClientLiteTest.CloseBoundaryTests.ParserCompletionAwaitsFallbackCloseBeforeObserverCompletion",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : Boundary schedule: SendingHandshakeToWebsocketServer -> HandshakeCompletedSuccessfully -> WebsocketConnected -> SingleFrameSending -> Close -> write-entered -> write-completed -> peer-wait"
+         },
+         {
+          "test": "WebsocketClientLiteTest.ControlledCloseTests.QueuedPongIsSuppressedAfterPeerClose",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : Controlled schedule: write-entered -> pong-queued -> peer-close -> write-completed -> write-entered -> write-completed -> dispose-start -> peer-wait"
+         },
+         {
+          "test": "WebsocketClientLiteTest.ControlledCloseTests.PausedCloseWriteBlocksDisposalAndPeerRaceSendsOnce(peerFirst: True)",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : Controlled schedule: peer-close-before-local -> write-entered -> dispose-start -> dispose-start -> write-completed -> peer-wait"
+         },
+         {
+          "test": "WebsocketClientLiteTest.CloseBoundaryTests.CancelledParserLeavesCloseToDisposalAndDoesNotCompleteObserver",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : Boundary schedule: SendingHandshakeToWebsocketServer -> HandshakeCompletedSuccessfully -> WebsocketConnected -> SingleFrameSending -> Close -> write-entered -> write-completed -> peer-wait"
+         },
+         {
+          "test": "WebsocketClientLiteTest.CloseBoundaryTests.DisposalStopsActivePeriodicPingsBeforeClose(synchronous: False)",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : Boundary schedule: SendingHandshakeToWebsocketServer -> HandshakeCompletedSuccessfully -> WebsocketConnected -> SingleFrameSending -> PingSend -> write-entered -> write-completed -> SendComplete -> SingleFrameSending -> Close -> write-entered -> write-completed -> peer-wait"
+         },
+         {
+          "test": "WebsocketClientLiteTest.ControlledCloseTests.CancellationBetweenFragmentsAllowsOnlyClose",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : Controlled schedule: write-entered -> cancel-between-fragments -> write-completed -> dispose-start -> write-entered -> write-completed -> peer-wait"
+         },
+         {
+          "test": "WebsocketClientLiteTest.CloseBoundaryTests.AsyncDisposalDoesNotRequireCallingSynchronizationContext",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : Boundary schedule: SendingHandshakeToWebsocketServer -> HandshakeCompletedSuccessfully -> WebsocketConnected -> SingleFrameSending -> Close -> write-entered -> write-completed -> peer-wait"
+         },
+         {
+          "test": "WebsocketClientLiteTest.ControlledCloseTests.PausedCloseWriteBlocksDisposalAndPeerRaceSendsOnce(peerFirst: False)",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : Controlled schedule: write-entered -> peer-close-during-write -> dispose-start -> dispose-start -> write-completed -> peer-wait"
+         },
+         {
+          "test": "WebsocketClientLiteTest.ControlledCloseTests.ParserSignalsPeerCloseOrReadFailureBeforeTimerExpiry(readFailure: False)",
+          "outcome": "Failed",
+          "message": "Parser notification did not release Close readiness"
+         }
+        ]
+       },
+       "outcome": "failed"
+      }
+     ]
+    },
+    "all": {
+     "verdict": "detected",
+     "runs": [
+      {
+       "command": [
+        "dotnet",
+        "test",
+        "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+        "-c",
+        "Release",
+        "-p:LibTfm=net11.0",
+        "--no-build",
+        "--nologo",
+        "--filter",
+        "FullyQualifiedName~WebsocketClientLiteTest",
+        "--logger",
+        "trx;LogFileName=all-1.trx",
+        "--results-directory",
+        "<scratch>/ca/out/peer-close-skipped"
+       ],
+       "exit": 1,
+       "timed_out": false,
+       "seconds": 61.47,
+       "log": "peer-close-skipped/all-1.log",
+       "trx": {
+        "total": 330,
+        "passed": 316,
+        "skipped": [],
+        "not_passed": [
+         {
+          "test": "WebsocketClientLiteTest.CloseBoundaryTests.AsyncDisposalDoesNotRequireCallingSynchronizationContext",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : Boundary schedule: SendingHandshakeToWebsocketServer -> HandshakeCompletedSuccessfully -> WebsocketConnected -> SingleFrameSending -> Close -> write-entered -> write-completed -> peer-wait"
+         },
+         {
+          "test": "WebsocketClientLiteTest.ProtocolStateTests.PongIsAllowedUntilPeerCloseThenSuppressed",
+          "outcome": "Failed",
+          "message": "Assert.Equal() Failure: Collections differ"
+         },
+         {
+          "test": "WebsocketClientLiteTest.ControlledCloseTests.ParserSignalsPeerCloseOrReadFailureBeforeTimerExpiry(readFailure: False)",
+          "outcome": "Failed",
+          "message": "Parser notification did not release Close readiness"
+         },
+         {
+          "test": "WebsocketClientLiteTest.ControlledCloseTests.CancellationBetweenFragmentsAllowsOnlyClose",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : Controlled schedule: write-entered -> cancel-between-fragments -> write-completed -> dispose-start -> write-entered -> write-completed -> peer-wait"
+         },
+         {
+          "test": "WebsocketClientLiteTest.CloseBoundaryTests.ParserCompletionAwaitsFallbackCloseBeforeObserverCompletion",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : Boundary schedule: SendingHandshakeToWebsocketServer -> HandshakeCompletedSuccessfully -> WebsocketConnected -> SingleFrameSending -> Close -> write-entered -> write-completed -> peer-wait"
+         },
+         {
+          "test": "WebsocketClientLiteTest.ControlledCloseTests.PausedCloseWriteBlocksDisposalAndPeerRaceSendsOnce(peerFirst: False)",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : Controlled schedule: write-entered -> peer-close-during-write -> dispose-start -> dispose-start -> write-completed -> peer-wait"
+         },
+         {
+          "test": "WebsocketClientLiteTest.ProtocolStateTests.ReceivedCloseBlocksDataAndSendsOnlyOneResponse",
+          "outcome": "Failed",
+          "message": "Assert.Throws() Failure: No exception was thrown"
+         },
+         {
+          "test": "WebsocketClientLiteTest.CloseBoundaryTests.CancelledParserLeavesCloseToDisposalAndDoesNotCompleteObserver",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : Boundary schedule: SendingHandshakeToWebsocketServer -> HandshakeCompletedSuccessfully -> WebsocketConnected -> SingleFrameSending -> Close -> write-entered -> write-completed -> peer-wait"
+         },
+         {
+          "test": "WebsocketClientLiteTest.QueuedWriteTests.TerminalNotificationRejectsDataWaitingAtEitherGate(frameGate: True, readFailure: False)",
+          "outcome": "Failed",
+          "message": "Assert.Throws() Failure: No exception was thrown"
+         },
+         {
+          "test": "WebsocketClientLiteTest.CloseBoundaryTests.DisposalStopsActivePeriodicPingsBeforeClose(synchronous: False)",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : Boundary schedule: SendingHandshakeToWebsocketServer -> HandshakeCompletedSuccessfully -> WebsocketConnected -> SingleFrameSending -> PingSend -> write-entered -> write-completed -> SendComplete -> SingleFrameSending -> Close -> write-entered -> write-completed -> peer-wait"
+         },
+         {
+          "test": "WebsocketClientLiteTest.PayloadLeaseTests.SuppressedQueuedPongReturnsWithoutDelegateUse",
+          "outcome": "Failed",
+          "message": "Assert.Equal() Failure: Values differ"
+         },
+         {
+          "test": "WebsocketClientLiteTest.ControlledCloseTests.PausedCloseWriteBlocksDisposalAndPeerRaceSendsOnce(peerFirst: True)",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : Controlled schedule: peer-close-before-local -> write-entered -> dispose-start -> dispose-start -> write-completed -> peer-wait"
+         },
+         {
+          "test": "WebsocketClientLiteTest.QueuedWriteTests.TerminalNotificationRejectsDataWaitingAtEitherGate(frameGate: False, readFailure: False)",
+          "outcome": "Failed",
+          "message": "Assert.Throws() Failure: No exception was thrown"
+         },
+         {
+          "test": "WebsocketClientLiteTest.ControlledCloseTests.QueuedPongIsSuppressedAfterPeerClose",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : Controlled schedule: write-entered -> pong-queued -> peer-close -> write-completed -> write-entered -> write-completed -> dispose-start -> peer-wait"
+         }
+        ]
+       },
+       "outcome": "failed"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "read-failure-skipped",
+   "breaks": "CLOSE-003, CLOSE-005",
+   "kind": "call missing",
+   "description": "NotifyReadFailure marks the send state failed but does not call AdvanceClose.",
+   "source_sha256": "517d48fd4819b3f9b390f4223412dcff7550abe4dacc22d838201841b7898a24",
+   "mutant_sha256": "2e0a25b5e957505d894ef0fe466121efeaf77c5b2b14040a2c1dcdd3bda973d0",
+   "build": {
+    "command": [
+     "dotnet",
+     "build",
+     "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+     "-c",
+     "Release",
+     "-p:LibTfm=net11.0",
+     "--nologo"
+    ],
+    "exit": 0,
+    "timed_out": false,
+    "seconds": 1.27,
+    "log": "read-failure-skipped/build.log"
+   },
+   "suites": {
+    "close": {
+     "verdict": "detected",
+     "runs": [
+      {
+       "command": [
+        "dotnet",
+        "test",
+        "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+        "-c",
+        "Release",
+        "-p:LibTfm=net11.0",
+        "--no-build",
+        "--nologo",
+        "--filter",
+        "FullyQualifiedName~WebsocketClientLiteTest.ControlledCloseTests|FullyQualifiedName~WebsocketClientLiteTest.CloseBoundaryTests",
+        "--logger",
+        "trx;LogFileName=close-1.trx",
+        "--results-directory",
+        "<scratch>/ca/out/read-failure-skipped"
+       ],
+       "exit": 1,
+       "timed_out": false,
+       "seconds": 16.35,
+       "log": "read-failure-skipped/close-1.log",
+       "trx": {
+        "total": 19,
+        "passed": 14,
+        "skipped": [],
+        "not_passed": [
+         {
+          "test": "WebsocketClientLiteTest.ControlledCloseTests.ParserSignalsPeerCloseOrReadFailureBeforeTimerExpiry(readFailure: True)",
+          "outcome": "Failed",
+          "message": "Parser notification did not release Close readiness"
+         },
+         {
+          "test": "WebsocketClientLiteTest.ControlledCloseTests.PostWriteFailureRejectsQueuedAndLaterDataAndSuppressesClose",
+          "outcome": "Failed",
+          "message": "Assert.Single() Failure: The collection contained 2 items"
+         },
+         {
+          "test": "WebsocketClientLiteTest.ControlledCloseTests.PeerWaitEndsByControlledTimeoutOrReadFailure(failure: True)",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : Controlled schedule: dispose-start -> write-entered -> write-completed -> peer-wait -> read-failure"
+         },
+         {
+          "test": "WebsocketClientLiteTest.CloseBoundaryTests.DisposalCancelsPausedPeriodicPingAndReleasesTransport",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : Boundary schedule: SendingHandshakeToWebsocketServer -> HandshakeCompletedSuccessfully -> WebsocketConnected -> SingleFrameSending -> PingSend -> write-entered -> SendError -> SingleFrameSending -> Close -> write-entered"
+         },
+         {
+          "test": "WebsocketClientLiteTest.CloseBoundaryTests.ReadFailureReleasesReadinessBeforeObserverError",
+          "outcome": "Failed",
+          "message": "Read failure did not release Close readiness before observer error"
+         }
+        ]
+       },
+       "outcome": "failed"
+      },
+      {
+       "command": [
+        "dotnet",
+        "test",
+        "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+        "-c",
+        "Release",
+        "-p:LibTfm=net11.0",
+        "--no-build",
+        "--nologo",
+        "--filter",
+        "FullyQualifiedName~WebsocketClientLiteTest.ControlledCloseTests|FullyQualifiedName~WebsocketClientLiteTest.CloseBoundaryTests",
+        "--logger",
+        "trx;LogFileName=close-2.trx",
+        "--results-directory",
+        "<scratch>/ca/out/read-failure-skipped"
+       ],
+       "exit": 1,
+       "timed_out": false,
+       "seconds": 16.35,
+       "log": "read-failure-skipped/close-2.log",
+       "trx": {
+        "total": 19,
+        "passed": 14,
+        "skipped": [],
+        "not_passed": [
+         {
+          "test": "WebsocketClientLiteTest.CloseBoundaryTests.DisposalCancelsPausedPeriodicPingAndReleasesTransport",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : Boundary schedule: SendingHandshakeToWebsocketServer -> HandshakeCompletedSuccessfully -> WebsocketConnected -> SingleFrameSending -> PingSend -> write-entered -> SendError -> SingleFrameSending -> Close -> write-entered"
+         },
+         {
+          "test": "WebsocketClientLiteTest.CloseBoundaryTests.ReadFailureReleasesReadinessBeforeObserverError",
+          "outcome": "Failed",
+          "message": "Read failure did not release Close readiness before observer error"
+         },
+         {
+          "test": "WebsocketClientLiteTest.ControlledCloseTests.PostWriteFailureRejectsQueuedAndLaterDataAndSuppressesClose",
+          "outcome": "Failed",
+          "message": "Assert.Single() Failure: The collection contained 2 items"
+         },
+         {
+          "test": "WebsocketClientLiteTest.ControlledCloseTests.PeerWaitEndsByControlledTimeoutOrReadFailure(failure: True)",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : Controlled schedule: dispose-start -> write-entered -> write-completed -> peer-wait -> read-failure"
+         },
+         {
+          "test": "WebsocketClientLiteTest.ControlledCloseTests.ParserSignalsPeerCloseOrReadFailureBeforeTimerExpiry(readFailure: True)",
+          "outcome": "Failed",
+          "message": "Parser notification did not release Close readiness"
+         }
+        ]
+       },
+       "outcome": "failed"
+      },
+      {
+       "command": [
+        "dotnet",
+        "test",
+        "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+        "-c",
+        "Release",
+        "-p:LibTfm=net11.0",
+        "--no-build",
+        "--nologo",
+        "--filter",
+        "FullyQualifiedName~WebsocketClientLiteTest.ControlledCloseTests|FullyQualifiedName~WebsocketClientLiteTest.CloseBoundaryTests",
+        "--logger",
+        "trx;LogFileName=close-3.trx",
+        "--results-directory",
+        "<scratch>/ca/out/read-failure-skipped"
+       ],
+       "exit": 1,
+       "timed_out": false,
+       "seconds": 16.35,
+       "log": "read-failure-skipped/close-3.log",
+       "trx": {
+        "total": 19,
+        "passed": 14,
+        "skipped": [],
+        "not_passed": [
+         {
+          "test": "WebsocketClientLiteTest.ControlledCloseTests.PeerWaitEndsByControlledTimeoutOrReadFailure(failure: True)",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : Controlled schedule: dispose-start -> write-entered -> write-completed -> peer-wait -> read-failure"
+         },
+         {
+          "test": "WebsocketClientLiteTest.CloseBoundaryTests.DisposalCancelsPausedPeriodicPingAndReleasesTransport",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : Boundary schedule: SendingHandshakeToWebsocketServer -> HandshakeCompletedSuccessfully -> WebsocketConnected -> SingleFrameSending -> PingSend -> write-entered -> SendError -> SingleFrameSending -> Close -> write-entered"
+         },
+         {
+          "test": "WebsocketClientLiteTest.ControlledCloseTests.ParserSignalsPeerCloseOrReadFailureBeforeTimerExpiry(readFailure: True)",
+          "outcome": "Failed",
+          "message": "Parser notification did not release Close readiness"
+         },
+         {
+          "test": "WebsocketClientLiteTest.CloseBoundaryTests.ReadFailureReleasesReadinessBeforeObserverError",
+          "outcome": "Failed",
+          "message": "Read failure did not release Close readiness before observer error"
+         },
+         {
+          "test": "WebsocketClientLiteTest.ControlledCloseTests.PostWriteFailureRejectsQueuedAndLaterDataAndSuppressesClose",
+          "outcome": "Failed",
+          "message": "Assert.Single() Failure: The collection contained 2 items"
+         }
+        ]
+       },
+       "outcome": "failed"
+      }
+     ]
+    },
+    "all": {
+     "verdict": "detected",
+     "runs": [
+      {
+       "command": [
+        "dotnet",
+        "test",
+        "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+        "-c",
+        "Release",
+        "-p:LibTfm=net11.0",
+        "--no-build",
+        "--nologo",
+        "--filter",
+        "FullyQualifiedName~WebsocketClientLiteTest",
+        "--logger",
+        "trx;LogFileName=all-1.trx",
+        "--results-directory",
+        "<scratch>/ca/out/read-failure-skipped"
+       ],
+       "exit": 1,
+       "timed_out": false,
+       "seconds": 26.22,
+       "log": "read-failure-skipped/all-1.log",
+       "trx": {
+        "total": 330,
+        "passed": 324,
+        "skipped": [],
+        "not_passed": [
+         {
+          "test": "WebsocketClientLiteTest.ControlledCloseTests.PostWriteFailureRejectsQueuedAndLaterDataAndSuppressesClose",
+          "outcome": "Failed",
+          "message": "Assert.Single() Failure: The collection contained 2 items"
+         },
+         {
+          "test": "WebsocketClientLiteTest.ControlledCloseTests.PeerWaitEndsByControlledTimeoutOrReadFailure(failure: True)",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : Controlled schedule: dispose-start -> write-entered -> write-completed -> peer-wait -> read-failure"
+         },
+         {
+          "test": "WebsocketClientLiteTest.ControlledCloseTests.ParserSignalsPeerCloseOrReadFailureBeforeTimerExpiry(readFailure: True)",
+          "outcome": "Failed",
+          "message": "Parser notification did not release Close readiness"
+         },
+         {
+          "test": "WebsocketClientLiteTest.CloseBoundaryTests.DisposalCancelsPausedPeriodicPingAndReleasesTransport",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : Boundary schedule: SendingHandshakeToWebsocketServer -> HandshakeCompletedSuccessfully -> WebsocketConnected -> SingleFrameSending -> PingSend -> write-entered -> SendError -> SingleFrameSending -> Close -> write-entered"
+         },
+         {
+          "test": "WebsocketClientLiteTest.CloseBoundaryTests.ReadFailureReleasesReadinessBeforeObserverError",
+          "outcome": "Failed",
+          "message": "Read failure did not release Close readiness before observer error"
+         },
+         {
+          "test": "WebsocketClientLiteTest.ProtocolStateTests.PartialWriteFailureForbidsFurtherFrames",
+          "outcome": "Failed",
+          "message": "WebsocketClientLite.CustomException.WebsocketClientLiteException : Websocket send error occured."
+         }
+        ]
+       },
+       "outcome": "failed"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "timeout-skipped",
+   "breaks": "CLOSE-003 (by the model)",
+   "kind": "call missing",
+   "description": "The peer-wait timeout does not call AdvanceClose.",
+   "source_sha256": "517d48fd4819b3f9b390f4223412dcff7550abe4dacc22d838201841b7898a24",
+   "mutant_sha256": "d8268c1242c6b53e69a257dfbf2f85a2db100b87845eb5ed34c633c78e134e02",
+   "build": {
+    "command": [
+     "dotnet",
+     "build",
+     "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+     "-c",
+     "Release",
+     "-p:LibTfm=net11.0",
+     "--nologo"
+    ],
+    "exit": 0,
+    "timed_out": false,
+    "seconds": 1.27,
+    "log": "timeout-skipped/build.log"
+   },
+   "suites": {
+    "close": {
+     "verdict": "survived",
+     "runs": [
+      {
+       "command": [
+        "dotnet",
+        "test",
+        "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+        "-c",
+        "Release",
+        "-p:LibTfm=net11.0",
+        "--no-build",
+        "--nologo",
+        "--filter",
+        "FullyQualifiedName~WebsocketClientLiteTest.ControlledCloseTests|FullyQualifiedName~WebsocketClientLiteTest.CloseBoundaryTests",
+        "--logger",
+        "trx;LogFileName=close-1.trx",
+        "--results-directory",
+        "<scratch>/ca/out/timeout-skipped"
+       ],
+       "exit": 0,
+       "timed_out": false,
+       "seconds": 1.02,
+       "log": "timeout-skipped/close-1.log",
+       "trx": {
+        "total": 19,
+        "passed": 19,
+        "skipped": [],
+        "not_passed": []
+       },
+       "outcome": "passed"
+      },
+      {
+       "command": [
+        "dotnet",
+        "test",
+        "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+        "-c",
+        "Release",
+        "-p:LibTfm=net11.0",
+        "--no-build",
+        "--nologo",
+        "--filter",
+        "FullyQualifiedName~WebsocketClientLiteTest.ControlledCloseTests|FullyQualifiedName~WebsocketClientLiteTest.CloseBoundaryTests",
+        "--logger",
+        "trx;LogFileName=close-2.trx",
+        "--results-directory",
+        "<scratch>/ca/out/timeout-skipped"
+       ],
+       "exit": 0,
+       "timed_out": false,
+       "seconds": 0.97,
+       "log": "timeout-skipped/close-2.log",
+       "trx": {
+        "total": 19,
+        "passed": 19,
+        "skipped": [],
+        "not_passed": []
+       },
+       "outcome": "passed"
+      },
+      {
+       "command": [
+        "dotnet",
+        "test",
+        "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+        "-c",
+        "Release",
+        "-p:LibTfm=net11.0",
+        "--no-build",
+        "--nologo",
+        "--filter",
+        "FullyQualifiedName~WebsocketClientLiteTest.ControlledCloseTests|FullyQualifiedName~WebsocketClientLiteTest.CloseBoundaryTests",
+        "--logger",
+        "trx;LogFileName=close-3.trx",
+        "--results-directory",
+        "<scratch>/ca/out/timeout-skipped"
+       ],
+       "exit": 0,
+       "timed_out": false,
+       "seconds": 0.97,
+       "log": "timeout-skipped/close-3.log",
+       "trx": {
+        "total": 19,
+        "passed": 19,
+        "skipped": [],
+        "not_passed": []
+       },
+       "outcome": "passed"
+      }
+     ]
+    },
+    "all": {
+     "verdict": "detected",
+     "runs": [
+      {
+       "command": [
+        "dotnet",
+        "test",
+        "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+        "-c",
+        "Release",
+        "-p:LibTfm=net11.0",
+        "--no-build",
+        "--nologo",
+        "--filter",
+        "FullyQualifiedName~WebsocketClientLiteTest",
+        "--logger",
+        "trx;LogFileName=all-1.trx",
+        "--results-directory",
+        "<scratch>/ca/out/timeout-skipped"
+       ],
+       "exit": 1,
+       "timed_out": false,
+       "seconds": 26.12,
+       "log": "timeout-skipped/all-1.log",
+       "trx": {
+        "total": 330,
+        "passed": 329,
+        "skipped": [],
+        "not_passed": [
+         {
+          "test": "WebsocketClientLiteTest.ProtocolStateTests.CloseResponseTimeoutMakesTheTransportTerminal",
+          "outcome": "Failed",
+          "message": "Assert.Equal() Failure: Collections differ"
+         }
+        ]
+       },
+       "outcome": "failed"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "write-failure-not-notified",
+   "breaks": "CLOSE-FAILURE (CLOSE-001, CLOSE-004)",
+   "kind": "extra: failure not reported",
+   "description": "A failed frame write is not reported to the close state, so a later Close may be appended to a partial frame.",
+   "source_sha256": "517d48fd4819b3f9b390f4223412dcff7550abe4dacc22d838201841b7898a24",
+   "mutant_sha256": "b8a6b1b430d2f5bc33ede682068ecf74846d5b3af0c769d149985a731b15e83b",
+   "build": {
+    "command": [
+     "dotnet",
+     "build",
+     "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+     "-c",
+     "Release",
+     "-p:LibTfm=net11.0",
+     "--nologo"
+    ],
+    "exit": 0,
+    "timed_out": false,
+    "seconds": 1.27,
+    "log": "write-failure-not-notified/build.log"
+   },
+   "suites": {
+    "close": {
+     "verdict": "detected",
+     "runs": [
+      {
+       "command": [
+        "dotnet",
+        "test",
+        "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+        "-c",
+        "Release",
+        "-p:LibTfm=net11.0",
+        "--no-build",
+        "--nologo",
+        "--filter",
+        "FullyQualifiedName~WebsocketClientLiteTest.ControlledCloseTests|FullyQualifiedName~WebsocketClientLiteTest.CloseBoundaryTests",
+        "--logger",
+        "trx;LogFileName=close-1.trx",
+        "--results-directory",
+        "<scratch>/ca/out/write-failure-not-notified"
+       ],
+       "exit": 1,
+       "timed_out": false,
+       "seconds": 4.58,
+       "log": "write-failure-not-notified/close-1.log",
+       "trx": {
+        "total": 19,
+        "passed": 17,
+        "skipped": [],
+        "not_passed": [
+         {
+          "test": "WebsocketClientLiteTest.ControlledCloseTests.PostWriteFailureRejectsQueuedAndLaterDataAndSuppressesClose",
+          "outcome": "Failed",
+          "message": "Assert.Single() Failure: The collection contained 4 items"
+         },
+         {
+          "test": "WebsocketClientLiteTest.CloseBoundaryTests.DisposalCancelsPausedPeriodicPingAndReleasesTransport",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : Boundary schedule: SendingHandshakeToWebsocketServer -> HandshakeCompletedSuccessfully -> WebsocketConnected -> SingleFrameSending -> PingSend -> write-entered -> SendError -> SingleFrameSending -> Close -> write-entered"
+         }
+        ]
+       },
+       "outcome": "failed"
+      },
+      {
+       "command": [
+        "dotnet",
+        "test",
+        "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+        "-c",
+        "Release",
+        "-p:LibTfm=net11.0",
+        "--no-build",
+        "--nologo",
+        "--filter",
+        "FullyQualifiedName~WebsocketClientLiteTest.ControlledCloseTests|FullyQualifiedName~WebsocketClientLiteTest.CloseBoundaryTests",
+        "--logger",
+        "trx;LogFileName=close-2.trx",
+        "--results-directory",
+        "<scratch>/ca/out/write-failure-not-notified"
+       ],
+       "exit": 1,
+       "timed_out": false,
+       "seconds": 4.57,
+       "log": "write-failure-not-notified/close-2.log",
+       "trx": {
+        "total": 19,
+        "passed": 17,
+        "skipped": [],
+        "not_passed": [
+         {
+          "test": "WebsocketClientLiteTest.CloseBoundaryTests.DisposalCancelsPausedPeriodicPingAndReleasesTransport",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : Boundary schedule: SendingHandshakeToWebsocketServer -> HandshakeCompletedSuccessfully -> WebsocketConnected -> SingleFrameSending -> PingSend -> write-entered -> SendError -> SingleFrameSending -> Close -> write-entered"
+         },
+         {
+          "test": "WebsocketClientLiteTest.ControlledCloseTests.PostWriteFailureRejectsQueuedAndLaterDataAndSuppressesClose",
+          "outcome": "Failed",
+          "message": "Assert.Single() Failure: The collection contained 4 items"
+         }
+        ]
+       },
+       "outcome": "failed"
+      },
+      {
+       "command": [
+        "dotnet",
+        "test",
+        "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+        "-c",
+        "Release",
+        "-p:LibTfm=net11.0",
+        "--no-build",
+        "--nologo",
+        "--filter",
+        "FullyQualifiedName~WebsocketClientLiteTest.ControlledCloseTests|FullyQualifiedName~WebsocketClientLiteTest.CloseBoundaryTests",
+        "--logger",
+        "trx;LogFileName=close-3.trx",
+        "--results-directory",
+        "<scratch>/ca/out/write-failure-not-notified"
+       ],
+       "exit": 1,
+       "timed_out": false,
+       "seconds": 4.52,
+       "log": "write-failure-not-notified/close-3.log",
+       "trx": {
+        "total": 19,
+        "passed": 17,
+        "skipped": [],
+        "not_passed": [
+         {
+          "test": "WebsocketClientLiteTest.CloseBoundaryTests.DisposalCancelsPausedPeriodicPingAndReleasesTransport",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : Boundary schedule: SendingHandshakeToWebsocketServer -> HandshakeCompletedSuccessfully -> WebsocketConnected -> SingleFrameSending -> PingSend -> write-entered -> SendError -> SingleFrameSending -> Close -> write-entered"
+         },
+         {
+          "test": "WebsocketClientLiteTest.ControlledCloseTests.PostWriteFailureRejectsQueuedAndLaterDataAndSuppressesClose",
+          "outcome": "Failed",
+          "message": "Assert.Single() Failure: The collection contained 4 items"
+         }
+        ]
+       },
+       "outcome": "failed"
+      }
+     ]
+    },
+    "all": {
+     "verdict": "detected",
+     "runs": [
+      {
+       "command": [
+        "dotnet",
+        "test",
+        "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+        "-c",
+        "Release",
+        "-p:LibTfm=net11.0",
+        "--no-build",
+        "--nologo",
+        "--filter",
+        "FullyQualifiedName~WebsocketClientLiteTest",
+        "--logger",
+        "trx;LogFileName=all-1.trx",
+        "--results-directory",
+        "<scratch>/ca/out/write-failure-not-notified"
+       ],
+       "exit": 1,
+       "timed_out": false,
+       "seconds": 26.12,
+       "log": "write-failure-not-notified/all-1.log",
+       "trx": {
+        "total": 330,
+        "passed": 327,
+        "skipped": [],
+        "not_passed": [
+         {
+          "test": "WebsocketClientLiteTest.ControlledCloseTests.PostWriteFailureRejectsQueuedAndLaterDataAndSuppressesClose",
+          "outcome": "Failed",
+          "message": "Assert.Single() Failure: The collection contained 4 items"
+         },
+         {
+          "test": "WebsocketClientLiteTest.ProtocolStateTests.PartialWriteFailureForbidsFurtherFrames",
+          "outcome": "Failed",
+          "message": "WebsocketClientLite.CustomException.WebsocketClientLiteException : Websocket send error occured."
+         },
+         {
+          "test": "WebsocketClientLiteTest.CloseBoundaryTests.DisposalCancelsPausedPeriodicPingAndReleasesTransport",
+          "outcome": "Failed",
+          "message": "System.TimeoutException : Boundary schedule: SendingHandshakeToWebsocketServer -> HandshakeCompletedSuccessfully -> WebsocketConnected -> SingleFrameSending -> PingSend -> write-entered -> SendError -> SingleFrameSending -> Close -> write-entered"
+         }
+        ]
+       },
+       "outcome": "failed"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "pong-suppressed-after-own-close",
+   "breaks": "none written down: the comment says Pong is still allowed after our Close",
+   "kind": "extra: misreads the state",
+   "description": "A queued Pong is dropped once our own Close is reserved, not only after a received Close or a terminal event.",
+   "source_sha256": "517d48fd4819b3f9b390f4223412dcff7550abe4dacc22d838201841b7898a24",
+   "mutant_sha256": "44c2be80363d2506b1723130569eca9e0434ba6d09f5bb1f9ed20ae6e21afae0",
+   "build": {
+    "command": [
+     "dotnet",
+     "build",
+     "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+     "-c",
+     "Release",
+     "-p:LibTfm=net11.0",
+     "--nologo"
+    ],
+    "exit": 0,
+    "timed_out": false,
+    "seconds": 1.27,
+    "log": "pong-suppressed-after-own-close/build.log"
+   },
+   "suites": {
+    "close": {
+     "verdict": "survived",
+     "runs": [
+      {
+       "command": [
+        "dotnet",
+        "test",
+        "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+        "-c",
+        "Release",
+        "-p:LibTfm=net11.0",
+        "--no-build",
+        "--nologo",
+        "--filter",
+        "FullyQualifiedName~WebsocketClientLiteTest.ControlledCloseTests|FullyQualifiedName~WebsocketClientLiteTest.CloseBoundaryTests",
+        "--logger",
+        "trx;LogFileName=close-1.trx",
+        "--results-directory",
+        "<scratch>/ca/out/pong-suppressed-after-own-close"
+       ],
+       "exit": 0,
+       "timed_out": false,
+       "seconds": 0.97,
+       "log": "pong-suppressed-after-own-close/close-1.log",
+       "trx": {
+        "total": 19,
+        "passed": 19,
+        "skipped": [],
+        "not_passed": []
+       },
+       "outcome": "passed"
+      },
+      {
+       "command": [
+        "dotnet",
+        "test",
+        "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+        "-c",
+        "Release",
+        "-p:LibTfm=net11.0",
+        "--no-build",
+        "--nologo",
+        "--filter",
+        "FullyQualifiedName~WebsocketClientLiteTest.ControlledCloseTests|FullyQualifiedName~WebsocketClientLiteTest.CloseBoundaryTests",
+        "--logger",
+        "trx;LogFileName=close-2.trx",
+        "--results-directory",
+        "<scratch>/ca/out/pong-suppressed-after-own-close"
+       ],
+       "exit": 0,
+       "timed_out": false,
+       "seconds": 0.97,
+       "log": "pong-suppressed-after-own-close/close-2.log",
+       "trx": {
+        "total": 19,
+        "passed": 19,
+        "skipped": [],
+        "not_passed": []
+       },
+       "outcome": "passed"
+      },
+      {
+       "command": [
+        "dotnet",
+        "test",
+        "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+        "-c",
+        "Release",
+        "-p:LibTfm=net11.0",
+        "--no-build",
+        "--nologo",
+        "--filter",
+        "FullyQualifiedName~WebsocketClientLiteTest.ControlledCloseTests|FullyQualifiedName~WebsocketClientLiteTest.CloseBoundaryTests",
+        "--logger",
+        "trx;LogFileName=close-3.trx",
+        "--results-directory",
+        "<scratch>/ca/out/pong-suppressed-after-own-close"
+       ],
+       "exit": 0,
+       "timed_out": false,
+       "seconds": 0.97,
+       "log": "pong-suppressed-after-own-close/close-3.log",
+       "trx": {
+        "total": 19,
+        "passed": 19,
+        "skipped": [],
+        "not_passed": []
+       },
+       "outcome": "passed"
+      }
+     ]
+    },
+    "all": {
+     "verdict": "detected",
+     "runs": [
+      {
+       "command": [
+        "dotnet",
+        "test",
+        "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+        "-c",
+        "Release",
+        "-p:LibTfm=net11.0",
+        "--no-build",
+        "--nologo",
+        "--filter",
+        "FullyQualifiedName~WebsocketClientLiteTest",
+        "--logger",
+        "trx;LogFileName=all-1.trx",
+        "--results-directory",
+        "<scratch>/ca/out/pong-suppressed-after-own-close"
+       ],
+       "exit": 1,
+       "timed_out": false,
+       "seconds": 26.07,
+       "log": "pong-suppressed-after-own-close/all-1.log",
+       "trx": {
+        "total": 330,
+        "passed": 329,
+        "skipped": [],
+        "not_passed": [
+         {
+          "test": "WebsocketClientLiteTest.ProtocolStateTests.PongIsAllowedUntilPeerCloseThenSuppressed",
+          "outcome": "Failed",
+          "message": "Assert.Equal() Failure: Collections differ"
+         }
+        ]
+       },
+       "outcome": "failed"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "data-after-close-allowed",
+   "breaks": "RFC 6455 5.5.1: no data frames after sending Close",
+   "kind": "extra: misreads the state",
+   "description": "Data frames are not rejected after the closing handshake has started.",
+   "source_sha256": "517d48fd4819b3f9b390f4223412dcff7550abe4dacc22d838201841b7898a24",
+   "mutant_sha256": "1b8655649c68d63f7ff97bc0e15636fd373781e64547c15bed7d5fcd41bcec75",
+   "build": {
+    "command": [
+     "dotnet",
+     "build",
+     "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+     "-c",
+     "Release",
+     "-p:LibTfm=net11.0",
+     "--nologo"
+    ],
+    "exit": 0,
+    "timed_out": false,
+    "seconds": 1.27,
+    "log": "data-after-close-allowed/build.log"
+   },
+   "suites": {
+    "close": {
+     "verdict": "survived",
+     "runs": [
+      {
+       "command": [
+        "dotnet",
+        "test",
+        "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+        "-c",
+        "Release",
+        "-p:LibTfm=net11.0",
+        "--no-build",
+        "--nologo",
+        "--filter",
+        "FullyQualifiedName~WebsocketClientLiteTest.ControlledCloseTests|FullyQualifiedName~WebsocketClientLiteTest.CloseBoundaryTests",
+        "--logger",
+        "trx;LogFileName=close-1.trx",
+        "--results-directory",
+        "<scratch>/ca/out/data-after-close-allowed"
+       ],
+       "exit": 0,
+       "timed_out": false,
+       "seconds": 0.97,
+       "log": "data-after-close-allowed/close-1.log",
+       "trx": {
+        "total": 19,
+        "passed": 19,
+        "skipped": [],
+        "not_passed": []
+       },
+       "outcome": "passed"
+      },
+      {
+       "command": [
+        "dotnet",
+        "test",
+        "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+        "-c",
+        "Release",
+        "-p:LibTfm=net11.0",
+        "--no-build",
+        "--nologo",
+        "--filter",
+        "FullyQualifiedName~WebsocketClientLiteTest.ControlledCloseTests|FullyQualifiedName~WebsocketClientLiteTest.CloseBoundaryTests",
+        "--logger",
+        "trx;LogFileName=close-2.trx",
+        "--results-directory",
+        "<scratch>/ca/out/data-after-close-allowed"
+       ],
+       "exit": 0,
+       "timed_out": false,
+       "seconds": 0.97,
+       "log": "data-after-close-allowed/close-2.log",
+       "trx": {
+        "total": 19,
+        "passed": 19,
+        "skipped": [],
+        "not_passed": []
+       },
+       "outcome": "passed"
+      },
+      {
+       "command": [
+        "dotnet",
+        "test",
+        "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+        "-c",
+        "Release",
+        "-p:LibTfm=net11.0",
+        "--no-build",
+        "--nologo",
+        "--filter",
+        "FullyQualifiedName~WebsocketClientLiteTest.ControlledCloseTests|FullyQualifiedName~WebsocketClientLiteTest.CloseBoundaryTests",
+        "--logger",
+        "trx;LogFileName=close-3.trx",
+        "--results-directory",
+        "<scratch>/ca/out/data-after-close-allowed"
+       ],
+       "exit": 0,
+       "timed_out": false,
+       "seconds": 0.97,
+       "log": "data-after-close-allowed/close-3.log",
+       "trx": {
+        "total": 19,
+        "passed": 19,
+        "skipped": [],
+        "not_passed": []
+       },
+       "outcome": "passed"
+      }
+     ]
+    },
+    "all": {
+     "verdict": "detected",
+     "runs": [
+      {
+       "command": [
+        "dotnet",
+        "test",
+        "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+        "-c",
+        "Release",
+        "-p:LibTfm=net11.0",
+        "--no-build",
+        "--nologo",
+        "--filter",
+        "FullyQualifiedName~WebsocketClientLiteTest",
+        "--logger",
+        "trx;LogFileName=all-1.trx",
+        "--results-directory",
+        "<scratch>/ca/out/data-after-close-allowed"
+       ],
+       "exit": 1,
+       "timed_out": false,
+       "seconds": 26.07,
+       "log": "data-after-close-allowed/all-1.log",
+       "trx": {
+        "total": 330,
+        "passed": 327,
+        "skipped": [],
+        "not_passed": [
+         {
+          "test": "WebsocketClientLiteTest.QueuedWriteTests.TerminalNotificationRejectsDataWaitingAtEitherGate(frameGate: True, readFailure: False)",
+          "outcome": "Failed",
+          "message": "Assert.Throws() Failure: No exception was thrown"
+         },
+         {
+          "test": "WebsocketClientLiteTest.QueuedWriteTests.TerminalNotificationRejectsDataWaitingAtEitherGate(frameGate: False, readFailure: False)",
+          "outcome": "Failed",
+          "message": "Assert.Throws() Failure: No exception was thrown"
+         },
+         {
+          "test": "WebsocketClientLiteTest.ProtocolStateTests.ReceivedCloseBlocksDataAndSendsOnlyOneResponse",
+          "outcome": "Failed",
+          "message": "Assert.Throws() Failure: No exception was thrown"
+         }
+        ]
+       },
+       "outcome": "failed"
+      }
+     ]
+    }
+   }
+  }
+ ],
+ "status": "complete"
+}

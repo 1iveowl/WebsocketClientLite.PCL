@@ -1,0 +1,11 @@
+--- a/src/main/WebsocketClientLite/Service/WebsocketSenderHandler.cs
++++ b/src/main/WebsocketClientLite/Service/WebsocketSenderHandler.cs
+@@ -42,7 +42,7 @@
+     private bool AdvanceClose(CloseEvent action)
+     {
+         CloseState.Step(_closeState, action, out _closeState, out bool send, out bool release);
+-        if (release) _closeReady.TrySetResult(true);
++        if (false) _closeReady.TrySetResult(true);
+         return send;
+     }
+ 

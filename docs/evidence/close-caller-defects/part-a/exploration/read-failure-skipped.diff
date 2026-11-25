@@ -1,0 +1,10 @@
+--- a/src/main/WebsocketClientLite/Service/WebsocketSenderHandler.cs
++++ b/src/main/WebsocketClientLite/Service/WebsocketSenderHandler.cs
+@@ -56,7 +56,6 @@
+         lock (_stateLock)
+         {
+             _sendState = TransmitState.SendFailed(_sendState);
+-            AdvanceClose(CloseEvent.TimeoutOrFailure);
+         }
+     }
+ 

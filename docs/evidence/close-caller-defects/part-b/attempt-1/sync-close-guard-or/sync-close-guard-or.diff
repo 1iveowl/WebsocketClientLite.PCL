@@ -1,0 +1,12 @@
+diff -ruN -x bin -x obj untouched/src/main/WebsocketClientLite/Service/WebsocketConnectionHandler.cs sync-close-guard-or/src/main/WebsocketClientLite/Service/WebsocketConnectionHandler.cs
+--- untouched/src/main/WebsocketClientLite/Service/WebsocketConnectionHandler.cs	2026-11-25 12:37:55.000000000 +0000
++++ sync-close-guard-or/src/main/WebsocketClientLite/Service/WebsocketConnectionHandler.cs	2026-11-25 12:37:55.955052745 +0000
+@@ -350,7 +350,7 @@
+         // unsubscribe -> ws.Dispose), where waiting would deadlock until the
+         // bound expires.
+         var closeOnce = _closeHandshakeOnce;
+-        if (closeOnce is not null && !closeOnce.IsValueCreated)
++        if (closeOnce is not null || !closeOnce.IsValueCreated)
+         {
+             try
+             {

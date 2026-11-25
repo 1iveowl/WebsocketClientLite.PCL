@@ -1,0 +1,928 @@
+{
+ "made": "2026-11-25",
+ "copy": "<scratch>/sync-close-guard-or",
+ "library_target": "net11.0",
+ "configuration": "Release",
+ "filter": "FullyQualifiedName=WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport&DisplayName~no-close",
+ "assertion": "Synchronous Dispose threw",
+ "runs": [
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport&DisplayName~no-close",
+    "--logger",
+    "trx;LogFileName=run-01.trx",
+    "--results-directory",
+    "<scratch>/pb/out-sync-close-guard-or"
+   ],
+   "exit": 1,
+   "timed_out": false,
+   "seconds": 1.47,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport(state: \"no-close\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0127349",
+     "message": "System.NullReferenceException : Object reference not set to an instance of an object."
+    }
+   ],
+   "outcome": "inconclusive"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport&DisplayName~no-close",
+    "--logger",
+    "trx;LogFileName=run-02.trx",
+    "--results-directory",
+    "<scratch>/pb/out-sync-close-guard-or"
+   ],
+   "exit": 1,
+   "timed_out": false,
+   "seconds": 1.52,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport(state: \"no-close\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0114327",
+     "message": "System.NullReferenceException : Object reference not set to an instance of an object."
+    }
+   ],
+   "outcome": "inconclusive"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport&DisplayName~no-close",
+    "--logger",
+    "trx;LogFileName=run-03.trx",
+    "--results-directory",
+    "<scratch>/pb/out-sync-close-guard-or"
+   ],
+   "exit": 1,
+   "timed_out": false,
+   "seconds": 1.52,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport(state: \"no-close\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0109114",
+     "message": "System.NullReferenceException : Object reference not set to an instance of an object."
+    }
+   ],
+   "outcome": "inconclusive"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport&DisplayName~no-close",
+    "--logger",
+    "trx;LogFileName=run-04.trx",
+    "--results-directory",
+    "<scratch>/pb/out-sync-close-guard-or"
+   ],
+   "exit": 1,
+   "timed_out": false,
+   "seconds": 1.47,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport(state: \"no-close\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0118777",
+     "message": "System.NullReferenceException : Object reference not set to an instance of an object."
+    }
+   ],
+   "outcome": "inconclusive"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport&DisplayName~no-close",
+    "--logger",
+    "trx;LogFileName=run-05.trx",
+    "--results-directory",
+    "<scratch>/pb/out-sync-close-guard-or"
+   ],
+   "exit": 1,
+   "timed_out": false,
+   "seconds": 1.52,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport(state: \"no-close\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0120465",
+     "message": "System.NullReferenceException : Object reference not set to an instance of an object."
+    }
+   ],
+   "outcome": "inconclusive"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport&DisplayName~no-close",
+    "--logger",
+    "trx;LogFileName=run-06.trx",
+    "--results-directory",
+    "<scratch>/pb/out-sync-close-guard-or"
+   ],
+   "exit": 1,
+   "timed_out": false,
+   "seconds": 1.52,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport(state: \"no-close\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0103627",
+     "message": "System.NullReferenceException : Object reference not set to an instance of an object."
+    }
+   ],
+   "outcome": "inconclusive"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport&DisplayName~no-close",
+    "--logger",
+    "trx;LogFileName=run-07.trx",
+    "--results-directory",
+    "<scratch>/pb/out-sync-close-guard-or"
+   ],
+   "exit": 1,
+   "timed_out": false,
+   "seconds": 1.52,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport(state: \"no-close\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0106801",
+     "message": "System.NullReferenceException : Object reference not set to an instance of an object."
+    }
+   ],
+   "outcome": "inconclusive"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport&DisplayName~no-close",
+    "--logger",
+    "trx;LogFileName=run-08.trx",
+    "--results-directory",
+    "<scratch>/pb/out-sync-close-guard-or"
+   ],
+   "exit": 1,
+   "timed_out": false,
+   "seconds": 1.52,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport(state: \"no-close\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0115162",
+     "message": "System.NullReferenceException : Object reference not set to an instance of an object."
+    }
+   ],
+   "outcome": "inconclusive"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport&DisplayName~no-close",
+    "--logger",
+    "trx;LogFileName=run-09.trx",
+    "--results-directory",
+    "<scratch>/pb/out-sync-close-guard-or"
+   ],
+   "exit": 1,
+   "timed_out": false,
+   "seconds": 1.57,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport(state: \"no-close\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0113451",
+     "message": "System.NullReferenceException : Object reference not set to an instance of an object."
+    }
+   ],
+   "outcome": "inconclusive"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport&DisplayName~no-close",
+    "--logger",
+    "trx;LogFileName=run-10.trx",
+    "--results-directory",
+    "<scratch>/pb/out-sync-close-guard-or"
+   ],
+   "exit": 1,
+   "timed_out": false,
+   "seconds": 1.52,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport(state: \"no-close\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0125854",
+     "message": "System.NullReferenceException : Object reference not set to an instance of an object."
+    }
+   ],
+   "outcome": "inconclusive"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport&DisplayName~no-close",
+    "--logger",
+    "trx;LogFileName=run-11.trx",
+    "--results-directory",
+    "<scratch>/pb/out-sync-close-guard-or"
+   ],
+   "exit": 1,
+   "timed_out": false,
+   "seconds": 1.52,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport(state: \"no-close\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0089791",
+     "message": "System.NullReferenceException : Object reference not set to an instance of an object."
+    }
+   ],
+   "outcome": "inconclusive"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport&DisplayName~no-close",
+    "--logger",
+    "trx;LogFileName=run-12.trx",
+    "--results-directory",
+    "<scratch>/pb/out-sync-close-guard-or"
+   ],
+   "exit": 1,
+   "timed_out": false,
+   "seconds": 1.47,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport(state: \"no-close\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0099652",
+     "message": "System.NullReferenceException : Object reference not set to an instance of an object."
+    }
+   ],
+   "outcome": "inconclusive"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport&DisplayName~no-close",
+    "--logger",
+    "trx;LogFileName=run-13.trx",
+    "--results-directory",
+    "<scratch>/pb/out-sync-close-guard-or"
+   ],
+   "exit": 1,
+   "timed_out": false,
+   "seconds": 1.47,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport(state: \"no-close\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0101167",
+     "message": "System.NullReferenceException : Object reference not set to an instance of an object."
+    }
+   ],
+   "outcome": "inconclusive"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport&DisplayName~no-close",
+    "--logger",
+    "trx;LogFileName=run-14.trx",
+    "--results-directory",
+    "<scratch>/pb/out-sync-close-guard-or"
+   ],
+   "exit": 1,
+   "timed_out": false,
+   "seconds": 1.47,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport(state: \"no-close\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0091001",
+     "message": "System.NullReferenceException : Object reference not set to an instance of an object."
+    }
+   ],
+   "outcome": "inconclusive"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport&DisplayName~no-close",
+    "--logger",
+    "trx;LogFileName=run-15.trx",
+    "--results-directory",
+    "<scratch>/pb/out-sync-close-guard-or"
+   ],
+   "exit": 1,
+   "timed_out": false,
+   "seconds": 1.47,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport(state: \"no-close\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0100029",
+     "message": "System.NullReferenceException : Object reference not set to an instance of an object."
+    }
+   ],
+   "outcome": "inconclusive"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport&DisplayName~no-close",
+    "--logger",
+    "trx;LogFileName=run-16.trx",
+    "--results-directory",
+    "<scratch>/pb/out-sync-close-guard-or"
+   ],
+   "exit": 1,
+   "timed_out": false,
+   "seconds": 1.47,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport(state: \"no-close\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0093047",
+     "message": "System.NullReferenceException : Object reference not set to an instance of an object."
+    }
+   ],
+   "outcome": "inconclusive"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport&DisplayName~no-close",
+    "--logger",
+    "trx;LogFileName=run-17.trx",
+    "--results-directory",
+    "<scratch>/pb/out-sync-close-guard-or"
+   ],
+   "exit": 1,
+   "timed_out": false,
+   "seconds": 1.47,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport(state: \"no-close\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0094588",
+     "message": "System.NullReferenceException : Object reference not set to an instance of an object."
+    }
+   ],
+   "outcome": "inconclusive"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport&DisplayName~no-close",
+    "--logger",
+    "trx;LogFileName=run-18.trx",
+    "--results-directory",
+    "<scratch>/pb/out-sync-close-guard-or"
+   ],
+   "exit": 1,
+   "timed_out": false,
+   "seconds": 1.47,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport(state: \"no-close\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0110887",
+     "message": "System.NullReferenceException : Object reference not set to an instance of an object."
+    }
+   ],
+   "outcome": "inconclusive"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport&DisplayName~no-close",
+    "--logger",
+    "trx;LogFileName=run-19.trx",
+    "--results-directory",
+    "<scratch>/pb/out-sync-close-guard-or"
+   ],
+   "exit": 1,
+   "timed_out": false,
+   "seconds": 1.47,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport(state: \"no-close\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0098697",
+     "message": "System.NullReferenceException : Object reference not set to an instance of an object."
+    }
+   ],
+   "outcome": "inconclusive"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport&DisplayName~no-close",
+    "--logger",
+    "trx;LogFileName=run-20.trx",
+    "--results-directory",
+    "<scratch>/pb/out-sync-close-guard-or"
+   ],
+   "exit": 1,
+   "timed_out": false,
+   "seconds": 1.47,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport(state: \"no-close\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0110715",
+     "message": "System.NullReferenceException : Object reference not set to an instance of an object."
+    }
+   ],
+   "outcome": "inconclusive"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport&DisplayName~no-close",
+    "--logger",
+    "trx;LogFileName=run-21.trx",
+    "--results-directory",
+    "<scratch>/pb/out-sync-close-guard-or"
+   ],
+   "exit": 1,
+   "timed_out": false,
+   "seconds": 1.52,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport(state: \"no-close\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0093278",
+     "message": "System.NullReferenceException : Object reference not set to an instance of an object."
+    }
+   ],
+   "outcome": "inconclusive"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport&DisplayName~no-close",
+    "--logger",
+    "trx;LogFileName=run-22.trx",
+    "--results-directory",
+    "<scratch>/pb/out-sync-close-guard-or"
+   ],
+   "exit": 1,
+   "timed_out": false,
+   "seconds": 1.42,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport(state: \"no-close\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0093376",
+     "message": "System.NullReferenceException : Object reference not set to an instance of an object."
+    }
+   ],
+   "outcome": "inconclusive"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport&DisplayName~no-close",
+    "--logger",
+    "trx;LogFileName=run-23.trx",
+    "--results-directory",
+    "<scratch>/pb/out-sync-close-guard-or"
+   ],
+   "exit": 1,
+   "timed_out": false,
+   "seconds": 1.47,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport(state: \"no-close\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0099798",
+     "message": "System.NullReferenceException : Object reference not set to an instance of an object."
+    }
+   ],
+   "outcome": "inconclusive"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport&DisplayName~no-close",
+    "--logger",
+    "trx;LogFileName=run-24.trx",
+    "--results-directory",
+    "<scratch>/pb/out-sync-close-guard-or"
+   ],
+   "exit": 1,
+   "timed_out": false,
+   "seconds": 1.47,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport(state: \"no-close\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0098236",
+     "message": "System.NullReferenceException : Object reference not set to an instance of an object."
+    }
+   ],
+   "outcome": "inconclusive"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport&DisplayName~no-close",
+    "--logger",
+    "trx;LogFileName=run-25.trx",
+    "--results-directory",
+    "<scratch>/pb/out-sync-close-guard-or"
+   ],
+   "exit": 1,
+   "timed_out": false,
+   "seconds": 1.47,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport(state: \"no-close\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0107956",
+     "message": "System.NullReferenceException : Object reference not set to an instance of an object."
+    }
+   ],
+   "outcome": "inconclusive"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport&DisplayName~no-close",
+    "--logger",
+    "trx;LogFileName=run-26.trx",
+    "--results-directory",
+    "<scratch>/pb/out-sync-close-guard-or"
+   ],
+   "exit": 1,
+   "timed_out": false,
+   "seconds": 1.47,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport(state: \"no-close\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0098631",
+     "message": "System.NullReferenceException : Object reference not set to an instance of an object."
+    }
+   ],
+   "outcome": "inconclusive"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport&DisplayName~no-close",
+    "--logger",
+    "trx;LogFileName=run-27.trx",
+    "--results-directory",
+    "<scratch>/pb/out-sync-close-guard-or"
+   ],
+   "exit": 1,
+   "timed_out": false,
+   "seconds": 1.47,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport(state: \"no-close\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0102753",
+     "message": "System.NullReferenceException : Object reference not set to an instance of an object."
+    }
+   ],
+   "outcome": "inconclusive"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport&DisplayName~no-close",
+    "--logger",
+    "trx;LogFileName=run-28.trx",
+    "--results-directory",
+    "<scratch>/pb/out-sync-close-guard-or"
+   ],
+   "exit": 1,
+   "timed_out": false,
+   "seconds": 1.47,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport(state: \"no-close\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0108740",
+     "message": "System.NullReferenceException : Object reference not set to an instance of an object."
+    }
+   ],
+   "outcome": "inconclusive"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport&DisplayName~no-close",
+    "--logger",
+    "trx;LogFileName=run-29.trx",
+    "--results-directory",
+    "<scratch>/pb/out-sync-close-guard-or"
+   ],
+   "exit": 1,
+   "timed_out": false,
+   "seconds": 1.47,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport(state: \"no-close\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0110542",
+     "message": "System.NullReferenceException : Object reference not set to an instance of an object."
+    }
+   ],
+   "outcome": "inconclusive"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport&DisplayName~no-close",
+    "--logger",
+    "trx;LogFileName=run-30.trx",
+    "--results-directory",
+    "<scratch>/pb/out-sync-close-guard-or"
+   ],
+   "exit": 1,
+   "timed_out": false,
+   "seconds": 1.47,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ControlledCloseTests.SynchronousDisposeReleasesTransport(state: \"no-close\")",
+     "outcome": "Failed",
+     "duration": "00:00:00.0095984",
+     "message": "System.NullReferenceException : Object reference not set to an instance of an object."
+    }
+   ],
+   "outcome": "inconclusive"
+  }
+ ],
+ "build": {
+  "command": [
+   "dotnet",
+   "build",
+   "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+   "-c",
+   "Release",
+   "-p:LibTfm=net11.0",
+   "--nologo"
+  ],
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 1.52
+ },
+ "verdict": "mixed: inconclusive,inconclusive,inconclusive,inconclusive,inconclusive,inconclusive,inconclusive,inconclusive,inconclusive,inconclusive,inconclusive,inconclusive,inconclusive,inconclusive,inconclusive,inconclusive,inconclusive,inconclusive,inconclusive,inconclusive,inconclusive,inconclusive,inconclusive,inconclusive,inconclusive,inconclusive,inconclusive,inconclusive,inconclusive,inconclusive",
+ "rows_per_run": [
+  1
+ ]
+}
