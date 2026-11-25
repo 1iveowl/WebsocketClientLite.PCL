@@ -85,4 +85,34 @@ public class CloseCallerEvidenceTests
         }
         Assert.ThrowsAny<Exception>(() => Evidence.ValidateCloseCallerReport(tree.Path, report, Hash));
     }
+
+    // Each case changes one mutant TRX so that only one row check can reject it, and names the
+    // check that must: a second named failure with the same message (the failing count), a
+    // named row replaced by an unrelated one (the named row count), an extra unrelated row (the
+    // total row count).
+    [Theory]
+    [InlineData("extra-failure-same-message", "Missing intended close caller assertion")]
+    [InlineData("named-row-replaced", "Missing intended close caller assertion")]
+    [InlineData("extra-result-row", "Missing close caller result rows")]
+    public void RowChecksRejectWrongRowCounts(string failure, string message)
+    {
+        using var tree = new TemporaryTree(); var report = Fixture(tree.Path);
+        var two = Evidence.CloseCallerCases.First(c => c.Rows > c.Failing);
+        var path = Path.Combine(tree.Path, two.Id, "results.trx");
+        var doc = XDocument.Load(path);
+        var rows = doc.Descendants(Ns + "UnitTestResult").Where(r => ((string?)r.Attribute("testName"))!.Contains(two.Test)).ToArray();
+        var passing = rows.Single(r => (string?)r.Attribute("outcome") == "Passed");
+        switch (failure)
+        {
+            case "extra-failure-same-message":
+                passing.SetAttributeValue("outcome", "Failed");
+                passing.Element(Ns + "Output")!.Value = two.Assertion; break;
+            case "named-row-replaced": passing.SetAttributeValue("testName", "OtherTests.Unrelated"); break;
+            default:
+                rows[0].Parent!.Add(new XElement(Ns + "UnitTestResult", new XAttribute("testName", "OtherTests.Unrelated"), new XAttribute("outcome", "Passed"))); break;
+        }
+        doc.Save(path);
+        var thrown = Assert.ThrowsAny<Exception>(() => Evidence.ValidateCloseCallerReport(tree.Path, report, Hash));
+        Assert.Equal(message, thrown.Message);
+    }
 }
