@@ -1,6 +1,6 @@
 {
  "made": "2026-11-25",
- "note": "Caller-side Close defects in WebsocketSenderHandler.cs: the close step (Protocol.CloseStep) is unchanged and right; the shell around it is wrong. Seeded one at a time in a git archive copy.",
+ "note": "Caller-side Close defects in WebsocketSenderHandler.cs: the close step (Protocol.CloseStep) is unchanged and right; the shell around it is wrong. Seeded one at a time in a git archive copy. The 'breaks' fields of read-failure-as-received, write-failure-not-notified and data-after-close-allowed were corrected after the recorded runs, following the fresh review of #190 (M2, L7); no edit changed.",
  "sides": {
   "base": {
    "commit": "b7a6bccef977d91fb4b142dcdee8729872f7e2f6"
@@ -114,7 +114,7 @@
   {
    "id": "read-failure-as-received",
    "kind": "wrong event",
-   "breaks": "CLOSE-001, CLOSE-003 (by the model); see the results for whether behaviour changes",
+   "breaks": "CLOSE-003, CLOSE-FAILURE",
    "description": "NotifyReadFailure reports a received Close instead of a timeout or failure.",
    "file": "src/main/WebsocketClientLite/Service/WebsocketSenderHandler.cs",
    "edits": [
@@ -218,7 +218,7 @@
   {
    "id": "data-after-close-allowed",
    "kind": "extra: misreads the state",
-   "breaks": "RFC 6455 5.5.1: no data frames after sending Close",
+   "breaks": "WRITE-001 (library policy: reject queued data after terminal notification); not RFC 6455 5.5.1, which SendStep already enforces after our own Close",
    "description": "Data frames are not rejected after the closing handshake has started.",
    "file": "src/main/WebsocketClientLite/Service/WebsocketSenderHandler.cs",
    "edits": [

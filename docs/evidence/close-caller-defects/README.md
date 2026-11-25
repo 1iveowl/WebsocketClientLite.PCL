@@ -6,7 +6,9 @@ No production file, disposition or gate changed.
 Host: Ubuntu 24.04.5 LTS dev container, kernel 7.3.4+deb13-amd64, 32 CPUs, .NET SDK
 11.0.100, test host .NET 11.0.0 (`-p:LibTfm=net11.0` throughout), Release. The scratch
 directory's absolute path is replaced with `<scratch>` in every file here, ignoring case,
-and also inside each `raw.zip`, including paths that a console log wrapped across lines.
+and also inside each `raw.zip`. Stryker's console wraps long paths across lines. The
+first redaction missed the second half of those wrapped paths, and the fresh review of #190
+found it (L6). It was redone on every file and zip here and in #189's evidence.
 Each `raw.zip` holds that folder's TRX files, logs and reports; the JSON beside it is the
 summary that the tables are read from.
 
@@ -22,6 +24,8 @@ tests in its own worktree on the same host for part of the time.
 | `9d1e8d7` | The test runs the harness cleanup itself, so that a cleanup failure cannot replace the named one |
 | `2547658` | `close-caller-defects` added to `tools/Pdd` |
 | `e6fc58a` | `release-early` names a deterministic test |
+| `b619ed0` | The report and this evidence (the head the fresh review of #190 read) |
+| `be840f8`, `9093fc0` | After the fresh review: the test reports a cleanup failure when its body passed (L2); the validator's three row checks are pinned (M3) |
 
 ## Part A
 
@@ -55,6 +59,11 @@ tests in its own worktree on the same host for part of the time.
   `2547658`, 13:23:31 to 13:23:40 UTC: **run and failed**, "Missing intended close caller
   assertion" on `release-early`, where one of the two PeerWait rows passed. This failure
   is what led to the 30-run probe.
+- `part-a/pdd-evidence-row-checks/`: after review finding M3, `git archive 9093fc0` copies
+  in which one row check of `ValidateCloseCallerResult` is removed (`no-total.diff`,
+  `no-named.diff`, `no-failing.diff`), each running `CloseCallerEvidenceTests`: untouched 16
+  of 16 passed; each edited copy failed exactly its own `RowChecksRejectWrongRowCounts` case
+  (`console.txt`, TRX files in `raw.zip`).
 - `part-a/pdd-close-caller-defects-2/`: the same at `e6fc58a`, 13:40:23 to 13:40:57 UTC:
   run and passed, 13 of 13. `dirty_worktree: true` in both runs: this evidence folder was
   untracked, and no source input differed.
@@ -73,6 +82,9 @@ Runner: `repeat_runs.py` of `docs/evidence/reconnect-disposal-schedules/` (#189)
 | 2, `2547658` | untouched | both rows | run and passed, 30 of 30; `no-close` 0.007 to 0.011 s, `close-finished` 0.016 to 0.021 s |
 | 2 | `sync-transport-release` | both rows | run and failed, 30 of 30, both rows, "Synchronous Dispose did not release the transport" |
 | 2 | `sync-close-guard-or` | `no-close` row | run and failed, 30 of 30, "Synchronous Dispose threw: System.NullReferenceException" |
+| 3, `9093fc0` (the cleanup change of review finding L2) | untouched | both rows | run and passed, 30 of 30, 14:45:24 to 14:45:53 UTC; `no-close` 0.005 to 0.011 s, `close-finished` 0.017 to 0.022 s |
+| 3 | `sync-transport-release` | both rows | run and failed, 30 of 30, both rows, "Synchronous Dispose did not release the transport" |
+| 3 | `sync-close-guard-or` | `no-close` row | run and failed, 30 of 30, "Synchronous Dispose threw: System.NullReferenceException" |
 
 ## Stryker
 
@@ -83,11 +95,12 @@ Runner: `repeat_runs.py` of `docs/evidence/reconnect-disposal-schedules/` (#189)
 - `stryker/sender-exploratory-c8/`: a copy of `e6fc58a` whose `stryker-config.json`
   mutates `**/Service/WebsocketSenderHandler.cs` instead (`config.diff`), run with
   `./scripts/stryker-close.sh`, 8 workers, 13:47:26 to 13:56:03 UTC: run and completed,
-  8 minutes 37 seconds. 166 tested: 112 Killed, 53 Survived, 11 NoCoverage, 1 Timeout,
-  3 CompileError, 43 Ignored, score 63.84 %.
+  8 minutes 37 seconds. 166 tested (112 Killed, 53 Survived, 1 Timeout), and besides those
+  11 NoCoverage, 3 CompileError and 43 Ignored; score 113 of 177, 63.84 %.
 - `stryker/sender-exploratory-c2/`: the same copy with `--concurrency 2`, as CI runs the
-  gate, 13:56:56 to 14:27:01 UTC: run and completed, **30 minutes 4 seconds**. 110 Killed,
-  53 Survived, 11 NoCoverage, 3 Timeout, 3 CompileError, 43 Ignored, score 63.84 %.
+  gate, 13:56:56 to 14:27:01 UTC: run and completed, **30 minutes 4 seconds**. 166 tested
+  (110 Killed, 53 Survived, 3 Timeout), and besides those 11 NoCoverage, 3 CompileError and
+  43 Ignored; score 63.84 %.
 
 ## Checks
 

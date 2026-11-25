@@ -42,11 +42,11 @@ update the report in real-time.
 
 Your json report has been generated at:
 file://<scratch>
-11c-ec22dd9949c5/scratchpad/stryker-sender/out/reports/mutation-report.json
+<scratch>
 
 Your html report has been generated at:
 file://<scratch>
-11c-ec22dd9949c5/scratchpad/stryker-sender/out/reports/mutation-report.html
+<scratch>
 You can open it in your browser of choice.
 [13:56:03 INF] Time Elapsed 00:08:36.6644409
 [13:56:03 INF] The final mutation score is 63.84 %

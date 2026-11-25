@@ -50,15 +50,15 @@ in 30 of 30 runs.
 | 6 | `state-stored-outside-lock` | `_stateLock` is released around the store of the new state | CLOSE-LOCK | **survived** | survived (4) | none |
 | 7 | `peer-close-outside-lock` | `NotifyPeerClose` calls `AdvanceClose` without the lock | CLOSE-LOCK | **survived** | survived (4) | none |
 | 8 | `send-decided-outside-lock` | `WriteFrameSerializedAsync` decides the Close send before it takes the lock | CLOSE-LOCK | **survived** | survived (4) | none |
-| 9 | `read-failure-as-received` | `NotifyReadFailure` reports a received Close | CLOSE-003 | caught | caught (1) | `CloseBoundaryTests.ReadFailureReleasesReadinessBeforeObserverError` |
+| 9 | `read-failure-as-received` | `NotifyReadFailure` reports a received Close | CLOSE-003, CLOSE-FAILURE (a Close written after a failed write, which `PostWriteFailure…` also shows) | caught | caught (1) | `CloseBoundaryTests.ReadFailureReleasesReadinessBeforeObserverError` |
 | 10 | `peer-close-as-failure` | `NotifyPeerClose` reports a timeout or failure | CLOSE-001 (RFC 6455 5.5.1: reply to a Close) | caught | caught (1) | `ControlledCloseTests.CancellationBetweenFragmentsAllowsOnlyClose` |
 | 11 | `timeout-as-received` | The peer-wait timeout reports a received Close | none observable (below) | **survived** | survived (4) | none |
 | 12 | `peer-close-skipped` | `NotifyPeerClose` does not call `AdvanceClose` | CLOSE-003, CLOSE-005 | caught | caught (1) | `ControlledCloseTests.ParserSignalsPeerCloseOrReadFailureBeforeTimerExpiry`, the peer Close row |
 | 13 | `read-failure-skipped` | `NotifyReadFailure` does not call `AdvanceClose` | CLOSE-003, CLOSE-005 | caught | caught (1) | `CloseBoundaryTests.ReadFailureReleasesReadinessBeforeObserverError` |
 | 14 | `timeout-skipped` | The timeout path does not call `AdvanceClose` | CLOSE-003 | survived | caught (4) | `ProtocolStateTests.CloseResponseTimeoutMakesTheTransportTerminal` |
-| 15 | `write-failure-not-notified` | Extra: a failed frame write is not reported to the close state | CLOSE-FAILURE, CLOSE-001 | caught | caught (1) | `ControlledCloseTests.PostWriteFailureRejectsQueuedAndLaterDataAndSuppressesClose` |
+| 15 | `write-failure-not-notified` | Extra: a failed frame write is not reported to the close state | CLOSE-FAILURE, CLOSE-001, CLOSE-004 | caught | caught (1) | `ControlledCloseTests.PostWriteFailureRejectsQueuedAndLaterDataAndSuppressesClose` |
 | 16 | `pong-suppressed-after-own-close` | Extra: a queued Pong is dropped once our own Close is reserved | none written; the code comment allows Pong until the peer's Close | survived | caught (4) | `ProtocolStateTests.PongIsAllowedUntilPeerCloseThenSuppressed` |
-| 17 | `data-after-close-allowed` | Extra: data frames are not rejected after the closing handshake started | RFC 6455 5.5.1 | survived | caught (4) | `ProtocolStateTests.ReceivedCloseBlocksDataAndSendsOnlyOneResponse` |
+| 17 | `data-after-close-allowed` | Extra: data frames are not rejected after the closing handshake started | WRITE-001 (library policy: reject queued data after terminal notification). Not RFC 6455 5.5.1: after our own Close, `SendStep` rejects data on its own | survived | caught (4) | `ProtocolStateTests.ReceivedCloseBlocksDataAndSendsOnlyOneResponse` |
 
 The three extra defects (15 to 17) misuse what the step returns or the state it leaves,
 in the same lines as the call: 15 is the second caller of `NotifyReadFailure`, the write
@@ -66,10 +66,10 @@ path's catch; 16 and 17 read `_closeState` to decide on Pong and data frames.
 
 For the owner to quote: **of 17 caller-side Close defects seeded in
 `WebsocketSenderHandler.cs`, the existing tests caught 13, each with a test that failed on
-its named assertion in 30 of 30 runs. The four survivors are three lock defects, which no
-test can reach without a seam inside `AdvanceClose`, and one wrong event that, by reading,
-changes no behaviour.** Unlike reconnect, the shell's misuse of the verified answer is
-caught here; what is not caught is the lock.
+its named assertion in 30 of 30 runs. The four survivors are three lock defects and one
+wrong event that, by reading, changes no behaviour.** Unlike reconnect, the shell's misuse
+of the verified answer is caught here; what is not caught is the lock. Whether two of the
+lock defects should get a test is an open question for the owner (below).
 
 No new test was written for Part A. Each surviving defect either needs a production seam
 to be reached, or changes no behaviour:
@@ -77,12 +77,27 @@ to be reached, or changes no behaviour:
 - **The three lock defects (6, 7, 8)** break the boundary assumption CLOSE-LOCK ("All
   CloseStep calls serialize access to the same sender state under `_stateLock`"), whose
   exclusion reads "No proof of C# locking, state persistence or exhaustive interleavings".
-  Each opens a window of a few instructions inside `AdvanceClose` or just before it. A
-  wrong result needs a second close event, on another thread, between the read and the
-  store. No callback, delegate or status runs inside that window, so a test cannot hold a
-  thread there with a barrier. It could only hope for the race. Forcing it needs an
-  internal hook inside `AdvanceClose`, which is a production change and out of scope here.
-  Left for the owner.
+  None breaks a CLOSE- requirement by itself. A wrong result, a lost update, needs a second
+  close event, on another thread, inside a window of a few instructions. No callback,
+  delegate or status runs inside that window, so no barrier can force a lost update.
+  Forcing one needs an internal hook inside `AdvanceClose`, which is a production change.
+
+  The fresh review of #190 (finding M1) showed that a test can detect a *missing lock* in
+  defects 7 and 8 without forcing a lost update. The test takes `_stateLock` itself, by
+  reflection, and starts `NotifyPeerClose` (7) or `SendCloseHandshakeAsync` (8) on a
+  dedicated thread. Then it waits until that thread is either blocked (`WaitSleepJoin`) or
+  finished, and checks that the close state has not moved. The reviewer's scratch probe,
+  not committed, failed 21 of 21 runs with each defect and passed 21 of 21 on unchanged
+  code. It does not cover defect 6, where the lock is released inside `AdvanceClose`. No
+  such test was added here, for three reasons:
+  - It orders nothing with a barrier. It spins on `Thread.ThreadState`, and the task asked
+    for barriers.
+  - `WaitSleepJoin` is any wait, not only the one on `_stateLock`.
+  - Whether that counts as an explicit signal under rule 6 is a question of method for the
+    owner (rule 9).
+
+  The probe's copies and output were kept outside the repository and are not part of this
+  evidence.
 - **`timeout-as-received` (11)** stores state 3 (sent and received) instead of 5 (sent and
   terminal). By reading, every later decision is the same. `WaitForPeerCloseAsync` runs
   only after `SendCloseHandshakeAsync` returned. It returns without the reservation bit
@@ -90,7 +105,11 @@ to be reached, or changes no behaviour:
   released and the timer cannot win. So the sent bit is always set when the timeout
   fires. From state 3 or 5, Send returns no send, Received and TimeoutOrFailure return
   release, and `Started` and `ReceivedOrTerminal` are both true. The model differs, and
-  the behaviour does not. Recorded as equivalent, for the owner to confirm.
+  the behaviour does not. Recorded as equivalent, for the owner to confirm. Confirming it
+  leaves part of a written obligation without visible behaviour. `requirements.json` gives
+  `WaitForPeerCloseAsync`, under CLOSE-003, the responsibility "Translate peer-wait expiry
+  to event 2", and this defect breaks only that translation (`catalog.json` maps it to
+  CLOSE-003).
 
 ### The repeatable experiment
 
@@ -98,7 +117,10 @@ to be reached, or changes no behaviour:
 runs the 13 caught defects. It copies the repository inputs, runs a baseline of the named
 tests, then applies each edit alone. Each must fail its named test on its named assertion,
 in the stated number of rows, with the other rows passing. A timeout message, a build
-failure, a missing row or an extra failing row does not count (`tools/Pdd.Tests/CloseCallerEvidenceTests.cs`).
+failure, a wrong total, a missing named row or an extra failing row does not count
+(`tools/Pdd.Tests/CloseCallerEvidenceTests.cs`). After finding M3 of the fresh review, each
+of the three row checks is pinned by its own case: removing it in a copy fails that case
+and only that one (`part-a/pdd-evidence-row-checks/`).
 The first run failed on `release-early`, which is how its race was found
 (`part-a/pdd-close-caller-defects-1/`). The second, at `e6fc58a`, passed 13 of 13 in 34
 seconds (`part-a/pdd-close-caller-defects-2/`). The command is standalone: it is not part
@@ -112,8 +134,9 @@ thrown"), because the detecting tests use bare `Assert.Equal`, `Assert.Single` a
 
 Measured, not changed. An exploratory run in a copy at `e6fc58a`, with only the
 `mutate` pattern of `stryker-config.json` changed, ran on this host in 8 minutes 37 seconds
-with the configured 8 workers. It found 166 testable mutants: 112 Killed, 53 Survived,
-11 NoCoverage, 1 Timeout, 3 CompileError (score 63.84 %). For comparison, the gate's own run
+with the configured 8 workers. Stryker tested 166 mutants: 112 Killed, 53 Survived and
+1 Timeout. A further 11 were NoCoverage and 3 CompileError, and the score, 113 of 177, is
+63.84 %. For comparison, the gate's own run
 (`WebsocketConnectionHandler.cs`, same host and workers, at `e6fc58a`) took 6 minutes
 27 seconds. CI runs the Stryker job with 2 workers
 (`--stryker-concurrency 2`, a 1800-second command budget). The same exploratory run with
@@ -134,9 +157,13 @@ defects above:
   running after the peer's Close. That is a resource or liveness matter, which CLOSE-TIMER excludes.
 - Two exception message strings (lines 428 and 430).
 
-Stryker's operators cannot express the lock defects, the wrong events or a missing call
-on a path with more than one statement. Those are the defects that matter here, and
-`close-caller-defects` covers the ones that can be caught. Extending the gate would add,
+Stryker's operators cannot express the lock defects or the wrong events. Its statement and
+statement and logical mutations do express five of the catalog's defects, and all five
+were Killed: `peer-close-skipped`, `read-failure-skipped`, `timeout-skipped` and
+`write-failure-not-notified` (statement removals at lines 51, 59, 69 and 438) and
+`send-inverted` (the un-negation at line 422). Four other mutants of the Pong check at line
+426 were Killed too. So the gate would add
+little that `close-caller-defects` does not already check. Extending the gate would add,
 at a minimum, 64 new dispositions (53 survivors and 11 NoCoverage, 44 of the survivors
 outside the Close code) for the owner to review. Recommendation: **not worth its run time
 as a gate now**. It would break the current budget, and it would add review work for
@@ -164,7 +191,9 @@ a close task. `"close-finished"` disposes one whose shared close task has alread
 completed. So nothing here asserts graceful Close behaviour on this path, which
 CLOSE-OBSERVER excludes. Its first version reported the 353 mutant as a raw
 `NullReferenceException`, because the harness cleanup disposed again and replaced the
-named failure. The test now runs that cleanup itself (`9d1e8d7`); the earlier runs are kept.
+named failure. The test now runs that cleanup itself (`9d1e8d7`). Since the fresh review
+of #190 (L2), a cleanup failure still fails the test when the body passed (`be840f8`). All
+three Part B runs were repeated at `9093fc0` with the same results; every earlier run is kept.
 
 **361 and 362** affect only fault observation, after the three-second wait has timed out.
 With 361, the continuation is attached when the close finished in time, which does nothing,
@@ -177,9 +206,12 @@ the only effect is that a close task which later faults goes unobserved.
    excludes ("Concurrent synchronous Dispose … may abort graceful closure");
 2. a real three-second wait, because the bound is a literal with no seam (CLOSE-TIMER
    excludes wall-clock guarantees);
-3. a throwing status callback (CLOSE-OBSERVER: "Blocking callbacks … may prevent completion");
-4. observing `TaskScheduler.UnobservedTaskException` after a forced garbage collection. That
-   event is process-wide, so it would see faults from other tests running in parallel.
+3. a throwing `Disconnected` status callback, outside the CLOSE-OBSERVER assumption
+   "Callbacks and resource disposal return";
+4. observing the unobserved fault, through `TaskScheduler.UnobservedTaskException` after a
+   forced garbage collection, which needs the handler and its `Lazy` to become unreachable.
+   A test could filter the process-wide event by its own exception instance; the forced
+   collection and the three-second literal are what make it unreliable.
 
 Each of these is excluded or unreliable, so no test was written. Both stay out of scope, as
 classified. A test would become reasonable only if the three-second bound got a seam and the
@@ -195,13 +227,16 @@ of this work. Whether to require 687 in `required_killed` is the owner's decisio
 
 | Test | Per case, 30 runs |
 | --- | --- |
-| `SynchronousDisposeReleasesTransport("no-close")` | 0.007 to 0.011 s |
-| `SynchronousDisposeReleasesTransport("close-finished")` | 0.016 to 0.021 s |
+| `SynchronousDisposeReleasesTransport("no-close")` | 0.005 to 0.011 s |
+| `SynchronousDisposeReleasesTransport("close-finished")` | 0.016 to 0.022 s |
 | `./scripts/pdd.sh close-caller-defects` | 34 s for the baseline and 13 edits |
 
 ## Left for the owner
 
-- Confirm `timeout-as-received` as equivalent, and decide whether the three lock defects
+- Whether to accept the lock-holding probe of review finding M1 as a test method (it
+  spins on `Thread.ThreadState`) for defects 7 and 8.
+- Confirm `timeout-as-received` as equivalent (with the CLOSE-003 responsibility it leaves
+  unobservable), and decide whether the three lock defects
   justify an internal seam inside `AdvanceClose`, so that a schedule can force the race.
 - Whether to wire `close-caller-defects` into `capture --job controlled` and `aggregate`.
 - Whether to add mutant 687 (line 373) to `required_killed`.
