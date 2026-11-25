@@ -25,7 +25,7 @@ public class ReconnectEvidenceTests
         var report = new JsonObject { ["status"] = "passed", ["library_target"] = Evidence.PrimaryTfm, ["baseline"] = Run(true), ["experiments"] = new JsonArray() };
         foreach (var c in Evidence.ReconnectCases)
         {
-            Write(c.Id, new[] { (c.Test, "Failed", c.Assertion), runtime });
+            Write(c.Id, Enumerable.Range(0, Evidence.ReconnectCaseCounts[c.Test]).Select(i => ("ReconnectTests." + c.Test + "(" + i + ")", "Failed", c.Assertion)).Append(runtime));
             report["experiments"]!.AsArray().Add(new JsonObject { ["id"] = c.Id, ["status"] = "passed", ["test"] = c.Test, ["assertion"] = c.Assertion,
                 ["source_hash"] = Hash, ["mutant_hash"] = new string('b', 64), ["before"] = c.Before, ["after"] = c.After, ["run"] = Run(false), ["host_runtime"] = ".NET 10 fixture" });
         }
@@ -50,6 +50,7 @@ public class ReconnectEvidenceTests
     [InlineData("missing-case")]
     [InlineData("missing-mutant")]
     [InlineData("duplicate-mutant")]
+    [InlineData("partial-rows")]
     public void InvalidEvidenceCannotCountAsDetection(string failure)
     {
         using var tree = new TemporaryTree(); var report = Fixture(tree.Path);
@@ -67,6 +68,10 @@ public class ReconnectEvidenceTests
             case "missing-mutant": report["experiments"]!.AsArray().RemoveAt(0); break;
             case "duplicate-mutant": report["experiments"]!.AsArray().Add(entry.DeepClone()); break;
             case "assertion": File.WriteAllText(trx, File.ReadAllText(trx).Replace(Evidence.ReconnectCases[0].Assertion, "Stuck owner")); break;
+            case "partial-rows":
+                // One row of a two-row theory passing with the defect seeded is not a detection.
+                var rows = Path.Combine(tree.Path, "register-ignores-disposal/results.trx");
+                var doc = XDocument.Load(rows); doc.Descendants(Ns + "UnitTestResult").First().SetAttributeValue("outcome", "Passed"); doc.Save(rows); break;
             case "missing-case":
                 var path = Path.Combine(tree.Path, "baseline/results.trx");
                 var xml = XDocument.Load(path); xml.Descendants(Ns + "UnitTestResult").First().Remove(); xml.Save(path); break;
