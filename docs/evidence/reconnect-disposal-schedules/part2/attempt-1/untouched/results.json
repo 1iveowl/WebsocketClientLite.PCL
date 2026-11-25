@@ -1,0 +1,1468 @@
+{
+ "made": "2026-11-25",
+ "copy": "<scratch>/untouched",
+ "library_target": "net11.0",
+ "configuration": "Release",
+ "filter": "FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService|FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender",
+ "assertion": null,
+ "runs": [
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService|FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender",
+    "--logger",
+    "trx;LogFileName=run-01.trx",
+    "--results-directory",
+    "<scratch>/p2/out-untouched"
+   ],
+   "exit": 0,
+   "timed_out": false,
+   "seconds": 0.92,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender(mode: \"async\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0037964",
+     "message": ""
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender(mode: \"dispose\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0286883",
+     "message": ""
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService(mode: \"async\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0027856",
+     "message": ""
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService(mode: \"dispose\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0263549",
+     "message": ""
+    }
+   ],
+   "outcome": "passed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService|FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender",
+    "--logger",
+    "trx;LogFileName=run-02.trx",
+    "--results-directory",
+    "<scratch>/p2/out-untouched"
+   ],
+   "exit": 0,
+   "timed_out": false,
+   "seconds": 0.97,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService(mode: \"async\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0027238",
+     "message": ""
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService(mode: \"dispose\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0233458",
+     "message": ""
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender(mode: \"dispose\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0260831",
+     "message": ""
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender(mode: \"async\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0033931",
+     "message": ""
+    }
+   ],
+   "outcome": "passed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService|FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender",
+    "--logger",
+    "trx;LogFileName=run-03.trx",
+    "--results-directory",
+    "<scratch>/p2/out-untouched"
+   ],
+   "exit": 0,
+   "timed_out": false,
+   "seconds": 0.92,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService(mode: \"async\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0025823",
+     "message": ""
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService(mode: \"dispose\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0246374",
+     "message": ""
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender(mode: \"dispose\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0291609",
+     "message": ""
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender(mode: \"async\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0021650",
+     "message": ""
+    }
+   ],
+   "outcome": "passed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService|FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender",
+    "--logger",
+    "trx;LogFileName=run-04.trx",
+    "--results-directory",
+    "<scratch>/p2/out-untouched"
+   ],
+   "exit": 1,
+   "timed_out": false,
+   "seconds": 16.36,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender(mode: \"dispose\")",
+     "outcome": "Failed",
+     "duration": "00:00:15.0430080",
+     "message": "The schedule did not hold the handshake until disposal returned"
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService(mode: \"dispose\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0225968",
+     "message": ""
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender(mode: \"async\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0066211",
+     "message": ""
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService(mode: \"async\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0028500",
+     "message": ""
+    }
+   ],
+   "outcome": "inconclusive"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService|FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender",
+    "--logger",
+    "trx;LogFileName=run-05.trx",
+    "--results-directory",
+    "<scratch>/p2/out-untouched"
+   ],
+   "exit": 0,
+   "timed_out": false,
+   "seconds": 1.02,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender(mode: \"async\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0016007",
+     "message": ""
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender(mode: \"dispose\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0277923",
+     "message": ""
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService(mode: \"dispose\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0251068",
+     "message": ""
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService(mode: \"async\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0031711",
+     "message": ""
+    }
+   ],
+   "outcome": "passed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService|FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender",
+    "--logger",
+    "trx;LogFileName=run-06.trx",
+    "--results-directory",
+    "<scratch>/p2/out-untouched"
+   ],
+   "exit": 0,
+   "timed_out": false,
+   "seconds": 0.92,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService(mode: \"dispose\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0224718",
+     "message": ""
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService(mode: \"async\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0024275",
+     "message": ""
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender(mode: \"dispose\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0254074",
+     "message": ""
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender(mode: \"async\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0025228",
+     "message": ""
+    }
+   ],
+   "outcome": "passed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService|FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender",
+    "--logger",
+    "trx;LogFileName=run-07.trx",
+    "--results-directory",
+    "<scratch>/p2/out-untouched"
+   ],
+   "exit": 0,
+   "timed_out": false,
+   "seconds": 0.97,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService(mode: \"async\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0020496",
+     "message": ""
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender(mode: \"dispose\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0264199",
+     "message": ""
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService(mode: \"dispose\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0227558",
+     "message": ""
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender(mode: \"async\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0031852",
+     "message": ""
+    }
+   ],
+   "outcome": "passed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService|FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender",
+    "--logger",
+    "trx;LogFileName=run-08.trx",
+    "--results-directory",
+    "<scratch>/p2/out-untouched"
+   ],
+   "exit": 0,
+   "timed_out": false,
+   "seconds": 0.92,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService(mode: \"async\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0030236",
+     "message": ""
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender(mode: \"async\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0017233",
+     "message": ""
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender(mode: \"dispose\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0290098",
+     "message": ""
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService(mode: \"dispose\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0230495",
+     "message": ""
+    }
+   ],
+   "outcome": "passed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService|FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender",
+    "--logger",
+    "trx;LogFileName=run-09.trx",
+    "--results-directory",
+    "<scratch>/p2/out-untouched"
+   ],
+   "exit": 0,
+   "timed_out": false,
+   "seconds": 0.97,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService(mode: \"dispose\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0225483",
+     "message": ""
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender(mode: \"dispose\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0260461",
+     "message": ""
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender(mode: \"async\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0023052",
+     "message": ""
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService(mode: \"async\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0020273",
+     "message": ""
+    }
+   ],
+   "outcome": "passed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService|FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender",
+    "--logger",
+    "trx;LogFileName=run-10.trx",
+    "--results-directory",
+    "<scratch>/p2/out-untouched"
+   ],
+   "exit": 0,
+   "timed_out": false,
+   "seconds": 0.92,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService(mode: \"async\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0021515",
+     "message": ""
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender(mode: \"async\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0016510",
+     "message": ""
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService(mode: \"dispose\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0219460",
+     "message": ""
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender(mode: \"dispose\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0255092",
+     "message": ""
+    }
+   ],
+   "outcome": "passed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService|FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender",
+    "--logger",
+    "trx;LogFileName=run-11.trx",
+    "--results-directory",
+    "<scratch>/p2/out-untouched"
+   ],
+   "exit": 1,
+   "timed_out": false,
+   "seconds": 16.3,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender(mode: \"async\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0062953",
+     "message": ""
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService(mode: \"async\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0019341",
+     "message": ""
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender(mode: \"dispose\")",
+     "outcome": "Failed",
+     "duration": "00:00:15.0397771",
+     "message": "The schedule did not hold the handshake until disposal returned"
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService(mode: \"dispose\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0224973",
+     "message": ""
+    }
+   ],
+   "outcome": "inconclusive"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService|FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender",
+    "--logger",
+    "trx;LogFileName=run-12.trx",
+    "--results-directory",
+    "<scratch>/p2/out-untouched"
+   ],
+   "exit": 0,
+   "timed_out": false,
+   "seconds": 0.92,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService(mode: \"dispose\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0222455",
+     "message": ""
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender(mode: \"async\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0028540",
+     "message": ""
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender(mode: \"dispose\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0260171",
+     "message": ""
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService(mode: \"async\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0024635",
+     "message": ""
+    }
+   ],
+   "outcome": "passed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService|FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender",
+    "--logger",
+    "trx;LogFileName=run-13.trx",
+    "--results-directory",
+    "<scratch>/p2/out-untouched"
+   ],
+   "exit": 0,
+   "timed_out": false,
+   "seconds": 0.92,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender(mode: \"dispose\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0261043",
+     "message": ""
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService(mode: \"async\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0020423",
+     "message": ""
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender(mode: \"async\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0014094",
+     "message": ""
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService(mode: \"dispose\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0243783",
+     "message": ""
+    }
+   ],
+   "outcome": "passed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService|FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender",
+    "--logger",
+    "trx;LogFileName=run-14.trx",
+    "--results-directory",
+    "<scratch>/p2/out-untouched"
+   ],
+   "exit": 0,
+   "timed_out": false,
+   "seconds": 0.92,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender(mode: \"dispose\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0262978",
+     "message": ""
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService(mode: \"dispose\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0237577",
+     "message": ""
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender(mode: \"async\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0025300",
+     "message": ""
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService(mode: \"async\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0015472",
+     "message": ""
+    }
+   ],
+   "outcome": "passed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService|FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender",
+    "--logger",
+    "trx;LogFileName=run-15.trx",
+    "--results-directory",
+    "<scratch>/p2/out-untouched"
+   ],
+   "exit": 0,
+   "timed_out": false,
+   "seconds": 0.92,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService(mode: \"dispose\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0247100",
+     "message": ""
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService(mode: \"async\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0022513",
+     "message": ""
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender(mode: \"dispose\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0256178",
+     "message": ""
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender(mode: \"async\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0024294",
+     "message": ""
+    }
+   ],
+   "outcome": "passed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService|FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender",
+    "--logger",
+    "trx;LogFileName=run-16.trx",
+    "--results-directory",
+    "<scratch>/p2/out-untouched"
+   ],
+   "exit": 1,
+   "timed_out": false,
+   "seconds": 16.29,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender(mode: \"async\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0049080",
+     "message": ""
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService(mode: \"dispose\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0243064",
+     "message": ""
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService(mode: \"async\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0017016",
+     "message": ""
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender(mode: \"dispose\")",
+     "outcome": "Failed",
+     "duration": "00:00:15.0356017",
+     "message": "The schedule did not hold the handshake until disposal returned"
+    }
+   ],
+   "outcome": "inconclusive"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService|FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender",
+    "--logger",
+    "trx;LogFileName=run-17.trx",
+    "--results-directory",
+    "<scratch>/p2/out-untouched"
+   ],
+   "exit": 0,
+   "timed_out": false,
+   "seconds": 0.92,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender(mode: \"dispose\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0254169",
+     "message": ""
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService(mode: \"async\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0020846",
+     "message": ""
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService(mode: \"dispose\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0222405",
+     "message": ""
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender(mode: \"async\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0024596",
+     "message": ""
+    }
+   ],
+   "outcome": "passed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService|FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender",
+    "--logger",
+    "trx;LogFileName=run-18.trx",
+    "--results-directory",
+    "<scratch>/p2/out-untouched"
+   ],
+   "exit": 0,
+   "timed_out": false,
+   "seconds": 0.97,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender(mode: \"dispose\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0275379",
+     "message": ""
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender(mode: \"async\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0017516",
+     "message": ""
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService(mode: \"dispose\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0238861",
+     "message": ""
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService(mode: \"async\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0026319",
+     "message": ""
+    }
+   ],
+   "outcome": "passed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService|FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender",
+    "--logger",
+    "trx;LogFileName=run-19.trx",
+    "--results-directory",
+    "<scratch>/p2/out-untouched"
+   ],
+   "exit": 0,
+   "timed_out": false,
+   "seconds": 0.97,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender(mode: \"dispose\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0265194",
+     "message": ""
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService(mode: \"async\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0014101",
+     "message": ""
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender(mode: \"async\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0030853",
+     "message": ""
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService(mode: \"dispose\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0235007",
+     "message": ""
+    }
+   ],
+   "outcome": "passed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService|FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender",
+    "--logger",
+    "trx;LogFileName=run-20.trx",
+    "--results-directory",
+    "<scratch>/p2/out-untouched"
+   ],
+   "exit": 0,
+   "timed_out": false,
+   "seconds": 0.92,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService(mode: \"dispose\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0236100",
+     "message": ""
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender(mode: \"dispose\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0256495",
+     "message": ""
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService(mode: \"async\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0016757",
+     "message": ""
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender(mode: \"async\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0029499",
+     "message": ""
+    }
+   ],
+   "outcome": "passed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService|FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender",
+    "--logger",
+    "trx;LogFileName=run-21.trx",
+    "--results-directory",
+    "<scratch>/p2/out-untouched"
+   ],
+   "exit": 0,
+   "timed_out": false,
+   "seconds": 0.97,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService(mode: \"dispose\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0232311",
+     "message": ""
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender(mode: \"async\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0013448",
+     "message": ""
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender(mode: \"dispose\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0271701",
+     "message": ""
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService(mode: \"async\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0019364",
+     "message": ""
+    }
+   ],
+   "outcome": "passed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService|FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender",
+    "--logger",
+    "trx;LogFileName=run-22.trx",
+    "--results-directory",
+    "<scratch>/p2/out-untouched"
+   ],
+   "exit": 0,
+   "timed_out": false,
+   "seconds": 0.92,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService(mode: \"dispose\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0221680",
+     "message": ""
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender(mode: \"async\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0019375",
+     "message": ""
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender(mode: \"dispose\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0275414",
+     "message": ""
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService(mode: \"async\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0015638",
+     "message": ""
+    }
+   ],
+   "outcome": "passed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService|FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender",
+    "--logger",
+    "trx;LogFileName=run-23.trx",
+    "--results-directory",
+    "<scratch>/p2/out-untouched"
+   ],
+   "exit": 0,
+   "timed_out": false,
+   "seconds": 0.92,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService(mode: \"dispose\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0216097",
+     "message": ""
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService(mode: \"async\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0015317",
+     "message": ""
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender(mode: \"dispose\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0258833",
+     "message": ""
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender(mode: \"async\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0025059",
+     "message": ""
+    }
+   ],
+   "outcome": "passed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService|FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender",
+    "--logger",
+    "trx;LogFileName=run-24.trx",
+    "--results-directory",
+    "<scratch>/p2/out-untouched"
+   ],
+   "exit": 0,
+   "timed_out": false,
+   "seconds": 0.92,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender(mode: \"dispose\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0257697",
+     "message": ""
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService(mode: \"dispose\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0235826",
+     "message": ""
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender(mode: \"async\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0026358",
+     "message": ""
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService(mode: \"async\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0016093",
+     "message": ""
+    }
+   ],
+   "outcome": "passed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService|FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender",
+    "--logger",
+    "trx;LogFileName=run-25.trx",
+    "--results-directory",
+    "<scratch>/p2/out-untouched"
+   ],
+   "exit": 1,
+   "timed_out": false,
+   "seconds": 16.3,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService(mode: \"dispose\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0217253",
+     "message": ""
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender(mode: \"async\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0065338",
+     "message": ""
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender(mode: \"dispose\")",
+     "outcome": "Failed",
+     "duration": "00:00:15.0407114",
+     "message": "The schedule did not hold the handshake until disposal returned"
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService(mode: \"async\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0020558",
+     "message": ""
+    }
+   ],
+   "outcome": "inconclusive"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService|FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender",
+    "--logger",
+    "trx;LogFileName=run-26.trx",
+    "--results-directory",
+    "<scratch>/p2/out-untouched"
+   ],
+   "exit": 0,
+   "timed_out": false,
+   "seconds": 1.02,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender(mode: \"async\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0024130",
+     "message": ""
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService(mode: \"async\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0020091",
+     "message": ""
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService(mode: \"dispose\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0271217",
+     "message": ""
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender(mode: \"dispose\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0248738",
+     "message": ""
+    }
+   ],
+   "outcome": "passed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService|FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender",
+    "--logger",
+    "trx;LogFileName=run-27.trx",
+    "--results-directory",
+    "<scratch>/p2/out-untouched"
+   ],
+   "exit": 0,
+   "timed_out": false,
+   "seconds": 0.97,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender(mode: \"dispose\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0263146",
+     "message": ""
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender(mode: \"async\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0033611",
+     "message": ""
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService(mode: \"dispose\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0281941",
+     "message": ""
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService(mode: \"async\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0035396",
+     "message": ""
+    }
+   ],
+   "outcome": "passed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService|FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender",
+    "--logger",
+    "trx;LogFileName=run-28.trx",
+    "--results-directory",
+    "<scratch>/p2/out-untouched"
+   ],
+   "exit": 0,
+   "timed_out": false,
+   "seconds": 0.97,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender(mode: \"dispose\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0256800",
+     "message": ""
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender(mode: \"async\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0017015",
+     "message": ""
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService(mode: \"async\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0024424",
+     "message": ""
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService(mode: \"dispose\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0233142",
+     "message": ""
+    }
+   ],
+   "outcome": "passed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService|FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender",
+    "--logger",
+    "trx;LogFileName=run-29.trx",
+    "--results-directory",
+    "<scratch>/p2/out-untouched"
+   ],
+   "exit": 0,
+   "timed_out": false,
+   "seconds": 0.97,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender(mode: \"async\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0013470",
+     "message": ""
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender(mode: \"dispose\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0261720",
+     "message": ""
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService(mode: \"dispose\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0233229",
+     "message": ""
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService(mode: \"async\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0028991",
+     "message": ""
+    }
+   ],
+   "outcome": "passed"
+  },
+  {
+   "command": [
+    "dotnet",
+    "test",
+    "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+    "-c",
+    "Release",
+    "-p:LibTfm=net11.0",
+    "--no-build",
+    "--nologo",
+    "--filter",
+    "FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService|FullyQualifiedName=WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender",
+    "--logger",
+    "trx;LogFileName=run-30.trx",
+    "--results-directory",
+    "<scratch>/p2/out-untouched"
+   ],
+   "exit": 1,
+   "timed_out": false,
+   "seconds": 16.3,
+   "rows": [
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender(mode: \"dispose\")",
+     "outcome": "Failed",
+     "duration": "00:00:15.0395642",
+     "message": "The schedule did not hold the handshake until disposal returned"
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService(mode: \"dispose\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0221941",
+     "message": ""
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.ConnectAfterDisposalInstallsNoSender(mode: \"async\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0057062",
+     "message": ""
+    },
+    {
+     "test": "WebsocketClientLiteTest.ReconnectTests.RegisterAfterDisposalAdmitsNoService(mode: \"async\")",
+     "outcome": "Passed",
+     "duration": "00:00:00.0026682",
+     "message": ""
+    }
+   ],
+   "outcome": "inconclusive"
+  }
+ ],
+ "build": {
+  "command": [
+   "dotnet",
+   "build",
+   "src/main/WebsocketClientLiteTest/WebsocketClientLiteTest.csproj",
+   "-c",
+   "Release",
+   "-p:LibTfm=net11.0",
+   "--nologo"
+  ],
+  "exit": 0,
+  "timed_out": false,
+  "seconds": 1.52
+ },
+ "verdict": "mixed: passed,passed,passed,inconclusive,passed,passed,passed,passed,passed,passed,inconclusive,passed,passed,passed,passed,inconclusive,passed,passed,passed,passed,passed,passed,passed,passed,inconclusive,passed,passed,passed,passed,inconclusive",
+ "rows_per_run": [
+  4
+ ]
+}
