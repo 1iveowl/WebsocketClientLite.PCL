@@ -109,4 +109,5 @@ Runner: `repeat_runs.py` of `docs/evidence/reconnect-disposal-schedules/` (#189)
 | `./test-all-tfms.sh Release` at `2547658` | run and passed, 13:24:09 to 13:26:49 UTC: 332 of 332 on each of netstandard2.0, netstandard2.1, net8.0, net9.0, net10.0 and net11.0 (`checks/test-all-tfms-summary.txt`) |
 | `dotnet test tools/Pdd.Tests` at `e6fc58a` | run and passed: 331 of 331 |
 | `./scripts/pdd.sh validate` at `e6fc58a` | run and passed: 16 requirements |
+| At `1e7da8b`, clean tree, after the review fixes | `dotnet test tools/Pdd.Tests` 334 of 334; `pdd.sh validate` 16 requirements; `pdd.sh close-caller-defects` run and passed, 13 of 13, `dirty_worktree: false` (`part-a/pdd-close-caller-defects-3/`); `./test-all-tfms.sh Release` 332 of 332 on each of the six targets, 14:48:53 to 14:51:32 UTC (`checks/test-all-tfms-summary-1e7da8b.txt`) |
 | Coverage gate, Dafny, other capture jobs | not run: no production or contract file changed |
