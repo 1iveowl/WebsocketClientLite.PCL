@@ -24,6 +24,7 @@ summary that the tables below are read from.
 | `8a7b970` | The two new tests, first version |
 | `5d5bb48` | `ConnectAfterDisposalInstallsNoSender` subscribes off the test thread (the schedule fix below) |
 | `b528666` | The three decision-line defects added to `./scripts/pdd.sh reconnect-defect` |
+| `ff8d943` | The Pdd.Tests fixture for those entries, left out of `b528666` (fresh review of #189, finding 1) |
 
 ## Part 1: the six defects, before and after
 
@@ -127,7 +128,10 @@ validator, which expected exactly one failing row. `Pdd.Tests` gains the case
 `partial-rows`: one row of a two-row theory passing with the defect seeded does not count.
 
 `pdd-reconnect-defect/`: `./scripts/pdd.sh reconnect-defect --output <scratch>/pdd-reconnect`
-at `b528666`, 12:27:45 to 12:28:12 UTC: run and passed. The baseline ran the 15 reconnect
+at `b528666`, 12:27:45 to 12:28:12 UTC: run and passed. Its `results.json` records
+`dirty_worktree: true`: the only differing input was the uncommitted
+`tools/Pdd.Tests/ReconnectEvidenceTests.cs`, which `reconnect-defect` does not build or run,
+so the verdict stands; `pdd-reconnect-defect-2/` repeats it from a clean tree. The baseline ran the 15 reconnect
 cases and `RecordHostRuntime`; each of the four edits failed its named test on its named
 assertion.
 
@@ -136,7 +140,7 @@ assertion.
 | Check | Result |
 | --- | --- |
 | `./test-all-tfms.sh Release` (`checks/test-all-tfms-summary.txt`) | run and passed: 334 of 334 on each of netstandard2.0, netstandard2.1, net8.0, net9.0, net10.0 and net11.0, test host .NET 11.0.0 |
-| `dotnet test tools/Pdd.Tests` | run and passed: 319 of 319 |
+| `dotnet test tools/Pdd.Tests` | first run (2026-11-25, about 12:13 UTC): 319 of 319, **but on an uncommitted fixture change**: `tools/Pdd.Tests/ReconnectEvidenceTests.cs` was left out of `b528666`. At `b528666` itself the result is 317 passed, 1 failed of 318 (`NamedCleanupAssertionIsAccepted`, "Missing intended reconnect assertion"), found by the fresh review of #189. The fixture was committed in `ff8d943`; at `ff8d943`, clean tree: run and passed, 319 of 319 |
 | `./scripts/pdd.sh validate` | run and passed: 16 requirements |
 | `./scripts/pdd.sh reconnect-defect` | run and passed, as above |
 | Coverage gate, Dafny, Stryker, the other `capture` jobs | not run: no production, contract or catalog file of theirs changed |
