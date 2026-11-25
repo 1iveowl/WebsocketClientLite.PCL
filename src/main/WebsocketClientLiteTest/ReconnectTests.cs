@@ -218,7 +218,10 @@ public class ReconnectTests
         var statuses = new ConcurrentQueue<ConnectionStatus>();
         Exception? error = null;
         bool held = true;
-        var subscription = client.WebsocketConnectWithStatusObservable(server.Uri).Subscribe(
+        IDisposable? subscription = null;
+        // Subscribe off the test thread: on loopback the handshake can complete synchronously, and
+        // the hold would then block the thread that has to dispose the client.
+        var subscribing = Task.Run(() => subscription = client.WebsocketConnectWithStatusObservable(server.Uri).Subscribe(
             value =>
             {
                 statuses.Enqueue(value.state);
@@ -231,7 +234,7 @@ public class ReconnectTests
                 if (value.state == ConnectionStatus.WebsocketConnected) settled.TrySetResult("WebsocketConnected");
             },
             ex => { error = ex; settled.TrySetResult("error " + ex.GetType().Name); },
-            () => settled.TrySetResult("completed"));
+            () => settled.TrySetResult("completed")));
         try
         {
             await handshake.Task.WaitAsync(Limit);
@@ -253,7 +256,8 @@ public class ReconnectTests
         finally
         {
             disposed.TrySetResult();
-            subscription.Dispose();
+            await subscribing.WaitAsync(Limit);
+            subscription?.Dispose();
             client.Dispose();
         }
     }
