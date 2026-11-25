@@ -121,13 +121,13 @@ Intent sentences, quoted from `verification/reconnect-intent.md`:
 | 8 | Register(g) | Og | Og | Register | 281 to 284 | I2, registered before disposal |
 | 9 | Register(g) | Ox | Ox | Register | 281 to 284 | U1: only reachable when another subscription is admitted between Subscribe(g) and Register(g), for example from the subscriber's `Initialized` callback, so both are active |
 | 10 | Register(g) | D0 | D0 | Reject | 281 | Unreachable, as row 7 |
-| 11 | Register(g) | Dg | Dg | Reject | 281 | I2, rejected; disposal fell between Subscribe(g) and Register(g) |
+| 11 | Register(g) | Dg | Dg | Reject | 281 | I2, rejected; disposal fell between Subscribe(g) and Register(g). Since 2026-11-25 reached by `RegisterAfterDisposalAdmitsNoService` |
 | 12 | Register(g) | Dx | Dx | Reject | 281 | I1, I2; with U1 |
 | 13 | Connect(g) | O0 | O0 | Install | 265 to 268 | Unreachable, as row 7 |
 | 14 | Connect(g) | Og | Og | Install | 265 to 268 | I5 |
 | 15 | Connect(g) | Ox | Ox | Install | 265 to 268 | U1 and U2. Today the generation is not checked: `g`'s sender replaces the current one and `IsConnected` becomes true |
 | 16 | Connect(g) | D0 | D0 | Reject | 265 | Unreachable, as row 7 |
-| 17 | Connect(g) | Dg | Dg | Reject | 265 | I1: disposal is permanent. No test reaches this row. `SetupAdmissionIsOwnedUntilTeardown` asserts `Sender` is null while its handshake is still held, so before any Connect, and the held handshake then fails on the closed transport (see "Counts" below) |
+| 17 | Connect(g) | Dg | Dg | Reject | 265 | I1: disposal is permanent. Since 2026-11-25 reached by `ConnectAfterDisposalInstallsNoSender`; before that no test reached this row. `SetupAdmissionIsOwnedUntilTeardown` asserts `Sender` is null while its handshake is still held, so before any Connect, and the held handshake then fails on the closed transport (see "Counts" below) |
 | 18 | Connect(g) | Dx | Dx | Reject | 265 | I1 |
 | 19 | Terminate(g) | O0 | O0 | Nothing | 303 | Unreachable, as row 7. `ReferenceEquals(null, g)` is false |
 | 20 | Terminate(g) | Og | Og | NotifyNotConnected | 303 | I6; teardown reports not-connected |
@@ -575,3 +575,116 @@ is already detected by `DisposedClientRejectsAdmission`, because it also loses t
 disposal. Corrected on 2026-11-11 after the M3 review (finding 5): an earlier version
 said the assertion would catch both defects "in either code shape". It was not run. Rows 11 and 17 need a controlled schedule either way. If U1
 is decided later, the function and its tests in `bd743b3` are the starting point.
+
+## Follow-up of 2026-11-25: the surviving decision-line defects
+
+Added on 2026-11-25. This changes no production code and does not bring back
+`bd743b3`. Commands, raw output and both attempts:
+[`docs/evidence/reconnect-disposal-schedules/`](../docs/evidence/reconnect-disposal-schedules/README.md).
+
+### Measured again
+
+The six decision-line defects of "Seeded defects, both ways" were seeded again with the
+same edits and the same script, in `ClientWebSocketRx.cs` at `origin/main` `08679d0`
+(the file is unchanged since `fa96d59`): reconnect suite three times, the other 319 tests
+once. Then again with the two new tests below, at `b528666`. Every verdict held in all
+three runs.
+
+| Defect | Rows | 2026-11-11, `fa96d59` | 2026-11-25, `08679d0` | 2026-11-25, `b528666` | Caught by |
+| --- | --- | --- | --- | --- | --- |
+| Subscribe ignores disposal | 4 to 6 | survived | survived | survived | none: accepted gap, below |
+| Subscribe does not store the generation | 1 to 3 | survived | **detected** | detected | `EndedConnectionReportsNotConnected`, both rows |
+| Register ignores disposal | 10 to 12 | survived | survived | **detected** | `RegisterAfterDisposalAdmitsNoService`, both rows |
+| Connect ignores disposal | 16 to 18 | survived | survived | **detected** | `ConnectAfterDisposalInstallsNoSender`, both rows |
+| Terminate ignores the generation | 19, 21, 22, 24 | detected | detected | detected | `TerminalCallbackSuccessorSurvivesOldCleanup` |
+| Dispose leaves admission open | 25 to 27 | detected | detected | detected | `DisposedClientRejectsAdmission`; at `b528666` also both new tests |
+
+The report expected `EndedConnectionReportsNotConnected` (added in #176) to catch
+"does not store the generation", by reading. It now has been run: it does, in every run,
+on "IsConnected did not become false when the connection ended". With `_generation` never
+stored, Terminate compares against `null` and the final notification never happens. The
+other tests (319) catch none of the six, as before.
+
+Count: the reconnect suite now catches 5 of the 6 decision-line defects (2 of 6 on
+2026-11-11). The one left is not a violation of the intent.
+
+### The two new tests
+
+Both are in `ReconnectTests`, two rows each (`Dispose` and `DisposeAsync`), and both reach
+a row that no test reached before.
+
+- **`RegisterAfterDisposalAdmitsNoService`, row 11.** The subscriber's `Initialized`
+  callback runs between Subscribe (L1) and Register (L3) on the subscribing thread. It
+  holds that thread until the test has disposed the client, so disposal lands between
+  the two. The server holds any handshake it receives, so a wrongly admitted service
+  cannot end, and leave the registry, before the test reads it. For this order its
+  detecting assertion is that no service is registered ("Disposed client registered a
+  service"). It also asserts that the subscriber gets `ObjectDisposedException` and that no
+  connection reaches the server. Its `Sender` null and "IsConnected never reports true"
+  assertions cannot fail under this schedule, with or without `register-ignores-disposal`:
+  the server holds the handshake, so `InitSender` is never reached while the test looks.
+- **`ConnectAfterDisposalInstallsNoSender`, row 17.** The setup is registered before
+  disposal (row 8). `WebsocketConnectionHandler` reports `HandshakeCompletedSuccessfully`
+  on the handshake thread immediately before it calls `InitSender`. The subscriber holds
+  that callback until the test has disposed the client, so disposal and its drain land
+  between the completed handshake and Connect. The service's `Dispose` emits no status,
+  so the first settlement after the release is the handshake thread's own. For this order
+  its detecting assertion is that no sender is installed ("Disposed client installed a
+  sender"); it also asserts that no `WebsocketConnected` is reported and that the setup ends
+  with `ObjectDisposedException`. Its later checks that the registration is gone and the
+  transport stream closed are settled by disposal's drain, which the test asserts before
+  the release (`TcpConnectionService.Dispose` closes the stream), not by the rejection: they
+  hold with `connect-ignores-disposal` too. The messages "Rejected setup left a
+  registration" and "Rejected setup kept its transport open" credit the rejection; read
+  them as checks of the drain.
+
+Each failed on every one of 50 runs with its defect seeded, on its named assertion and on
+both rows, and passed on every one of 50 runs without it (library net11.0). Each case
+takes 0.001 to 0.031 seconds. The first version of the row 17 test failed 5 of 30 runs on
+unmodified code: on loopback the handshake can complete synchronously inside `Subscribe`,
+so the hold blocked the test thread that had to dispose. A diagnostic run showed the hold
+and the test on the same thread in every failure. The test now subscribes from
+`Task.Run`; that run is kept in the evidence.
+
+What they do not establish:
+
+- Only the forced orders. Row 11 is reached through the `Initialized` callback, row 17
+  through the `HandshakeCompletedSuccessfully` callback; disposal from another thread at
+  any other point between those locks is not shown.
+- In the row 17 schedule, disposal has already disposed the `IsConnected` subject when
+  Connect runs, and `SetIsConnected` swallows that. So its "IsConnected never reports true"
+  assertion cannot fail under this schedule, with or without the Connect defect. (In the
+  row 11 schedule Connect does not run while the test looks.) A
+  Connect between `_disposed = true` and `_disposables.Dispose()` would show it, but it
+  needs a pause inside the drain of `Dispose` or `DisposeAsync`, which no seam offers.
+- Rows 12 and 18 (Register or Connect after disposal while another subscription is the
+  current generation) are still reached by no test; they make the same decision as rows 11
+  and 17 and combine disposal with U1.
+- U1 to U4 stay undecided; neither test asserts anything about them. The final
+  notification after disposal (U3) goes into the swallowed subject, and the tests only
+  check that `true` never appears.
+- A choice for the owner to review (found in the fresh review of #189): both tests pin
+  that the rejection is an `ObjectDisposedException`, and row 17 also that no
+  `WebsocketConnected` is reported. I2 says only "rejected and cleaned up" and names no
+  exception; I1's `ObjectDisposedException` sentence is about a subscription made after
+  disposal, while in rows 11 and 17 the subscription was admitted first. The tests take
+  the table's "Reject" as today's code does it. That is a reading of today's behaviour,
+  not written intent, and it sits beside the accepted gap below, where pinning a rejected
+  subscription's status sequence was left alone for the same reason.
+
+### The catalog
+
+`./scripts/pdd.sh reconnect-defect` now runs four edits: `missing-removal` and the three
+above that survived on 2026-11-11, each against its named test and assertion. Its
+validator requires every row of the named test to fail on that assertion.
+
+### Accepted gap, for the owner to confirm
+
+"Subscribe ignores disposal" (rows 4 to 6) still survives every test, and no test was
+written for it. It is not a violation of the intent. I1 says a subscription after
+disposal must terminate with `ObjectDisposedException` without admitting a service. With
+the defect, the Register check still rejects the subscription with that exception and
+admits no service. Only the status sequence differs: the subscriber sees `Initialized`
+first, and `_generation` is overwritten. The table is stricter than the intent here. A
+test would have to pin the status sequence of a rejected subscription, which is intent
+nobody has written down.

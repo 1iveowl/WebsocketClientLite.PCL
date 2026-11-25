@@ -209,8 +209,11 @@ runtime. The existing REASSEMBLY-001-TEST adapter obligation includes the new
 six-target tests without expanding its proof. See [parser retention](../../verification/parser-retention.md).
 
 P3-D adds `reconnect-defect --output <fresh-directory>` to controlled capture.
-The missing-removal edit must fail the old service identity assertion after all
-nine reconnect cases pass. EPOCH-001-TEST requires six-target tests and this
+The missing-removal edit must fail the old service identity assertion after every
+reconnect case (`ReconnectCaseCounts`) passes. Since 2026-11-25 three decision-line
+edits of [reconnect-decision.md](../../verification/reconnect-decision.md) follow it:
+`subscribe-keeps-generation`, `register-ignores-disposal` and `connect-ignores-disposal`,
+each of which must fail every row of its named test on its named assertion. EPOCH-001-TEST requires six-target tests and this
 source-bound experiment. Concurrent active subscription policy remains deferred.
 
 P3-G bounds post-kill process/output draining at two seconds. If an escaped orphan

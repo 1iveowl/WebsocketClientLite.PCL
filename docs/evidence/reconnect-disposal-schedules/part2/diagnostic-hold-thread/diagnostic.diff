@@ -1,0 +1,26 @@
+--- a/src/main/WebsocketClientLiteTest/ReconnectTests.cs	2026-11-25 12:20:01.959247965 +0000
++++ b/src/main/WebsocketClientLiteTest/ReconnectTests.cs	2026-11-25 12:13:47.580603606 +0000
+@@ -218,12 +218,14 @@
+         var statuses = new ConcurrentQueue<ConnectionStatus>();
+         Exception? error = null;
+         bool held = true;
++        int testThread = Environment.CurrentManagedThreadId, holdThread = 0;
+         var subscription = client.WebsocketConnectWithStatusObservable(server.Uri).Subscribe(
+             value =>
+             {
+                 statuses.Enqueue(value.state);
+                 if (value.state == ConnectionStatus.HandshakeCompletedSuccessfully)
+                 {
++                    holdThread = Environment.CurrentManagedThreadId;
+                     handshake.TrySetResult();
+                     // Hold the handshake thread before InitSender until disposal returns.
+                     held = disposed.Task.Wait(Limit);
+@@ -242,7 +244,7 @@
+             Assert.True(Active(client).IsEmpty, "Disposal did not drain the setup in progress");
+             disposed.TrySetResult();
+             var outcome = await settled.Task.WaitAsync(Limit);
+-            Assert.True(held, "The schedule did not hold the handshake until disposal returned");
++            Assert.True(held, $"The schedule did not hold the handshake until disposal returned (test thread {testThread}, hold thread {holdThread}, subscription returned {subscription is not null})");
+             Assert.True(client.Sender is null, $"Disposed client installed a sender (first settlement: {outcome})");
+             Assert.False(statuses.Contains(ConnectionStatus.WebsocketConnected), "Disposed client reported WebsocketConnected");
+             Assert.True(error is ObjectDisposedException, $"Connect after disposal was not rejected with ObjectDisposedException (first settlement: {outcome})");

@@ -130,6 +130,138 @@ public class ReconnectTests
         finally { released.TrySetResult(); }
     }
 
+    private static TcpConnectionService Transport(WebsocketService service) =>
+        (TcpConnectionService)typeof(WebsocketService)
+            .GetField("_tcpConnectionService", BindingFlags.Instance | BindingFlags.NonPublic)!.GetValue(service)!;
+
+    // Row 11 of verification/reconnect-decision.md: Register(g) after disposal (I1, I2). The
+    // subscriber's Initialized callback runs between Subscribe(g), lock L1, and Register(g), the
+    // Using resource factory, on the subscribing thread. It holds that thread until the test has
+    // disposed the client, so disposal lands between the two. The server holds any handshake it
+    // receives, so a service admitted by mistake cannot end, and leave the registry, before the
+    // registry is read.
+    [Theory]
+    [InlineData("dispose")]
+    [InlineData("async")]
+    public async Task RegisterAfterDisposalAdmitsNoService(string mode)
+    {
+        using var server = new LoopbackWebSocketServer();
+        var accepted = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        var released = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        server.Start(LoopbackWebSocketServer.EchoLoopAsync, async (_, ct) =>
+        {
+            accepted.TrySetResult();
+            await released.Task.WaitAsync(ct);
+        });
+        var client = new ClientWebSocketRx();
+        var values = new ConcurrentQueue<bool>();
+        using var status = client.IsConnectedObservable.Subscribe(values.Enqueue);
+        var initialized = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        var disposed = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        var terminal = new TaskCompletionSource<Exception?>(TaskCreationOptions.RunContinuationsAsynchronously);
+        bool held = true;
+        IDisposable? subscription = null;
+        try
+        {
+            var subscribing = Task.Run(() => subscription = client.WebsocketConnectWithStatusObservable(server.Uri).Subscribe(
+                value =>
+                {
+                    if (value.state != ConnectionStatus.Initialized) return;
+                    initialized.TrySetResult();
+                    // Hold Subscribe between its admission (L1) and Register (L3) until disposal returns.
+                    held = disposed.Task.Wait(Limit);
+                },
+                error => terminal.TrySetResult(error),
+                () => terminal.TrySetResult(null)));
+            await initialized.Task.WaitAsync(Limit);
+            if (mode == "async") await client.DisposeAsync().AsTask().WaitAsync(Limit);
+            else client.Dispose();
+            disposed.TrySetResult();
+            await subscribing.WaitAsync(Limit);
+            Assert.True(held, "The schedule did not hold Subscribe until disposal returned");
+            Assert.True(Active(client).IsEmpty, "Disposed client registered a service");
+            Assert.True(terminal.Task.IsCompleted && terminal.Task.Result is ObjectDisposedException,
+                "Setup after disposal was not rejected with ObjectDisposedException");
+            Assert.False(accepted.Task.IsCompleted, "A connection after disposal reached the server");
+            Assert.Null(client.Sender);
+            Assert.DoesNotContain(true, values);
+        }
+        finally
+        {
+            disposed.TrySetResult();
+            released.TrySetResult();
+            subscription?.Dispose();
+            client.Dispose();
+        }
+    }
+
+    // Row 17 of verification/reconnect-decision.md: Connect(g) after disposal (I1, I2). The setup
+    // was registered before disposal (row 8). WebsocketConnectionHandler reports
+    // HandshakeCompletedSuccessfully on the handshake thread immediately before it calls
+    // InitSender. The subscriber holds that callback until the test has disposed the client, so
+    // disposal, and its drain of the registry, lands between the completed handshake and Connect.
+    // The service's Dispose emits no status, so the first settlement after the release is the
+    // handshake thread's own: the rejection, or WebsocketConnected after a wrongly installed sender.
+    [Theory]
+    [InlineData("dispose")]
+    [InlineData("async")]
+    public async Task ConnectAfterDisposalInstallsNoSender(string mode)
+    {
+        using var server = new LoopbackWebSocketServer();
+        server.Start(LoopbackWebSocketServer.EchoLoopAsync);
+        var client = new ClientWebSocketRx();
+        var values = new ConcurrentQueue<bool>();
+        using var status = client.IsConnectedObservable.Subscribe(values.Enqueue);
+        var handshake = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        var disposed = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        var settled = new TaskCompletionSource<string>(TaskCreationOptions.RunContinuationsAsynchronously);
+        var statuses = new ConcurrentQueue<ConnectionStatus>();
+        Exception? error = null;
+        bool held = true;
+        IDisposable? subscription = null;
+        // Subscribe off the test thread: on loopback the handshake can complete synchronously, and
+        // the hold would then block the thread that has to dispose the client.
+        var subscribing = Task.Run(() => subscription = client.WebsocketConnectWithStatusObservable(server.Uri).Subscribe(
+            value =>
+            {
+                statuses.Enqueue(value.state);
+                if (value.state == ConnectionStatus.HandshakeCompletedSuccessfully)
+                {
+                    handshake.TrySetResult();
+                    // Hold the handshake thread before InitSender until disposal returns.
+                    held = disposed.Task.Wait(Limit);
+                }
+                if (value.state == ConnectionStatus.WebsocketConnected) settled.TrySetResult("WebsocketConnected");
+            },
+            ex => { error = ex; settled.TrySetResult("error " + ex.GetType().Name); },
+            () => settled.TrySetResult("completed")));
+        try
+        {
+            await handshake.Task.WaitAsync(Limit);
+            var service = Assert.Single(Active(client)).Key;
+            var transport = Transport(service);
+            if (mode == "async") await client.DisposeAsync().AsTask().WaitAsync(Limit);
+            else client.Dispose();
+            Assert.True(Active(client).IsEmpty, "Disposal did not drain the setup in progress");
+            disposed.TrySetResult();
+            var outcome = await settled.Task.WaitAsync(Limit);
+            Assert.True(held, "The schedule did not hold the handshake until disposal returned");
+            Assert.True(client.Sender is null, $"Disposed client installed a sender (first settlement: {outcome})");
+            Assert.False(statuses.Contains(ConnectionStatus.WebsocketConnected), "Disposed client reported WebsocketConnected");
+            Assert.True(error is ObjectDisposedException, $"Connect after disposal was not rejected with ObjectDisposedException (first settlement: {outcome})");
+            Assert.True(Active(client).IsEmpty, "Rejected setup left a registration");
+            Assert.False(transport.ConnectionStream.CanRead, "Rejected setup kept its transport open");
+            Assert.DoesNotContain(true, values);
+        }
+        finally
+        {
+            disposed.TrySetResult();
+            await subscribing.WaitAsync(Limit);
+            subscription?.Dispose();
+            client.Dispose();
+        }
+    }
+
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
