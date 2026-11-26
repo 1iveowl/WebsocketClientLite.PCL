@@ -67,7 +67,7 @@ public sealed partial class Evidence
             }
             foreach (var (name, count) in caseCounts.Where(p => p.Key.StartsWith("WebsocketClientLiteTest.ControlledCloseTests.", StringComparison.Ordinal) || p.Key.StartsWith("WebsocketClientLiteTest.CloseBoundaryTests.", StringComparison.Ordinal)))
             {
-                var expectedCases = name.EndsWith("PausedCloseWriteBlocksDisposalAndPeerRaceSendsOnce", StringComparison.Ordinal) || name.EndsWith("PeerWaitEndsByControlledTimeoutOrReadFailure", StringComparison.Ordinal) || name.EndsWith("ParserSignalsPeerCloseOrReadFailureBeforeTimerExpiry", StringComparison.Ordinal) || name.EndsWith("DisposalStopsActivePeriodicPingsBeforeClose", StringComparison.Ordinal) ? 2 : 1;
+                var expectedCases = name.EndsWith("PausedCloseWriteBlocksDisposalAndPeerRaceSendsOnce", StringComparison.Ordinal) || name.EndsWith("PeerWaitEndsByControlledTimeoutOrReadFailure", StringComparison.Ordinal) || name.EndsWith("ParserSignalsPeerCloseOrReadFailureBeforeTimerExpiry", StringComparison.Ordinal) || name.EndsWith("DisposalStopsActivePeriodicPingsBeforeClose", StringComparison.Ordinal) || name.EndsWith("SynchronousDisposeReleasesTransport", StringComparison.Ordinal) ? 2 : 1;
                 if (count != expectedCases) tests[name] = "failed";
             }
             foreach (var (name, count) in QueuedCaseCounts)
